@@ -13,19 +13,31 @@ struct WeeklyHabitLineChart: View {
     var body: some View {
         Chart(chartData) { dataPoint in
             LineMark(
-                x: .value("Day", dataPoint.dayName), // CATEGORICAL данные
+                x: .value("Day", dataPoint.dayName),
                 y: .value("Progress", dataPoint.completionRate)
             )
             .foregroundStyle(habit.iconColor.color)
-            .lineStyle(StrokeStyle(lineWidth: 2))
+            .lineStyle(StrokeStyle(lineWidth: 1.5)) // ✅ Тоньше линия
+            .interpolationMethod(.monotone) // ✅ Теперь и Weekly мягкий!
             
             AreaMark(
-                x: .value("Day", dataPoint.dayName), // CATEGORICAL данные
+                x: .value("Day", dataPoint.dayName),
                 y: .value("Progress", dataPoint.completionRate)
             )
-            .foregroundStyle(habit.iconColor.color.opacity(0.2))
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [
+                        habit.iconColor.color.opacity(0.5),
+                        habit.iconColor.color.opacity(0.1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .interpolationMethod(.monotone) // ✅ И для области
         }
         .frame(height: 140)
+        .chartYScale(domain: 0...1.0) // ✅ Строгие границы
         .chartXAxis {
             AxisMarks { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
@@ -52,19 +64,15 @@ struct WeeklyHabitLineChart: View {
                 }
             }
         }
-        .chartYScale(domain: 0...1.0)
         .onAppear {
             generateChartData()
         }
     }
     
-    // MARK: - Data Generation
-    
     private func generateChartData() {
         let today = Date()
         var data: [WeeklyChartDataPoint] = []
         
-        // Генерируем последние 7 дней
         let startDate = calendar.date(byAdding: .day, value: -6, to: today) ?? today
         
         for dayOffset in 0...6 {
@@ -91,8 +99,6 @@ struct WeeklyHabitLineChart: View {
         let goal = habit.goal
         
         let rate = goal > 0 ? Double(progress) / Double(goal) : 0
-        return min(1.0, rate)
+        return min(1.0, max(0.0, rate)) // ✅ Гарантируем 0-100%
     }
 }
-
-// Data model находится в LineChartModels.swift

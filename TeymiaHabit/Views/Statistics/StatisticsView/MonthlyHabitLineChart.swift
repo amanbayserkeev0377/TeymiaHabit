@@ -10,59 +10,87 @@ struct MonthlyHabitLineChart: View {
         Calendar.userPreferred
     }
     
-    // Вычисляем конкретные даты для оси X
+    // ✅ УНИВЕРСАЛЬНОЕ РЕШЕНИЕ: динамическое равномерное распределение
     private var xAxisValues: [Date] {
         guard !chartData.isEmpty else { return [] }
         
-        var dates: [Date] = []
+        let totalDays = chartData.count // 30
+        let targetLabels = 7 // Хотим 7 меток (6 столбцов)
         
-        // НОВЫЙ ПОДХОД: показываем каждые 3 дня, но ГАРАНТИРУЕМ последний день
-        for (index, dataPoint) in chartData.enumerated() {
-            let isEveryThirdDay = index % 3 == 0
-            let isLastDay = index == chartData.count - 1
-            let isSecondToLastDay = index == chartData.count - 2 // Добавляем предпоследний для контекста
+        var values: [Date] = []
+        
+        // ✅ ВСЕГДА добавляем первый день
+        values.append(chartData[0].date)
+        
+        // ✅ Вычисляем равномерные промежуточные точки
+        if totalDays > 2 {
+            let step = Double(totalDays - 1) / Double(targetLabels - 1)
             
-            if isEveryThirdDay || isLastDay || isSecondToLastDay {
-                dates.append(dataPoint.date)
+            for i in 1..<(targetLabels - 1) {
+                let index = Int(round(Double(i) * step))
+                if index < totalDays && index > 0 {
+                    values.append(chartData[index].date)
+                }
             }
         }
         
-        // DEBUG: проверяем какие даты мы передаем в AxisMarks
-        print("📍 xAxisValues: \(dates.map { calendar.component(.day, from: $0) })")
-        
-        return dates
-    }
-    
-    // Принудительно задаем диапазон X-оси от первого до последнего дня
-    private var xAxisDomain: ClosedRange<Date> {
-        guard let firstDate = chartData.first?.date,
-              let lastDate = chartData.last?.date else {
-            return Date()...Date()
+        // ✅ ВСЕГДА добавляем последний день
+        if totalDays > 1 {
+            values.append(chartData[totalDays - 1].date)
         }
-        return firstDate...lastDate
+        
+        // ✅ УБИРАЕМ дубликаты (на случай округления)
+        var uniqueValues: [Date] = []
+        for date in values {
+            let dayNumber = calendar.component(.day, from: date)
+            let isDuplicate = uniqueValues.contains { existingDate in
+                calendar.component(.day, from: existingDate) == dayNumber
+            }
+            if !isDuplicate {
+                uniqueValues.append(date)
+            }
+        }
+        
+        // DEBUG: проверяем финальный результат
+        let days = uniqueValues.map { calendar.component(.day, from: $0) }
+        print("📍 DYNAMIC xAxisValues days: \(days)")
+        
+        return uniqueValues
     }
     
     var body: some View {
         Chart(chartData) { dataPoint in
-            // Возвращаем LineMark как изначально задумано
             LineMark(
                 x: .value("Day", dataPoint.date, unit: .day),
                 y: .value("Progress", dataPoint.completionRate)
             )
             .foregroundStyle(habit.iconColor.color)
-            .lineStyle(StrokeStyle(lineWidth: 2))
+            .lineStyle(StrokeStyle(lineWidth: 1.5))
+            .interpolationMethod(.monotone)
             
             AreaMark(
                 x: .value("Day", dataPoint.date, unit: .day),
                 y: .value("Progress", dataPoint.completionRate)
             )
-            .foregroundStyle(habit.iconColor.color.opacity(0.2))
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [
+                        habit.iconColor.color.opacity(0.5),
+                        habit.iconColor.color.opacity(0.1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .interpolationMethod(.monotone)
         }
         .frame(height: 140)
-        .padding(.trailing, 8) // Добавляем padding справа для последней метки
+        .chartYScale(domain: 0...1.0)
+        // ✅ ДОБАВЛЯЕМ минимальные отступы для читабельности
+        .chartXScale(range: .plotDimension(startPadding: 12, endPadding: 12))
         .chartXAxis {
-            // ПРОСТОЕ РЕШЕНИЕ: пусть Charts сам решает что показывать
-            AxisMarks(values: .stride(by: .day, count: 3)) { value in
+            // ✅ ВОЗВРАЩАЕМ к принудительным значениям с улучшенной логикой
+            AxisMarks(values: xAxisValues) { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
                     .foregroundStyle(.gray.opacity(0.3))
                 AxisValueLabel {
@@ -87,45 +115,54 @@ struct MonthlyHabitLineChart: View {
                 }
             }
         }
-        .chartYScale(domain: 0...1.0)
         .onAppear {
             generateChartData()
         }
     }
     
-    // MARK: - Data Generation
-    
     private func generateChartData() {
         let today = Date()
+        
         var data: [MonthlyChartDataPoint] = []
         
-        // ИСПРАВЛЯЕМ: показываем последние 30 дней правильно!
-        // От 29 дней назад до СЕГОДНЯ (включительно)
+        // ✅ Генерируем 30 дней: от (сегодня - 29) до сегодня включительно
         for dayOffset in 0..<30 {
-            guard let date = calendar.date(byAdding: .day, value: dayOffset - 29, to: today) else { continue }
+            guard let date = calendar.date(byAdding: .day, value: -(29 - dayOffset), to: today) else { continue }
             
-            let dayName = formatDayName(date: date)
-            let completionRate = calculateCompletionRate(for: date)
+            // ✅ Нормализуем к полуночи для консистентности
+            let normalizedDate = calendar.startOfDay(for: date)
+            
+            let dayName = formatDayName(date: normalizedDate)
+            let completionRate = calculateCompletionRate(for: date) // Используем оригинальную дату для расчетов
             
             data.append(MonthlyChartDataPoint(
                 dayName: dayName,
-                date: date,
+                date: normalizedDate,
                 completionRate: completionRate
             ))
         }
         
         chartData = data
         
-        // DEBUG - проверяем правильность дат
-        print("🔍 MonthlyHabitLineChart: Generated \(chartData.count) data points")
-        print("  From: \(chartData.first?.date.formatted(.dateTime.day().month()) ?? "?")")
-        print("  To: \(chartData.last?.date.formatted(.dateTime.day().month()) ?? "?")")
-        print("  Today should be last: \(today.formatted(.dateTime.day().month()))")
+        // ✅ РАСШИРЕННЫЙ DEBUG
+        print("🔍 MonthlyHabitLineChart FIXED:")
+        print("  Today: \(today.formatted(.dateTime.day().month()))")
+        print("  Generated \(chartData.count) data points")
+        print("  Chart from: \(chartData.first?.date.formatted(.dateTime.day().month()) ?? "?")")
+        print("  Chart to: \(chartData.last?.date.formatted(.dateTime.day().month()) ?? "?")")
+        
+        // ✅ Проверяем что последний день = сегодня
+        if let lastDate = chartData.last?.date {
+            let isToday = calendar.isDate(lastDate, inSameDayAs: today)
+            print("  ✅ Last day is today: \(isToday)")
+            print("  Last day number: \(calendar.component(.day, from: lastDate))")
+            print("  Today number: \(calendar.component(.day, from: today))")
+        }
     }
     
     private func formatDayName(date: Date) -> String {
         let day = calendar.component(.day, from: date)
-        return "\(day)" // Показываем день месяца
+        return "\(day)"
     }
     
     private func calculateCompletionRate(for date: Date) -> Double {
@@ -134,33 +171,7 @@ struct MonthlyHabitLineChart: View {
         let progress = habit.progressForDate(date)
         let goal = habit.goal
         
-        // Ограничиваем максимумом 100% как в требованиях
         let rate = goal > 0 ? Double(progress) / Double(goal) : 0
         return min(1.0, rate)
     }
-    
-    private func barColor(for dataPoint: MonthlyChartDataPoint) -> Color {
-        let date = dataPoint.date
-        let completionRate = dataPoint.completionRate
-        
-        // Future dates or inactive days
-        if !habit.isActiveOnDate(date) || date > Date() {
-            return Color.gray.opacity(0.2)
-        }
-        
-        // No progress
-        if completionRate == 0 {
-            return Color.gray.opacity(0.3)
-        }
-        
-        // Completed (100%)
-        if completionRate >= 1.0 {
-            return Color(red: 0.2, green: 0.8, blue: 0.4) // Success green
-        } else {
-            // Partial progress - use habit color with opacity based on completion
-            return habit.iconColor.color.opacity(0.4 + (completionRate * 0.6))
-        }
-    }
 }
-
-// Data model находится в LineChartModels.swift

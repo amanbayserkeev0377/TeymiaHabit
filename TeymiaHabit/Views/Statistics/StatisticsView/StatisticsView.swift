@@ -44,18 +44,6 @@ struct StatisticsView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         
-                        // Section Header для привычек
-                        HStack {
-                            Text("Your Habits")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.primary)
-                            
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
-                        
                         // Habits Charts Section - БЕЗ горизонтальных отступов
                         VStack(spacing: 12) {
                             if selectedTimeRange == .heatmap {

@@ -47,15 +47,15 @@ struct HabitLineChartCard: View {
                 switch timeRange {
                 case .week:
                     WeeklyHabitLineChart(habit: habit)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 8)
                         
                 case .month:
                     MonthlyHabitLineChart(habit: habit)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 8)
                         
                 case .year:
                     YearlyHabitLineChart(habit: habit)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 8)
                         
                 case .heatmap:
                     // Heatmap не использует этот компонент
@@ -64,7 +64,6 @@ struct HabitLineChartCard: View {
             }
             .padding(.horizontal, 0)  // Убираем горизонтальные отступы полностью
             .padding(.vertical, 12)   // Только вертикальные отступы
-            // Фон убран для WMY режимов
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -74,32 +73,48 @@ struct HabitLineChartCard: View {
     private var currentPeriodProgress: String {
         switch timeRange {
         case .week:
-            // Считаем последние 7 дней
+            // Считаем последние 7 дней - возвращаем процент
             let today = Date()
             
             let weekCompletedDays = (0...6).filter { dayOffset in
                 guard let date = calendar.date(byAdding: .day, value: dayOffset - 6, to: today) else { return false }
                 return habit.isActiveOnDate(date) && habit.progressForDate(date) >= habit.goal
             }.count
-            return "\(weekCompletedDays)/7"
+            
+            let percentage = Int((Double(weekCompletedDays) / 7.0) * 100)
+            return "\(percentage)%"
             
         case .month:
-            // Считаем последние 30 дней
+            // Считаем последние 30 дней - возвращаем процент
             let today = Date()
             let monthCompletedDays = (0..<30).filter { dayOffset in
                 guard let date = calendar.date(byAdding: .day, value: dayOffset - 29, to: today) else { return false }
                 return habit.isActiveOnDate(date) && habit.progressForDate(date) >= habit.goal
             }.count
-            return "\(monthCompletedDays)/30"
+            
+            let percentage = Int((Double(monthCompletedDays) / 30.0) * 100)
+            return "\(percentage)%"
             
         case .year:
-            // Считаем последние 12 месяцев (процент завершенных месяцев)
+            // Считаем последние 365 дней - возвращаем процент
             let today = Date()
-            let completedMonths = (0..<12).filter { monthOffset in
-                guard let monthDate = calendar.date(byAdding: .month, value: monthOffset - 11, to: today) else { return false }
-                return calculateMonthlyCompletionRate(for: monthDate) >= 0.8 // 80% дней в месяце
-            }.count
-            return "\(completedMonths)/12"
+            
+            var totalActiveDays = 0
+            var completedDays = 0
+            
+            for dayOffset in 0..<365 {
+                guard let date = calendar.date(byAdding: .day, value: dayOffset - 364, to: today) else { continue }
+                
+                if habit.isActiveOnDate(date) && date <= Date() {
+                    totalActiveDays += 1
+                    if habit.progressForDate(date) >= habit.goal {
+                        completedDays += 1
+                    }
+                }
+            }
+            
+            let percentage = totalActiveDays > 0 ? Int((Double(completedDays) / Double(totalActiveDays)) * 100) : 0
+            return "\(percentage)%"
             
         case .heatmap:
             return ""
