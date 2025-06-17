@@ -22,7 +22,7 @@ enum OverviewTimeRange: String, CaseIterable {
     }
 }
 
-// ===== Line Chart Data Point =====
+// ===== Generic Line Chart Data Point =====
 
 struct LineChartDataPoint: Identifiable {
     let id = UUID()
@@ -30,15 +30,36 @@ struct LineChartDataPoint: Identifiable {
     let completionRate: Double // 0.0 to 1.0
 }
 
-// ===== Heatmap Data Point =====
+// ===== Specific Chart Data Points =====
+
+struct WeeklyChartDataPoint: Identifiable {
+    let id = UUID()
+    let dayName: String  
+    let date: Date      
+    let completionRate: Double
+}
+
+struct MonthlyChartDataPoint: Identifiable {
+    let id = UUID()
+    let dayName: String  
+    let date: Date      
+    let completionRate: Double
+}
+
+struct YearlyChartDataPoint: Identifiable {
+    let id = UUID()
+    let monthName: String  
+    let date: Date      
+    let completionRate: Double
+}
+
+// ===== Heatmap Data =====
 
 struct HeatmapDataPoint: Identifiable {
     let id = UUID()
     let date: Date
     let completionRate: Double // 0.0 or 1.0 for individual habits
 }
-
-// ===== Week Data for Heatmap =====
 
 struct WeekData {
     let week: Int

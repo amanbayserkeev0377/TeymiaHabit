@@ -1,3 +1,5 @@
+// Views/Statistics/StatisticsView/StatisticsView.swift
+
 import SwiftUI
 import SwiftData
 
@@ -29,48 +31,55 @@ struct StatisticsView: View {
             if habits.isEmpty {
                 StatisticsEmptyStateView()
             } else {
-                List {
-                    // Overview Section
-                    Section {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Overview Section
                         VStack(spacing: 16) {
                             if selectedTimeRange == .heatmap {
                                 OverviewHeatmapView(habits: habits)
                             } else {
-                                Text("Overview Coming Soon")
-                                    .font(.headline)
-                                    .foregroundStyle(.secondary)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 32)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(.quaternary)
-                                    }
+                                OverviewStatsView(habits: habits, timeRange: selectedTimeRange)
                             }
                         }
-                        .padding(.vertical, 8)
-                    }
-                    .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
-                    .listRowSeparator(.hidden)
-                    
-                    // Habits Charts Section
-                    Section("Your Habits") {
-                        if selectedTimeRange == .heatmap {
-                            ForEach(habits) { habit in
-                                HabitHeatmapCard(habit: habit, onTap: {
-                                    selectedHabitForStats = habit
-                                })
-                            }
-                        } else {
-                            ForEach(habits) { habit in
-                                HabitLineChartCard(
-                                    habit: habit, 
-                                    timeRange: selectedTimeRange,
-                                    onTap: {
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        
+                        // Section Header для привычек
+                        HStack {
+                            Text("Your Habits")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.primary)
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
+                        
+                        // Habits Charts Section - БЕЗ горизонтальных отступов
+                        VStack(spacing: 12) {
+                            if selectedTimeRange == .heatmap {
+                                ForEach(habits) { habit in
+                                    HabitHeatmapCard(habit: habit, onTap: {
                                         selectedHabitForStats = habit
-                                    }
-                                )
+                                    })
+                                }
+                            } else {
+                                ForEach(habits) { habit in
+                                    HabitLineChartCard(
+                                        habit: habit, 
+                                        timeRange: selectedTimeRange,
+                                        onTap: {
+                                            selectedHabitForStats = habit
+                                        }
+                                    )
+                                }
                             }
                         }
+                        .padding(.horizontal, 0) // БЕЗ горизонтальных отступов
+                        
+                        // Нижний отступ
+                        Spacer(minLength: 20)
                     }
                 }
             }
