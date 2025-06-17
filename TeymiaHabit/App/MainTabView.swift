@@ -31,7 +31,7 @@ struct MainTabView: View {
                 StatisticsView()
             }
             .tabItem {
-                Label("statistics".localized, systemImage: "chart.bar.fill")
+                Label("statistics".localized, systemImage: "chart.line.text.clipboard.fill")
             }
             
             NavigationStack {
