@@ -26,16 +26,18 @@ struct OverviewStatsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            // Stats Grid - делаем карточки шире
+            // Stats Grid - новый порядок карточек
             LazyVGrid(columns: gridColumns, spacing: 16) {
+                // 1. Active Habits (первая)
                 StatCardInteractive(
-                    title: "Habits Done", 
-                    value: "\(statsData.habitsCompleted)",
-                    icon: "checkmark.rectangle.stack.fill",
-                    color: Color(#colorLiteral(red: 0.5725490196, green: 0.7490196078, blue: 0.4235294118, alpha: 1)),
-                    onTap: { selectedInfoCard = .habitsDone }
+                    title: "Active Habits", 
+                    value: "\(statsData.activeHabitsCount)",
+                    icon: "list.bullet.rectangle.fill",
+                    color: Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1)),
+                    onTap: { selectedInfoCard = .activeHabits }
                 )
                 
+                // 2. Active Days (вторая)
                 StatCardInteractive(
                     title: "Active Days", 
                     value: "\(statsData.activeDays)",
@@ -44,20 +46,22 @@ struct OverviewStatsView: View {
                     onTap: { selectedInfoCard = .activeDays }
                 )
                 
+                // 3. Habits Done (третья)
+                StatCardInteractive(
+                    title: "Habits Done", 
+                    value: "\(statsData.habitsCompleted)",
+                    icon: "checkmark.rectangle.stack.fill",
+                    color: Color(#colorLiteral(red: 0.5725490196, green: 0.7490196078, blue: 0.4235294118, alpha: 1)),
+                    onTap: { selectedInfoCard = .habitsDone }
+                )
+                
+                // 4. Completion Rate (четвертая)
                 StatCardInteractive(
                     title: "Completion Rate", 
                     value: "\(Int(statsData.completionRate * 100))%",
                     icon: "chart.pie.fill",
                     color: Color(#colorLiteral(red: 0.3843137255, green: 0.5215686275, blue: 0.662745098, alpha: 1)),
                     onTap: { selectedInfoCard = .completionRate }
-                )
-                
-                StatCardInteractive(
-                    title: "Active Habits", 
-                    value: "\(statsData.activeHabitsCount)",
-                    icon: "list.bullet.rectangle.fill",
-                    color: Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1)),
-                    onTap: { selectedInfoCard = .activeHabits }
                 )
             }
         }
@@ -362,81 +366,90 @@ struct StatCardInteractive: View {
 struct CardInfoView: View {
     let card: InfoCard
     let timeRange: OverviewTimeRange
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Header с иконкой
-                    HStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(cardColor.opacity(0.15))
-                                .frame(width: 60, height: 60)
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Spacer()
+                        Image(cardIllustration)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: cardImageSize.width, height: cardImageSize.height)
+                        Spacer()
+                    }
+                    .padding(.top, 0)
+                    .padding(.bottom, 20)
+                    
+                    // Контент с отступами
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Card description
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("What it shows:")
+                                .font(.headline)
+                                .fontWeight(.semibold)
                             
-                            Image(systemName: cardIcon)
-                                .font(.title)
-                                .fontWeight(.medium)
-                                .foregroundStyle(cardColor)
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(cardTitle)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            
-                            Text("How this metric works")
-                                .font(.subheadline)
+                            Text(cardDescription)
+                                .font(.body)
                                 .foregroundStyle(.secondary)
                         }
                         
-                        Spacer()
-                    }
-                    
-                    // Card description
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("What it shows:")
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                        // How it's calculated
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("How it's calculated:")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            
+                            Text(calculationDescription)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
                         
-                        Text(cardDescription)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
+                        // Example
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Example:")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            
+                            Text(exampleDescription)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                    
-                    // How it's calculated
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("How it's calculated:")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        
-                        Text(calculationDescription)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding()
-                    .background(.quaternary)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    // Example
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Example:")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        
-                        Text(exampleDescription)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding()
-                    .background(cardColor.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
-                .padding()
             }
-            .navigationTitle("")
+            .navigationTitle(cardTitle)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("button_done".localized) {
+                        dismiss()
+                    }
+                    .foregroundStyle(cardColor)
+                    .fontWeight(.semibold)
+                }
+            }
         }
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var cardIllustration: String {
+        switch card {
+        case .habitsDone: return "CardInfo_habits_done"
+        case .activeDays: return "CardInfo_active_days" 
+        case .completionRate: return "CardInfo_completion_rate" 
+        case .activeHabits: return "CardInfo_active_habits"
+        }
+    }
+    
+    private var cardImageSize: CGSize {
+        // Единый размер для всех карточек
+        return CGSize(width: 200, height: 160)
     }
     
     private var cardColor: Color {
