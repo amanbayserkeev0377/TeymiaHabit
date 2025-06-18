@@ -65,7 +65,7 @@ struct OverviewStatsView: View {
                 )
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 12)
         .padding(.vertical, 0)
         .onAppear {
             calculateStats()
@@ -87,8 +87,8 @@ struct OverviewStatsView: View {
     
     private var gridColumns: [GridItem] {
         [
-            GridItem(.flexible(), spacing: 16),
-            GridItem(.flexible(), spacing: 16)
+            GridItem(.adaptive(minimum: 160), spacing: 16),
+            GridItem(.adaptive(minimum: 160), spacing: 16)
         ]
     }
     

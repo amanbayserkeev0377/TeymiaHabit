@@ -41,7 +41,7 @@ struct HabitLineChartCard: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .padding(.horizontal, 16) // Отступы только для хедера
+                .padding(.horizontal, 28) // Отступы только для хедера
                 
                 // Line Chart - используем отдельные компоненты
                 switch timeRange {
