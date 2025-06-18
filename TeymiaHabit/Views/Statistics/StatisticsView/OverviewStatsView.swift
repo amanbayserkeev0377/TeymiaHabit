@@ -5,7 +5,6 @@ struct OverviewStatsView: View {
     let timeRange: OverviewTimeRange
     
     @State private var statsData: MotivatingOverviewStats = MotivatingOverviewStats()
-    @State private var showingInfoSheet = false
     @State private var selectedInfoCard: InfoCard? = nil
     @ObservedObject private var colorManager = AppColorManager.shared
     
@@ -15,68 +14,55 @@ struct OverviewStatsView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Header with info button
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(headerTitle)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    
-                    Text(headerSubtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            // Header - clean без фона
+            VStack(alignment: .leading, spacing: 8) {
+                Text(headerTitle)
+                    .font(.headline)
+                    .fontWeight(.semibold)
                 
-                Spacer()
-                
-                // Info button
-                Button(action: { showingInfoSheet = true }) {
-                    Image(systemName: "info.circle")
-                        .font(.title3)
-                        .foregroundStyle(.secondary)
-                }
+                Text(headerSubtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
-            // Stats Grid
-            LazyVGrid(columns: gridColumns, spacing: 12) {
-                StatCardWithInfo(
+            // Stats Grid - делаем карточки шире
+            LazyVGrid(columns: gridColumns, spacing: 16) {
+                StatCardInteractive(
                     title: "Habits Done", 
                     value: "\(statsData.habitsCompleted)",
-                    icon: "checkmark.rectangle.stack",
-                    color: .green,
-                    onInfoTap: { selectedInfoCard = .habitsDone }
+                    icon: "checkmark.rectangle.stack.fill",
+                    color: Color(#colorLiteral(red: 0.5725490196, green: 0.7490196078, blue: 0.4235294118, alpha: 1)),
+                    onTap: { selectedInfoCard = .habitsDone }
                 )
                 
-                StatCardWithInfo(
+                StatCardInteractive(
                     title: "Active Days", 
                     value: "\(statsData.activeDays)",
                     icon: "calendar.badge.checkmark",
-                    color: colorManager.selectedColor.color,
-                    onInfoTap: { selectedInfoCard = .activeDays }
+                    color: Color(#colorLiteral(red: 0.5960784314, green: 0.2745098039, blue: 0.4039215686, alpha: 1)),
+                    onTap: { selectedInfoCard = .activeDays }
                 )
                 
-                StatCardWithInfo(
+                StatCardInteractive(
                     title: "Completion Rate", 
                     value: "\(Int(statsData.completionRate * 100))%",
-                    icon: "chart.pie",
-                    color: .blue,
-                    onInfoTap: { selectedInfoCard = .completionRate }
+                    icon: "chart.pie.fill",
+                    color: Color(#colorLiteral(red: 0.3843137255, green: 0.5215686275, blue: 0.662745098, alpha: 1)),
+                    onTap: { selectedInfoCard = .completionRate }
                 )
                 
-                StatCardWithInfo(
+                StatCardInteractive(
                     title: "Active Habits", 
                     value: "\(statsData.activeHabitsCount)",
-                    icon: "list.bullet",
-                    color: .orange,
-                    onInfoTap: { selectedInfoCard = .activeHabits }
+                    icon: "list.bullet.rectangle.fill",
+                    color: Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1)),
+                    onTap: { selectedInfoCard = .activeHabits }
                 )
             }
         }
-        .padding()
-        .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.quaternary)
-        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 0)
         .onAppear {
             calculateStats()
         }
@@ -86,14 +72,9 @@ struct OverviewStatsView: View {
         .onChange(of: habits.count) { _, _ in
             calculateStats()
         }
-        .sheet(isPresented: $showingInfoSheet) {
-            StatsInfoView()
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.visible)
-        }
         .sheet(item: $selectedInfoCard) { card in
             CardInfoView(card: card, timeRange: timeRange)
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
     }
@@ -102,8 +83,8 @@ struct OverviewStatsView: View {
     
     private var gridColumns: [GridItem] {
         [
-            GridItem(.flexible(), spacing: 12),
-            GridItem(.flexible(), spacing: 12)
+            GridItem(.flexible(), spacing: 16),
+            GridItem(.flexible(), spacing: 16)
         ]
     }
     
@@ -146,8 +127,6 @@ struct OverviewStatsView: View {
             return "Past 365 days"
         }
     }
-    
-    // Removed unused streak properties since we replaced them with completion rate and active habits
     
     // MARK: - Stats Calculation
     
@@ -278,81 +257,107 @@ enum InfoCard: String, Identifiable {
     var id: String { rawValue }
 }
 
-// MARK: - StatCard with Info
+// MARK: - Interactive StatCard в стиле Structured
 
-struct StatCardWithInfo: View {
+struct StatCardInteractive: View {
     let title: String
     let value: String
     let icon: String
     let color: Color
-    let onInfoTap: () -> Void
+    let onTap: () -> Void
+    
+    @State private var isPressed = false
     
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title2)
+        Button(action: onTap) {
+            VStack(spacing: 0) {
+                // Название сверху по центру
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.bold)
                     .foregroundStyle(color)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 16)
+                    .padding(.horizontal, 16)
                 
                 Spacer()
                 
-                Button(action: onInfoTap) {
-                    Image(systemName: "info.circle")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                // Нижняя часть: иконка слева, значение справа
+                HStack {
+                    // Иконка слева
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .foregroundStyle(color)
+                    
+                    Spacer()
+                    
+                    // Значение справа
+                    Text(value)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(color)
                 }
+                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
             }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(value)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.primary)
-                
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.leading)
+            .frame(height: 100)
+            .background {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(color.opacity(0.2))
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            // Добавляем тень
+            .background(cardShadow)
+            // Добавляем stroke
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(strokeColor, lineWidth: strokeWidth)
+            )
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8, blendDuration: 0), value: isPressed)
+            .hapticFeedback(.impact(weight: .light), trigger: isPressed)
         }
-        .padding(12)
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(uiColor: .secondarySystemGroupedBackground))
+        .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    if !isPressed {
+                        isPressed = true
+                    }
+                }
+                .onEnded { _ in
+                    isPressed = false
+                }
+        )
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var strokeColor: Color {
+        if isPressed {
+            return color.opacity(0.5) // При нажатии - более яркий stroke
+        } else {
+            return Color(.separator).opacity(0.3) // Обычное состояние - тонкий stroke
         }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(color.opacity(0.2), lineWidth: 1)
-        }
+    }
+    
+    private var strokeWidth: CGFloat {
+        isPressed ? 1.5 : 0.5 // Тонкий stroke в обычном состоянии
+    }
+    
+    private var cardShadow: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(Color.clear)
+            .shadow(
+                color: Color.black.opacity(isPressed ? 0.15 : 0.08), // Легкая тень
+                radius: isPressed ? 6 : 3,
+                x: 0,
+                y: isPressed ? 3 : 1.5
+            )
     }
 }
 
 // MARK: - Info Views
-
-struct StatsInfoView: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Your statistics show your progress and achievements. Tap any card to learn more about what it measures.")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                    
-                    Text("Remember: Every small step counts towards building lasting habits! 🌟")
-                        .font(.body)
-                        .foregroundStyle(.primary)
-                        .padding()
-                        .background(.quaternary)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                .padding()
-            }
-            .navigationTitle("Statistics Help")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
 
 struct CardInfoView: View {
     let card: InfoCard
@@ -361,10 +366,36 @@ struct CardInfoView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Header с иконкой
+                    HStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(cardColor.opacity(0.15))
+                                .frame(width: 60, height: 60)
+                            
+                            Image(systemName: cardIcon)
+                                .font(.title)
+                                .fontWeight(.medium)
+                                .foregroundStyle(cardColor)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(cardTitle)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            
+                            Text("How this metric works")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        Spacer()
+                    }
+                    
                     // Card description
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(cardTitle)
+                        Text("What it shows:")
                             .font(.headline)
                             .fontWeight(.semibold)
                         
@@ -376,8 +407,8 @@ struct CardInfoView: View {
                     // How it's calculated
                     VStack(alignment: .leading, spacing: 8) {
                         Text("How it's calculated:")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.headline)
+                            .fontWeight(.semibold)
                         
                         Text(calculationDescription)
                             .font(.body)
@@ -385,26 +416,48 @@ struct CardInfoView: View {
                     }
                     .padding()
                     .background(.quaternary)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     
                     // Example
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Example:")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.headline)
+                            .fontWeight(.semibold)
                         
                         Text(exampleDescription)
                             .font(.body)
                             .foregroundStyle(.secondary)
                     }
                     .padding()
-                    .background(.green.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .background(cardColor.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .padding()
             }
-            .navigationTitle(cardTitle)
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    private var cardColor: Color {
+        switch card {
+        case .habitsDone: 
+            return Color(#colorLiteral(red: 0.5725490196, green: 0.7490196078, blue: 0.4235294118, alpha: 1))
+        case .activeDays: 
+            return Color(#colorLiteral(red: 0.5960784314, green: 0.2745098039, blue: 0.4039215686, alpha: 1))
+        case .completionRate: 
+            return Color(#colorLiteral(red: 0.3843137255, green: 0.5215686275, blue: 0.662745098, alpha: 1))
+        case .activeHabits: 
+            return Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1))
+        }
+    }
+    
+    private var cardIcon: String {
+        switch card {
+        case .habitsDone: return "checkmark.rectangle.stack"
+        case .activeDays: return "calendar.badge.checkmark"
+        case .completionRate: return "chart.pie"
+        case .activeHabits: return "list.bullet.rectangle"
         }
     }
     
