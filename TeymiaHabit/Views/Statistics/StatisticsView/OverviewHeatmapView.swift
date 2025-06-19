@@ -15,11 +15,11 @@ struct OverviewHeatmapView: View {
             // Header - консистентный с HabitHeatmapCard
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Activity Overview")
+                    Text("activity_overview".localized)
                         .font(.headline)
                         .fontWeight(.semibold)
                     
-                    Text("Combined activity across all habits (this year)")
+                    Text("combined_activity_description".localized)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -33,7 +33,7 @@ struct OverviewHeatmapView: View {
                         .fontWeight(.medium)
                         .foregroundStyle(AppColorManager.shared.selectedColor.color)
                     
-                    Text("This Year")
+                    Text("this_year".localized)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -112,7 +112,7 @@ struct OverviewHeatmapView: View {
                 Spacer()
                 
                 HStack(spacing: 6) {
-                    Text("Less")
+                    Text("less".localized)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     
@@ -123,7 +123,7 @@ struct OverviewHeatmapView: View {
                             .frame(width: 12, height: 12)
                     }
                     
-                    Text("More")
+                    Text("more".localized)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }

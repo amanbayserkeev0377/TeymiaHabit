@@ -11,7 +11,10 @@ struct HabitLineChartCard: View {
     }
     
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            HapticManager.shared.playSelection()
+            onTap()
+        }) {
             VStack(alignment: .leading, spacing: 12) {
                 // Header
                 HStack {
@@ -123,9 +126,9 @@ struct HabitLineChartCard: View {
     
     private var currentPeriodLabel: String {
         switch timeRange {
-        case .week: return "Last 7 Days"
-        case .month: return "Last 30 Days"
-        case .year: return "Last 12 Months"
+        case .week: return "last_7_days".localized
+        case .month: return "last_30_days".localized
+        case .year: return "last_12_months".localized
         case .heatmap: return ""
         }
     }

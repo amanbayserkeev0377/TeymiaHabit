@@ -284,3 +284,58 @@
 "empty_view_title3" = "Step by Step";
 "empty_view_tap" = "Tap";
 "empty_view_to_create_habit" = "to create your first habit";
+
+/* ===================== Statistics Overview ===================== */
+
+// Time Range Labels
+"last_7_days" = "Last 7 Days";
+"last_30_days" = "Last 30 Days";  
+"last_12_months" = "Last 12 Months";
+"this_year" = "This Year";
+"past_365_days" = "Past 365 days";
+
+// Overview Stats Cards
+"active_habits" = "Active Habits";
+"habits_done" = "Habits Done"; 
+"completion_rate" = "Completion Rate";
+
+// Activity Overview
+"activity_overview" = "Activity Overview";
+"combined_activity_description" = "Combined activity across all habits (this year)";
+
+// Heatmap Legend
+"less" = "Less";
+"more" = "More";
+
+/* ===================== Card Info Modal ===================== */
+
+// Section Headers
+"what_it_shows" = "What it shows:";
+"how_its_calculated" = "How it's calculated:";  
+"example" = "Example:";
+
+// Active Habits Card
+"active_habits_description" = "The total number of habits you're currently tracking (not including archived habits). This gives you an overview of your current habit workload.";
+"active_habits_calculation" = "We count all habits that are not archived. This includes habits that might not be active every day of the week, but are still part of your routine.";
+"active_habits_example" = "If you're tracking 'Morning Exercise', 'Read Books', and 'Drink Water', but archived 'Learn Spanish', your active habits count is 3.";
+
+// Active Days Card  
+"active_days_description" = "The number of days when you made progress on at least one habit. Even small progress counts as an active day!";
+"active_days_calculation" = "We count unique days where you made any progress on any habit. Partial progress (like 1 out of 3 glasses of water) still counts as an active day.";
+"active_days_example" = "If you work on habits Monday, Tuesday, Thursday, and Saturday, that's 4 active days, even if you didn't complete all goals each day.";
+
+// Habits Done Card
+"habits_done_description" = "The total number of habits you've successfully completed during this period. A habit is considered 'done' when you reach or exceed your daily goal.";
+"habits_done_calculation" = "For each day in the period, we check each active habit. If your progress meets or exceeds the goal (e.g., 3 out of 3 glasses of water), it counts as one completed habit.";
+"habits_done_example" = "If you have 3 habits and complete 2 of them today, that adds 2 to your total. Over 7 days, you might complete 12 habits total.";
+
+// Completion Rate Card
+"completion_rate_description" = "Your average completion percentage across all habits. This shows how well you're meeting your daily goals overall.";
+"completion_rate_calculation" = "For each habit and each day, we calculate: (progress made / daily goal) × 100%. Then we average all these percentages across all habits and days in the period.";
+"completion_rate_example" = "If you have 2 habits: drink 3 glasses of water (you drank 2 = 67%) and read 30 minutes (you read 30 = 100%), your average completion rate is 83%.";
+
+/* ===================== Chart Accessibility ===================== */
+
+"chart_accessibility_habit" = "Chart for %@ habit";
+"heatmap_accessibility" = "Year heatmap for %@ habit";
+"overview_heatmap_accessibility" = "Overall activity heatmap for all habits";

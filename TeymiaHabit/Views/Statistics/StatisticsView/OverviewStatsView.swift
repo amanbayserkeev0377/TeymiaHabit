@@ -31,7 +31,7 @@ struct OverviewStatsView: View {
             LazyVGrid(columns: gridColumns, spacing: 16) {
                 // 1. Active Habits (первая)
                 StatCardInteractive(
-                    title: "Active Habits", 
+                    title: "active_habits".localized, 
                     value: "\(statsData.activeHabitsCount)",
                     icon: "list.bullet.rectangle.fill",
                     color: Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1)),
@@ -40,7 +40,7 @@ struct OverviewStatsView: View {
                 
                 // 2. Active Days (вторая)
                 StatCardInteractive(
-                    title: "Active Days", 
+                    title: "active_days".localized,
                     value: "\(statsData.activeDays)",
                     icon: "calendar.badge.checkmark",
                     color: Color(#colorLiteral(red: 0.5960784314, green: 0.2745098039, blue: 0.4039215686, alpha: 1)),
@@ -49,7 +49,7 @@ struct OverviewStatsView: View {
                 
                 // 3. Habits Done (третья)
                 StatCardInteractive(
-                    title: "Habits Done", 
+                    title: "habits_done".localized,
                     value: "\(statsData.habitsCompleted)",
                     icon: "checkmark.circle.fill",
                     color: Color(#colorLiteral(red: 0.5725490196, green: 0.7490196078, blue: 0.4235294118, alpha: 1)),
@@ -58,7 +58,7 @@ struct OverviewStatsView: View {
                 
                 // 4. Completion Rate (четвертая)
                 StatCardInteractive(
-                    title: "Completion Rate", 
+                    title: "completion_rate".localized,
                     value: "\(Int(statsData.completionRate * 100))%",
                     icon: "chart.pie.fill",
                     color: Color(#colorLiteral(red: 0.3843137255, green: 0.5215686275, blue: 0.662745098, alpha: 1)),
@@ -101,10 +101,10 @@ struct OverviewStatsView: View {
     
     private var headerTitle: String {
         switch timeRange {
-        case .week: return "Last 7 Days"
-        case .month: return "Last 30 Days"
-        case .year: return "Last 12 Months"
-        case .heatmap: return "Activity Overview"
+        case .week: return "last_7_days".localized
+        case .month: return "last_30_days".localized
+        case .year: return "last_12_months".localized
+        case .heatmap: return "activity_overview".localized
         }
     }
     
@@ -135,7 +135,7 @@ struct OverviewStatsView: View {
             return "\(startString) - \(endString)"
             
         case .heatmap:
-            return "Past 365 days"
+            return "past_365_days".localized
         }
     }
     
@@ -268,7 +268,7 @@ enum InfoCard: String, Identifiable {
     var id: String { rawValue }
 }
 
-// MARK: - Interactive StatCard в стиле Structured
+// MARK: - StatCardInteractive
 
 struct StatCardInteractive: View {
     let title: String
@@ -282,20 +282,23 @@ struct StatCardInteractive: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 0) {
-                // Название сверху по центру
+                
                 Text(title)
-                    .font(.subheadline)
-                    .fontWeight(.bold)
+                    .font(.headline)
+                    .fontWeight(.semibold)
                     .foregroundStyle(color)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 16)
-                    .padding(.horizontal, 16)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.9)
+                    .padding(.top, 14)
+                    .padding(.horizontal, 8)
+                    .frame(maxWidth: 140) // ✅ ФИКСИРОВАННАЯ ширина = естественные переносы
+                    .frame(maxWidth: .infinity) // ✅ Но карточка полной ширины
                 
-                Spacer()
                 
-                // Нижняя часть: иконка слева, значение справа
-                HStack {
-                    // Иконка слева
+                Spacer(minLength: 8)
+                
+                HStack(spacing: 12) {
                     Image(systemName: icon)
                         .font(.title2)
                         .fontWeight(.medium)
@@ -303,23 +306,22 @@ struct StatCardInteractive: View {
                     
                     Spacer()
                     
-                    // Значение справа
                     Text(value)
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundStyle(color)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
-                .padding(.bottom, 16)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 14)
             }
-            .frame(height: 100)
+            .frame(minHeight: 105)
             .background {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(color.opacity(0.2))
             }
-            // Добавляем тень
             .background(cardShadow)
-            // Добавляем stroke
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(strokeColor, lineWidth: strokeWidth)
@@ -394,7 +396,7 @@ struct CardInfoView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         // Card description
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("What it shows:")
+                            Text("what_it_shows".localized)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             
@@ -405,7 +407,7 @@ struct CardInfoView: View {
                         
                         // How it's calculated
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("How it's calculated:")
+                            Text("how_its_calculated".localized)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             
@@ -416,7 +418,7 @@ struct CardInfoView: View {
                         
                         // Example
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Example:")
+                            Text("example".localized)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                             
@@ -471,52 +473,52 @@ struct CardInfoView: View {
             return Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1))
         }
     }
-        
+    
     private var cardTitle: String {
         switch card {
-        case .habitsDone: return "Habits Done"
-        case .activeDays: return "Active Days"
-        case .completionRate: return "Completion Rate"
-        case .activeHabits: return "Active Habits"
+        case .habitsDone: return "habits_done".localized
+        case .activeDays: return "active_days".localized
+        case .completionRate: return "completion_rate".localized
+        case .activeHabits: return "active_habits".localized
         }
     }
     
     private var cardDescription: String {
         switch card {
         case .habitsDone:
-            return "The total number of habits you've successfully completed during this period. A habit is considered 'done' when you reach or exceed your daily goal."
+            return "habits_done_description".localized
         case .activeDays:
-            return "The number of days when you made progress on at least one habit. Even small progress counts as an active day!"
+            return "active_days_description".localized
         case .completionRate:
-            return "Your average completion percentage across all habits. This shows how well you're meeting your daily goals overall."
+            return "completion_rate_description".localized
         case .activeHabits:
-            return "The total number of habits you're currently tracking (not including archived habits). This gives you an overview of your current habit workload."
+            return "active_habits_description".localized
         }
     }
     
     private var calculationDescription: String {
         switch card {
         case .habitsDone:
-            return "For each day in the period, we check each active habit. If your progress meets or exceeds the goal (e.g., 3 out of 3 glasses of water), it counts as one completed habit."
+            return "habits_done_calculation".localized
         case .activeDays:
-            return "We count unique days where you made any progress on any habit. Partial progress (like 1 out of 3 glasses of water) still counts as an active day."
+            return "active_days_calculation".localized
         case .completionRate:
-            return "For each habit and each day, we calculate: (progress made / daily goal) × 100%. Then we average all these percentages across all habits and days in the period."
+            return "completion_rate_calculation".localized
         case .activeHabits:
-            return "We count all habits that are not archived. This includes habits that might not be active every day of the week, but are still part of your routine."
+            return "active_habits_calculation".localized
         }
     }
     
     private var exampleDescription: String {
         switch card {
         case .habitsDone:
-            return "If you have 3 habits and complete 2 of them today, that adds 2 to your total. Over 7 days, you might complete 12 habits total."
+            return "habits_done_example".localized
         case .activeDays:
-            return "If you work on habits Monday, Tuesday, Thursday, and Saturday, that's 4 active days, even if you didn't complete all goals each day."
+            return "active_days_example".localized
         case .completionRate:
-            return "If you have 2 habits: drink 3 glasses of water (you drank 2 = 67%) and read 30 minutes (you read 30 = 100%), your average completion rate is 83%."
+            return "completion_rate_example".localized
         case .activeHabits:
-            return "If you're tracking 'Morning Exercise', 'Read Books', and 'Drink Water', but archived 'Learn Spanish', your active habits count is 3."
+            return "active_habits_example".localized
         }
     }
 }

@@ -12,7 +12,10 @@ struct HabitHeatmapCard: View {
     }
     
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            HapticManager.shared.playSelection()
+            onTap()
+        }) {
             VStack(alignment: .leading, spacing: 12) {
                 // Header - консистентный с line charts
                 HStack {
@@ -37,7 +40,7 @@ struct HabitHeatmapCard: View {
                             .fontWeight(.medium)
                             .foregroundStyle(habit.iconColor.color)
                         
-                        Text("This Year")
+                        Text("this_year".localized)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
@@ -116,7 +119,7 @@ struct HabitHeatmapCard: View {
                     Spacer()
                     
                     HStack(spacing: 6) {
-                        Text("Less")
+                        Text("less".localized)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                         
@@ -127,7 +130,7 @@ struct HabitHeatmapCard: View {
                                 .frame(width: 12, height: 12)
                         }
                         
-                        Text("More")
+                        Text("more".localized)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
