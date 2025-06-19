@@ -5,9 +5,6 @@ struct IconPickerView: View {
     @Binding var selectedIcon: String?
     @Binding var selectedColor: HabitIconColor
     
-    // MARK: - State
-    @State private var customColor = HabitIconColor.customColor
-    
     // MARK: - Environment
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -52,12 +49,6 @@ struct IconPickerView: View {
         // Reduce columns for larger dynamic type
         let adjustedCount = dynamicTypeSize.isAccessibilitySize ? max(3, baseColumnCount - 2) : baseColumnCount
         return Array(repeating: GridItem(.flexible()), count: adjustedCount)
-    }
-    
-    /// Color picker columns
-    private var colorColumns: [GridItem] {
-        let columnCount = horizontalSizeClass == .compact ? 7 : 10
-        return Array(repeating: GridItem(.flexible()), count: columnCount)
     }
     
     // MARK: - Data
@@ -140,16 +131,10 @@ struct IconPickerView: View {
         .background(Color(UIColor.systemGroupedBackground))
     }
     
-    /// Color picker section at the bottom
+    /// Color picker section at the bottom (using reusable component)
     private var colorPickerSection: some View {
         VStack(spacing: 16) {
-            LazyVGrid(columns: colorColumns, spacing: 12) {
-                ForEach(colorManager.getAvailableColors().filter { $0 != .colorPicker }, id: \.self) { color in
-                    colorButton(for: color)
-                }
-                
-                customColorPicker
-            }
+            ColorPickerSection.forIconPicker(selectedColor: $selectedColor)
         }
         .padding()
         .padding(.horizontal)
@@ -174,7 +159,7 @@ struct IconPickerView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .strokeBorder(
                         selectedIcon == iconName ? 
-                            (selectedColor == .colorPicker ? customColor : selectedColor.color) :
+                            (selectedColor == .colorPicker ? HabitIconColor.customColor : selectedColor.color) :
                             Color.primary.opacity(0.1),
                         lineWidth: selectedIcon == iconName ? 2 : 1
                     )
@@ -192,40 +177,8 @@ struct IconPickerView: View {
             .foregroundStyle(
                 iconName == defaultIcon
                 ? colorManager.selectedColor.color
-                : (selectedColor == .colorPicker ? customColor : selectedColor.color)
+                : (selectedColor == .colorPicker ? HabitIconColor.customColor : selectedColor.color)
             )
-    }
-    
-    /// Individual color button
-    private func colorButton(for color: HabitIconColor) -> some View {
-        Button {
-            selectedColor = color
-        } label: {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(color.color)
-                .frame(width: 28, height: 28)
-                .overlay(
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .black : .white)
-                        .opacity(selectedColor == color ? 1 : 0)
-                )
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(color.rawValue.localized) color")
-    }
-    
-    /// Custom color picker
-    private var customColorPicker: some View {
-        ColorPicker("", selection: $customColor)
-            .labelsHidden()
-            .onChange(of: customColor) { _, newColor in
-                HabitIconColor.customColor = newColor
-                selectedColor = .colorPicker
-            }
-            .frame(width: 28, height: 28)
-            .clipShape(Circle())
-            .accessibilityLabel("custom_color_picker".localized)
     }
     
     /// Accessibility label for icons

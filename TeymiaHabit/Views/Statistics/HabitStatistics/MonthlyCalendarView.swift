@@ -217,7 +217,8 @@ struct MonthlyCalendarView: View {
                                     showingActionSheet = true
                                 }
                             },
-                            showProgressRing: isActiveDate // Показываем кольцо только для активных дней
+                            showProgressRing: isActiveDate, // Показываем кольцо только для активных дней
+                            habit: habit
                         )
                         .frame(width: 40, height: 40)
                         // Уникальный ID для элемента дня

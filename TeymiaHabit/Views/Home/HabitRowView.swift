@@ -69,6 +69,7 @@ struct HabitRowView: View {
                     currentValue: habit.formattedProgressValue(for: date),
                     isCompleted: habit.isCompletedForDate(date),
                     isExceeded: habit.isExceededForDate(date),
+                    habit: habit,
                     size: ringSize,
                     lineWidth: lineWidth,
                     fontSize: adaptedFontSize,

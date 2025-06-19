@@ -6,6 +6,7 @@ struct DayProgressItem: View, Equatable {
     let progress: Double
     let onTap: () -> Void
     var showProgressRing: Bool = true
+    var habit: Habit? = nil // ← НОВЫЙ ПАРАМЕТР
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -30,26 +31,19 @@ struct DayProgressItem: View, Equatable {
         date <= Date().addingTimeInterval(86400 * 365)
     }
     
-    private var progressMainColor: Color {
-        if progress >= 1.0 {
-            return Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
-        } else if progress > 0 {
-            return Color(#colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1))
+    // UPDATED: Use habit parameter for colors
+    private var progressColors: [Color] {
+        if progress > 0 {
+            return AppColorManager.shared.getMirroredRingColors(
+                isCompleted: progress >= 1.0,
+                isExceeded: false,
+                habit: habit // ← ИСПОЛЬЗУЕМ ПЕРЕДАННУЮ ПРИВЫЧКУ
+            )
         } else {
-            return Color.gray.opacity(0.3)
+            // No progress - gray colors
+            return [Color.gray.opacity(0.3), Color.gray.opacity(0.2)]
         }
     }
-    
-    private var progressSecondaryColor: Color {
-        if progress >= 1.0 {
-            return Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1))
-        } else if progress > 0 {
-            return Color(#colorLiteral(red: 1, green: 0.6470588235, blue: 0, alpha: 1))
-        } else {
-            return Color.gray.opacity(0.2)
-        }
-    }
-    
     
     // Размеры для разных значений dynamic type
     private var circleSize: CGFloat {
@@ -70,7 +64,7 @@ struct DayProgressItem: View, Equatable {
         case .accessibility2, .accessibility1:
             return 3.8
         default:
-            return 3.5  // Увеличиваем с 2.5 до 3.5 для более заметных кругов
+            return 3.5
         }
     }
     
@@ -88,22 +82,22 @@ struct DayProgressItem: View, Equatable {
     // Цвет текста для дня
     private var dayTextColor: Color {
         if isToday {
-            return .orange // Сегодняшний день всегда оранжевый
+            return .orange
         } else if isSelected {
-            return .primary // Выбранный день primary
+            return .primary
         } else if isFutureDate {
-            return .primary // Будущие дни
+            return .primary
         } else {
-            return .primary // Остальные дни
+            return .primary
         }
     }
     
     // Вес шрифта
     private var fontWeight: Font.Weight {
         if isSelected {
-            return .bold // Выбранный день bold
+            return .bold
         } else {
-            return .regular // Остальные regular
+            return .regular
         }
     }
     
@@ -119,10 +113,11 @@ struct DayProgressItem: View, Equatable {
                         Circle()
                             .trim(from: 0, to: progress)
                             .stroke(
-                                LinearGradient(
-                                    colors: [progressMainColor, progressSecondaryColor],
-                                    startPoint: .trailing,
-                                    endPoint: .leading
+                                AngularGradient(
+                                    colors: progressColors,
+                                    center: .center,
+                                    startAngle: .degrees(0),
+                                    endAngle: .degrees(360)
                                 ),
                                 style: StrokeStyle(
                                     lineWidth: lineWidth,
@@ -141,20 +136,21 @@ struct DayProgressItem: View, Equatable {
                 
                 // Индикатор выбранного дня (точка под числом)
                 Circle()
-                    .fill(isToday ? Color.orange : Color.primary) // Цвет точки
+                    .fill(isToday ? Color.orange : Color.primary)
                     .frame(width: 4, height: 4)
-                    .opacity(isSelected ? 1 : 0) // Показывать только для выбранного дня
+                    .opacity(isSelected ? 1 : 0)
             }
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isFutureDate || !isValidDate)
     }
     
-    // Обновить Equatable чтобы учитывать новый параметр
+    // UPDATED: Include habit in equality check
     static func == (lhs: DayProgressItem, rhs: DayProgressItem) -> Bool {
         return Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date) &&
         lhs.isSelected == rhs.isSelected &&
         abs(lhs.progress - rhs.progress) < 0.01 &&
-        lhs.showProgressRing == rhs.showProgressRing
+        lhs.showProgressRing == rhs.showProgressRing &&
+        lhs.habit?.id == rhs.habit?.id // ← ДОБАВЛЯЕМ СРАВНЕНИЕ HABIT
     }
 }

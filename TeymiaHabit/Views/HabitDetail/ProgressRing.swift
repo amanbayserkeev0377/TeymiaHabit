@@ -6,6 +6,7 @@ struct ProgressRing: View {
     let currentValue: String
     let isCompleted: Bool
     let isExceeded: Bool
+    let habit: Habit? // NEW: Optional habit for color context
     
     // Размеры и стили
     var size: CGFloat = 180
@@ -15,31 +16,22 @@ struct ProgressRing: View {
     
     // MARK: - Computed Properties
     
-    // Упрощаем цветовую схему - один и тот же цвет для выполнения/перевыполнения
+    // NEW: Use AppColorManager for dynamic ring colors
     private var ringColors: [Color] {
-        if isCompleted || isExceeded {
-            return [
-                Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1)),
-                Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1)),
-                Color(#colorLiteral(red: 0.8196078431, green: 1, blue: 0.8352941176, alpha: 1)),
-                Color(#colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)),
-                Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
-            ]
-        } else {
-            return [
-                Color(#colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1)),
-                Color(#colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)),
-                Color(#colorLiteral(red: 1, green: 0.8805306554, blue: 0.5692787766, alpha: 1)),
-                Color(#colorLiteral(red: 1, green: 0.6470588235, blue: 0, alpha: 1)),
-                Color(#colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1))
-            ]
-        }
+        return AppColorManager.shared.getRingColors(
+            isCompleted: isCompleted,
+            isExceeded: isExceeded,
+            habit: habit
+        )
     }
     
+    // Text color follows the same logic as ring colors
     private var textColor: Color {
         if isCompleted || isExceeded {
+            // Always green for completed states
             return Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
         } else {
+            // For in-progress, use primary color (neutral)
             return .primary
         }
     }

@@ -51,6 +51,7 @@ struct ProgressControlSection: View {
                 currentValue: formattedProgress,
                 isCompleted: isCompleted,
                 isExceeded: isExceeded,
+                habit: habit,
                 size: isSmallDevice ? 160 : 180 // Уменьшаем размер для маленьких экранов
             )
             .aspectRatio(1, contentMode: .fit)
