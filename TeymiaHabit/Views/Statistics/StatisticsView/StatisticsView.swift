@@ -41,7 +41,7 @@ struct StatisticsView: View {
                                 OverviewStatsView(habits: habits, timeRange: selectedTimeRange)
                             }
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 0)
                         .padding(.vertical, 16)
                         
                         // Habits Charts Section - БЕЗ горизонтальных отступов

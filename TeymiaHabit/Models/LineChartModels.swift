@@ -65,3 +65,9 @@ struct WeekData {
     let week: Int
     let days: [HeatmapDataPoint]
 }
+
+struct MonthLabelInfo {
+    let name: String
+    let weeks: Int  
+    let week: Int
+}

@@ -25,6 +25,7 @@ struct OverviewStatsView: View {
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
             
             // Stats Grid - новый порядок карточек
             LazyVGrid(columns: gridColumns, spacing: 16) {
@@ -64,8 +65,14 @@ struct OverviewStatsView: View {
                     onTap: { selectedInfoCard = .completionRate }
                 )
             }
+            .padding(.horizontal, 16)
+            
+            // Divider для отделения от привычек
+            Divider()
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 0)
         .padding(.vertical, 0)
         .onAppear {
             calculateStats()
