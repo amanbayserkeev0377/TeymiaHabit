@@ -50,7 +50,7 @@ struct OverviewStatsView: View {
                 StatCardInteractive(
                     title: "Habits Done", 
                     value: "\(statsData.habitsCompleted)",
-                    icon: "checkmark.rectangle.stack.fill",
+                    icon: "checkmark.circle.fill",
                     color: Color(#colorLiteral(red: 0.5725490196, green: 0.7490196078, blue: 0.4235294118, alpha: 1)),
                     onTap: { selectedInfoCard = .habitsDone }
                 )
@@ -464,16 +464,7 @@ struct CardInfoView: View {
             return Color(#colorLiteral(red: 1, green: 0.6156862745, blue: 0.4549019608, alpha: 1))
         }
     }
-    
-    private var cardIcon: String {
-        switch card {
-        case .habitsDone: return "checkmark.rectangle.stack"
-        case .activeDays: return "calendar.badge.checkmark"
-        case .completionRate: return "chart.pie"
-        case .activeHabits: return "list.bullet.rectangle"
-        }
-    }
-    
+        
     private var cardTitle: String {
         switch card {
         case .habitsDone: return "Habits Done"

@@ -152,7 +152,7 @@ struct MonthlyCalendarView: View {
         }
         // Диалог для действий с датой
         .confirmationDialog(
-            Text(dateFormatter.string(from: selectedActionDate ?? Date())),
+            Text(dialogTitle),
             isPresented: $showingActionSheet,
             titleVisibility: .visible
         ) {
@@ -231,6 +231,36 @@ struct MonthlyCalendarView: View {
             }
         }
         .padding(.horizontal, 8)
+    }
+    
+    // MARK: - Computed Property
+    private var dialogTitle: String {
+        guard let selectedActionDate = selectedActionDate else { return "" }
+        
+        let dateString = dateFormatter.string(from: selectedActionDate)
+        let progress = habit.progressForDate(selectedActionDate)
+        let goal = habit.goal
+        
+        if habit.type == .time {
+            let progressFormatted = formatTime(progress)
+            let goalFormatted = formatTime(goal)
+            return "\(dateString)\n\(progressFormatted) / \(goalFormatted)"
+        } else {
+            return "\(dateString)\n\(progress) / \(goal)"
+        }
+    }
+    
+    private func formatTime(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        
+        if hours > 0 && minutes > 0 {
+            return String(format: "hours_minutes_format".localized, hours, minutes)
+        } else if hours > 0 {
+            return String(format: "hours_format".localized, hours)
+        } else {
+            return String(format: "minutes_format".localized, minutes)
+        }
     }
     
     // MARK: - Helper Properties
