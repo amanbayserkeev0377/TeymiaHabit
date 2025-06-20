@@ -36,7 +36,7 @@ struct CountInputAlertModifier: ViewModifier {
     @Binding var successTrigger: Bool
     @Binding var errorTrigger: Bool
     let onCountInput: () -> Void
-    let habit: Habit? // ✅ Добавляем habit для цветов
+    let habit: Habit?
     
     func body(content: Content) -> some View {
         content
@@ -44,7 +44,6 @@ struct CountInputAlertModifier: ViewModifier {
                 TextField("count".localized, text: $inputText)
                     .keyboardType(.numberPad)
                 Button("button_cancel".localized, role: .cancel) { }
-                    .withComponentColor(habit: habit) // ✅ Цвет кнопки следует настройкам
                 Button("button_add".localized) {
                     if let count = Int(inputText) {
                         progressService.addProgress(count, for: habitId)
@@ -55,10 +54,11 @@ struct CountInputAlertModifier: ViewModifier {
                     }
                     inputText = ""
                 }
-                .withComponentColor(habit: habit) // ✅ Цвет кнопки следует настройкам
             } message: {
                 Text("alert_add_count_message".localized)
             }
+            // ✅ Применяем локальный tint для всего алерта
+            .tint(AppColorManager.shared.getComponentColor(for: habit))
     }
 }
 
@@ -72,7 +72,7 @@ struct TimeInputAlertModifier: ViewModifier {
     @Binding var successTrigger: Bool
     @Binding var errorTrigger: Bool
     let onTimeInput: () -> Void
-    let habit: Habit? // ✅ Добавляем habit для цветов
+    let habit: Habit?
     
     func body(content: Content) -> some View {
         content
@@ -82,14 +82,14 @@ struct TimeInputAlertModifier: ViewModifier {
                 TextField("minutes_less_than_60".localized, text: $minutesText)
                     .keyboardType(.numberPad)
                 Button("button_cancel".localized, role: .cancel) { }
-                    .withComponentColor(habit: habit) // ✅ Цвет кнопки следует настройкам
                 Button("button_add".localized) {
                     onTimeInput()
                 }
-                .withComponentColor(habit: habit) // ✅ Цвет кнопки следует настройкам
             } message: {
                 Text("alert_add_time_message".localized)
             }
+            // ✅ Применяем локальный tint для всего алерта
+            .tint(AppColorManager.shared.getComponentColor(for: habit))
     }
 }
 
@@ -100,20 +100,20 @@ struct DeleteSingleHabitAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
     let habitName: String
     let onDelete: () -> Void
-    let habit: Habit? // ✅ Добавляем habit для цветов
+    let habit: Habit?
     
     func body(content: Content) -> some View {
         content
             .alert("alert_delete_habit".localized, isPresented: $isPresented) {
                 Button("button_cancel".localized, role: .cancel) { }
-                    .withComponentColor(habit: habit) // ✅ Цвет кнопки следует настройкам
                 Button("button_delete".localized, role: .destructive) {
                     onDelete()
                 }
-                // Destructive кнопки оставляем красными (системный цвет)
             } message: {
                 Text("alert_delete_habit_message".localized(with: habitName))
             }
+            // ✅ Применяем локальный tint для Cancel кнопки
+            .tint(AppColorManager.shared.getComponentColor(for: habit))
     }
 }
 
@@ -122,19 +122,19 @@ struct DeleteMultipleHabitsAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
     let habitsCount: Int
     let onDelete: () -> Void
-    // Для множественного удаления habit = nil (используем app color всегда)
     
     func body(content: Content) -> some View {
         content
             .alert("alert_delete_multiple_habits".localized, isPresented: $isPresented) {
                 Button("button_cancel".localized, role: .cancel) { }
-                    .withComponentColor() // ✅ Всегда app color для множественных операций
                 Button("button_delete".localized, role: .destructive) {
                     onDelete()
                 }
             } message: {
                 Text("alert_delete_multiple_habits_message".localized(with: habitsCount))
             }
+            // ✅ Всегда app color для множественных операций
+            .tint(AppColorManager.shared.getComponentColor())
     }
 }
 
@@ -150,13 +150,14 @@ struct DeleteSingleFolderAlertModifier: ViewModifier {
         content
             .alert("alert_delete_folder".localized, isPresented: $isPresented) {
                 Button("button_cancel".localized, role: .cancel) { }
-                    .withComponentColor() // ✅ App color для операций с папками
                 Button("button_delete".localized, role: .destructive) {
                     onDelete()
                 }
             } message: {
                 Text("alert_delete_folder_message".localized(with: folderName))
             }
+            // ✅ App color для операций с папками
+            .tint(AppColorManager.shared.getComponentColor())
     }
 }
 
@@ -170,13 +171,14 @@ struct DeleteMultipleFoldersAlertModifier: ViewModifier {
         content
             .alert("alert_delete_folders".localized, isPresented: $isPresented) {
                 Button("button_cancel".localized, role: .cancel) { }
-                    .withComponentColor() // ✅ App color для операций с папками
                 Button("button_delete".localized, role: .destructive) {
                     onDelete()
                 }
             } message: {
                 Text("alert_delete_folders_message".localized(with: foldersCount))
             }
+            // ✅ App color для операций с папками
+            .tint(AppColorManager.shared.getComponentColor())
     }
 }
 
@@ -192,7 +194,7 @@ extension View {
         successTrigger: Binding<Bool>,
         errorTrigger: Binding<Bool>,
         onCountInput: @escaping () -> Void,
-        habit: Habit? = nil // ✅ Добавляем habit параметр
+        habit: Habit? = nil
     ) -> some View {
         self.modifier(CountInputAlertModifier(
             isPresented: isPresented,
@@ -202,7 +204,7 @@ extension View {
             successTrigger: successTrigger,
             errorTrigger: errorTrigger,
             onCountInput: onCountInput,
-            habit: habit // ✅ Передаем habit
+            habit: habit
         ))
     }
     
@@ -215,7 +217,7 @@ extension View {
         successTrigger: Binding<Bool>,
         errorTrigger: Binding<Bool>,
         onTimeInput: @escaping () -> Void,
-        habit: Habit? = nil // ✅ Добавляем habit параметр
+        habit: Habit? = nil
     ) -> some View {
         self.modifier(TimeInputAlertModifier(
             isPresented: isPresented,
@@ -226,7 +228,7 @@ extension View {
             successTrigger: successTrigger,
             errorTrigger: errorTrigger,
             onTimeInput: onTimeInput,
-            habit: habit // ✅ Передаем habit
+            habit: habit
         ))
     }
     
@@ -237,13 +239,13 @@ extension View {
         isPresented: Binding<Bool>,
         habitName: String,
         onDelete: @escaping () -> Void,
-        habit: Habit? = nil // ✅ Добавляем habit параметр
+        habit: Habit? = nil
     ) -> some View {
         self.modifier(DeleteSingleHabitAlertModifier(
             isPresented: isPresented,
             habitName: habitName,
             onDelete: onDelete,
-            habit: habit // ✅ Передаем habit
+            habit: habit
         ))
     }
     
@@ -304,7 +306,7 @@ extension View {
                 isPresented: alertState.isDeleteAlertPresented,
                 habitName: habit.title,
                 onDelete: onDelete,
-                habit: habit // ✅ Передаем habit для правильных цветов
+                habit: habit
             )
             .countInputAlert(
                 isPresented: alertState.isCountAlertPresented,
@@ -314,7 +316,7 @@ extension View {
                 successTrigger: alertState.successFeedbackTrigger,
                 errorTrigger: alertState.errorFeedbackTrigger,
                 onCountInput: onCountInput,
-                habit: habit // ✅ Передаем habit для правильных цветов
+                habit: habit
             )
             .timeInputAlert(
                 isPresented: alertState.isTimeAlertPresented,
@@ -325,7 +327,7 @@ extension View {
                 successTrigger: alertState.successFeedbackTrigger,
                 errorTrigger: alertState.errorFeedbackTrigger,
                 onTimeInput: onTimeInput,
-                habit: habit // ✅ Передаем habit для правильных цветов
+                habit: habit
             )
     }
 }

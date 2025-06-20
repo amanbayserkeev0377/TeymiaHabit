@@ -563,6 +563,7 @@ struct HomeView: View {
                                 Label("complete".localized, systemImage: "checkmark")
                             }
                             .disabled(habit.isCompletedForDate(selectedDate))
+                            .withComponentTint(habit: habit)
                             
                             Divider()
                             
@@ -575,6 +576,7 @@ struct HomeView: View {
                                     } label: {
                                         Label("folders_no_folder".localized, systemImage: "minus.circle")
                                     }
+                                    .withComponentTint(habit: habit)
                                     
                                     Divider()
                                     
@@ -598,10 +600,12 @@ struct HomeView: View {
                                                 }
                                             }
                                         }
+                                        .withComponentTint(habit: habit)
                                     }
                                 } label: {
                                     Label("folders_move_to_folder".localized, systemImage: "folder")
                                 }
+                                .withComponentTint(habit: habit)
                             }
                             // Pin/Unpin
                             Button {
@@ -612,6 +616,7 @@ struct HomeView: View {
                                     systemImage: habit.isPinned ? "pin.slash" : "pin"
                                 )
                             }
+                            .withComponentTint(habit: habit)
                             
                             // Edit
                             Button {
@@ -619,6 +624,7 @@ struct HomeView: View {
                             } label: {
                                 Label("button_edit".localized, systemImage: "pencil")
                             }
+                            .withComponentTint(habit: habit)
                             
                             // Archive
                             Button {
@@ -626,6 +632,7 @@ struct HomeView: View {
                             } label: {
                                 Label("archive".localized, systemImage: "archivebox")
                             }
+                            .withComponentTint(habit: habit)
                             
                             Divider()
                             

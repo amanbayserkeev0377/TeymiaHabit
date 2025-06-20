@@ -104,7 +104,7 @@ struct MonthlyHabitChart: View {
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .foregroundStyle(AppColorManager.shared.selectedColor.color)
+                            .foregroundStyle(AppColorManager.shared.getComponentColor(for: habit))
                         
                         Text(shortDateFormatter.string(from: selectedDataPoint.date))
                             .font(.caption)
@@ -118,7 +118,7 @@ struct MonthlyHabitChart: View {
                         Text(averageValueFormatted)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .foregroundStyle(AppColorManager.shared.selectedColor.color)
+                            .foregroundStyle(AppColorManager.shared.getComponentColor(for: habit))
                         
                         Text("This Month")
                             .font(.caption)
@@ -137,7 +137,7 @@ struct MonthlyHabitChart: View {
                     Text(monthlyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .foregroundStyle(AppColorManager.shared.selectedColor.color)
+                        .foregroundStyle(AppColorManager.shared.getComponentColor(for: habit))
                     
                     Text("This Month")
                         .font(.caption)
@@ -374,7 +374,7 @@ struct MonthlyHabitChart: View {
             return Color(red: 0.2, green: 0.8, blue: 0.4) // Bright success green
         } else {
             // Partial progress: Use user's selected color with reduced opacity
-            return AppColorManager.shared.selectedColor.color.mix(with: .white, by: 0.1)
+            return AppColorManager.shared.getComponentColor(for: habit).mix(with: .white, by: 0.1)
         }
     }
     

@@ -181,13 +181,13 @@ struct HabitStatisticsView: View {
         )
         .alert("alert_reset_history", isPresented: $showingResetAlert) {
             Button("button_cancel".localized, role: .cancel) { }
-                .tint(componentColor)
             Button("button_reset".localized, role: .destructive) {
                 resetHabitHistory()
             }
         } message: {
             Text("alert_reset_history_message".localized)
         }
+        .tint(componentColor)
     }
     
     // MARK: - Обработка действий календаря

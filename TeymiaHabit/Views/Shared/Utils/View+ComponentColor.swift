@@ -16,6 +16,10 @@ extension View {
         )
     }
     
+    func withComponentTint(habit: Habit? = nil) -> some View {
+            self.tint(AppColorManager.shared.getComponentColor(for: habit))
+        }
+    
     /// Получить цвет компонента как Color (для использования в computed properties)
     static func componentColor(for habit: Habit? = nil) -> Color {
         return AppColorManager.shared.getComponentColor(for: habit)
