@@ -92,9 +92,21 @@ struct TeymiaHabitApp: App {
     private func handleAppActive() {
         print("📱 App became active")
         
+        // ✅ НОВОЕ: Проверяем смену дня при активации приложения
+        checkDayChangeOnAppActive()
+        
         // Just update UI - timers should still be running
         habitsUpdateService.triggerUpdate()
         print("✅ App became active, triggering UI update")
+    }
+    
+    private func checkDayChangeOnAppActive() {
+        // Force day change check in services
+        // Services will automatically clear progress if day changed
+        _ = HabitTimerService.shared.getCurrentProgress(for: "dummy") // This triggers checkDayChange
+        _ = HabitCounterService.shared.getCurrentProgress(for: "dummy") // This triggers checkDayChange
+        
+        print("✅ Day change check completed")
     }
 
     private func handleAppInactive() {

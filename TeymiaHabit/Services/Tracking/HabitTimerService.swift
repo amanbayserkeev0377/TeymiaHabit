@@ -10,15 +10,45 @@ final class HabitTimerService: ProgressTrackingService {
     private var activeHabitId: String? = nil
     private var startTime: Date? = nil
     private var timer: Timer?
+    private var lastSaveDate: String = ""
     
     // MARK: - Initialization
     private init() {
-        // Don't load any state on init - keep it simple
+        loadState()
+        checkDayChange()
     }
     
     deinit {
         timer?.invalidate()
         timer = nil
+    }
+    
+    // MARK: - Day Change Detection
+    private var currentDateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: Date())
+    }
+    
+    private func checkDayChange() {
+        let today = currentDateString
+        
+        // If this is a new day, clear all progress
+        if lastSaveDate != today && lastSaveDate != "" {
+            print("🗓️ Day changed from \(lastSaveDate) to \(today) - clearing timer progress")
+            progressUpdates.removeAll()
+            
+            // Stop any active timers from previous day
+            if activeHabitId != nil {
+                activeHabitId = nil
+                startTime = nil
+                timer?.invalidate()
+                timer = nil
+            }
+        }
+        
+        lastSaveDate = today
+        saveState()
     }
     
     // MARK: - Timer Management
@@ -30,6 +60,9 @@ final class HabitTimerService: ProgressTrackingService {
         // Start timer only for UI updates
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
+            
+            // Check for day change on each timer tick
+            self.checkDayChange()
             
             // If no active timer, stop UI timer
             if self.activeHabitId == nil {
@@ -46,6 +79,9 @@ final class HabitTimerService: ProgressTrackingService {
     
     // MARK: - ProgressTrackingService Implementation
     func getCurrentProgress(for habitId: String) -> Int {
+        // Check for day change first
+        checkDayChange()
+        
         // Base progress (saved)
         let baseProgress = progressUpdates[habitId] ?? 0
         
@@ -59,11 +95,15 @@ final class HabitTimerService: ProgressTrackingService {
     }
     
     func isTimerRunning(for habitId: String) -> Bool {
+        checkDayChange()
         return activeHabitId == habitId
     }
     
     func startTimer(for habitId: String, initialProgress: Int = 0) {
         print("🟢 Starting timer for \(habitId) with initial progress: \(initialProgress)")
+        
+        // Check for day change first
+        checkDayChange()
         
         // If timer is already active for this habit, just exit
         if activeHabitId == habitId {
@@ -86,11 +126,15 @@ final class HabitTimerService: ProgressTrackingService {
             startUITimer()
         }
         
+        saveState()
         print("🟢 Timer started for \(habitId)")
     }
     
     func stopTimer(for habitId: String) {
         print("🔴 Stopping timer for \(habitId)")
+        
+        // Check for day change first
+        checkDayChange()
         
         // Check that this is the active timer
         guard activeHabitId == habitId, let startTime = startTime else {
@@ -118,11 +162,15 @@ final class HabitTimerService: ProgressTrackingService {
             timer = nil
         }
         
+        saveState()
         print("🔴 Timer stopped for \(habitId)")
     }
     
     func addProgress(_ value: Int, for habitId: String) {
         print("➕ Adding \(value) to habit \(habitId)")
+        
+        // Check for day change first
+        checkDayChange()
         
         // If timer is active for this habit, stop it first
         if activeHabitId == habitId {
@@ -133,11 +181,15 @@ final class HabitTimerService: ProgressTrackingService {
         let current = progressUpdates[habitId] ?? 0
         progressUpdates[habitId] = max(0, current + value)
         
+        saveState()
         print("➕ New total for \(habitId): \(progressUpdates[habitId] ?? 0)")
     }
     
     func resetProgress(for habitId: String) {
         print("🔄 Resetting progress for \(habitId)")
+        
+        // Check for day change first
+        checkDayChange()
         
         // Stop timer if running for this habit
         if activeHabitId == habitId {
@@ -154,6 +206,7 @@ final class HabitTimerService: ProgressTrackingService {
         // Reset progress
         progressUpdates[habitId] = 0
         
+        saveState()
         print("🔄 Progress reset for \(habitId)")
     }
     
@@ -173,6 +226,41 @@ final class HabitTimerService: ProgressTrackingService {
     
     /// Check if there are active timers
     var hasActiveTimers: Bool {
+        checkDayChange()
         return activeHabitId != nil
     }
+    
+    // MARK: - Saving and Loading
+    private func saveState() {
+        let state = TimerServiceState(
+            progressUpdates: progressUpdates,
+            lastSaveDate: lastSaveDate
+        )
+        
+        if let encodedData = try? JSONEncoder().encode(state) {
+            UserDefaults.standard.set(encodedData, forKey: "habit.timer.data")
+        }
+    }
+    
+    private func loadState() {
+        if let savedData = UserDefaults.standard.data(forKey: "habit.timer.data"),
+           let decodedState = try? JSONDecoder().decode(TimerServiceState.self, from: savedData) {
+            progressUpdates = decodedState.progressUpdates
+            lastSaveDate = decodedState.lastSaveDate
+        } else {
+            // Migration: try to load old format
+            if let savedData = UserDefaults.standard.data(forKey: "habit.timer.data"),
+               let decodedData = try? JSONDecoder().decode([String: Int].self, from: savedData) {
+                progressUpdates = decodedData
+                lastSaveDate = currentDateString
+                saveState() // Save in new format
+            }
+        }
+    }
+}
+
+// MARK: - Helper Struct for State Persistence
+private struct TimerServiceState: Codable {
+    let progressUpdates: [String: Int]
+    let lastSaveDate: String
 }
