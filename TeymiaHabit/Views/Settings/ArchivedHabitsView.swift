@@ -88,7 +88,8 @@ struct ArchivedHabitsView: View {
                     deleteHabit(habit)
                 }
                 habitToDelete = nil
-            }
+            },
+            habit: habitToDelete
         )
         .deleteMultipleHabitsAlert(
             isPresented: $isDeleteSelectedAlertPresented,

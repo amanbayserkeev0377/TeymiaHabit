@@ -134,7 +134,7 @@ struct HomeView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
-                                    .foregroundStyle(colorManager.selectedColor.color)
+                                    .withComponentColor()
                                     .frame(width: 52, height: 52)
                                     .background(
                                         Circle()
@@ -211,31 +211,32 @@ struct HomeView: View {
         .onChange(of: selectedDate) { _, _ in
             habitsUpdateService.triggerUpdate()
         }
-        .alert(
-            habitForProgress != nil ? "alert_delete_habit".localized : "alert_delete_multiple_habits".localized,
-            isPresented: $alertState.isDeleteAlertPresented
-        ) {
-            Button("button_cancel".localized, role: .cancel) {
-                habitForProgress = nil
-            }
-            Button("button_delete".localized, role: .destructive) {
+        .deleteSingleHabitAlert(
+            isPresented: Binding(
+                get: { alertState.isDeleteAlertPresented && habitForProgress != nil },
+                set: { if !$0 { alertState.isDeleteAlertPresented = false } }
+            ),
+            habitName: habitForProgress?.title ?? "",
+            onDelete: {
                 if let habit = habitForProgress {
-                    // Single delete
                     actionService.deleteHabit(habit)
-                } else {
-                    // Multiple delete
-                    deleteSelectedHabits()
                 }
                 habitForProgress = nil
+            },
+            habit: habitForProgress
+        )
+        .deleteMultipleHabitsAlert(
+            isPresented: Binding(
+                get: { alertState.isDeleteAlertPresented && habitForProgress == nil },
+                set: { if !$0 { alertState.isDeleteAlertPresented = false } }
+            ),
+            habitsCount: selectedForAction.count,
+            onDelete: {
+                deleteSelectedHabits()
+                habitForProgress = nil
             }
-        } message: {
-            if let habit = habitForProgress {
-                Text("alert_delete_habit_message".localized(with: habit.title))
-            } else {
-                Text("alert_delete_multiple_habits_message".localized(with: selectedForAction.count))
-            }
+        )
         }
-    }
     
     private func contentView(actionService: HabitActionService) -> some View {
         VStack(spacing: 0) {

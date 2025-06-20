@@ -3,59 +3,30 @@ import SwiftUI
 struct AppColorSection: View {
     @ObservedObject private var colorManager = AppColorManager.shared
     @Environment(ProManager.self) private var proManager
-    @State private var showingPaywall = false
     
     var body: some View {
-        if proManager.isPro {
-            // Pro users - normal navigation
-            NavigationLink {
-                AppColorPickerView()
-            } label: {
-                HStack {
-                    Label(
-                        title: { Text("app_color".localized) },
-                        icon: {
-                            Image(systemName: "paintbrush.pointed.fill")
-                                .withIOSSettingsIcon(lightColors: [
-                                    Color(.purple),
-                                    Color(.pink)
-                                ])
-                        }
-                    )
-                    
-                    Spacer()
-                    
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(colorManager.selectedColor.color)
-                        .frame(width: 18, height: 18)
-                        .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
-                }
-            }
-        } else {
-            // Free users - show Pro badge and paywall
-            Button {
-                showingPaywall = true
-            } label: {
-                HStack {
-                    Label(
-                        title: { Text("app_color".localized) },
-                        icon: {
-                            Image(systemName: "paintbrush.pointed.fill")
-                                .withIOSSettingsIcon(lightColors: [
-                                    Color(.purple),
-                                    Color(.pink)
-                                ])
-                        }
-                    )
-                    
-                    Spacer()
-                    
-                    ProLockBadge()
-                }
-            }
-            .tint(.primary)
-            .sheet(isPresented: $showingPaywall) {
-                PaywallView()
+        // ✅ Теперь все пользователи могут зайти в AppColorPickerView
+        NavigationLink {
+            AppColorPickerView()
+        } label: {
+            HStack {
+                Label(
+                    title: { Text("app_color".localized) },
+                    icon: {
+                        Image(systemName: "paintbrush.pointed.fill")
+                            .withIOSSettingsIcon(lightColors: [
+                                Color(.purple),
+                                Color(.pink)
+                            ])
+                    }
+                )
+                
+                Spacer()
+                
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(colorManager.selectedColor.color)
+                    .frame(width: 18, height: 18)
+                    .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
             }
         }
     }
@@ -65,239 +36,307 @@ struct AppColorPickerView: View {
     @ObservedObject private var colorManager = AppColorManager.shared
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
-    @State private var isToggleOn = true
+    @Environment(ProManager.self) private var proManager
+    @State private var showingPaywall = false
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Main content in Form (scrollable)
+            ZStack(alignment: .bottom) {
+                // Main content (Form)
                 Form {
-                    // MARK: - Ring Colors Section (moved to top)
+                    // MARK: - Ring Colors Section
                     Section {
-                        VStack(spacing: 16) {
+                        VStack(spacing: 20) {
                             // Preview content that changes based on selection
                             Group {
                                 switch colorManager.ringColorMode {
-                                case .habitColors:
-                                    habitColorPreviewContent
                                 case .appColor:
                                     appColorPreviewContent
+                                case .habitColors:
+                                    habitColorPreviewContent
                                 case .customGradient:
                                     customGradientPreviewContent
                                 }
                             }
-                            .frame(height: 140) // Fixed height to prevent jumping
-                            .animation(.easeInOut(duration: 0.3), value: colorManager.ringColorMode)
+                            .frame(height: 160) // Fixed height to prevent jumping
+                            .animation(.easeInOut(duration: 0.4), value: colorManager.ringColorMode)
                             
-                            // Custom Gradient Color Pickers (only show when custom is selected)
-                            if colorManager.ringColorMode == .customGradient {
-                                VStack(spacing: 12) {
-                                    ColorPicker(
-                                        "Gradient Start",
-                                        selection: $colorManager.customGradientColor1
-                                    )
-                                    .onChange(of: colorManager.customGradientColor1) { _, newColor in
-                                        colorManager.setCustomGradientColors(
-                                            color1: newColor,
-                                            color2: colorManager.customGradientColor2
-                                        )
-                                    }
-                                    
-                                    ColorPicker(
-                                        "Gradient End",
-                                        selection: $colorManager.customGradientColor2
-                                    )
-                                    .onChange(of: colorManager.customGradientColor2) { _, newColor in
-                                        colorManager.setCustomGradientColors(
-                                            color1: colorManager.customGradientColor1,
-                                            color2: newColor
-                                        )
-                                    }
-                                }
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                            }
+                            // Ring Color Mode Selection
+                            ringColorModeSelector
                         }
-                        .padding(.vertical, 8)
-                        .animation(.easeInOut(duration: 0.3), value: colorManager.ringColorMode)
-                        
-                    } header: {
-                        Text("Ring Colors")
-                    } footer: {
-                        Text("Choose which colors to use for progress rings. Completed habits are always shown in green.")
-                    }
-                    
-                    // MARK: - App Color Preview Section
-                    Section {
-                        // Toggle preview
-                        Toggle(isOn: $isToggleOn.animation(.easeInOut(duration: 0.3))) {
-                            Label("reminders".localized, systemImage: "bell.badge")
-                                .symbolEffect(.bounce, options: .repeat(1), value: isToggleOn)
-                        }
-                        .withToggleColor()
-                        .animation(.easeInOut(duration: 0.5), value: colorManager.selectedColor.color)
-                        
-                        // Icons preview
-                        HStack(spacing: 24) {
-                            ForEach(["trophy", "calendar.badge.clock", "cloud.sun", "folder"], id: \.self) { iconName in
-                                Image(systemName: iconName)
-                                    .font(.title2)
-                                    .foregroundStyle(colorManager.selectedColor.color)
-                                    .animation(.easeInOut(duration: 0.5), value: colorManager.selectedColor.color)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .listRowInsets(EdgeInsets())
                         .padding(.vertical, 12)
                         
-                        // Complete button preview
-                        Button(action: {}) {
-                            Text("complete".localized)
-                                .font(.headline)
-                                .foregroundStyle(
-                                    colorScheme == .dark ? .black : .white
-                                )
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(
-                                    colorManager.selectedColor.color.opacity(0.8),
-                                    in: RoundedRectangle(cornerRadius: 16)
-                                )
-                                .animation(.easeInOut(duration: 0.5), value: colorManager.selectedColor.color)
-                        }
-                        .listRowInsets(EdgeInsets())
-                        .padding()
                     } header: {
-                        Text("app_color_preview_header".localized)
+                        Text("Progress Ring Colors")
+                            .font(.headline)
                     } footer: {
-                        Text("app_color_preview_footer".localized)
+                        Text("Customize how progress rings appear in your app. Completed habits always show in green for clarity.")
+                            .font(.footnote)
                     }
-                    
-                    // MARK: - Ring Color Mode Selection (native list buttons)
-                    Section {
-                        // Habit Color Option
-                        Button {
-                            colorManager.setRingColorMode(.habitColors)
-                        } label: {
-                            HStack {
-                                Text("Habit Color")
-                                    .foregroundStyle(.primary)
-                                
-                                Spacer()
-                                
-                                if colorManager.ringColorMode == .habitColors {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(colorManager.selectedColor.color)
-                                } else {
-                                    Image(systemName: "circle")
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                        
-                        // App Color Option  
-                        Button {
-                            colorManager.setRingColorMode(.appColor)
-                        } label: {
-                            HStack {
-                                Text("App Color")
-                                    .foregroundStyle(.primary)
-                                
-                                Spacer()
-                                
-                                if colorManager.ringColorMode == .appColor {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(colorManager.selectedColor.color)
-                                } else {
-                                    Image(systemName: "circle")
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                        
-                        // Custom Gradient Option
-                        Button {
-                            colorManager.setRingColorMode(.customGradient)
-                        } label: {
-                            HStack {
-                                Text("Custom Gradient")
-                                    .foregroundStyle(.primary)
-                                
-                                Spacer()
-                                
-                                if colorManager.ringColorMode == .customGradient {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(colorManager.selectedColor.color)
-                                } else {
-                                    Image(systemName: "circle")
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                    }
+                }
+                .safeAreaInset(edge: .bottom) {
+                    // This creates space for the overlay
+                    Color.clear.frame(height: 120)
                 }
                 
-                // Color picker section at the bottom (pinned, like IconPickerView)
+                // Overlay Color Picker Section (floating above)
                 VStack(spacing: 16) {
-                    ColorPickerSection.forAppColorPicker(selectedColor: Binding(
-                        get: { colorManager.selectedColor },
-                        set: { colorManager.setAppColor($0) }
-                    ))
+                    // ✅ Используем новую версию ColorPickerSection с onProRequired
+                    ColorPickerSection.forAppColorPicker(
+                        selectedColor: Binding(
+                            get: { colorManager.selectedColor },
+                            set: { colorManager.setAppColor($0) }
+                        ),
+                        onProRequired: {
+                            showingPaywall = true
+                        }
+                    )
                 }
-                .padding()
-                .padding(.horizontal)
-                .background(Color(UIColor.systemGroupedBackground))
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(.regularMaterial) // Material для glassmorphism эффекта
+                        .shadow(color: .primary.opacity(0.2), radius: 20, x: 0, y: -10)
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
             .navigationTitle("app_color".localized)
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
+            }
         }
     }
     
-    // MARK: - Preview Content (for fixed preview area)
+    // MARK: - Ring Color Mode Selector
     
     @ViewBuilder
-    private var habitColorPreviewContent: some View {
-        // Mock habit rows with different colors (compact version)
-        VStack(spacing: 6) {
-            mockHabitRow(title: "Drink Water", icon: "drop.fill", color: .blue, progress: 0.6)
-            mockHabitRow(title: "Exercise", icon: "figure.run", color: .orange, progress: 0.8)
-            mockHabitRow(title: "Read Book", icon: "book.fill", color: .purple, progress: 0.4)
+    private var ringColorModeSelector: some View {
+        VStack(spacing: 12) {
+            // ✅ App Theme - доступен всем пользователям
+            Button {
+                colorManager.setRingColorMode(.appColor)
+                HapticManager.shared.playSelection()
+            } label: {
+                ringModeRow(
+                    mode: .appColor,
+                    title: "App Theme",
+                    description: "Use your selected app color",
+                    icon: "app",
+                    isLocked: false
+                )
+            }
+            .buttonStyle(.plain)
+            
+            // ✅ Habit Colors - Pro функция
+            Button {
+                if proManager.isPro {
+                    colorManager.setRingColorMode(.habitColors)
+                    HapticManager.shared.playSelection()
+                } else {
+                    showingPaywall = true
+                }
+            } label: {
+                ringModeRow(
+                    mode: .habitColors,
+                    title: "Habit Colors",
+                    description: "Each habit uses its own color",
+                    icon: "paintbrush",
+                    isLocked: !proManager.isPro
+                )
+            }
+            .buttonStyle(.plain)
+            
+            // ✅ Custom Gradient - Pro функция
+            Button {
+                if proManager.isPro {
+                    colorManager.setRingColorMode(.customGradient)
+                    HapticManager.shared.playSelection()
+                } else {
+                    showingPaywall = true
+                }
+            } label: {
+                ringModeRow(
+                    mode: .customGradient,
+                    title: "Custom Gradient",
+                    description: "Create your own gradient",
+                    icon: "rainbow",
+                    isLocked: !proManager.isPro
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
+    
+    // MARK: - Ring Mode Row Helper
+    
+    @ViewBuilder
+    private func ringModeRow(
+        mode: RingColorMode,
+        title: String,
+        description: String,
+        icon: String,
+        isLocked: Bool
+    ) -> some View {
+        HStack(spacing: 12) {
+            // Icon
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(
+                    isLocked ? .secondary.opacity(0.6) :
+                    (colorManager.ringColorMode == mode ? colorManager.selectedColor.color : .secondary)
+                )
+                .frame(width: 24)
+            
+            // Text content
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundStyle(isLocked ? .secondary : .primary)
+                
+                Text(description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+            
+            // Right side indicator
+            if isLocked {
+                ProLockBadge()
+            } else if colorManager.ringColorMode == mode {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(colorManager.selectedColor.color)
+                    .symbolEffect(.bounce, value: colorManager.ringColorMode == mode)
+            } else {
+                Image(systemName: "circle")
+                    .font(.title3)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    isLocked ? Color.clear :
+                    (colorManager.ringColorMode == mode ? colorManager.selectedColor.color.opacity(0.1) : Color.clear)
+                )
+        )
+        .animation(.easeInOut(duration: 0.3), value: colorManager.ringColorMode)
+    }
+    
+    // MARK: - Preview Content
     
     @ViewBuilder
     private var appColorPreviewContent: some View {
-        VStack {
-            Spacer()
+        VStack(spacing: 12) {
+            Text("Uses your app theme color")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            
             ProgressRing(
                 progress: 0.65,
                 currentValue: "65%",
                 isCompleted: false,
                 isExceeded: false,
                 habit: nil, // nil = uses app color
-                size: 100 // Increased size to match habit preview height
+                size: 100
             )
             .animation(.easeInOut(duration: 0.5), value: colorManager.selectedColor)
             .animation(.easeInOut(duration: 0.5), value: colorManager.ringColorMode)
-            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private var habitColorPreviewContent: some View {
+        VStack(spacing: 8) {
+            Text("Each habit uses its own color")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            
+            VStack(spacing: 8) {
+                mockHabitRow(title: "Drink Water", icon: "drop.fill", color: .blue, progress: 0.6)
+                mockHabitRow(title: "Exercise", icon: "figure.run", color: .orange, progress: 0.8)
+                mockHabitRow(title: "Read Book", icon: "book.fill", color: .purple, progress: 0.4)
+            }
         }
     }
     
     @ViewBuilder
     private var customGradientPreviewContent: some View {
-        VStack {
-            Spacer()
+        HStack(spacing: 20) {
+            // Start Color Picker (Left)
+            VStack(spacing: 8) {
+                Text("Start")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                
+                ColorPicker("", selection: $colorManager.customGradientColor1)
+                    .labelsHidden()
+                    .frame(width: 50, height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(.primary.opacity(0.2), lineWidth: 1)
+                    )
+                    .disabled(!proManager.isPro) // ✅ Отключаем для бесплатных пользователей
+                    .onChange(of: colorManager.customGradientColor1) { _, newColor in
+                        if proManager.isPro {
+                            colorManager.setCustomGradientColors(
+                                color1: newColor,
+                                color2: colorManager.customGradientColor2
+                            )
+                            HapticManager.shared.playSelection()
+                        }
+                    }
+            }
+            
+            // Progress Ring (Center)
             ProgressRing(
                 progress: 0.65,
                 currentValue: "65%",
                 isCompleted: false,
                 isExceeded: false,
                 habit: nil, // nil = uses custom gradient
-                size: 100 // Increased size to match habit preview height
+                size: 80
             )
             .animation(.easeInOut(duration: 0.3), value: colorManager.customGradientColor1)
             .animation(.easeInOut(duration: 0.3), value: colorManager.customGradientColor2)
-            Spacer()
+            
+            // End Color Picker (Right)
+            VStack(spacing: 8) {
+                Text("End")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                
+                ColorPicker("", selection: $colorManager.customGradientColor2)
+                    .labelsHidden()
+                    .frame(width: 50, height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(.primary.opacity(0.2), lineWidth: 1)
+                    )
+                    .disabled(!proManager.isPro) // ✅ Отключаем для бесплатных пользователей
+                    .onChange(of: colorManager.customGradientColor2) { _, newColor in
+                        if proManager.isPro {
+                            colorManager.setCustomGradientColors(
+                                color1: colorManager.customGradientColor1,
+                                color2: newColor
+                            )
+                            HapticManager.shared.playSelection()
+                        }
+                    }
+            }
         }
+        .frame(maxWidth: .infinity)
     }
     
     // MARK: - Mock Habit Row Helper
@@ -307,12 +346,12 @@ struct AppColorPickerView: View {
         HStack(spacing: 12) {
             // Mock habit icon
             Image(systemName: icon)
-                .font(.system(size: 20))
+                .font(.system(size: 18))
                 .foregroundStyle(color.color)
-                .frame(width: 36, height: 36)
+                .frame(width: 32, height: 32)
                 .background(
                     Circle()
-                        .fill(color.color.opacity(0.1))
+                        .fill(color.color.opacity(0.15))
                 )
             
             // Habit title and goal
@@ -323,7 +362,7 @@ struct AppColorPickerView: View {
                     .lineLimit(1)
                 
                 Text("Goal: 8 times")
-                    .font(.footnote)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
             
@@ -336,14 +375,14 @@ struct AppColorPickerView: View {
                 isCompleted: false,
                 isExceeded: false,
                 habit: mockHabitWithColor(color),
-                size: 40
+                size: 36
             )
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(uiColor: .secondarySystemGroupedBackground))
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color(uiColor: .tertiarySystemGroupedBackground))
         )
     }
     
@@ -353,17 +392,5 @@ struct AppColorPickerView: View {
         // Create a simple mock habit for preview
         // You might need to adjust this based on your Habit model
         return nil // For now, we'll rely on the fact that nil uses app settings
-        
-        // If you want to create a proper mock habit:
-        /*
-        let mockHabit = Habit(
-            title: "Mock",
-            type: .count,
-            goal: 8,
-            iconName: "circle.fill",
-            iconColor: color
-        )
-        return mockHabit
-        */
     }
 }

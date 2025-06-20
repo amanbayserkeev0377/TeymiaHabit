@@ -12,6 +12,10 @@ struct ProgressControlSection: View {
     @State private var incrementTrigger: Bool = false
     @State private var decrementTrigger: Bool = false
     
+    private var componentColor: Color {
+        AppColorManager.shared.getComponentColor(for: habit)
+    }
+    
     // Определяем, является ли устройство маленьким (iPhone SE)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isSmallDevice: Bool {
@@ -34,10 +38,11 @@ struct ProgressControlSection: View {
             }) {
                 Image(systemName: "minus")
                     .font(.system(size: isSmallDevice ? 22 : 24))
+                    .foregroundStyle(componentColor)
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
-                            .fill(AppColorManager.shared.selectedColor.color.opacity(0.1))
+                            .fill(componentColor.opacity(0.1))
                     )
             }
             .decreaseHaptic(trigger: decrementTrigger)
@@ -64,10 +69,11 @@ struct ProgressControlSection: View {
             }) {
                 Image(systemName: "plus")
                     .font(.system(size: isSmallDevice ? 22 : 24))
+                    .foregroundStyle(componentColor)
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
-                            .fill(AppColorManager.shared.selectedColor.color.opacity(0.1))
+                            .fill(componentColor.opacity(0.1))
                     )
             }
             .increaseHaptic(trigger: incrementTrigger)

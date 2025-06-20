@@ -88,9 +88,27 @@ struct IconPickerView: View {
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .bottom) {
+            // Main content (Icon Grid)
             iconGridSection
-            colorPickerSection
+                .safeAreaInset(edge: .bottom) {
+                    // This creates space for the overlay
+                    Color.clear.frame(height: 100)
+                }
+            
+            // Overlay Color Picker Section (floating above)
+            VStack(spacing: 16) {
+                ColorPickerSection.forIconPicker(selectedColor: $selectedColor)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.regularMaterial) // Material для glassmorphism эффекта
+                    .shadow(color: .primary.opacity(0.2), radius: 20, x: 0, y: -10)
+            )
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
         .navigationTitle("choose_icon".localized)
         .navigationBarTitleDisplayMode(.inline)
@@ -128,16 +146,6 @@ struct IconPickerView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .background(Color(UIColor.systemGroupedBackground))
-    }
-    
-    /// Color picker section at the bottom (using reusable component)
-    private var colorPickerSection: some View {
-        VStack(spacing: 16) {
-            ColorPickerSection.forIconPicker(selectedColor: $selectedColor)
-        }
-        .padding()
-        .padding(.horizontal)
         .background(Color(UIColor.systemGroupedBackground))
     }
     

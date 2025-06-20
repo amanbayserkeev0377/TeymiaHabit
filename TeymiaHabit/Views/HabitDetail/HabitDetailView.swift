@@ -49,6 +49,7 @@ struct HabitDetailView: View {
                     }
                     .alert("alert_close_timer".localized, isPresented: $isTimerStopAlertPresented) {
                         Button("button_cancel".localized, role: .cancel) { }
+                            .tint(componentColor)
                         Button("button_close".localized, role: .destructive) {
                             isManuallyDismissing = true
                             viewModel.saveIfNeeded()
@@ -161,6 +162,10 @@ struct HabitDetailView: View {
         )
     }
     
+    private var componentColor: Color {
+        AppColorManager.shared.getComponentColor(for: habit)
+    }
+    
     // Информация о цели привычки - центрированная с иконкой
     private func goalInfoView(viewModel: HabitDetailViewModel) -> some View {
         // Центрированный контейнер с иконкой (если она есть) и текстом
@@ -219,8 +224,8 @@ struct HabitDetailView: View {
                 .padding(.vertical, 16)
                 .background(
                     viewModel.isAlreadyCompleted
-                    ? AppColorManager.shared.selectedColor.color.opacity(0.3)
-                    : AppColorManager.shared.selectedColor.color.opacity(0.8)
+                    ? componentColor.opacity(0.3)
+                    : componentColor.opacity(0.9)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 16))
         }
@@ -240,6 +245,7 @@ struct HabitDetailView: View {
                 Button("button_close".localized) {
                     isTimerStopAlertPresented = true
                 }
+                .tint(componentColor)
             }
         }
         
@@ -251,7 +257,7 @@ struct HabitDetailView: View {
             } label: {
                 Image(systemName: "chart.line.text.clipboard")
                     .font(.system(size: 16))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(componentColor)
             }
         }
         
@@ -264,6 +270,7 @@ struct HabitDetailView: View {
                 } label: {
                     Label("button_edit".localized, systemImage: "pencil")
                 }
+                .tint(componentColor)
                 
                 // Кнопка архивирования
                 Button {
@@ -271,6 +278,7 @@ struct HabitDetailView: View {
                 } label: {
                     Label("archive".localized, systemImage: "archivebox")
                 }
+                .tint(componentColor)
                 
                 // Кнопка удаления
                 Button(role: .destructive) {
@@ -282,11 +290,11 @@ struct HabitDetailView: View {
             } label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(componentColor)
                     .frame(width: 28, height: 28)
                     .background(
                         Circle()
-                            .fill(AppColorManager.shared.selectedColor.color.opacity(0.1))
+                            .fill(componentColor.opacity(0.1))
                     )
             }
         }

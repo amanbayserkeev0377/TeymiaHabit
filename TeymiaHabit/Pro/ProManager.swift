@@ -14,6 +14,16 @@ class ProManager {
     private(set) var hasActiveSubscription: Bool = false
     
     private init() {
+        // ✅ AUTO-ENABLE PRO for Development version
+        #if DEBUG
+        // Check if this is development bundle ID
+        if AppConfig.current == .development {
+            isPro = true
+            hasLifetimePurchase = true
+            print("🧪 DEBUG: Auto-enabled Pro status for Development version")
+        }
+        #endif
+        
         checkProStatus()
         loadOfferings()
     }
@@ -45,6 +55,14 @@ func toggleProStatusForTesting() {
     // MARK: - Pro Status
     
     func checkProStatus() {
+        // ✅ Don't override Pro status for development version
+        #if DEBUG
+        if AppConfig.current == .development {
+            print("🧪 DEBUG: Skipping RevenueCat check for Development version")
+            return
+        }
+        #endif
+        
         Task {
             await MainActor.run {
                 isLoading = true
@@ -168,6 +186,14 @@ func toggleProStatusForTesting() {
     }
     
     private func updateProStatusFromCustomerInfo(_ customerInfo: CustomerInfo) async {
+        // ✅ Don't override Pro status for development version
+        #if DEBUG
+        if AppConfig.current == .development {
+            print("🧪 DEBUG: Keeping Pro status for Development version")
+            return
+        }
+        #endif
+        
         // Check subscription entitlement
         let hasActiveEntitlement = customerInfo.entitlements[RevenueCatConfig.Entitlements.pro]?.isActive == true
         

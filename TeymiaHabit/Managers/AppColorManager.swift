@@ -213,4 +213,18 @@ final class AppColorManager: ObservableObject {
             customGradientColor2 = Color(uiColor2)
         }
     }
+    
+    // MARK: - UI Component Colors (не кольца!)
+    func getComponentColor(for habit: Habit? = nil) -> Color {
+        switch ringColorMode {
+        case .habitColors:
+            // Для Habit Colors - используем цвет привычки
+            return habit?.iconColor.color ?? selectedColor.color
+            
+        case .appColor, .customGradient:
+            // Для App Theme и Custom Gradient - всегда цвет приложения
+            // (Custom Gradient применяется только к кольцам, компоненты остаются app color)
+            return selectedColor.color
+        }
+    }
 }
