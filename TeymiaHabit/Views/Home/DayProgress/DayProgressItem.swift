@@ -34,10 +34,10 @@ struct DayProgressItem: View, Equatable {
     // UPDATED: Use habit parameter for colors
     private var progressColors: [Color] {
         if progress > 0 {
-            return AppColorManager.shared.getMirroredRingColors(
+            return AppColorManager.shared.getSmallRingColors(
+                for: habit,
                 isCompleted: progress >= 1.0,
-                isExceeded: false,
-                habit: habit // ← ИСПОЛЬЗУЕМ ПЕРЕДАННУЮ ПРИВЫЧКУ
+                isExceeded: false
             )
         } else {
             // No progress - gray colors

@@ -134,7 +134,6 @@ struct HomeView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
-                                    .withComponentColor()
                                     .frame(width: 52, height: 52)
                                     .background(
                                         Circle()
@@ -563,8 +562,7 @@ struct HomeView: View {
                                 Label("complete".localized, systemImage: "checkmark")
                             }
                             .disabled(habit.isCompletedForDate(selectedDate))
-                            .withComponentTint(habit: habit)
-                            
+                            .withHabitColor(habit)                            
                             Divider()
                             
                             // Move to Folder - Submenu
@@ -576,7 +574,7 @@ struct HomeView: View {
                                     } label: {
                                         Label("folders_no_folder".localized, systemImage: "minus.circle")
                                     }
-                                    .withComponentTint(habit: habit)
+                                    .withHabitColor(habit)
                                     
                                     Divider()
                                     
@@ -600,12 +598,12 @@ struct HomeView: View {
                                                 }
                                             }
                                         }
-                                        .withComponentTint(habit: habit)
+                                        .withHabitColor(habit)
                                     }
                                 } label: {
                                     Label("folders_move_to_folder".localized, systemImage: "folder")
                                 }
-                                .withComponentTint(habit: habit)
+                                .withHabitColor(habit)
                             }
                             // Pin/Unpin
                             Button {
@@ -616,7 +614,7 @@ struct HomeView: View {
                                     systemImage: habit.isPinned ? "pin.slash" : "pin"
                                 )
                             }
-                            .withComponentTint(habit: habit)
+                            .withHabitColor(habit)
                             
                             // Edit
                             Button {
@@ -624,7 +622,7 @@ struct HomeView: View {
                             } label: {
                                 Label("button_edit".localized, systemImage: "pencil")
                             }
-                            .withComponentTint(habit: habit)
+                            .withHabitColor(habit)
                             
                             // Archive
                             Button {
@@ -632,7 +630,7 @@ struct HomeView: View {
                             } label: {
                                 Label("archive".localized, systemImage: "archivebox")
                             }
-                            .withComponentTint(habit: habit)
+                            .withHabitColor(habit)
                             
                             Divider()
                             

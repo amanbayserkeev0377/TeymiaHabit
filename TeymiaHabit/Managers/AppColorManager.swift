@@ -1,27 +1,11 @@
 import SwiftUI
 
-// MARK: - Ring Color Mode Enum
-enum RingColorMode: String, CaseIterable {
-    case habitColors = "habitColors"     // Use each habit's color
-    case appColor = "appColor"           // Use app color
-    case customGradient = "customGradient" // Custom gradient
-}
-
 final class AppColorManager: ObservableObject {
     static let shared = AppColorManager()
     
-    // Existing app color properties
+    // App color properties
     @Published private(set) var selectedColor: HabitIconColor
     @AppStorage("selectedAppColor") private var selectedColorId: String?
-    
-    // New ring color properties
-    @Published var ringColorMode: RingColorMode = .appColor
-    @Published var customGradientColor1: Color = .blue
-    @Published var customGradientColor2: Color = .purple
-    
-    @AppStorage("ringColorMode") private var ringColorModeStorage: String = RingColorMode.appColor.rawValue
-    @AppStorage("customGradientColor1Data") private var customGradientColor1Data: Data?
-    @AppStorage("customGradientColor2Data") private var customGradientColor2Data: Data?
     
     private let availableColors: [HabitIconColor] = [
         .primary,
@@ -43,22 +27,15 @@ final class AppColorManager: ObservableObject {
     private init() {
         selectedColor = .primary
         
-        // Load existing app color
+        // Load saved app color
         if let savedColorId = selectedColorId,
            let color = HabitIconColor(rawValue: savedColorId) {
             selectedColor = color
         }
-        
-        // Load ring color mode
-        if let mode = RingColorMode(rawValue: ringColorModeStorage) {
-            ringColorMode = mode
-        }
-        
-        // Load custom gradient colors
-        loadCustomGradientColors()
     }
     
-    // MARK: - Existing Methods
+    // MARK: - Public Methods
+    
     func setAppColor(_ color: HabitIconColor) {
         selectedColor = color
         selectedColorId = color.rawValue
@@ -68,45 +45,44 @@ final class AppColorManager: ObservableObject {
         return availableColors
     }
     
-    // MARK: - New Ring Color Methods
-    func setRingColorMode(_ mode: RingColorMode) {
-        ringColorMode = mode
-        ringColorModeStorage = mode.rawValue
-    }
+    // MARK: - Ring Colors (упрощенная логика)
     
-    func setCustomGradientColors(color1: Color, color2: Color) {
-        customGradientColor1 = color1
-        customGradientColor2 = color2
-        saveCustomGradientColors()
-    }
-    
-    // Main method to get ring colors based on current settings
-    func getRingColors(isCompleted: Bool, isExceeded: Bool, habit: Habit? = nil) -> [Color] {
-        // Always use green colors for completed/exceeded states
+    /// Получить цвета для кольца прогресса привычки
+    /// - Parameters:
+    ///   - habit: Привычка (если nil - используется app color)
+    ///   - isCompleted: Завершена ли привычка
+    ///   - isExceeded: Превышена ли цель
+    /// - Returns: Массив цветов для градиента кольца
+    func getRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool) -> [Color] {
+        // Завершенные привычки всегда зеленые
         if isCompleted || isExceeded {
             return getCompletedColors(isExceeded: isExceeded)
         }
         
-        // For in-progress states, use user's customization
-        switch ringColorMode {
-        case .habitColors:
-            let baseColor = habit?.iconColor.color ?? selectedColor.color
-            return generateProgressColors(from: baseColor)
-            
-        case .appColor:
-            return generateProgressColors(from: selectedColor.color)
-            
-        case .customGradient:
-            return generateCustomGradientProgressColors()
+        // Для незавершенных - используем цвет привычки или app color как fallback
+        let baseColor = habit?.iconColor.color ?? selectedColor.color
+        return generateProgressColors(from: baseColor)
+    }
+    
+    /// Получить цвета для маленьких колец (например, в календаре)
+    /// Логика та же, но с другим градиентом для лучшей видимости
+    func getSmallRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool) -> [Color] {
+        // Завершенные привычки всегда зеленые
+        if isCompleted || isExceeded {
+            return getCompletedColors(isExceeded: isExceeded)
         }
+        
+        // Для незавершенных - используем цвет привычки или app color как fallback
+        let baseColor = habit?.iconColor.color ?? selectedColor.color
+        return generateSmallRingColors(from: baseColor)
     }
     
     // MARK: - Private Helper Methods
     
-    // Always green colors for completed/exceeded (hardcoded)
+    /// Зеленые цвета для завершенных привычек (неизменяемые)
     private func getCompletedColors(isExceeded: Bool) -> [Color] {
         if isExceeded {
-            // Darker green for exceeded
+            // Более темный зеленый для превышенных целей
             return [
                 Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1)),
                 Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1)),
@@ -115,7 +91,7 @@ final class AppColorManager: ObservableObject {
                 Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1))
             ]
         } else {
-            // Regular green for completed
+            // Обычный зеленый для завершенных
             return [
                 Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1)),
                 Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1)),
@@ -126,105 +102,25 @@ final class AppColorManager: ObservableObject {
         }
     }
     
-    // Generate colors for in-progress state from base color (for big rings)
+    /// Генерация градиента для больших колец прогресса
     private func generateProgressColors(from baseColor: Color) -> [Color] {
         return [
-            baseColor.opacity(0.9),  // Dark start
-            baseColor,               // Full bright
-            baseColor.opacity(0.2),  // Very light
-            baseColor.opacity(0.5),  // Medium
-            baseColor.opacity(0.9)   // Back to dark for smooth gradient
+            baseColor.opacity(0.9),  // Темное начало
+            baseColor,               // Полная яркость
+            baseColor.opacity(0.2),  // Очень светлый
+            baseColor.opacity(0.5),  // Средний
+            baseColor.opacity(0.9)   // Обратно к темному для плавного градиента
         ]
     }
     
-    // Generate custom gradient colors for in-progress state (for big rings)
-    private func generateCustomGradientProgressColors() -> [Color] {
+    /// Генерация градиента для маленьких колец (календарь, etc)
+    private func generateSmallRingColors(from baseColor: Color) -> [Color] {
         return [
-            customGradientColor1.opacity(0.9),   // Dark start with first color
-            customGradientColor1,                 // Full bright first color
-            customGradientColor2.opacity(0.3),   // Light second color
-            customGradientColor2,                 // Full bright second color
-            customGradientColor1.opacity(0.9)    // Back to dark first color (seamless loop)
+            baseColor.opacity(0.3),  // Светлое начало
+            baseColor.opacity(0.5),  // Средний
+            baseColor.opacity(0.9),  // Темный
+            baseColor,               // Полная яркость
+            baseColor.opacity(0.3)   // Обратно к светлому
         ]
-    }
-    
-    // Generate mirrored colors for small rings (day progress items)
-    func getMirroredRingColors(isCompleted: Bool, isExceeded: Bool, habit: Habit? = nil) -> [Color] {
-        // Always use green colors for completed/exceeded states
-        if isCompleted || isExceeded {
-            return getCompletedColors(isExceeded: isExceeded)
-        }
-        
-        // For in-progress states, use mirrored version
-        switch ringColorMode {
-        case .habitColors:
-            let baseColor = habit?.iconColor.color ?? selectedColor.color
-            return generateMirroredProgressColors(from: baseColor)
-            
-        case .appColor:
-            return generateMirroredProgressColors(from: selectedColor.color)
-            
-        case .customGradient:
-            return generateMirroredCustomGradientProgressColors()
-        }
-    }
-
-    // Mirrored version for small rings (lighter start)
-    private func generateMirroredProgressColors(from baseColor: Color) -> [Color] {
-        return [
-            baseColor.opacity(0.3),  // Light start
-            baseColor.opacity(0.5),  // Medium
-            baseColor.opacity(0.9),  // Dark
-            baseColor,               // Full bright
-            baseColor.opacity(0.3)   // Back to light for smooth cycle
-        ]
-    }
-
-    // Mirrored custom gradient for small rings (starts with second color)
-    private func generateMirroredCustomGradientProgressColors() -> [Color] {
-        return [
-            customGradientColor2.opacity(0.4),   // Light start with second color
-            customGradientColor2.opacity(0.7),   // Medium second color
-            customGradientColor1.opacity(0.3),   // Light first color
-            customGradientColor1,                 // Full bright first color
-            customGradientColor2.opacity(0.4)    // Back to light second color (seamless loop)
-        ]
-    }
-    
-    // MARK: - Color Data Persistence
-    private func saveCustomGradientColors() {
-        if let color1Data = try? NSKeyedArchiver.archivedData(withRootObject: UIColor(customGradientColor1), requiringSecureCoding: false) {
-            customGradientColor1Data = color1Data
-        }
-        
-        if let color2Data = try? NSKeyedArchiver.archivedData(withRootObject: UIColor(customGradientColor2), requiringSecureCoding: false) {
-            customGradientColor2Data = color2Data
-        }
-    }
-    
-    private func loadCustomGradientColors() {
-        if let color1Data = customGradientColor1Data,
-           let uiColor1 = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: color1Data) {
-            customGradientColor1 = Color(uiColor1)
-        }
-        
-        if let color2Data = customGradientColor2Data,
-           let uiColor2 = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: color2Data) {
-            customGradientColor2 = Color(uiColor2)
-        }
-    }
-    
-    // MARK: - UI Component Colors (не кольца!)
-    func getComponentColor(for habit: Habit? = nil) -> Color {
-        switch ringColorMode {
-        case .habitColors:
-            // Для Habit Colors - используем цвет привычки
-            return habit?.iconColor.color ?? selectedColor.color
-            
-        case .appColor, .customGradient:
-            // Для App Theme и Custom Gradient - всегда цвет приложения
-            // (Custom Gradient применяется только к кольцам, компоненты остаются app color)
-            return selectedColor.color
-        }
     }
 }

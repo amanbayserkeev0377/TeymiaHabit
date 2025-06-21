@@ -106,7 +106,7 @@ struct YearlyHabitChart: View {
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .foregroundStyle(AppColorManager.shared.getComponentColor(for: habit))
+                            .withHabitColor(habit)
                         
                         Text(monthYearFormatter.string(from: selectedDataPoint.date).capitalized)
                             .font(.caption)
@@ -120,7 +120,7 @@ struct YearlyHabitChart: View {
                         Text(averageValueFormatted)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .foregroundStyle(AppColorManager.shared.getComponentColor(for: habit))
+                            .withHabitColor(habit)
                         
                         Text("This Year")
                             .font(.caption)
@@ -139,7 +139,7 @@ struct YearlyHabitChart: View {
                     Text(yearlyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .foregroundStyle(AppColorManager.shared.getComponentColor(for: habit))
+                        .withHabitColor(habit)
                     
                     Text("This Year")
                         .font(.caption)
@@ -387,10 +387,10 @@ struct YearlyHabitChart: View {
             return Color(red: 0.2, green: 0.8, blue: 0.4)
         } else if estimatedDailyAverage >= dailyGoalDouble * 0.7 {
             // Decent performance: User's color 
-            return AppColorManager.shared.getComponentColor(for: habit).mix(with: .white, by: 0.1)
+            return habit.iconColor.color.opacity(0.9)
         } else {
             // Low performance: Muted user color
-            return AppColorManager.shared.getComponentColor(for: habit).mix(with: .white, by: 0.4)
+            return habit.iconColor.color.opacity(0.6)
         }
     }
     

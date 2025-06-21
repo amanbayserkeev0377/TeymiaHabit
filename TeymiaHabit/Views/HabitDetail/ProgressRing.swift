@@ -19,9 +19,9 @@ struct ProgressRing: View {
     // NEW: Use AppColorManager for dynamic ring colors
     private var ringColors: [Color] {
         return AppColorManager.shared.getRingColors(
+            for: habit,
             isCompleted: isCompleted,
-            isExceeded: isExceeded,
-            habit: habit
+            isExceeded: isExceeded
         )
     }
     

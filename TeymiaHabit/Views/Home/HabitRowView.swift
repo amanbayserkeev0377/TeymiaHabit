@@ -33,11 +33,11 @@ struct HabitRowView: View {
                     // Основная иконка
                     Image(systemName: iconName)
                         .font(.system(size: 26))
-                        .foregroundStyle(habit.iconName == nil ? AppColorManager.shared.selectedColor.color : habit.iconColor.color)
+                        .foregroundStyle(habit.iconColor.color)
                         .frame(width: 52, height: 52)
                         .background(
                             Circle()
-                                .fill((habit.iconName == nil ? AppColorManager.shared.selectedColor.color : habit.iconColor.color).opacity(0.1))
+                                .fill(habit.iconColor.color.opacity(0.1))
                         )
                     
                     // Pin indicator badge

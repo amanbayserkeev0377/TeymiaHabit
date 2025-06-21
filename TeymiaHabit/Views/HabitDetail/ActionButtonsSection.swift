@@ -11,11 +11,7 @@ struct ActionButtonsSection: View {
     @State private var resetPressed = false
     @State private var togglePressed = false
     @State private var manualEntryPressed = false
-    
-    private var componentColor: Color {
-        AppColorManager.shared.getComponentColor(for: habit)
-    }
-    
+        
     var body: some View {
         HStack(spacing: 18) {
             // 1. Reset
@@ -25,7 +21,7 @@ struct ActionButtonsSection: View {
             } label: {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.system(size: 24))
-                    .foregroundStyle(componentColor)
+                    .withHabitColor(habit)
                     .frame(minWidth: 44, minHeight: 44)
                     .symbolEffect(.rotate, options: .speed(4.5), value: resetPressed)
             }
@@ -40,7 +36,7 @@ struct ActionButtonsSection: View {
                     Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
                         .font(.system(size: 42))
                         .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
-                        .foregroundStyle(componentColor)
+                        .withHabitColor(habit)
                         .frame(minWidth: 52, minHeight: 52)
                 }
                 .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
@@ -53,7 +49,7 @@ struct ActionButtonsSection: View {
             } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 24))
-                    .foregroundStyle(componentColor)
+                    .withHabitColor(habit)
                     .frame(minWidth: 44, minHeight: 44)
             }
             .hapticFeedback(.impact(weight: .medium), trigger: manualEntryPressed)

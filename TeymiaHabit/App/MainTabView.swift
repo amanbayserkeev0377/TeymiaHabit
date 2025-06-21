@@ -42,7 +42,7 @@ struct MainTabView: View {
             }
         }
         .preferredColorScheme(themeMode.colorScheme)
-        .withAppColor()
+        .tint(AppColorManager.shared.selectedColor.color)
     }
 }
 

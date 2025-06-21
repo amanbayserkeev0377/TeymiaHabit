@@ -53,7 +53,6 @@ struct AppIconPickerView: View {
                 } else if iconManager.currentIcon.id == icon.id {
                     // Selected checkmark
                     Image(systemName: "checkmark")
-                        .withAppAccent()
                         .font(.title3)
                 }
             }

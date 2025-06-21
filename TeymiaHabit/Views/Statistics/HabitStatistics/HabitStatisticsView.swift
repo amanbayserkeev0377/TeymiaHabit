@@ -43,7 +43,7 @@ struct HabitStatisticsView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "hand.tap")
                         .font(.footnote)
-                        .withComponentColor(habit: habit)                    
+                        .withHabitColor(habit)                   
                     Text("habit_statistics_view".localized)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
@@ -83,7 +83,7 @@ struct HabitStatisticsView: View {
                 // Start date
                 HStack {
                     Image(systemName: "calendar.badge.clock")
-                        .withComponentColor(habit: habit)
+                        .withHabitColor(habit)
                     Text("start_date".localized)
                     
                     Spacer()
@@ -95,7 +95,7 @@ struct HabitStatisticsView: View {
                 // Goal
                 HStack {
                     Image(systemName: "trophy")
-                        .withComponentColor(habit: habit)
+                        .withHabitColor(habit)
                     Text("daily_goal".localized)
                     
                     Spacer()
@@ -107,7 +107,7 @@ struct HabitStatisticsView: View {
                 // Active days
                 HStack {
                     Image(systemName: "cloud.sun")
-                        .withComponentColor(habit: habit)
+                        .withHabitColor(habit)
                     Text("active_days".localized)
                     
                     Spacer()
@@ -124,7 +124,7 @@ struct HabitStatisticsView: View {
                 } label: {
                     HStack {
                         Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                            .withComponentColor(habit: habit)
+                            .withHabitColor(habit)
                         Text("reset_all_history".localized)
                     }
                 }
@@ -148,7 +148,7 @@ struct HabitStatisticsView: View {
                 Button("button_done".localized) {
                     dismiss()
                 }
-                .withComponentColor(habit: habit)
+                .withHabitColor(habit)
             }
         }
         // ИСПРАВЛЕНО: Просто обновляем статистику, не пересоздаем ViewModel
@@ -187,7 +187,7 @@ struct HabitStatisticsView: View {
         } message: {
             Text("alert_reset_history_message".localized)
         }
-        .tint(componentColor)
+        .withHabitColor(habit)
     }
     
     // MARK: - Обработка действий календаря
@@ -211,10 +211,6 @@ struct HabitStatisticsView: View {
     }
     
     // MARK: - Computed Properties
-    
-    private var componentColor: Color {
-        AppColorManager.shared.getComponentColor(for: habit)
-    }
     
     private var formattedActiveDays: String {
         let weekdays = Calendar.userPreferred.orderedFormattedWeekdaySymbols

@@ -12,10 +12,6 @@ struct ProgressControlSection: View {
     @State private var incrementTrigger: Bool = false
     @State private var decrementTrigger: Bool = false
     
-    private var componentColor: Color {
-        AppColorManager.shared.getComponentColor(for: habit)
-    }
-    
     // Определяем, является ли устройство маленьким (iPhone SE)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isSmallDevice: Bool {
@@ -38,15 +34,15 @@ struct ProgressControlSection: View {
             }) {
                 Image(systemName: "minus")
                     .font(.system(size: isSmallDevice ? 22 : 24))
-                    .foregroundStyle(componentColor)
+                    .withHabitColor(habit)
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
-                            .fill(componentColor.opacity(0.1))
+                            .withHabitBackground(habit, opacity: 0.1)
                     )
             }
             .decreaseHaptic(trigger: decrementTrigger)
-            .padding(.leading, isSmallDevice ? 18 : 22) // Уменьшаем отступ для маленьких экранов
+            .padding(.leading, isSmallDevice ? 18 : 22)
             
             Spacer()
             
@@ -57,7 +53,7 @@ struct ProgressControlSection: View {
                 isCompleted: isCompleted,
                 isExceeded: isExceeded,
                 habit: habit,
-                size: isSmallDevice ? 160 : 180 // Уменьшаем размер для маленьких экранов
+                size: isSmallDevice ? 160 : 180
             )
             .aspectRatio(1, contentMode: .fit)
             
@@ -69,16 +65,16 @@ struct ProgressControlSection: View {
             }) {
                 Image(systemName: "plus")
                     .font(.system(size: isSmallDevice ? 22 : 24))
-                    .foregroundStyle(componentColor)
+                    .withHabitColor(habit)
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
-                            .fill(componentColor.opacity(0.1))
+                            .withHabitBackground(habit, opacity: 0.1)
                     )
             }
             .increaseHaptic(trigger: incrementTrigger)
-            .padding(.trailing, isSmallDevice ? 18 : 22) // Уменьшаем отступ для маленьких экранов
+            .padding(.trailing, isSmallDevice ? 18 : 22)
         }
-        .padding(.horizontal, isSmallDevice ? 8 : 16) // Уменьшаем горизонтальные отступы
+        .padding(.horizontal, isSmallDevice ? 8 : 16)
     }
 }

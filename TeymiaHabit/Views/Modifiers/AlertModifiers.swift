@@ -57,8 +57,8 @@ struct CountInputAlertModifier: ViewModifier {
             } message: {
                 Text("alert_add_count_message".localized)
             }
-            // ✅ Применяем локальный tint для всего алерта
-            .tint(AppColorManager.shared.getComponentColor(for: habit))
+            // ✅ Цвет привычки для alert
+            .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
     }
 }
 
@@ -88,8 +88,8 @@ struct TimeInputAlertModifier: ViewModifier {
             } message: {
                 Text("alert_add_time_message".localized)
             }
-            // ✅ Применяем локальный tint для всего алерта
-            .tint(AppColorManager.shared.getComponentColor(for: habit))
+            // ✅ Цвет привычки для alert
+            .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
     }
 }
 
@@ -112,8 +112,8 @@ struct DeleteSingleHabitAlertModifier: ViewModifier {
             } message: {
                 Text("alert_delete_habit_message".localized(with: habitName))
             }
-            // ✅ Применяем локальный tint для Cancel кнопки
-            .tint(AppColorManager.shared.getComponentColor(for: habit))
+            // ✅ Цвет привычки для alert
+            .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
     }
 }
 
@@ -133,8 +133,8 @@ struct DeleteMultipleHabitsAlertModifier: ViewModifier {
             } message: {
                 Text("alert_delete_multiple_habits_message".localized(with: habitsCount))
             }
-            // ✅ Всегда app color для множественных операций
-            .tint(AppColorManager.shared.getComponentColor())
+            // ✅ Цвет приложения для множественных операций
+            .tint(AppColorManager.shared.selectedColor.color)
     }
 }
 
@@ -156,8 +156,8 @@ struct DeleteSingleFolderAlertModifier: ViewModifier {
             } message: {
                 Text("alert_delete_folder_message".localized(with: folderName))
             }
-            // ✅ App color для операций с папками
-            .tint(AppColorManager.shared.getComponentColor())
+            // ✅ Цвет приложения для операций с папками
+            .tint(AppColorManager.shared.selectedColor.color)
     }
 }
 
@@ -177,8 +177,8 @@ struct DeleteMultipleFoldersAlertModifier: ViewModifier {
             } message: {
                 Text("alert_delete_folders_message".localized(with: foldersCount))
             }
-            // ✅ App color для операций с папками
-            .tint(AppColorManager.shared.getComponentColor())
+            // ✅ Цвет приложения для операций с папками
+            .tint(AppColorManager.shared.selectedColor.color)
     }
 }
 
