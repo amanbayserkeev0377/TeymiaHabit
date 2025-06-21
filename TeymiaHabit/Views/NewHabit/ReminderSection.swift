@@ -12,15 +12,18 @@ struct ReminderSection: View {
     
     var body: some View {
         Section {
-            Toggle(isOn: $isReminderEnabled.animation()) {
-                HStack {
-                    Image(systemName: "bell.badge")
-                        .foregroundStyle(AppColorManager.shared.selectedColor.color)
-                        .font(.system(size: 22))
-                        .frame(width: 30)
-                        .symbolEffect(.bounce, options: .repeat(1), value: isReminderEnabled)
-                    Text("reminders".localized)
-                }
+            Toggle(isOn: $isReminderEnabled.animation(.easeInOut(duration: 0.3))) {
+                Label(
+                    title: { Text("reminders".localized) },
+                    icon: {
+                        Image(systemName: "bell.badge.fill")
+                            .withIOSSettingsIcon(lightColors: [
+                                Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)), // Красный
+                                Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))  // Темно-красный
+                            ])
+                            .symbolEffect(.bounce, options: .repeat(1), value: isReminderEnabled)
+                    }
+                )
             }
             .withToggleColor()
             .onChange(of: isReminderEnabled) { _, newValue in

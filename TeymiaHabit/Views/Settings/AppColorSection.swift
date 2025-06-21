@@ -22,9 +22,13 @@ struct AppColorSection: View {
                 
                 Spacer()
                 
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                Circle()
                     .fill(colorManager.selectedColor.color)
                     .frame(width: 18, height: 18)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
                     .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
             }
         }

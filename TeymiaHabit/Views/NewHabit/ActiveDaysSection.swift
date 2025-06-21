@@ -21,12 +21,17 @@ struct ActiveDaysSection: View {
     var body: some View {
         NavigationLink(destination: ActiveDaysSelectionView(activeDays: $activeDays)) {
             HStack {
-                Image(systemName: "cloud.sun")
-                    .foregroundStyle(AppColorManager.shared.selectedColor.color)
-                    .font(.system(size: 22))
-                    .frame(width: 30)
-                    .clipped()
-                Text("active_days".localized)
+                Label(
+                    title: { Text("active_days".localized) },
+                    icon: {
+                        Image(systemName: "cloud.sun.fill")
+                            .withIOSSettingsIcon(lightColors: [
+                                Color(#colorLiteral(red: 1, green: 0.8, blue: 0.2, alpha: 1)), // Золотой
+                                Color(#colorLiteral(red: 0.9, green: 0.6, blue: 0.1, alpha: 1))  // Темно-золотой
+                            ], fontSize: 13  
+                            )
+                    }
+                )
                 
                 Spacer()
                 

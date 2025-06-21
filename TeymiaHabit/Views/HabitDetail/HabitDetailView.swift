@@ -267,7 +267,7 @@ struct HabitDetailView: View {
                 } label: {
                     Label("button_edit".localized, systemImage: "pencil")
                 }
-                .withHabitColor(habit)
+                .withHabitTint(habit)
                 
                 // Кнопка архивирования
                 Button {
@@ -275,7 +275,7 @@ struct HabitDetailView: View {
                 } label: {
                     Label("archive".localized, systemImage: "archivebox")
                 }
-                .withHabitColor(habit)
+                .withHabitTint(habit)
                 
                 // Кнопка удаления
                 Button(role: .destructive) {
@@ -291,8 +291,7 @@ struct HabitDetailView: View {
                     .frame(width: 28, height: 28)
                     .background(
                         Circle()
-                            .withHabitBackground(habit, opacity: 0.1)
-                    )
+                            .fill(habit.iconColor.color.opacity(0.1))                    )
             }
         }
     }

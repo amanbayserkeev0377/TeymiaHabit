@@ -7,10 +7,11 @@ struct NameFieldSection: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "pencil")
-                .foregroundStyle(AppColorManager.shared.selectedColor.color)
-                .font(.system(size: 22))
-                .frame(width: 30)
-                .clipped()
+                .withIOSSettingsIcon(lightColors: [
+                    Color(#colorLiteral(red: 1, green: 0.6, blue: 0.2, alpha: 1)), // Оранжевый
+                    Color(#colorLiteral(red: 0.9, green: 0.4, blue: 0.1, alpha: 1))  // Темно-оранжевый
+                ], fontSize: 18
+                )
             TextField("habit_name".localized, text: $title)
                 .autocorrectionDisabled()
                 .focused($isFocused)

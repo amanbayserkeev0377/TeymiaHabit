@@ -3,9 +3,6 @@ import SwiftUI
 struct IconSection: View {
     @Binding var selectedIcon: String?
     @Binding var selectedColor: HabitIconColor
-    @ObservedObject private var colorManager = AppColorManager.shared
-    
-    private let defaultIcon = "checkmark"
     
     var body: some View {
         NavigationLink {
@@ -15,14 +12,22 @@ struct IconSection: View {
             )
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: selectedIcon ?? "checkmark")
-                    .foregroundStyle(selectedIcon == "checkmark" ? AppColorManager.shared.selectedColor.color : selectedColor.color)
-                    .font(.system(size: 22))
-                    .frame(width: 30)
-                    .clipped()
+                Image(systemName: "paintbrush.pointed.fill")
+                    .withIOSSettingsIcon(lightColors: [
+                        Color(.purple),
+                        Color(.pink)
+                    ])
+                
                 Text("icon".localized)
                 
                 Spacer()
+                
+                // Показываем выбранную иконку с ее цветом
+                if let selectedIcon = selectedIcon {
+                    Image(systemName: selectedIcon)
+                        .foregroundStyle(selectedColor.color)
+                        .font(.system(size: 16))
+                }
             }
         }
     }

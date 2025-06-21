@@ -134,6 +134,7 @@ struct HomeView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
+                                    .foregroundStyle(colorManager.selectedColor.color)
                                     .frame(width: 52, height: 52)
                                     .background(
                                         Circle()

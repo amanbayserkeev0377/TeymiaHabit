@@ -32,15 +32,21 @@ struct FolderSection: View {
     
     private var folderContent: some View {
         HStack(spacing: 12) {
-            Image(systemName: "folder")
-                .foregroundStyle(AppColorManager.shared.selectedColor.color)
-                .font(.system(size: 22))
-                .frame(width: 30)
-                .clipped()
-            Text("folders".localized)
+            // Используем Label с iOS Settings стилем
+            Label(
+                title: { Text("folders".localized) },
+                icon: {
+                    Image(systemName: "folder.fill")
+                        .withIOSSettingsIcon(lightColors: [
+                            Color(#colorLiteral(red: 0.4, green: 0.7843137255, blue: 1, alpha: 1)), // Голубой
+                            Color(#colorLiteral(red: 0.0, green: 0.4784313725, blue: 0.8, alpha: 1))  // Синий
+                        ])
+                }
+            )
             
             Spacer()
             
+            // Показываем выбранные папки
             if selectedFolders.isEmpty {
                 Text("folders_none_selected".localized)
                     .foregroundStyle(.secondary)
@@ -53,15 +59,18 @@ struct FolderSection: View {
     }
     
     private var folderContentWithProBadge: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "folder")
-                .foregroundStyle(AppColorManager.shared.selectedColor.color.opacity(0.5))
-                .font(.system(size: 22))
-                .frame(width: 30)
-                .clipped()
-            
-            Text("folders".localized)
-                .foregroundStyle(.primary)
+        HStack {
+            // Тот же Label стиль для консистентности
+            Label(
+                title: { Text("folders".localized) },
+                icon: {
+                    Image(systemName: "folder.fill")
+                        .withIOSSettingsIcon(lightColors: [
+                            Color(#colorLiteral(red: 0.4, green: 0.7843137255, blue: 1, alpha: 1)),
+                            Color(#colorLiteral(red: 0.0, green: 0.4784313725, blue: 0.8, alpha: 1))
+                        ])
+                }
+            )
             
             Spacer()
             

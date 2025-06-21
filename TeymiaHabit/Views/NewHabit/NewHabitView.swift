@@ -57,8 +57,14 @@ struct NewHabitView: View {
     
     // MARK: - Computed Properties
     private var isFormValid: Bool {
-        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        (selectedType == .count ? countGoal > 0 : hours > 0 || minutes > 0)
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasValidTitle = !trimmedTitle.isEmpty
+        
+        let hasValidGoal = selectedType == .count 
+            ? countGoal > 0 
+            : (hours > 0 || minutes > 0)
+        
+        return hasValidTitle && hasValidGoal
     }
     
     private var effectiveGoal: Int {
@@ -118,6 +124,10 @@ struct NewHabitView: View {
                     )
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                // Место для кнопки
+                Color.clear.frame(height: 80)
+            }
             .navigationTitle(habit == nil ? "create_habit".localized : "edit_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -125,13 +135,6 @@ struct NewHabitView: View {
                     Button("button_cancel".localized) {
                         dismiss()
                     }
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("button_save".localized) {
-                        saveHabit()
-                    }
-                    .disabled(!isFormValid)
                 }
                 
                 ToolbarItemGroup(placement: .keyboard) {
@@ -145,6 +148,26 @@ struct NewHabitView: View {
                 }
             }
             .animation(.default, value: isKeyboardActive)
+            
+            // OVERLAY кнопка - только для этого экрана
+            .overlay(alignment: .bottom) {
+                Button {
+                    // Дополнительная проверка для надежности
+                    guard isFormValid else { return }
+                    saveHabit()
+                } label: {
+                    HStack {
+                        Text(habit == nil ? "button_save".localized : "button_save".localized)
+                            .font(.system(size: 17, weight: .semibold))
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 18, weight: .semibold))
+                    }
+                }
+                .beautifulButton(isEnabled: isFormValid)
+                .allowsHitTesting(isFormValid) // Блокирует touch когда disabled
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+            }
         }
     }
     

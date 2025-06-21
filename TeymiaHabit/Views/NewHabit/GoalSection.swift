@@ -13,11 +13,14 @@ struct GoalSection: View {
     var body: some View {
         Section {
             HStack(spacing: 12) {
-                Image(systemName: "trophy")
-                    .foregroundStyle(AppColorManager.shared.selectedColor.color)
-                    .font(.system(size: 20))
+                Image(systemName: "trophy.fill")
+                    .withIOSSettingsIcon(lightColors: [
+                        Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)), // Яркий зеленый
+                        Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1))  // Темно-зеленый
+                    ],
+                    fontSize: 17
+                    )
                     .symbolEffect(.bounce, options: .repeat(1), value: selectedType)
-                    .frame(width: 30)
                 Text("daily_goal".localized)
                 
                 Spacer()
@@ -35,7 +38,7 @@ struct GoalSection: View {
             if selectedType == .count {
                 HStack(spacing: 12) {
                     Image(systemName: "number")
-                        .foregroundStyle(AppColorManager.shared.selectedColor.color.opacity(0.5))
+                        .foregroundStyle(Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1)).opacity(0.8))
                         .font(.system(size: 22))
                         .frame(width: 30)
                         .clipped()
@@ -53,7 +56,7 @@ struct GoalSection: View {
             } else {
                 HStack(spacing: 12) {
                     Image(systemName: "clock")
-                        .foregroundStyle(AppColorManager.shared.selectedColor.color.opacity(0.5))
+                        .foregroundStyle(Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1)).opacity(0.8))
                         .font(.system(size: 22))
                         .frame(width: 30)
                         .clipped()

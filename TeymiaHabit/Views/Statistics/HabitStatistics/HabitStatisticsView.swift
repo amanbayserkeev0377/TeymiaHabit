@@ -187,7 +187,7 @@ struct HabitStatisticsView: View {
         } message: {
             Text("alert_reset_history_message".localized)
         }
-        .withHabitColor(habit)
+        .withHabitTint(habit)
     }
     
     // MARK: - Обработка действий календаря
