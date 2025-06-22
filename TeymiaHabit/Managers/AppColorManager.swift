@@ -3,39 +3,40 @@ import SwiftUI
 final class AppColorManager: ObservableObject {
     static let shared = AppColorManager()
     
-    // App color properties
+    // MARK: - Published Properties
     @Published private(set) var selectedColor: HabitIconColor
     @AppStorage("selectedAppColor") private var selectedColorId: String?
     
-    private let availableColors: [HabitIconColor] = [
-        .primary,
-        .red,
-        .orange,
-        .yellow,
-        .mint,
-        .green,
-        .blue,
-        .purple,
-        .softLavender,
-        .pink,
-        .sky,
-        .brown,
-        .gray,
-        .colorPicker
-    ]
-    
-    private init() {
-        selectedColor = .primary
+    // MARK: - Constants
+    private struct ColorConstants {
+        static let completedBaseGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
         
-        // Load saved app color
-        if let savedColorId = selectedColorId,
-           let color = HabitIconColor(rawValue: savedColorId) {
-            selectedColor = color
+        struct Opacity {
+            // Light theme gradient points
+            static let lightStart: Double = 0.9
+            static let lightFull: Double = 1.0
+            static let lightMid: Double = 0.4
+            static let lightEnd: Double = 0.6
+            
+            // Dark theme gradient points
+            static let darkStart: Double = 0.7
+            static let darkMid: Double = 0.8
+            static let darkFull: Double = 1.0
         }
     }
     
-    // MARK: - Public Methods
+    private let availableColors: [HabitIconColor] = [
+        .primary, .red, .orange, .yellow, .mint, .green, .blue, .purple,
+        .softLavender, .pink, .sky, .brown, .gray, .colorPicker
+    ]
     
+    // MARK: - Initialization
+    private init() {
+        selectedColor = .primary
+        loadSavedColor()
+    }
+    
+    // MARK: - Public Interface
     func setAppColor(_ color: HabitIconColor) {
         selectedColor = color
         selectedColorId = color.rawValue
@@ -45,110 +46,112 @@ final class AppColorManager: ObservableObject {
         return availableColors
     }
     
-    // MARK: - Ring Colors (упрощенная логика)
-    
-    /// Получить цвета для кольца прогресса привычки
-    /// - Parameters:
-    ///   - habit: Привычка (если nil - используется app color)
-    ///   - isCompleted: Завершена ли привычка
-    ///   - isExceeded: Превышена ли цель
-    ///   - colorScheme: Текущая тема (передается из SwiftUI View)
-    /// - Returns: Массив цветов для градиента кольца
-    func getRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool, colorScheme: ColorScheme) -> [Color] {
-        // Завершенные привычки всегда зеленые
-        if isCompleted || isExceeded {
-            return getCompletedColors(isExceeded: isExceeded, colorScheme: colorScheme)
-        }
+    /// Universal method for getting ring colors for any habit state
+    /// Works for both regular and small rings
+    func getRingColors(
+        for habit: Habit?,
+        isCompleted: Bool,
+        isExceeded: Bool,
+        colorScheme: ColorScheme
+    ) -> [Color] {
+        let habitState = HabitState(isCompleted: isCompleted, isExceeded: isExceeded)
+        let baseColor = resolveBaseColor(for: habit)
         
-        // Для незавершенных - используем цвет привычки или app color как fallback
-        let baseColor = habit?.iconColor.color ?? selectedColor.color
-        return generateProgressColors(from: baseColor, colorScheme: colorScheme)
+        return generateColors(for: habitState, baseColor: baseColor, colorScheme: colorScheme)
     }
     
-    /// Получить цвета для маленьких колец (например, в календаре)
-    /// Использует ту же логику что и большие кольца
-    func getSmallRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool, colorScheme: ColorScheme) -> [Color] {
-        // Завершенные привычки всегда зеленые
-        if isCompleted || isExceeded {
-            return getCompletedColors(isExceeded: isExceeded, colorScheme: colorScheme)
-        }
-        
-        // Для незавершенных - используем цвет привычки или app color как fallback
-        let baseColor = habit?.iconColor.color ?? selectedColor.color
-        return generateProgressColors(from: baseColor, colorScheme: colorScheme)
+    /// Legacy method for backward compatibility
+    func getSmallRingColors(
+        for habit: Habit?,
+        isCompleted: Bool,
+        isExceeded: Bool,
+        colorScheme: ColorScheme
+    ) -> [Color] {
+        // Same logic as regular rings - no need for separate implementation
+        return getRingColors(
+            for: habit,
+            isCompleted: isCompleted,
+            isExceeded: isExceeded,
+            colorScheme: colorScheme
+        )
     }
-    
-    // MARK: - Private Helper Methods
-    
-    /// Зеленые цвета для завершенных привычек
-    private func getCompletedColors(isExceeded: Bool, colorScheme: ColorScheme) -> [Color] {
-        if isExceeded {
-            let baseGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
-            let habitMintColor = HabitIconColor.mint.color
-            
-            if colorScheme == .dark {
-                return [
-                    baseGreen.opacity(0.7),
-                    baseGreen.opacity(0.8),
-                    habitMintColor,
-                    habitMintColor,
-                    baseGreen.opacity(0.7)
-                ]
-            } else {
-                return [
-                    baseGreen.opacity(0.9),
-                    baseGreen,
-                    habitMintColor.opacity(0.6),
-                    habitMintColor.opacity(0.8),
-                    baseGreen.opacity(0.9)
-                ]
-            }
-        } else {
-            let baseGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
-            
-            if colorScheme == .dark {
-                return [
-                    baseGreen.opacity(0.7),
-                    baseGreen.opacity(0.8),
-                    baseGreen,
-                    baseGreen,
-                    baseGreen.opacity(0.7)
-                ]
-            } else {
-                return [
-                    baseGreen.opacity(0.9),
-                    baseGreen,
-                    baseGreen.opacity(0.4),
-                    baseGreen.opacity(0.6),
-                    baseGreen.opacity(0.9)
-                ]
-            }
-        }
-    }
-    
-    
-    /// Генерация градиента для колец прогресса
-    /// В темной теме - отзеркаленный градиент с другими opacity
-    private func generateProgressColors(from baseColor: Color, colorScheme: ColorScheme) -> [Color] {
-        if colorScheme == .dark {
-            // Темная тема: отзеркаленный градиент с мягкими opacity
-            return [
-                baseColor.opacity(0.7),
-                baseColor.opacity(0.8),
-                baseColor,
-                baseColor,
-                baseColor.opacity(0.7)
-            ]
-        } else {
-            // Светлая тема: как было
-            return [
-                baseColor.opacity(0.9),
-                baseColor,
-                baseColor.opacity(0.4),
-                baseColor.opacity(0.6),
-                baseColor.opacity(0.9)
-            ]
-        }
-    }
+}
 
+// MARK: - Private Helpers
+private extension AppColorManager {
+    
+    func loadSavedColor() {
+        guard let savedColorId = selectedColorId,
+              let savedColor = HabitIconColor(rawValue: savedColorId) else {
+            return
+        }
+        selectedColor = savedColor
+    }
+    
+    func resolveBaseColor(for habit: Habit?) -> Color {
+        return habit?.iconColor.color ?? selectedColor.color
+    }
+    
+    func generateColors(
+        for state: HabitState,
+        baseColor: Color,
+        colorScheme: ColorScheme
+    ) -> [Color] {
+        switch state {
+        case .completed:
+            return createCompletedGradient(colorScheme: colorScheme)
+        case .exceeded:
+            return createExceededGradient(colorScheme: colorScheme)
+        case .inProgress:
+            return createProgressGradient(baseColor: baseColor, colorScheme: colorScheme)
+        }
+    }
+    
+    func createCompletedGradient(colorScheme: ColorScheme) -> [Color] {
+        let green = ColorConstants.completedBaseGreen
+        let opacity = ColorConstants.Opacity.self
+        
+        return colorScheme == .dark
+            ? [green.opacity(opacity.darkStart), green.opacity(opacity.darkMid), green, green, green.opacity(opacity.darkStart)]
+            : [green.opacity(opacity.lightStart), green, green.opacity(opacity.lightMid), green.opacity(opacity.lightEnd), green.opacity(opacity.lightStart)]
+    }
+    
+    func createExceededGradient(colorScheme: ColorScheme) -> [Color] {
+        let green = ColorConstants.completedBaseGreen
+        let mint = HabitIconColor.mint.color
+        let opacity = ColorConstants.Opacity.self
+        
+        return colorScheme == .dark
+            ? [green.opacity(opacity.darkStart), green.opacity(opacity.darkMid), mint, mint, green.opacity(opacity.darkStart)]
+            : [green.opacity(opacity.lightStart), green, mint.opacity(opacity.lightEnd), mint.opacity(opacity.darkMid), green.opacity(opacity.lightStart)]
+    }
+    
+    func createProgressGradient(baseColor: Color, colorScheme: ColorScheme) -> [Color] {
+        let opacity = ColorConstants.Opacity.self
+        
+        return colorScheme == .dark
+            ? [baseColor.opacity(opacity.darkStart), baseColor.opacity(opacity.darkMid), baseColor, baseColor, baseColor.opacity(opacity.darkStart)]
+            : [baseColor.opacity(opacity.lightStart), baseColor, baseColor.opacity(opacity.lightMid), baseColor.opacity(opacity.lightEnd), baseColor.opacity(opacity.lightStart)]
+    }
+}
+
+// MARK: - Supporting Types
+extension AppColorManager {
+    
+    /// Represents the current state of a habit for color determination
+    enum HabitState {
+        case inProgress  // Default state for incomplete habits
+        case completed   // Habit is completed
+        case exceeded    // Habit goal is exceeded
+        
+        init(isCompleted: Bool, isExceeded: Bool) {
+            if isExceeded {
+                self = .exceeded
+            } else if isCompleted {
+                self = .completed
+            } else {
+                self = .inProgress
+            }
+        }
+    }
 }
