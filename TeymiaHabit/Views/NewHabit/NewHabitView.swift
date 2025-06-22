@@ -60,8 +60,8 @@ struct NewHabitView: View {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let hasValidTitle = !trimmedTitle.isEmpty
         
-        let hasValidGoal = selectedType == .count 
-            ? countGoal > 0 
+        let hasValidGoal = selectedType == .count
+            ? countGoal > 0
             : (hours > 0 || minutes > 0)
         
         return hasValidTitle && hasValidGoal
@@ -147,28 +147,25 @@ struct NewHabitView: View {
                     }
                 }
             }
-            .animation(.default, value: isKeyboardActive)
             
-            // OVERLAY кнопка - только для этого экрана
+            // OVERLAY кнопка - с BeautifulButton и правильным порядком
             .overlay(alignment: .bottom) {
                 Button {
-                    // Дополнительная проверка для надежности
                     guard isFormValid else { return }
                     saveHabit()
                 } label: {
-                    HStack {
+                    HStack(spacing: 8) {
                         Text(habit == nil ? "button_save".localized : "button_save".localized)
-                            .font(.system(size: 17, weight: .semibold))
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 18, weight: .semibold))
                     }
                 }
                 .beautifulButton(isEnabled: isFormValid)
-                .allowsHitTesting(isFormValid) // Блокирует touch когда disabled
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
             }
         }
+        // ИСПРАВЛЕНО: убираем анимацию которая могла вызывать глитчи
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
     // MARK: - Methods

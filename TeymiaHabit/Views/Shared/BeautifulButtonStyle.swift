@@ -15,13 +15,13 @@ struct BeautifulButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(style.foregroundColor(isEnabled: isEnabled))
+            .foregroundStyle(style.foregroundColor(for: baseColor, isEnabled: isEnabled))
             .frame(maxWidth: .infinity)
             .frame(height: style.height)
             .background(
                 RoundedRectangle(cornerRadius: style.cornerRadius, style: .continuous)
                     .fill(
-                        isEnabled 
+                        isEnabled
                             ? style.backgroundGradient(from: baseColor)
                             : style.disabledGradient()
                     )
@@ -43,7 +43,7 @@ struct BeautifulButtonStyle: ButtonStyle {
 // MARK: - Button Types
 enum BeautifulButtonType {
     case primary      // Основные кнопки (Save, Complete)
-    case secondary    // Второстепенные кнопки  
+    case secondary    // Второстепенные кнопки
     case compact      // Компактные кнопки
     
     var height: CGFloat {
@@ -62,8 +62,18 @@ enum BeautifulButtonType {
         }
     }
     
-    func foregroundColor(isEnabled: Bool) -> Color {
-        return isEnabled ? .white : .secondary
+    // ИСПРАВЛЕНО: умный выбор цвета текста на основе контраста
+    func foregroundColor(for backgroundColor: Color, isEnabled: Bool) -> Color {
+        guard isEnabled else {
+            return .secondary
+        }
+        
+        // Проверяем контраст с фоном
+        if backgroundColor.isLight {
+            return .black  // Темный текст на светлом фоне
+        } else {
+            return .white  // Светлый текст на темном фоне
+        }
     }
     
     func backgroundGradient(from color: Color) -> LinearGradient {
@@ -71,8 +81,8 @@ enum BeautifulButtonType {
         case .primary:
             return LinearGradient(
                 colors: [
-                    color.opacity(0.9),  // Светлее
-                    color,               // Основной
+                    color.opacity(0.5),  // Светлее
+                    color.opacity(0.7),  // Средний
                     color.opacity(0.8)   // Темнее
                 ],
                 startPoint: .topLeading,
@@ -81,11 +91,12 @@ enum BeautifulButtonType {
         case .secondary, .compact:
             return LinearGradient(
                 colors: [
-                    color.opacity(0.8),
-                    color
+                    color.opacity(0.5),  // Светлее
+                    color.opacity(0.7),  // Средний
+                    color.opacity(0.8)   // Темнее
                 ],
-                startPoint: .top,
-                endPoint: .bottom
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
         }
     }
@@ -99,11 +110,33 @@ enum BeautifulButtonType {
     }
 }
 
+// MARK: - Color Extensions
+extension Color {
+    // Определяем, светлый ли цвет
+    var isLight: Bool {
+        // Конвертируем Color в UIColor для получения RGB компонентов
+        let uiColor = UIColor(self)
+        
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        // Используем стандартную формулу для определения яркости
+        let luminance = 0.299 * red + 0.587 * green + 0.114 * blue
+        
+        // Если яркость больше 0.5, считаем цвет светлым
+        return luminance > 0.5
+    }
+}
+
 // MARK: - View Extensions
 extension View {
     /// Применяет красивый стиль кнопки с цветом приложения
     func beautifulButton(
-        isEnabled: Bool = true, 
+        isEnabled: Bool = true,
         style: BeautifulButtonType = .primary
     ) -> some View {
         self.buttonStyle(BeautifulButtonStyle(
@@ -115,8 +148,8 @@ extension View {
     
     /// Применяет красивый стиль кнопки с цветом привычки
     func beautifulButton(
-        habit: Habit, 
-        isEnabled: Bool = true, 
+        habit: Habit,
+        isEnabled: Bool = true,
         style: BeautifulButtonType = .primary
     ) -> some View {
         self.buttonStyle(BeautifulButtonStyle(
@@ -128,8 +161,8 @@ extension View {
     
     /// Применяет красивый стиль кнопки с кастомным цветом
     func beautifulButton(
-        color: Color, 
-        isEnabled: Bool = true, 
+        color: Color,
+        isEnabled: Bool = true,
         style: BeautifulButtonType = .primary
     ) -> some View {
         self.buttonStyle(BeautifulButtonStyle(

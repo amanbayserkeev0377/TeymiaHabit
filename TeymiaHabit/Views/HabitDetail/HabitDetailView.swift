@@ -207,32 +207,23 @@ struct HabitDetailView: View {
         )
     }
     
-    // Complete
+    // Complete button с BeautifulButton - ОБНОВЛЕНО
     private func completeButtonView(viewModel: HabitDetailViewModel) -> some View {
         Button(action: {
             viewModel.completeHabit()
         }) {
             Text(viewModel.isAlreadyCompleted ? "completed".localized : "complete".localized)
-                .font(.headline)
-                .foregroundStyle(
-                    colorScheme == .dark ? .black : .white
-                )
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    viewModel.isAlreadyCompleted
-                    ? habit.iconColor.color.opacity(0.3)
-                    : habit.iconColor.color.opacity(0.9)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
         }
-        .disabled(viewModel.isAlreadyCompleted)
+        .beautifulButton(
+            color: habit.iconColor.color,
+            isEnabled: !viewModel.isAlreadyCompleted
+        )
         .modifier(HapticManager.shared.sensoryFeedback(.impact(weight: .medium), trigger: !viewModel.isAlreadyCompleted))
         .padding(.horizontal)
         .padding(.vertical, 8)
         .background(Color(uiColor: .systemBackground))
     }
-        
+    
     // Toolbar
     @ToolbarContentBuilder
     private var habitDetailToolbar: some ToolbarContent {

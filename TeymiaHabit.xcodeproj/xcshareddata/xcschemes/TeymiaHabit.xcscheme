@@ -31,7 +31,7 @@
       shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -44,12 +44,21 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
+            BlueprintIdentifier = "07971CF52DF2AD66006B9C21"
+            BuildableName = "TeymiaHabit Dev.app"
+            BlueprintName = "TeymiaHabit Dev"
+            ReferencedContainer = "container:TeymiaHabit.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
             BlueprintIdentifier = "07A95EF92D9849F300044A7A"
             BuildableName = "TeymiaHabit.app"
             BlueprintName = "TeymiaHabit"
             ReferencedContainer = "container:TeymiaHabit.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <StoreKitConfigurationFileReference
          identifier = "../../TeymiaHabit/Pro/Teymia Habit.storekit">
       </StoreKitConfigurationFileReference>

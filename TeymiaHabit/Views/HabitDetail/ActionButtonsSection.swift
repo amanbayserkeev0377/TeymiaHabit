@@ -28,7 +28,7 @@ struct ActionButtonsSection: View {
             .errorHaptic(trigger: resetPressed)
             
             if habit.type == .time {
-                // 2. Play/Pause
+                // 2. Play/Pause - обычная иконка без фона
                 Button {
                     togglePressed.toggle()
                     onTimerToggle()
@@ -36,7 +36,16 @@ struct ActionButtonsSection: View {
                     Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
                         .font(.system(size: 42))
                         .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
-                        .withHabitColor(habit)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [
+                                    habit.iconColor.color.opacity(0.5),
+                                    habit.iconColor.color.opacity(0.9)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                         .frame(minWidth: 52, minHeight: 52)
                 }
                 .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)

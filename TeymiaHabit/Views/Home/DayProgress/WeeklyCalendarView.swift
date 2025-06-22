@@ -44,7 +44,8 @@ struct WeeklyCalendarView: View {
                             onTap: {
                                 handleDateTap(date: date, hasHabits: hasHabits, isAvailable: isAvailable)
                             },
-                            showProgressRing: showRing
+                            showProgressRing: showRing,
+                            isOverallProgress: true
                         )
                         .frame(width: 35)
                     }
@@ -250,7 +251,14 @@ struct WeeklyCalendarView: View {
             total + habit.completionPercentageForDate(date)
         }
         
-        return totalCompletionPercentage / Double(activeHabits.count)
+        let averageProgress = totalCompletionPercentage / Double(activeHabits.count)
+        
+        // DEBUG для всех вызовов
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd"
+        print("📅 calculateProgress: \(formatter.string(from: date)) = \(averageProgress)")
+        
+        return averageProgress
     }
     
     // MARK: - Navigation

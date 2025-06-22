@@ -10,11 +10,26 @@ struct NameFieldSection: View {
                 .withIOSSettingsIcon(lightColors: [
                     Color(#colorLiteral(red: 1, green: 0.6, blue: 0.2, alpha: 1)), // Оранжевый
                     Color(#colorLiteral(red: 0.9, green: 0.4, blue: 0.1, alpha: 1))  // Темно-оранжевый
-                ], fontSize: 18
+                ], fontSize: 19
                 )
-            TextField("habit_name".localized, text: $title)
-                .autocorrectionDisabled()
-                .focused($isFocused)
+            
+            HStack {
+                TextField("habit_name".localized, text: $title)
+                    .autocorrectionDisabled()
+                    .focused($isFocused)
+                
+                // Clear button - показываем только когда есть текст
+                if !title.isEmpty {
+                    Button(action: {
+                        title = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                            .font(.system(size: 16))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
         }
     }
 }

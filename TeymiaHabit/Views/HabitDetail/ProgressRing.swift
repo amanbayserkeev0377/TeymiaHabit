@@ -14,6 +14,9 @@ struct ProgressRing: View {
     var fontSize: CGFloat? = nil
     var iconSize: CGFloat? = nil
     
+    // MARK: - Environment
+    @Environment(\.colorScheme) private var colorScheme
+    
     // MARK: - Computed Properties
     
     // NEW: Use AppColorManager for dynamic ring colors
@@ -21,7 +24,8 @@ struct ProgressRing: View {
         return AppColorManager.shared.getRingColors(
             for: habit,
             isCompleted: isCompleted,
-            isExceeded: isExceeded
+            isExceeded: isExceeded,
+            colorScheme: colorScheme
         )
     }
     

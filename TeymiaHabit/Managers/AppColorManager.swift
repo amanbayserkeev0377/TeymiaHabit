@@ -52,75 +52,103 @@ final class AppColorManager: ObservableObject {
     ///   - habit: Привычка (если nil - используется app color)
     ///   - isCompleted: Завершена ли привычка
     ///   - isExceeded: Превышена ли цель
+    ///   - colorScheme: Текущая тема (передается из SwiftUI View)
     /// - Returns: Массив цветов для градиента кольца
-    func getRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool) -> [Color] {
+    func getRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool, colorScheme: ColorScheme) -> [Color] {
         // Завершенные привычки всегда зеленые
         if isCompleted || isExceeded {
-            return getCompletedColors(isExceeded: isExceeded)
+            return getCompletedColors(isExceeded: isExceeded, colorScheme: colorScheme)
         }
         
         // Для незавершенных - используем цвет привычки или app color как fallback
         let baseColor = habit?.iconColor.color ?? selectedColor.color
-        return generateProgressColors(from: baseColor)
+        return generateProgressColors(from: baseColor, colorScheme: colorScheme)
     }
     
     /// Получить цвета для маленьких колец (например, в календаре)
-    /// Логика та же, но с другим градиентом для лучшей видимости
-    func getSmallRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool) -> [Color] {
+    /// Использует ту же логику что и большие кольца
+    func getSmallRingColors(for habit: Habit?, isCompleted: Bool, isExceeded: Bool, colorScheme: ColorScheme) -> [Color] {
         // Завершенные привычки всегда зеленые
         if isCompleted || isExceeded {
-            return getCompletedColors(isExceeded: isExceeded)
+            return getCompletedColors(isExceeded: isExceeded, colorScheme: colorScheme)
         }
         
         // Для незавершенных - используем цвет привычки или app color как fallback
         let baseColor = habit?.iconColor.color ?? selectedColor.color
-        return generateSmallRingColors(from: baseColor)
+        return generateProgressColors(from: baseColor, colorScheme: colorScheme)
     }
     
     // MARK: - Private Helper Methods
     
-    /// Зеленые цвета для завершенных привычек (неизменяемые)
-    private func getCompletedColors(isExceeded: Bool) -> [Color] {
+    /// Зеленые цвета для завершенных привычек
+    private func getCompletedColors(isExceeded: Bool, colorScheme: ColorScheme) -> [Color] {
         if isExceeded {
-            // Более темный зеленый для превышенных целей
-            return [
-                Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1)),
-                Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1)),
-                Color(#colorLiteral(red: 0.1411764706, green: 0.4274509804, blue: 0.2666666667, alpha: 1)),
-                Color(#colorLiteral(red: 0.2470588235, green: 0.6196078431, blue: 0.1960784314, alpha: 1)),
-                Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1))
-            ]
+            let baseGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
+            let habitMintColor = HabitIconColor.mint.color
+            
+            if colorScheme == .dark {
+                return [
+                    baseGreen.opacity(0.7),
+                    baseGreen.opacity(0.8),
+                    habitMintColor,
+                    habitMintColor,
+                    baseGreen.opacity(0.7)
+                ]
+            } else {
+                return [
+                    baseGreen.opacity(0.9),
+                    baseGreen,
+                    habitMintColor.opacity(0.6),
+                    habitMintColor.opacity(0.8),
+                    baseGreen.opacity(0.9)
+                ]
+            }
         } else {
-            // Обычный зеленый для завершенных
-            return [
-                Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1)),
-                Color(#colorLiteral(red: 0.1803921569, green: 0.5450980392, blue: 0.3411764706, alpha: 1)),
-                Color(#colorLiteral(red: 0.8196078431, green: 1, blue: 0.8352941176, alpha: 1)),
-                Color(#colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1)),
-                Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
-            ]
+            let baseGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
+            
+            if colorScheme == .dark {
+                return [
+                    baseGreen.opacity(0.7),
+                    baseGreen.opacity(0.8),
+                    baseGreen,
+                    baseGreen,
+                    baseGreen.opacity(0.7)
+                ]
+            } else {
+                return [
+                    baseGreen.opacity(0.9),
+                    baseGreen,
+                    baseGreen.opacity(0.4),
+                    baseGreen.opacity(0.6),
+                    baseGreen.opacity(0.9)
+                ]
+            }
         }
     }
     
-    /// Генерация градиента для больших колец прогресса
-    private func generateProgressColors(from baseColor: Color) -> [Color] {
-        return [
-            baseColor.opacity(0.9),  // Темное начало
-            baseColor,               // Полная яркость
-            baseColor.opacity(0.2),  // Очень светлый
-            baseColor.opacity(0.5),  // Средний
-            baseColor.opacity(0.9)   // Обратно к темному для плавного градиента
-        ]
-    }
     
-    /// Генерация градиента для маленьких колец (календарь, etc)
-    private func generateSmallRingColors(from baseColor: Color) -> [Color] {
-        return [
-            baseColor.opacity(0.3),  // Светлое начало
-            baseColor.opacity(0.5),  // Средний
-            baseColor.opacity(0.9),  // Темный
-            baseColor,               // Полная яркость
-            baseColor.opacity(0.3)   // Обратно к светлому
-        ]
+    /// Генерация градиента для колец прогресса
+    /// В темной теме - отзеркаленный градиент с другими opacity
+    private func generateProgressColors(from baseColor: Color, colorScheme: ColorScheme) -> [Color] {
+        if colorScheme == .dark {
+            // Темная тема: отзеркаленный градиент с мягкими opacity
+            return [
+                baseColor.opacity(0.7),
+                baseColor.opacity(0.8),
+                baseColor,
+                baseColor,
+                baseColor.opacity(0.7)
+            ]
+        } else {
+            // Светлая тема: как было
+            return [
+                baseColor.opacity(0.9),
+                baseColor,
+                baseColor.opacity(0.4),
+                baseColor.opacity(0.6),
+                baseColor.opacity(0.9)
+            ]
+        }
     }
+
 }

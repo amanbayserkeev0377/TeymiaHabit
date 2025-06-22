@@ -6,10 +6,12 @@ struct DayProgressItem: View, Equatable {
     let progress: Double
     let onTap: () -> Void
     var showProgressRing: Bool = true
-    var habit: Habit? = nil // ← НОВЫЙ ПАРАМЕТР
+    var habit: Habit? = nil
+    var isOverallProgress: Bool = false  // ✅ NEW: Флаг для общего прогресса
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ObservedObject private var colorManager = AppColorManager.shared
     
     private var calendar: Calendar {
         return Calendar.userPreferred
@@ -31,13 +33,30 @@ struct DayProgressItem: View, Equatable {
         date <= Date().addingTimeInterval(86400 * 365)
     }
     
-    // UPDATED: Use habit parameter for colors
+    // UPDATED: Properly determine isExceeded
     private var progressColors: [Color] {
         if progress > 0 {
-            return AppColorManager.shared.getSmallRingColors(
+            let isCompleted = progress >= 1.0
+            let isExceeded: Bool
+            
+            if isOverallProgress {
+                // Для общего прогресса: exceeded если средний progress > 1.0
+                isExceeded = progress > 1.0
+                
+                // DEBUG для отладки
+                if Calendar.current.isDateInToday(date) {
+                    print("🎯 DayProgressItem: Today progress=\(progress), isExceeded=\(isExceeded), isOverallProgress=\(isOverallProgress)")
+                }
+            } else {
+                // Для отдельной привычки: используем метод habit
+                isExceeded = habit?.isExceededForDate(date) ?? false
+            }
+            
+            return AppColorManager.shared.getRingColors(
                 for: habit,
-                isCompleted: progress >= 1.0,
-                isExceeded: false
+                isCompleted: isCompleted,
+                isExceeded: isExceeded,
+                colorScheme: colorScheme
             )
         } else {
             // No progress - gray colors
@@ -151,6 +170,7 @@ struct DayProgressItem: View, Equatable {
         lhs.isSelected == rhs.isSelected &&
         abs(lhs.progress - rhs.progress) < 0.01 &&
         lhs.showProgressRing == rhs.showProgressRing &&
-        lhs.habit?.id == rhs.habit?.id // ← ДОБАВЛЯЕМ СРАВНЕНИЕ HABIT
+        lhs.habit?.id == rhs.habit?.id &&
+        lhs.isOverallProgress == rhs.isOverallProgress  // ✅ Добавляем новый параметр
     }
 }

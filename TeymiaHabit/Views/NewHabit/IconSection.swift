@@ -16,7 +16,8 @@ struct IconSection: View {
                     .withIOSSettingsIcon(lightColors: [
                         Color(.purple),
                         Color(.pink)
-                    ])
+                    ], fontSize: 16
+                    )
                 
                 Text("icon".localized)
                 
