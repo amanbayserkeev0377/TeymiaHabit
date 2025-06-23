@@ -18,6 +18,9 @@ struct MainTabView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     
+    // What's New state
+    @State private var showingWhatsNew = false
+    
     var body: some View {
         TabView {
             NavigationStack {
@@ -43,6 +46,22 @@ struct MainTabView: View {
         }
         .preferredColorScheme(themeMode.colorScheme)
         .withAppColor()
+        .onAppear {
+            checkAndShowWhatsNew()
+        }
+        .sheet(isPresented: $showingWhatsNew) {
+            WhatsNewView()
+        }
+    }
+    
+    // MARK: - What's New Logic
+    private func checkAndShowWhatsNew() {
+        // Check once when app loads
+        if WhatsNewManager.shouldShowWhatsNew() {
+            // Small delay to let the app fully load
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                showingWhatsNew = true
+            }
+        }
     }
 }
-

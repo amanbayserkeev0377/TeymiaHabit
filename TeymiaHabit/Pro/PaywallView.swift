@@ -3,8 +3,8 @@ import RevenueCat
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(ProManager.self) private var proManager
-    @ObservedObject private var colorManager = AppColorManager.shared
     
     @State private var selectedPackage: Package?
     @State private var showingAlert = false
@@ -67,16 +67,7 @@ struct PaywallView: View {
                 .padding(.horizontal, 24)
                 .padding(.vertical, 20)
             }
-            .background(
-                LinearGradient(
-                    colors: [
-                        Color(uiColor: .systemBackground),
-                        ProGradientColors.proAccentColor.opacity(0.05)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
+            .background(backgroundGradient)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     XmarkView(action: {
@@ -99,6 +90,26 @@ struct PaywallView: View {
         }
     }
     
+    // MARK: - Background Gradient (те же цвета что в WhatsNew)
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: colorScheme == .dark ? [
+                // Темная тема - те же тона что в WhatsNew
+                Color(#colorLiteral(red: 0.1215686275, green: 0.1294117647, blue: 0.1607843137, alpha: 1)), // Темно-серый с фиолетовым
+                Color(#colorLiteral(red: 0.1568627451, green: 0.1647058824, blue: 0.2196078431, alpha: 1)), // Темно-синий
+                Color(#colorLiteral(red: 0.1843137255, green: 0.1725490196, blue: 0.2588235294, alpha: 1))  // Темно-фиолетовый
+            ] : [
+                // Светлая тема - те же тона что в WhatsNew
+                Color(#colorLiteral(red: 0.9098039216, green: 0.9176470588, blue: 0.9647058824, alpha: 1)), // Очень светлый лавандовый
+                Color(#colorLiteral(red: 0.8235294118, green: 0.8470588235, blue: 0.9215686275, alpha: 1)), // Мягкий фиолетовый
+                Color(#colorLiteral(red: 0.7450980392, green: 0.7803921569, blue: 0.8784313725, alpha: 1))  // Чуть темнее
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
+    
     // MARK: - Header Section
     private var headerSection: some View {
         VStack(spacing: 20) {
@@ -113,6 +124,7 @@ struct PaywallView: View {
                 Text("paywall_header_title".localized)
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                     .multilineTextAlignment(.center)
                 
                 Spacer()
@@ -128,7 +140,7 @@ struct PaywallView: View {
     private var featuresSection: some View {
         VStack(spacing: 20) {
             ForEach(ProFeature.allFeatures, id: \.id) { feature in
-                FeatureRow(feature: feature)
+                FeatureRow(feature: feature, colorScheme: colorScheme)
             }
         }
     }
@@ -166,7 +178,8 @@ struct PaywallView: View {
                     // Show Lifetime card
                     LifetimePricingCard(
                         package: package,
-                        isSelected: selectedPackage?.identifier == package.identifier
+                        isSelected: selectedPackage?.identifier == package.identifier,
+                        colorScheme: colorScheme
                     ) {
                         selectedPackage = package
                         HapticManager.shared.playSelection()
@@ -176,7 +189,8 @@ struct PaywallView: View {
                     PricingCard(
                         package: package,
                         isSelected: selectedPackage?.identifier == package.identifier,
-                        offering: offering
+                        offering: offering,
+                        colorScheme: colorScheme
                     ) {
                         selectedPackage = package
                         HapticManager.shared.playSelection()
@@ -186,36 +200,57 @@ struct PaywallView: View {
         }
     }
     
-    // MARK: - Purchase Button
+    // MARK: - Purchase Button (красивая как в WhatsNew)
     private var purchaseButton: some View {
         Button {
             purchaseSelected()
         } label: {
             HStack(spacing: 12) {
-                if isPurchasing { // Изменено: убрали isLoading
+                if isPurchasing {
                     ProgressView()
                         .scaleEffect(0.9)
-                        .tint(.white)
+                        .tint(colorScheme == .dark ? .white : .black)
                 } else {
                     Image(systemName: isLifetimeSelected ? "infinity" : "star.fill")
-                        .font(.system(size: 18))
+                        .font(.system(size: 18, weight: .medium))
                 }
                 
                 Text(buttonText)
                     .font(.headline)
                     .fontWeight(.semibold)
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(colorScheme == .dark ? .white : .black)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
-            .background(buttonBackground)
+            .frame(height: 56)
+            .background(
+                LinearGradient(
+                    colors: colorScheme == .dark ? [
+                        Color.white.opacity(0.15),
+                        Color.white.opacity(0.05)
+                    ] : [
+                        Color.black.opacity(0.08),
+                        Color.black.opacity(0.04)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        colorScheme == .dark
+                            ? Color.white.opacity(0.2)
+                            : Color.black.opacity(0.15),
+                        lineWidth: 1
+                    )
+            )
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: buttonShadowColor.opacity(0.3), radius: 8, x: 0, y: 4)
         }
-        .disabled(selectedPackage == nil || isPurchasing) // Убрали isLoading
-        .opacity(selectedPackage == nil || isPurchasing ? 0.6 : 1.0) // Убрали isLoading
-        .scaleEffect(isPurchasing ? 0.98 : 1.0) // Изменено
-        .animation(.easeInOut(duration: 0.2), value: isPurchasing) // Изменено
+        .buttonStyle(.plain)
+        .scaleEffect(isPurchasing ? 0.95 : 1.0)
+        .disabled(selectedPackage == nil || isPurchasing)
+        .opacity(selectedPackage == nil || isPurchasing ? 0.6 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: isPurchasing)
     }
     
     private var isLifetimeSelected: Bool {
@@ -223,24 +258,8 @@ struct PaywallView: View {
         return selectedPackage.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase
     }
     
-    private var buttonBackground: LinearGradient {
-        if isLifetimeSelected {
-            return LinearGradient(
-                colors: [Color.orange, Color.red],
-                startPoint: .bottomLeading,
-                endPoint: .topTrailing
-            )
-        } else {
-            return ProGradientColors.proGradientSimple
-        }
-    }
-    
-    private var buttonShadowColor: Color {
-        isLifetimeSelected ? .orange : ProGradientColors.proAccentColor
-    }
-    
     private var buttonText: String {
-        if isPurchasing { // Изменено: убрали isLoading
+        if isPurchasing {
             return "paywall_processing_button".localized
         }
         
@@ -257,7 +276,7 @@ struct PaywallView: View {
         }
     }
     
-    // MARK: - Footer Section
+    // MARK: - Footer Section (адаптивный текст)
     private var footerSection: some View {
         VStack(spacing: 20) {
             // Restore button
@@ -265,12 +284,12 @@ struct PaywallView: View {
                 restorePurchases()
             }
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
             
             // Regional pricing notice
             Text("paywall_regional_pricing_notice".localized)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
                 .padding(.horizontal, 8)
@@ -301,7 +320,7 @@ struct PaywallView: View {
             // Legal text
             Text("paywall_legal_text".localized)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
             
@@ -313,7 +332,7 @@ struct PaywallView: View {
                     }
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 
                 Button("Privacy Policy") {
                     if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
@@ -321,12 +340,12 @@ struct PaywallView: View {
                     }
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
             }
         }
     }
     
-    // MARK: - Helper Methods
+    // MARK: - Helper Methods (остаются те же)
     
     private func selectDefaultPackage() {
         guard let offerings = proManager.offerings,
@@ -394,7 +413,7 @@ struct PaywallView: View {
     }
 }
 
-// MARK: - Pro Feature Model
+// MARK: - Pro Feature Model (остается тот же)
 struct ProFeature {
     let id = UUID()
     let icon: String
@@ -430,9 +449,10 @@ struct ProFeature {
     ]
 }
 
-// MARK: - Feature Row
+// MARK: - Feature Row (адаптивный текст)
 struct FeatureRow: View {
     let feature: ProFeature
+    let colorScheme: ColorScheme
     
     var body: some View {
         HStack(spacing: 16) {
@@ -458,10 +478,11 @@ struct FeatureRow: View {
                 Text(feature.title)
                     .font(.headline)
                     .fontWeight(.semibold)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 
                 Text(feature.description)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
                     .lineLimit(2)
             }
             
@@ -471,11 +492,12 @@ struct FeatureRow: View {
     }
 }
 
-// MARK: - Pricing Card
+// MARK: - Pricing Card (адаптивные цвета)
 struct PricingCard: View {
     let package: Package
     let isSelected: Bool
     let offering: Offering
+    let colorScheme: ColorScheme
     let onTap: () -> Void
     
     private var isMonthly: Bool {
@@ -504,6 +526,23 @@ struct PricingCard: View {
     }
     
     var body: some View {
+        let cardBackground = colorScheme == .dark
+            ? Color.white.opacity(0.08)
+            : Color.white.opacity(0.6)
+        
+        let strokeColor = isSelected
+            ? ProGradientColors.proAccentColor
+            : (colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.1))
+        
+        let strokeWidth: CGFloat = isSelected ? 2 : 1
+        
+        let shadowColor = isSelected
+            ? ProGradientColors.proAccentColor.opacity(0.2)
+            : Color.clear
+        
+        let shadowRadius: CGFloat = isSelected ? 8 : 0
+        let shadowY: CGFloat = isSelected ? 4 : 0
+        
         Button(action: {
             onTap()
         }) {
@@ -512,11 +551,11 @@ struct PricingCard: View {
                     Text(planName)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                     
                     Text(descriptionText)
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
                 }
                 
                 Spacer()
@@ -525,7 +564,7 @@ struct PricingCard: View {
                     Text(priceText)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                     
                     if isYearly {
                         Text("paywall_free_trial_label".localized)
@@ -545,53 +584,49 @@ struct PricingCard: View {
             .padding(.vertical, 18)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                    .fill(cardBackground)
             )
-            .background(cardShadow)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(strokeColor, lineWidth: strokeWidth)
+                    .stroke(strokeColor, lineWidth: strokeWidth)
+            )
+            .shadow(
+                color: shadowColor,
+                radius: shadowRadius,
+                x: 0,
+                y: shadowY
             )
         }
         .buttonStyle(.plain)
         .animation(.easeInOut(duration: 0.2), value: isSelected)
     }
-    
-    private var strokeColor: Color {
-        if isSelected {
-            return ProGradientColors.proAccentColor
-        } else {
-            return Color(.separator)
-        }
-    }
-    
-    private var strokeWidth: CGFloat {
-        isSelected ? 2.5 : 0.8
-    }
-    
-    private var cardShadow: some View {
-        Group {
-            if isSelected {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.clear)
-                    .shadow(
-                        color: ProGradientColors.proAccentColor.opacity(0.2),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-            }
-        }
-    }
 }
 
-// MARK: - Lifetime Pricing Card
+// MARK: - Lifetime Pricing Card (адаптивная)
 struct LifetimePricingCard: View {
     let package: Package
     let isSelected: Bool
+    let colorScheme: ColorScheme
     let onTap: () -> Void
     
     var body: some View {
+        let cardBackground = colorScheme == .dark
+            ? Color.white.opacity(0.08)
+            : Color.white.opacity(0.6)
+        
+        let strokeColor = isSelected
+            ? Color.orange
+            : (colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.1))
+        
+        let strokeWidth: CGFloat = isSelected ? 2 : 1
+        
+        let shadowColor = isSelected
+            ? Color.orange.opacity(0.2)
+            : Color.clear
+        
+        let shadowRadius: CGFloat = isSelected ? 8 : 0
+        let shadowY: CGFloat = isSelected ? 4 : 0
+        
         Button(action: onTap) {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
@@ -599,7 +634,7 @@ struct LifetimePricingCard: View {
                         Text("paywall_lifetime_plan".localized)
                             .font(.headline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(colorScheme == .dark ? .white : .black)
                         
                         // "Best Value" badge
                         Text("paywall_best_value".localized)
@@ -622,7 +657,7 @@ struct LifetimePricingCard: View {
                     
                     Text("paywall_lifetime_description".localized)
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
                 }
                 
                 Spacer()
@@ -631,53 +666,31 @@ struct LifetimePricingCard: View {
                     Text(package.storeProduct.localizedPriceString)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                     
                     Text("paywall_one_time_payment".localized)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                    .fill(cardBackground)
             )
-            .background(cardShadow)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(strokeColor, lineWidth: strokeWidth)
+                    .stroke(strokeColor, lineWidth: strokeWidth)
+            )
+            .shadow(
+                color: shadowColor,
+                radius: shadowRadius,
+                x: 0,
+                y: shadowY
             )
         }
         .buttonStyle(.plain)
         .animation(.easeInOut(duration: 0.2), value: isSelected)
-    }
-    
-    private var strokeColor: Color {
-        if isSelected {
-            return Color.orange
-        } else {
-            return Color(.separator)
-        }
-    }
-    
-    private var strokeWidth: CGFloat {
-        isSelected ? 2.5 : 0.8
-    }
-    
-    private var cardShadow: some View {
-        Group {
-            if isSelected {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.clear)
-                    .shadow(
-                        color: Color.orange.opacity(0.2),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-            }
-        }
     }
 }
