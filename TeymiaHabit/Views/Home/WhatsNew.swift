@@ -1,4 +1,4 @@
-// MARK: - WhatsNew.swift (исправленный полный файл)
+// MARK: - WhatsNew.swift (обновленный с neutralButton)
 
 import SwiftUI
 
@@ -239,7 +239,7 @@ struct WhatsNewView: View {
         }
     }
     
-    // MARK: - Continue Button - кастомная с анимацией нажатия
+    // MARK: - Continue Button - с фиолетово-розовыми цветами
     private var continueButton: some View {
         Button {
             markAsSeenAndDismiss()
@@ -252,34 +252,11 @@ struct WhatsNewView: View {
                 Image(systemName: "arrow.right.circle.fill")
                     .font(.system(size: 18, weight: .medium))
             }
-            .foregroundStyle(colorScheme == .dark ? .white : .black)
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(
-                LinearGradient(
-                    colors: colorScheme == .dark ? [
-                        Color.white.opacity(0.15),
-                        Color.white.opacity(0.05)
-                    ] : [
-                        Color.black.opacity(0.08),
-                        Color.black.opacity(0.04)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        colorScheme == .dark
-                            ? Color.white.opacity(0.2)
-                            : Color.black.opacity(0.15),
-                        lineWidth: 1
-                    )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
         }
-        .buttonStyle(WhatsNewButtonStyle())
+        .neutralButton(
+            primaryColor: .purple.opacity(0.5),
+            secondaryColor: .pink
+        )
         .padding(.horizontal, 32)
         .opacity(buttonOpacity)
         .offset(y: buttonOffset)
@@ -290,16 +267,6 @@ struct WhatsNewView: View {
         WhatsNewManager.markAsSeen()
         HapticManager.shared.play(.success)
         dismiss()
-    }
-}
-
-// MARK: - Custom Button Style for What's New
-struct WhatsNewButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .opacity(configuration.isPressed ? 0.8 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 

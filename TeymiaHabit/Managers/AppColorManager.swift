@@ -9,20 +9,11 @@ final class AppColorManager: ObservableObject {
     
     // MARK: - Constants
     private struct ColorConstants {
-        static let completedBaseGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
+        static let completedLightGreen = Color(#colorLiteral(red: 0.4980392157, green: 0.9333333333, blue: 0.29019607843, alpha: 1))
+        static let completedDarkGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
         
-        struct Opacity {
-            // Light theme gradient points
-            static let lightStart: Double = 0.9
-            static let lightFull: Double = 1.0
-            static let lightMid: Double = 0.4
-            static let lightEnd: Double = 0.6
-            
-            // Dark theme gradient points
-            static let darkStart: Double = 0.7
-            static let darkMid: Double = 0.8
-            static let darkFull: Double = 1.0
-        }
+        static let exceededLightMint = Color(#colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1))
+        static let exceededDarkMint = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
     }
     
     private let availableColors: [HabitIconColor] = [
@@ -46,8 +37,7 @@ final class AppColorManager: ObservableObject {
         return availableColors
     }
     
-    /// Universal method for getting ring colors for any habit state
-    /// Works for both regular and small rings
+    /// НОВЫЙ метод для получения чистых цветов кольца (адаптивная логика по темам)
     func getRingColors(
         for habit: Habit?,
         isCompleted: Bool,
@@ -55,19 +45,45 @@ final class AppColorManager: ObservableObject {
         colorScheme: ColorScheme
     ) -> [Color] {
         let habitState = HabitState(isCompleted: isCompleted, isExceeded: isExceeded)
-        let baseColor = resolveBaseColor(for: habit)
         
-        return generateColors(for: habitState, baseColor: baseColor, colorScheme: colorScheme)
+        switch habitState {
+        case .completed:
+            // Чистый зеленый градиент (адаптивный)
+            let light = ColorConstants.completedLightGreen
+            let dark = ColorConstants.completedDarkGreen
+            
+            return colorScheme == .dark
+            ? [light, dark, dark, light]       // Темная тема: light→dark→light
+            : [dark, light, light, dark]       // Светлая тема: dark→light→dark
+            
+        case .exceeded:
+            // Чистый мятный градиент (адаптивный)
+            let light = ColorConstants.exceededLightMint
+            let dark = ColorConstants.exceededDarkMint
+            
+            return colorScheme == .dark
+                ? [light, dark, dark, light]
+                : [dark, light, light, dark]
+            
+        case .inProgress:
+            // Чистые цвета привычки (адаптивная логика как в старой версии)
+            let habitColor = habit?.iconColor ?? selectedColor
+            let light = habitColor.lightColor
+            let dark = habitColor.darkColor
+            
+            return colorScheme == .dark
+            ?     [light, dark, dark, light]
+        // Темная тема: светлее→темнее→светлее
+            : [dark, light, light, dark]       // Светлая тема: темнее→светлее→темнее
+        }
     }
-    
-    /// Legacy method for backward compatibility
+    /// Legacy method - теперь просто вызывает новый метод
     func getSmallRingColors(
         for habit: Habit?,
         isCompleted: Bool,
         isExceeded: Bool,
         colorScheme: ColorScheme
     ) -> [Color] {
-        // Same logic as regular rings - no need for separate implementation
         return getRingColors(
             for: habit,
             isCompleted: isCompleted,
@@ -75,9 +91,15 @@ final class AppColorManager: ObservableObject {
             colorScheme: colorScheme
         )
     }
+    
+    /// Метод для получения чистого градиента кнопок
+    func getButtonGradient(for habit: Habit?) -> LinearGradient {
+        let habitColor = habit?.iconColor ?? selectedColor
+        return habitColor.gradient
+    }
 }
 
-// MARK: - Private Helpers
+// MARK: - Private Helpers (упрощенные)
 private extension AppColorManager {
     
     func loadSavedColor() {
@@ -87,55 +109,9 @@ private extension AppColorManager {
         }
         selectedColor = savedColor
     }
-    
-    func resolveBaseColor(for habit: Habit?) -> Color {
-        return habit?.iconColor.color ?? selectedColor.color
-    }
-    
-    func generateColors(
-        for state: HabitState,
-        baseColor: Color,
-        colorScheme: ColorScheme
-    ) -> [Color] {
-        switch state {
-        case .completed:
-            return createCompletedGradient(colorScheme: colorScheme)
-        case .exceeded:
-            return createExceededGradient(colorScheme: colorScheme)
-        case .inProgress:
-            return createProgressGradient(baseColor: baseColor, colorScheme: colorScheme)
-        }
-    }
-    
-    func createCompletedGradient(colorScheme: ColorScheme) -> [Color] {
-        let green = ColorConstants.completedBaseGreen
-        let opacity = ColorConstants.Opacity.self
-        
-        return colorScheme == .dark
-            ? [green.opacity(opacity.darkStart), green.opacity(opacity.darkMid), green, green, green.opacity(opacity.darkStart)]
-            : [green.opacity(opacity.lightStart), green, green.opacity(opacity.lightMid), green.opacity(opacity.lightEnd), green.opacity(opacity.lightStart)]
-    }
-    
-    func createExceededGradient(colorScheme: ColorScheme) -> [Color] {
-        let green = ColorConstants.completedBaseGreen
-        let mint = HabitIconColor.mint.color
-        let opacity = ColorConstants.Opacity.self
-        
-        return colorScheme == .dark
-            ? [green.opacity(opacity.darkStart), green.opacity(opacity.darkMid), mint, mint, green.opacity(opacity.darkStart)]
-            : [green.opacity(opacity.lightStart), green, mint.opacity(opacity.lightEnd), mint.opacity(opacity.darkMid), green.opacity(opacity.lightStart)]
-    }
-    
-    func createProgressGradient(baseColor: Color, colorScheme: ColorScheme) -> [Color] {
-        let opacity = ColorConstants.Opacity.self
-        
-        return colorScheme == .dark
-            ? [baseColor.opacity(opacity.darkStart), baseColor.opacity(opacity.darkMid), baseColor, baseColor, baseColor.opacity(opacity.darkStart)]
-            : [baseColor.opacity(opacity.lightStart), baseColor, baseColor.opacity(opacity.lightMid), baseColor.opacity(opacity.lightEnd), baseColor.opacity(opacity.lightStart)]
-    }
 }
 
-// MARK: - Supporting Types
+// MARK: - Supporting Types (упрощенные)
 extension AppColorManager {
     
     /// Represents the current state of a habit for color determination
