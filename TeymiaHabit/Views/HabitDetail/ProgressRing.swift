@@ -149,13 +149,12 @@ struct ProgressRingCircle: View {
     
     var body: some View {
         Circle()
-            .trim(from: 0, to: min(progress, 1.0)) // Ограничиваем до 100%
+            .trim(from: 0, to: min(progress, 1.0))
             .stroke(
-                AngularGradient(
+                LinearGradient(
                     colors: ringColors,
-                    center: .center,
-                    startAngle: .degrees(0),
-                    endAngle: .degrees(360)
+                    startPoint: .leading, // leading при повороте -90° = визуальный top
+                    endPoint: .trailing // trailing при повороте -90° = визуальный bottom
                 ),
                 style: StrokeStyle(
                     lineWidth: lineWidth,

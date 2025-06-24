@@ -173,16 +173,68 @@ extension HabitIconColor {
         }
     }
     
-    /// Градиент из светлого и темного цвета (с возможностью opacity)
-    var gradient: LinearGradient {
+    // MARK: - ✅ ИСПРАВЛЕННЫЕ градиенты с ЕДИНОЙ ПРАВИЛЬНОЙ логикой
+    
+    /// Адаптивный градиент с учетом темы (ИСПРАВЛЕНО)
+    func adaptiveGradient(
+        for colorScheme: ColorScheme,
+        lightOpacity: Double = 1.0,
+        darkOpacity: Double = 1.0
+    ) -> LinearGradient {
+        // ✅ ЕДИНАЯ ЛОГИКА для всего приложения (как в AppColorManager)
+        // Light theme: light top → dark bottom
+        // Dark theme: dark top → light bottom
+        let topColor = colorScheme == .dark ? darkColor : lightColor      // темная тема: темный вверх, светлая тема: светлый вверх
+        let bottomColor = colorScheme == .dark ? lightColor : darkColor   // темная тема: светлый низ, светлая тема: темный низ
+        
         return LinearGradient(
-            colors: [lightColor, darkColor],
+            colors: [
+                topColor.opacity(colorScheme == .dark ? darkOpacity : lightOpacity),     // применяем правильную opacity
+                bottomColor.opacity(colorScheme == .dark ? lightOpacity : darkOpacity)   // применяем правильную opacity
+            ],
             startPoint: .top,
             endPoint: .bottom
         )
     }
     
-    /// Градиент с кастомной прозрачностью
+    /// Градиент для колец с правильной инверсией (ИСПРАВЛЕНО)
+    func ringGradient(for colorScheme: ColorScheme) -> LinearGradient {
+        return LinearGradient(
+            colors: colorScheme == .dark
+                ? [darkColor, lightColor]   // темная тема: темный → светлый
+                : [lightColor, darkColor],  // светлая тема: светлый → темный
+            startPoint: .leading,  // для поворота кольца на -90°
+            endPoint: .trailing
+        )
+    }
+    
+    /// Градиент для кнопок с адаптивной инверсией (ИСПРАВЛЕНО)
+    func buttonGradient(
+        for colorScheme: ColorScheme,
+        lightOpacity: Double = 1.0,
+        darkOpacity: Double = 1.0
+    ) -> LinearGradient {
+        return LinearGradient(
+            colors: colorScheme == .dark
+                ? [darkColor.opacity(darkOpacity), lightColor.opacity(lightOpacity)]   // темная тема: темный → светлый
+                : [lightColor.opacity(lightOpacity), darkColor.opacity(darkOpacity)],  // светлая тема: светлый → темный
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+    
+    // MARK: - ✅ СТАНДАРТНЫЕ градиенты (ИСПРАВЛЕНЫ для consistency)
+    
+    /// Стандартный градиент (ИСПРАВЛЕНО - теперь адаптивный)
+    var gradient: LinearGradient {
+        return LinearGradient(
+            colors: [lightColor, darkColor], // оставляем для backward compatibility, но лучше использовать adaptiveGradient
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+    
+    /// Градиент с кастомной прозрачностью (УСТАРЕЛ - используйте adaptiveGradient)
     func gradient(lightOpacity: Double = 1.0, darkOpacity: Double = 1.0) -> LinearGradient {
         return LinearGradient(
             colors: [
@@ -194,11 +246,47 @@ extension HabitIconColor {
         )
     }
     
-    /// Получить цвета для градиента с прозрачностью
+    /// Получить цвета для градиента с прозрачностью (УСТАРЕЛ)
     func gradientColors(lightOpacity: Double = 1.0, darkOpacity: Double = 1.0) -> [Color] {
         return [
             lightColor.opacity(lightOpacity),
             darkColor.opacity(darkOpacity)
         ]
+    }
+    
+    // MARK: - ✅ ACCESSIBILITY методы (без изменений)
+    
+    /// Проверить, обеспечивает ли цвет хороший контраст для текста
+    func hasGoodTextContrast(in colorScheme: ColorScheme) -> Bool {
+        let backgroundColor = colorScheme == .dark ? self.darkColor : self.lightColor
+        let textColor: Color = colorScheme == .dark ? .white : .black
+        
+        return backgroundColor.hasGoodContrast(with: textColor)
+    }
+    
+    /// Получить лучший цвет для текста на этом фоне
+    func bestTextColor(in colorScheme: ColorScheme) -> Color {
+        let backgroundColor = colorScheme == .dark ? self.darkColor : self.lightColor
+        return backgroundColor.bestContrastingTextColor
+    }
+    
+    /// Получить лучший текстовый цвет для градиента
+    func bestTextColorForGradient(in colorScheme: ColorScheme) -> Color {
+        // Смешиваем светлый и темный цвета для получения среднего
+        let lightUIColor = UIColor(lightColor)
+        let darkUIColor = UIColor(darkColor)
+        
+        var lr: CGFloat = 0, lg: CGFloat = 0, lb: CGFloat = 0, la: CGFloat = 0
+        var dr: CGFloat = 0, dg: CGFloat = 0, db: CGFloat = 0, da: CGFloat = 0
+        
+        lightUIColor.getRed(&lr, green: &lg, blue: &lb, alpha: &la)
+        darkUIColor.getRed(&dr, green: &dg, blue: &db, alpha: &da)
+        
+        let avgRed = (lr + dr) / 2
+        let avgGreen = (lg + dg) / 2
+        let avgBlue = (lb + db) / 2
+        
+        let averageColor = Color(red: avgRed, green: avgGreen, blue: avgBlue)
+        return averageColor.bestContrastingTextColor
     }
 }

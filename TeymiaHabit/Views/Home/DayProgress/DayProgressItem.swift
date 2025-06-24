@@ -132,11 +132,10 @@ struct DayProgressItem: View, Equatable {
                         Circle()
                             .trim(from: 0, to: progress)
                             .stroke(
-                                AngularGradient(
+                                LinearGradient(
                                     colors: progressColors,
-                                    center: .center,
-                                    startAngle: .degrees(0),
-                                    endAngle: .degrees(360)
+                                    startPoint: .leading,
+                                    endPoint: .trailing
                                 ),
                                 style: StrokeStyle(
                                     lineWidth: lineWidth,

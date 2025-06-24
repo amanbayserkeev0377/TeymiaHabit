@@ -11,6 +11,8 @@ struct ActionButtonsSection: View {
     @State private var resetPressed = false
     @State private var togglePressed = false
     @State private var manualEntryPressed = false
+    
+    @Environment(\.colorScheme) private var colorScheme
         
     var body: some View {
         HStack(spacing: 18) {
@@ -28,7 +30,7 @@ struct ActionButtonsSection: View {
             .errorHaptic(trigger: resetPressed)
             
             if habit.type == .time {
-                // 2. Play/Pause - обычная иконка без фона
+                // 2. Play/Pause - ✅ ИСПРАВЛЕННЫЙ градиент с единой логикой
                 Button {
                     togglePressed.toggle()
                     onTimerToggle()
@@ -36,16 +38,7 @@ struct ActionButtonsSection: View {
                     Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
                         .font(.system(size: 42))
                         .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [
-                                    habit.iconColor.color.opacity(0.5),
-                                    habit.iconColor.color.opacity(0.9)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .foregroundStyle(adaptivePlayButtonGradient)
                         .frame(minWidth: 52, minHeight: 52)
                 }
                 .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
@@ -67,5 +60,40 @@ struct ActionButtonsSection: View {
         .frame(maxWidth: 300)
         .frame(maxWidth: .infinity)
         .frame(height: 80)
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// ✅ ИСПРАВЛЕННЫЙ адаптивный градиент с единой логикой приложения
+    private var adaptivePlayButtonGradient: LinearGradient {
+        if habit.iconColor == .primary {
+            // ✅ Для primary используем ту же логику что в AppColorManager и BeautifulButtonStyle
+            return LinearGradient(
+                colors: colorScheme == .dark ? [
+                    Color.secondary.opacity(0.8),   // темная тема: серый вверх
+                    Color.primary                   // белый низ
+                ] : [
+                    Color.secondary.opacity(0.8),   // светлая тема: серый вверх
+                    Color.primary                   // черный низ
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        } else {
+            // ✅ Для остальных цветов используем единую логику
+            return LinearGradient(
+                colors: colorScheme == .dark ? [
+                    // ТЕМНАЯ тема: темный → светлый
+                    habit.iconColor.darkColor,
+                    habit.iconColor.lightColor.opacity(0.8)
+                ] : [
+                    // СВЕТЛАЯ тема: светлый → темный
+                    habit.iconColor.lightColor.opacity(0.8),
+                    habit.iconColor.darkColor
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
     }
 }

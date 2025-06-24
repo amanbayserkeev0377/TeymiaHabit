@@ -9,11 +9,11 @@ final class AppColorManager: ObservableObject {
     
     // MARK: - Constants
     private struct ColorConstants {
-        static let completedLightGreen = Color(#colorLiteral(red: 0.4980392157, green: 0.9333333333, blue: 0.29019607843, alpha: 1))
-        static let completedDarkGreen = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
+        static let completedLightGreen = Color(#colorLiteral(red: 0.48, green: 0.96, blue: 0.32, alpha: 1))
+        static let completedDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.7, blue: 0.1, alpha: 1))
         
-        static let exceededLightMint = Color(#colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1))
-        static let exceededDarkMint = Color(#colorLiteral(red: 0.2980392157, green: 0.7333333333, blue: 0.09019607843, alpha: 1))
+        static let exceededLightMint = Color(#colorLiteral(red: 0.4, green: 0.9, blue: 1, alpha: 1))
+        static let exceededDarkGreen = Color(#colorLiteral(red: 0.15, green: 0.6, blue: 0.08, alpha: 1))
     }
     
     private let availableColors: [HabitIconColor] = [
@@ -37,56 +37,79 @@ final class AppColorManager: ObservableObject {
         return availableColors
     }
     
-    /// НОВЫЙ метод для получения чистых цветов кольца (адаптивная логика по темам)
+    /// Get ring colors for progress rings
+    /// Returns gradient array accounting for -90° rotation in ProgressRingCircle
     func getRingColors(
         for habit: Habit?,
         isCompleted: Bool,
         isExceeded: Bool,
         colorScheme: ColorScheme
     ) -> [Color] {
+        let visualColors = getVisualRingColors(
+            for: habit,
+            isCompleted: isCompleted,
+            isExceeded: isExceeded,
+            colorScheme: colorScheme
+        )
+        
+        // Convert visual order to gradient array order for rotated ring
+        // Due to -90° rotation: gradient[0] = visual bottom, gradient[1] = visual top
+        return [visualColors.bottom, visualColors.top]
+    }
+    
+    /// Get colors in intuitive visual order (what user actually sees)
+    /// Returns (top: Color, bottom: Color) as displayed to user
+    private func getVisualRingColors(
+        for habit: Habit?,
+        isCompleted: Bool,
+        isExceeded: Bool,
+        colorScheme: ColorScheme
+    ) -> (top: Color, bottom: Color) {
         let habitState = HabitState(isCompleted: isCompleted, isExceeded: isExceeded)
         
         switch habitState {
         case .completed:
-            // Чистый зеленый градиент (адаптивный)
-            let light = ColorConstants.completedLightGreen
-            let dark = ColorConstants.completedDarkGreen
+            let lightGreen = ColorConstants.completedLightGreen
+            let darkGreen = ColorConstants.completedDarkGreen
             
-            return colorScheme == .dark
-                ? [light, dark, dark, light]       // Темная тема: light→dark→light
-                : [dark, light, light, dark]       // Светлая тема: dark→light→dark
+            // Visual logic: light theme = light top → dark bottom, dark theme = dark top → light bottom
+            let visualTop = colorScheme == .dark ? darkGreen : lightGreen
+            let visualBottom = colorScheme == .dark ? lightGreen : darkGreen
+            
+            return (top: visualTop, bottom: visualBottom)
             
         case .exceeded:
-            // Чистый мятный градиент (адаптивный)
-            let light = ColorConstants.exceededLightMint
-            let dark = ColorConstants.exceededDarkMint
+            let lightMint = ColorConstants.exceededLightMint
+            let darkGreen = ColorConstants.exceededDarkGreen
             
-            return colorScheme == .dark
-                ? [light, dark, dark, light]
-                : [dark, light, light, dark]
+            let visualTop = colorScheme == .dark ? darkGreen : lightMint
+            let visualBottom = colorScheme == .dark ? lightMint : darkGreen
+            
+            return (top: visualTop, bottom: visualBottom)
             
         case .inProgress:
-            // Специальная логика для primary цвета
             let habitColor = habit?.iconColor ?? selectedColor
             
             if habitColor == .primary {
-                // Для primary создаем черно-белый градиент по темам
-                return colorScheme == .dark
-                    ? [Color.white, Color.gray, Color.gray, Color.white]           // Темная тема: белый градиент
-                    : [Color.black, Color.gray, Color.gray, Color.black]          // Светлая тема: черный градиент
-            } else {
-                // Для остальных цветов используем обычную логику
-                let light = habitColor.lightColor
-                let dark = habitColor.darkColor
+                // Primary uses system colors for best contrast
+                let visualTop = Color.secondary     // Gray at top (what user sees)
+                let visualBottom = Color.primary    // Black/White at bottom (what user sees)
                 
-                return colorScheme == .dark
-                    ? [light, dark, dark, light]        // Темная тема: светлее→темнее→светлее
-                    : [dark, light, light, dark]         // Светлая тема: темнее→светлее→темнее
+                return (top: visualTop, bottom: visualBottom)
+            } else {
+                let lightColor = habitColor.lightColor
+                let darkColor = habitColor.darkColor
+                
+                // Standard logic: light theme = light top → dark bottom, dark theme = dark top → light bottom
+                let visualTop = colorScheme == .dark ? darkColor : lightColor
+                let visualBottom = colorScheme == .dark ? lightColor : darkColor
+                
+                return (top: visualTop, bottom: visualBottom)
             }
         }
     }
     
-    /// Legacy method - теперь просто вызывает новый метод
+    /// Legacy method - delegates to new implementation
     func getSmallRingColors(
         for habit: Habit?,
         isCompleted: Bool,
@@ -101,14 +124,14 @@ final class AppColorManager: ObservableObject {
         )
     }
     
-    /// Метод для получения чистого градиента кнопок
+    /// Get gradient for buttons (standard top→bottom without rotation)
     func getButtonGradient(for habit: Habit?) -> LinearGradient {
         let habitColor = habit?.iconColor ?? selectedColor
         return habitColor.gradient
     }
 }
 
-// MARK: - Private Helpers (упрощенные)
+// MARK: - Private Helpers
 private extension AppColorManager {
     
     func loadSavedColor() {
@@ -120,7 +143,7 @@ private extension AppColorManager {
     }
 }
 
-// MARK: - Supporting Types (упрощенные)
+// MARK: - Supporting Types
 extension AppColorManager {
     
     /// Represents the current state of a habit for color determination
@@ -140,3 +163,30 @@ extension AppColorManager {
         }
     }
 }
+
+// MARK: - 📝 DEVELOPER DOCUMENTATION
+
+/*
+🎯 RING GRADIENT SYSTEM EXPLANATION:
+
+WHY THE COMPLEXITY?
+ProgressRingCircle uses LinearGradient with .leading → .trailing direction and -90° rotation.
+This rotation is necessary so the ring starts at 12 o'clock (top) instead of 3 o'clock (right).
+
+COORDINATE TRANSFORMATION:
+- Without rotation: .leading = left, .trailing = right
+- With -90° rotation: .leading = top, .trailing = bottom (visually)
+- Gradient array [0, 1] maps to [.leading, .trailing] = [visual top, visual bottom]
+- BUT we want to think in visual terms: [visual bottom, visual top]
+
+SOLUTION:
+1. getVisualRingColors() - Think in visual terms: what does user see?
+2. getRingColors() - Convert visual order to gradient array order
+3. Result: Code reads naturally, works correctly
+
+VISUAL LOGIC (consistent across all states):
+- Light theme: light top → dark bottom
+- Dark theme: dark top → light bottom
+
+This creates natural depth perception and follows iOS design principles.
+*/
