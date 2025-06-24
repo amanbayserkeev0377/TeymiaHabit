@@ -342,22 +342,7 @@
 
 /* ===================== What's New ===================== */
 "whats_new_title" = "What's New";
-"whats_new_subtitle" = "Teymia Habit 1.1";
-"whats_new_description" = "Discover the latest improvements to help you build better habits";
-
-// Features
-"whats_new_statistics_title" = "Beautiful Statistics";
-"whats_new_statistics_description" = "Track your progress with interactive line charts, bar charts, and detailed insights about your habits.";
-
-"whats_new_colorful_rings_title" = "Colorful Progress Rings";
-"whats_new_colorful_rings_description" = "Each habit now displays in its own vibrant color, making it easier to track multiple habits at a glance.";
-
-"whats_new_activity_heatmap_title" = "Activity Heatmap";
-"whats_new_activity_heatmap_description" = "Visualize your consistency throughout the year with an intuitive activity heatmap for all your habits.";
-
-/* ===================== What's New ===================== */
-"whats_new_title" = "What's New";
-"whats_new_title_full" = "What's New in";
+"whats_new_title_full" = "What's New";
 "whats_new_version" = "Version 1.1";
 "whats_new_subtitle" = "Version 1.1";
 "whats_new_description" = "Discover the latest improvements to help you build better habits";

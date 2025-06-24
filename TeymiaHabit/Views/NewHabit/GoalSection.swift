@@ -38,10 +38,15 @@ struct GoalSection: View {
             if selectedType == .count {
                 HStack(spacing: 12) {
                     Image(systemName: "number")
-                        .foregroundStyle(Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1)).opacity(0.8))
-                        .font(.system(size: 22))
-                        .frame(width: 30)
-                        .clipped()
+                        .withGradientIcon(
+                            colors: [
+                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),  // светлый зеленый
+                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))   // темный зеленый
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom,
+                            fontSize: 16
+                        )
                     
                     TextField("goalsection_enter_count".localized, text: $countText)
                         .keyboardType(.numberPad)
@@ -55,11 +60,16 @@ struct GoalSection: View {
                 }
             } else {
                 HStack(spacing: 12) {
-                    Image(systemName: "clock")
-                        .foregroundStyle(Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1)).opacity(0.8))
-                        .font(.system(size: 22))
-                        .frame(width: 30)
-                        .clipped()
+                    Image(systemName: "clock.fill")
+                        .withGradientIcon(
+                            colors: [
+                                Color(#colorLiteral(red: 0.3, green: 0.6, blue: 0.8, alpha: 1)),  // светлый синий
+                                Color(#colorLiteral(red: 0.1, green: 0.3, blue: 0.6, alpha: 1))   // темный синий
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom,
+                            fontSize: 16
+                        )
                     
                     Text("goalsection_choose_time".localized)
                         .foregroundStyle(.secondary)

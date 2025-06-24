@@ -1,5 +1,3 @@
-// MARK: - WhatsNew.swift (обновленный с neutralButton)
-
 import SwiftUI
 
 // MARK: - What's New Feature Data
@@ -7,13 +5,13 @@ struct WhatsNewFeature {
     let icon: String
     let title: String
     let description: String
-    let accentColor: Color?
+    let habitColor: HabitIconColor // ✅ Изменили с Color на HabitIconColor
     
-    init(icon: String, title: String, description: String, accentColor: Color? = nil) {
+    init(icon: String, title: String, description: String, habitColor: HabitIconColor) {
         self.icon = icon
         self.title = title
         self.description = description
-        self.accentColor = accentColor
+        self.habitColor = habitColor
     }
 }
 
@@ -31,25 +29,25 @@ struct WhatsNewView: View {
     @State private var buttonOpacity: Double = 0
     @State private var buttonOffset: CGFloat = 30
     
-    // MARK: - Features for Version 1.1 - все градиентные
+    // MARK: - Features for Version 1.1 - ✅ обновленные с HabitIconColor
     private let features: [WhatsNewFeature] = [
         WhatsNewFeature(
             icon: "chart.line.uptrend.xyaxis",
             title: "whats_new_statistics_title".localized,
             description: "whats_new_statistics_description".localized,
-            accentColor: .green // Для градиента blue→green
+            habitColor: .blue // Аналитика и данные
         ),
         WhatsNewFeature(
             icon: "paintbrush.pointed.fill",
             title: "whats_new_colorful_rings_title".localized,
             description: "whats_new_colorful_rings_description".localized,
-            accentColor: .purple // Для градиента purple→pink
+            habitColor: .purple // Креативность и дизайн
         ),
         WhatsNewFeature(
             icon: "calendar.badge.checkmark",
             title: "whats_new_activity_heatmap_title".localized,
             description: "whats_new_activity_heatmap_description".localized,
-            accentColor: .orange // Для градиента orange→red
+            habitColor: .green // Успех и завершение
         )
     ]
     
@@ -178,48 +176,17 @@ struct WhatsNewView: View {
         .offset(y: featuresOffset)
     }
     
-    // MARK: - Feature Row - градиенты как в PaywallView
+    // MARK: - Feature Row - ✅ используем единую логику градиентов
     private func featureRow(_ feature: WhatsNewFeature, index: Int) -> some View {
         HStack(alignment: .top, spacing: 16) {
-            // Icon - используем градиенты как в PaywallView
-            switch feature.icon {
-            case "chart.line.uptrend.xyaxis":
-                Image(systemName: feature.icon)
-                    .withGradientCircle(
-                        colors: [Color.blue, Color.cyan],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing,
-                        size: 48,
-                        iconSize: 20
-                    )
-            case "paintbrush.pointed.fill":
-                Image(systemName: feature.icon)
-                    .withGradientCircle(
-                        colors: [Color.purple, Color.pink],
-                        startPoint: .top,
-                        endPoint: .bottom,
-                        size: 48,
-                        iconSize: 20
-                    )
-            case "calendar.badge.checkmark":
-                Image(systemName: feature.icon)
-                    .withGradientCircle(
-                        colors: [Color.red, Color.orange],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing,
-                        size: 48,
-                        iconSize: 20
-                    )
-            default:
-                Image(systemName: feature.icon)
-                    .withGradientCircle(
-                        colors: [Color.orange, Color.yellow],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing,
-                        size: 48,
-                        iconSize: 20
-                    )
-            }
+            // Icon - ✅ единая логика для всех иконок
+            Image(systemName: feature.icon)
+                .withAdaptiveGradientCircle(
+                    habitColor: feature.habitColor,
+                    colorScheme: colorScheme,
+                    size: 48,
+                    iconSize: 20
+                )
             
             // Content
             VStack(alignment: .leading, spacing: 4) {
@@ -239,7 +206,7 @@ struct WhatsNewView: View {
         }
     }
     
-    // MARK: - Continue Button - с фиолетово-розовыми цветами
+    // MARK: - Continue Button - ✅ используем цвет приложения
     private var continueButton: some View {
         Button {
             markAsSeenAndDismiss()
@@ -253,9 +220,10 @@ struct WhatsNewView: View {
                     .font(.system(size: 18, weight: .medium))
             }
         }
-        .neutralButton(
-            primaryColor: HabitIconColor.purple.lightColor.opacity(0.8),
-            secondaryColor: HabitIconColor.pink.darkColor
+        .beautifulButton(
+            isEnabled: true,
+            lightOpacity: 0.9,
+            darkOpacity: 1.0
         )
         .padding(.horizontal, 32)
         .opacity(buttonOpacity)
@@ -265,15 +233,95 @@ struct WhatsNewView: View {
     // MARK: - Actions
     private func markAsSeenAndDismiss() {
         WhatsNewManager.markAsSeen()
-        HapticManager.shared.play(.success)
+        HapticManager.shared.play(.success) // ✅ Оставляем .success - это важное завершающее действие
         dismiss()
     }
 }
 
-// MARK: - Circle Icon Modifiers (упрощенные)
-struct GradientCircleModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
+// MARK: - ✅ Adaptive Gradient Circle Modifier (с единой логикой)
+struct AdaptiveGradientCircleModifier: ViewModifier {
+    let habitColor: HabitIconColor
+    let colorScheme: ColorScheme
+    let size: CGFloat
+    let iconSize: CGFloat
     
+    func body(content: Content) -> some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: colorScheme == .dark ? [
+                            // ТЕМНАЯ тема: темный → светлый
+                            habitColor.darkColor,
+                            habitColor.lightColor.opacity(0.8)
+                        ] : [
+                            // СВЕТЛАЯ тема: светлый → темный
+                            habitColor.lightColor.opacity(0.8),
+                            habitColor.darkColor
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: size, height: size)
+                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+            
+            content
+                .font(.system(size: iconSize, weight: .medium))
+                .foregroundStyle(.white)
+        }
+    }
+}
+
+// MARK: - ✅ Обновленные расширения
+extension View {
+    /// ✅ Новый метод с адаптивным градиентом по единой логике
+    func withAdaptiveGradientCircle(
+        habitColor: HabitIconColor,
+        colorScheme: ColorScheme,
+        size: CGFloat = 48,
+        iconSize: CGFloat = 20
+    ) -> some View {
+        modifier(AdaptiveGradientCircleModifier(
+            habitColor: habitColor,
+            colorScheme: colorScheme,
+            size: size,
+            iconSize: iconSize
+        ))
+    }
+    
+    /// ✅ Обновленный метод с единой логикой (для обратной совместимости)
+    func withGradientCircle(
+        colors: [Color],
+        startPoint: UnitPoint = .top,
+        endPoint: UnitPoint = .bottom,
+        size: CGFloat = 48,
+        iconSize: CGFloat = 20
+    ) -> some View {
+        modifier(GradientCircleModifier(
+            gradientColors: colors,
+            startPoint: startPoint,
+            endPoint: endPoint,
+            size: size,
+            iconSize: iconSize
+        ))
+    }
+    
+    func withColoredCircle(
+        color: Color,
+        size: CGFloat = 48,
+        iconSize: CGFloat = 20
+    ) -> some View {
+        modifier(ColoredCircleModifier(
+            color: color,
+            size: size,
+            iconSize: iconSize
+        ))
+    }
+}
+
+// MARK: - Legacy Gradient Circle Modifier (для обратной совместимости)
+struct GradientCircleModifier: ViewModifier {
     let gradientColors: [Color]
     let startPoint: UnitPoint
     let endPoint: UnitPoint
@@ -319,37 +367,7 @@ struct ColoredCircleModifier: ViewModifier {
     }
 }
 
-extension View {
-    func withGradientCircle(
-        colors: [Color],
-        startPoint: UnitPoint = .top,
-        endPoint: UnitPoint = .bottom,
-        size: CGFloat = 48,
-        iconSize: CGFloat = 20
-    ) -> some View {
-        modifier(GradientCircleModifier(
-            gradientColors: colors,
-            startPoint: startPoint,
-            endPoint: endPoint,
-            size: size,
-            iconSize: iconSize
-        ))
-    }
-    
-    func withColoredCircle(
-        color: Color,
-        size: CGFloat = 48,
-        iconSize: CGFloat = 20
-    ) -> some View {
-        modifier(ColoredCircleModifier(
-            color: color,
-            size: size,
-            iconSize: iconSize
-        ))
-    }
-}
-
-// MARK: - What's New Manager (тот же)
+// MARK: - What's New Manager (без изменений)
 struct WhatsNewManager {
     private static let currentVersion = "1.1.0"
     private static let whatsNewKey = "hasSeenWhatsNew_\(currentVersion.replacingOccurrences(of: ".", with: "_"))"

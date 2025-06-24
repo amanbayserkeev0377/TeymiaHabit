@@ -10,25 +10,37 @@ struct SettingsIconModifier: ViewModifier {
         content
             .foregroundStyle(
                 colorScheme == .dark ?
+                // ✅ ТЕМНАЯ тема: иконка цветная с единой логикой
                 LinearGradient(
-                    colors: lightColors,
+                    colors: [
+                        lightColors.first ?? .blue,    // светлый вверх
+                        lightColors.last ?? .blue      // темный низ
+                    ],
                     startPoint: .top,
                     endPoint: .bottom
                 ) :
+                // ✅ СВЕТЛАЯ тема: иконка белая
                 LinearGradient(colors: [.white, .white], startPoint: .top, endPoint: .bottom)
             )
             .font(.system(size: fontSize, weight: .medium))
             .frame(width: 29, height: 29)
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(LinearGradient(
-                        colors: colorScheme == .dark ? [
-                            Color(#colorLiteral(red: 0.2605174184, green: 0.2605243921, blue: 0.260520637, alpha: 1)),
-                            Color(#colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1))
-                        ] : lightColors,
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ))
+                    .fill(
+                        LinearGradient(
+                            colors: colorScheme == .dark ? [
+                                // ✅ ТЕМНАЯ тема: серый фон с единой логикой (темный → светлый)
+                                Color(#colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)),
+                                Color(#colorLiteral(red: 0.2605174184, green: 0.2605243921, blue: 0.260520637, alpha: 1))
+                            ] : [
+                                // ✅ СВЕТЛАЯ тема: цветной фон с единой логикой (светлый → темный)
+                                lightColors.first ?? .blue,
+                                lightColors.last ?? .blue
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .stroke(
@@ -68,8 +80,8 @@ struct GradientIconModifier: ViewModifier {
                     colorScheme == .dark ?
                     LinearGradient(
                         colors: [
-                            Color(#colorLiteral(red: 0.2605174184, green: 0.2605243921, blue: 0.260520637, alpha: 1)),
-                            Color(#colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1))
+                            Color(#colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)),
+                            Color(#colorLiteral(red: 0.2605174184, green: 0.2605243921, blue: 0.260520637, alpha: 1))
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -80,9 +92,8 @@ struct GradientIconModifier: ViewModifier {
                 .overlay(
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .stroke(
-                            colorScheme == .dark ?
-                            Color.white.opacity(0.5) : Color.gray.opacity(0.3),
-                            lineWidth: colorScheme == .dark ? 0.2 : 0.4
+                            Color.primary.opacity(0.1),
+                            lineWidth:  0.5
                         )
                 )
             
