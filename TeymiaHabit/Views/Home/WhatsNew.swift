@@ -254,8 +254,8 @@ struct WhatsNewView: View {
             }
         }
         .neutralButton(
-            primaryColor: .purple.opacity(0.5),
-            secondaryColor: .pink
+            primaryColor: HabitIconColor.purple.lightColor.opacity(0.8),
+            secondaryColor: HabitIconColor.pink.darkColor
         )
         .padding(.horizontal, 32)
         .opacity(buttonOpacity)

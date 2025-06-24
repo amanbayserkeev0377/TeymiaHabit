@@ -53,8 +53,8 @@ final class AppColorManager: ObservableObject {
             let dark = ColorConstants.completedDarkGreen
             
             return colorScheme == .dark
-            ? [light, dark, dark, light]       // Темная тема: light→dark→light
-            : [dark, light, light, dark]       // Светлая тема: dark→light→dark
+                ? [light, dark, dark, light]       // Темная тема: light→dark→light
+                : [dark, light, light, dark]       // Светлая тема: dark→light→dark
             
         case .exceeded:
             // Чистый мятный градиент (адаптивный)
@@ -66,17 +66,26 @@ final class AppColorManager: ObservableObject {
                 : [dark, light, light, dark]
             
         case .inProgress:
-            // Чистые цвета привычки (адаптивная логика как в старой версии)
+            // Специальная логика для primary цвета
             let habitColor = habit?.iconColor ?? selectedColor
-            let light = habitColor.lightColor
-            let dark = habitColor.darkColor
             
-            return colorScheme == .dark
-            ?     [light, dark, dark, light]
-        // Темная тема: светлее→темнее→светлее
-            : [dark, light, light, dark]       // Светлая тема: темнее→светлее→темнее
+            if habitColor == .primary {
+                // Для primary создаем черно-белый градиент по темам
+                return colorScheme == .dark
+                    ? [Color.white, Color.gray, Color.gray, Color.white]           // Темная тема: белый градиент
+                    : [Color.black, Color.gray, Color.gray, Color.black]          // Светлая тема: черный градиент
+            } else {
+                // Для остальных цветов используем обычную логику
+                let light = habitColor.lightColor
+                let dark = habitColor.darkColor
+                
+                return colorScheme == .dark
+                    ? [light, dark, dark, light]        // Темная тема: светлее→темнее→светлее
+                    : [dark, light, light, dark]         // Светлая тема: темнее→светлее→темнее
+            }
         }
     }
+    
     /// Legacy method - теперь просто вызывает новый метод
     func getSmallRingColors(
         for habit: Habit?,

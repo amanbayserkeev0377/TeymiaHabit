@@ -1,20 +1,81 @@
 import SwiftUI
 
-// MARK: - Button Configuration (обновленный под чистые цвета)
-struct ButtonConfiguration {
-    let gradientColors: [Color]
-    let strokeColor: Color
-    let strokeWidth: CGFloat
-    let shadowColor: Color
-    let shadowRadius: CGFloat
-    let shadowOffset: CGFloat
+// MARK: - Button Style Parameters (передаем параметры, не готовую конфигурацию)
+struct ButtonStyleParameters {
+    enum ButtonType {
+        case neutral(primaryColor: Color, secondaryColor: Color)
+        case colored(habitColor: HabitIconColor, opacity: Double)
+        case legacy(color: Color)
+    }
     
-    // Конфигурация для нейтральных кнопок (WhatsNew, etc)
-    static func neutral(
-        colorScheme: ColorScheme,
-        primaryColor: Color = .white,
-        secondaryColor: Color = .black
-    ) -> ButtonConfiguration {
+    let type: ButtonType
+    let isEnabled: Bool
+    let styleType: BeautifulButtonType
+}
+
+// MARK: - Beautiful Button Style (чистая архитектура)
+struct BeautifulButtonStyle: ButtonStyle {
+    let parameters: ButtonStyleParameters
+    
+    @Environment(\.colorScheme) private var colorScheme // Правильный доступ к теме!
+    
+    // Главный инициализатор - только параметры, без логики
+    init(parameters: ButtonStyleParameters) {
+        self.parameters = parameters
+    }
+    
+    func makeBody(configuration: Configuration) -> some View {
+        let config = createConfiguration() // Здесь уже есть доступ к colorScheme!
+        
+        configuration.label
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(parameters.isEnabled ? textColor(for: config) : .secondary)
+            .frame(maxWidth: .infinity)
+            .frame(height: parameters.styleType.height)
+            .background(
+                LinearGradient(
+                    colors: parameters.isEnabled ? config.gradientColors : [Color.gray.opacity(0.3)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: parameters.styleType.cornerRadius)
+                    .stroke(
+                        parameters.isEnabled ? config.strokeColor : Color.gray.opacity(0.3),
+                        lineWidth: config.strokeWidth
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: parameters.styleType.cornerRadius))
+            .shadow(
+                color: parameters.isEnabled ? config.shadowColor : .clear,
+                radius: parameters.isEnabled ? config.shadowRadius : 0,
+                x: 0,
+                y: parameters.isEnabled ? config.shadowOffset : 0
+            )
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .scaleEffect(parameters.isEnabled ? 1.0 : 0.95)
+            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+            .animation(.easeInOut(duration: 0.2), value: parameters.isEnabled)
+            .disabled(!parameters.isEnabled)
+    }
+    
+    // MARK: - Private Helpers (с доступом к правильному colorScheme)
+    
+    private func createConfiguration() -> ButtonConfiguration {
+        switch parameters.type {
+        case .neutral(let primaryColor, let secondaryColor):
+            return createNeutralConfiguration(primaryColor: primaryColor, secondaryColor: secondaryColor)
+            
+        case .colored(let habitColor, let opacity):
+            return createColoredConfiguration(habitColor: habitColor, opacity: opacity)
+            
+        case .legacy(let color):
+            return createLegacyConfiguration(color: color)
+        }
+    }
+    
+    private func createNeutralConfiguration(primaryColor: Color, secondaryColor: Color) -> ButtonConfiguration {
         return ButtonConfiguration(
             gradientColors: colorScheme == .dark ? [
                 secondaryColor,  // В темной теме: инвертируем
@@ -35,155 +96,79 @@ struct ButtonConfiguration {
         )
     }
     
-    // Конфигурация для цветных кнопок (с HabitIconColor)
-    static func colored(
-        habitColor: HabitIconColor,
-        colorScheme: ColorScheme,
-        opacity: Double = 1.0
-    ) -> ButtonConfiguration {
-        return ButtonConfiguration(
-            gradientColors: habitColor.gradientColors(
-                lightOpacity: opacity,
-                darkOpacity: opacity
-            ),
-            strokeColor: colorScheme == .dark
-                ? Color.white.opacity(0.15)
-                : Color.black.opacity(0.12),  // Нейтральный stroke для объема
-            strokeWidth: 0.7,
-            shadowColor: colorScheme == .dark
-                ? .clear
-                : Color.black.opacity(0.1),
-            shadowRadius: colorScheme == .dark ? 0 : 6,
-            shadowOffset: colorScheme == .dark ? 0 : 3
-        )
-    }
-    
-    // Кастомная конфигурация (как было)
-    static func custom(
-        gradientColors: [Color],
-        strokeColor: Color,
-        strokeWidth: CGFloat = 1.0,
-        shadowColor: Color = .clear,
-        shadowRadius: CGFloat = 0,
-        shadowOffset: CGFloat = 0
-    ) -> ButtonConfiguration {
-        return ButtonConfiguration(
-            gradientColors: gradientColors,
-            strokeColor: strokeColor,
-            strokeWidth: strokeWidth,
-            shadowColor: shadowColor,
-            shadowRadius: shadowRadius,
-            shadowOffset: shadowOffset
-        )
-    }
-}
-
-// MARK: - Beautiful Button Style (обновленный)
-struct BeautifulButtonStyle: ButtonStyle {
-    let configuration: ButtonConfiguration
-    let isEnabled: Bool
-    let style: BeautifulButtonType
-    
-    @Environment(\.colorScheme) private var colorScheme
-    
-    init(configuration: ButtonConfiguration, isEnabled: Bool = true, style: BeautifulButtonType = .primary) {
-        self.configuration = configuration
-        self.isEnabled = isEnabled
-        self.style = style
-    }
-    
-    // Инициализатор для HabitIconColor
-    init(habitColor: HabitIconColor, isEnabled: Bool = true, style: BeautifulButtonType = .primary, opacity: Double = 1.0) {
-        self.isEnabled = isEnabled
-        self.style = style
-        
-        let colorScheme = UITraitCollection.current.userInterfaceStyle == .dark ? ColorScheme.dark : .light
-        
-        switch style {
-        case .neutral:
-            // Для neutral используем дефолтные цвета
-            self.configuration = .neutral(colorScheme: colorScheme)
-        default:
-            // Для цветных используем HabitIconColor
-            self.configuration = .colored(habitColor: habitColor, colorScheme: colorScheme, opacity: opacity)
-        }
-    }
-    
-    // Старый инициализатор для обратной совместимости
-    init(color: Color, isEnabled: Bool = true, style: BeautifulButtonType = .primary) {
-        self.isEnabled = isEnabled
-        self.style = style
-        
-        let colorScheme = UITraitCollection.current.userInterfaceStyle == .dark ? ColorScheme.dark : .light
-        
-        switch style {
-        case .neutral:
-            self.configuration = .neutral(colorScheme: colorScheme)
-        default:
-            // Эмулируем старое поведение через кастомную конфигурацию
-            self.configuration = .custom(
-                gradientColors: [color.opacity(0.5), color.opacity(0.8)],
-                strokeColor: colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.12),
+    private func createColoredConfiguration(habitColor: HabitIconColor, opacity: Double) -> ButtonConfiguration {
+        // Специальная логика для primary цвета
+        if habitColor == .primary {
+            return ButtonConfiguration(
+                gradientColors: colorScheme == .dark
+                    ? [Color.white.opacity(opacity), Color.gray.opacity(opacity)]
+                    : [Color.black.opacity(opacity), Color.gray.opacity(opacity)],
+                strokeColor: colorScheme == .dark
+                    ? Color.white.opacity(0.15)
+                    : Color.black.opacity(0.12),
                 strokeWidth: 0.7,
-                shadowColor: colorScheme == .dark ? .clear : Color.black.opacity(0.1),
+                shadowColor: colorScheme == .dark
+                    ? .clear
+                    : Color.black.opacity(0.1),
+                shadowRadius: colorScheme == .dark ? 0 : 6,
+                shadowOffset: colorScheme == .dark ? 0 : 3
+            )
+        } else {
+            // Для остальных цветов используем чистые lightColor/darkColor
+            return ButtonConfiguration(
+                gradientColors: [
+                    habitColor.lightColor.opacity(opacity),
+                    habitColor.darkColor.opacity(opacity)
+                ],
+                strokeColor: colorScheme == .dark
+                    ? Color.white.opacity(0.15)
+                    : Color.black.opacity(0.12),
+                strokeWidth: 0.7,
+                shadowColor: colorScheme == .dark
+                    ? .clear
+                    : Color.black.opacity(0.1),
                 shadowRadius: colorScheme == .dark ? 0 : 6,
                 shadowOffset: colorScheme == .dark ? 0 : 3
             )
         }
     }
     
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(isEnabled ? textColor : .secondary)
-            .frame(maxWidth: .infinity)
-            .frame(height: style.height)
-            .background(
-                LinearGradient(
-                    colors: isEnabled ? self.configuration.gradientColors : [Color.gray.opacity(0.3)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: style.cornerRadius)
-                    .stroke(
-                        isEnabled ? self.configuration.strokeColor : Color.gray.opacity(0.3),
-                        lineWidth: self.configuration.strokeWidth
-                    )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
-            .shadow(
-                color: isEnabled ? self.configuration.shadowColor : .clear,
-                radius: isEnabled ? self.configuration.shadowRadius : 0,
-                x: 0,
-                y: isEnabled ? self.configuration.shadowOffset : 0
-            )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .scaleEffect(isEnabled ? 1.0 : 0.95)
-            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
-            .animation(.easeInOut(duration: 0.2), value: isEnabled)
-            .disabled(!isEnabled)
+    private func createLegacyConfiguration(color: Color) -> ButtonConfiguration {
+        return ButtonConfiguration(
+            gradientColors: [color.opacity(0.5), color.opacity(0.8)],
+            strokeColor: colorScheme == .dark ? Color.white.opacity(0.15) : Color.black.opacity(0.12),
+            strokeWidth: 0.7,
+            shadowColor: colorScheme == .dark ? .clear : Color.black.opacity(0.1),
+            shadowRadius: colorScheme == .dark ? 0 : 6,
+            shadowOffset: colorScheme == .dark ? 0 : 3
+        )
     }
     
-    private var textColor: Color {
+    private func textColor(for config: ButtonConfiguration) -> Color {
         // Для neutral всегда черный/белый
-        if case .neutral = style {
+        if case .neutral = parameters.type {
             return colorScheme == .dark ? .white : .black
         }
         
         // Для цветных определяем контраст
-        let averageColor = configuration.gradientColors.first ?? .black
+        let averageColor = config.gradientColors.first ?? .black
         return averageColor.isLight ? .black : .white
     }
 }
 
+// MARK: - Button Configuration (упрощенная)
+struct ButtonConfiguration {
+    let gradientColors: [Color]
+    let strokeColor: Color
+    let strokeWidth: CGFloat
+    let shadowColor: Color
+    let shadowRadius: CGFloat
+    let shadowOffset: CGFloat
+}
+
 // MARK: - Button Types (без изменений)
 enum BeautifulButtonType {
-    case primary      // Цветные основные кнопки
-    case neutral      // Нейтральные кнопки
-    case secondary    // Второстепенные кнопки
-    case compact      // Компактные кнопки
+    case primary, neutral, secondary, compact
     
     var height: CGFloat {
         switch self {
@@ -202,7 +187,7 @@ enum BeautifulButtonType {
     }
 }
 
-// MARK: - Color Extensions (без изменений)
+// MARK: - Color Extensions
 extension Color {
     var isLight: Bool {
         let uiColor = UIColor(self)
@@ -217,100 +202,94 @@ extension Color {
     }
 }
 
-// MARK: - View Extensions (обновленные под HabitIconColor)
+// MARK: - View Extensions (чистые, без UITraitCollection!)
 extension View {
+    
+    // MARK: - Neutral кнопки
+    
     /// Нейтральная кнопка с дефолтными цветами
     func neutralButton(isEnabled: Bool = true) -> some View {
-        self.buttonStyle(BeautifulButtonStyle(
-            habitColor: .primary, // Не важно для neutral
+        let parameters = ButtonStyleParameters(
+            type: .neutral(primaryColor: .white, secondaryColor: .black),
             isEnabled: isEnabled,
-            style: .neutral
-        ))
+            styleType: .neutral
+        )
+        return self.buttonStyle(BeautifulButtonStyle(parameters: parameters))
     }
     
-    /// Нейтральная кнопка с кастомными цветами (адаптивный градиент)
+    /// Нейтральная кнопка с кастомными цветами
     func neutralButton(
         primaryColor: Color = .white,
         secondaryColor: Color = .black,
         isEnabled: Bool = true
     ) -> some View {
-        let colorScheme = UITraitCollection.current.userInterfaceStyle == .dark ? ColorScheme.dark : .light
-        let config = ButtonConfiguration.neutral(
-            colorScheme: colorScheme,
-            primaryColor: primaryColor,
-            secondaryColor: secondaryColor
+        let parameters = ButtonStyleParameters(
+            type: .neutral(primaryColor: primaryColor, secondaryColor: secondaryColor),
+            isEnabled: isEnabled,
+            styleType: .neutral
         )
-        
-        return self.buttonStyle(BeautifulButtonStyle(
-            configuration: config,
-            isEnabled: isEnabled,
-            style: .neutral
-        ))
+        return self.buttonStyle(BeautifulButtonStyle(parameters: parameters))
     }
     
-    /// Цветная кнопка с цветом приложения (через HabitIconColor)
-    func beautifulButton(isEnabled: Bool = true, style: BeautifulButtonType = .primary, opacity: Double = 1.0) -> some View {
-        self.buttonStyle(BeautifulButtonStyle(
-            habitColor: AppColorManager.shared.selectedColor,
+    // MARK: - Цветные кнопки
+    
+    /// Цветная кнопка с цветом приложения
+    func beautifulButton(
+        isEnabled: Bool = true,
+        style: BeautifulButtonType = .primary,
+        opacity: Double = 1.0
+    ) -> some View {
+        let parameters = ButtonStyleParameters(
+            type: .colored(habitColor: AppColorManager.shared.selectedColor, opacity: opacity),
             isEnabled: isEnabled,
-            style: style,
-            opacity: opacity
-        ))
+            styleType: style
+        )
+        return self.buttonStyle(BeautifulButtonStyle(parameters: parameters))
     }
     
-    /// Цветная кнопка с цветом привычки (через HabitIconColor)
-    func beautifulButton(habit: Habit, isEnabled: Bool = true, style: BeautifulButtonType = .primary, opacity: Double = 1.0) -> some View {
-        self.buttonStyle(BeautifulButtonStyle(
-            habitColor: habit.iconColor,
+    /// Цветная кнопка с цветом привычки
+    func beautifulButton(
+        habit: Habit,
+        isEnabled: Bool = true,
+        style: BeautifulButtonType = .primary,
+        opacity: Double = 1.0
+    ) -> some View {
+        let parameters = ButtonStyleParameters(
+            type: .colored(habitColor: habit.iconColor, opacity: opacity),
             isEnabled: isEnabled,
-            style: style,
-            opacity: opacity
-        ))
+            styleType: style
+        )
+        return self.buttonStyle(BeautifulButtonStyle(parameters: parameters))
     }
     
     /// Цветная кнопка с кастомным HabitIconColor
-    func beautifulButton(habitColor: HabitIconColor, isEnabled: Bool = true, style: BeautifulButtonType = .primary, opacity: Double = 1.0) -> some View {
-        self.buttonStyle(BeautifulButtonStyle(
-            habitColor: habitColor,
+    func beautifulButton(
+        habitColor: HabitIconColor,
+        isEnabled: Bool = true,
+        style: BeautifulButtonType = .primary,
+        opacity: Double = 1.0
+    ) -> some View {
+        let parameters = ButtonStyleParameters(
+            type: .colored(habitColor: habitColor, opacity: opacity),
             isEnabled: isEnabled,
-            style: style,
-            opacity: opacity
-        ))
+            styleType: style
+        )
+        return self.buttonStyle(BeautifulButtonStyle(parameters: parameters))
     }
     
-    /// Цветная кнопка с кастомным Color (для обратной совместимости)
-    func beautifulButton(color: Color, isEnabled: Bool = true, style: BeautifulButtonType = .primary) -> some View {
-        self.buttonStyle(BeautifulButtonStyle(
-            color: color,
-            isEnabled: isEnabled,
-            style: style
-        ))
-    }
+    // MARK: - Обратная совместимость
     
-    /// Кнопка с полностью кастомной конфигурацией
-    func customButton(
-        gradientColors: [Color],
-        strokeColor: Color,
-        strokeWidth: CGFloat = 1.0,
-        shadowColor: Color = .clear,
-        shadowRadius: CGFloat = 0,
-        shadowOffset: CGFloat = 0,
+    /// Цветная кнопка с кастомным Color (legacy)
+    func beautifulButton(
+        color: Color,
         isEnabled: Bool = true,
         style: BeautifulButtonType = .primary
     ) -> some View {
-        let config = ButtonConfiguration.custom(
-            gradientColors: gradientColors,
-            strokeColor: strokeColor,
-            strokeWidth: strokeWidth,
-            shadowColor: shadowColor,
-            shadowRadius: shadowRadius,
-            shadowOffset: shadowOffset
-        )
-        
-        return self.buttonStyle(BeautifulButtonStyle(
-            configuration: config,
+        let parameters = ButtonStyleParameters(
+            type: .legacy(color: color),
             isEnabled: isEnabled,
-            style: style
-        ))
+            styleType: style
+        )
+        return self.buttonStyle(BeautifulButtonStyle(parameters: parameters))
     }
 }

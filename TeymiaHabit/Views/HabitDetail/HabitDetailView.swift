@@ -215,7 +215,7 @@ struct HabitDetailView: View {
             Text(viewModel.isAlreadyCompleted ? "completed".localized : "complete".localized)
         }
         .beautifulButton(
-            color: habit.iconColor.color,
+            habit: habit,  // Вместо color: habit.iconColor.color
             isEnabled: !viewModel.isAlreadyCompleted
         )
         .modifier(HapticManager.shared.sensoryFeedback(.impact(weight: .medium), trigger: !viewModel.isAlreadyCompleted))
