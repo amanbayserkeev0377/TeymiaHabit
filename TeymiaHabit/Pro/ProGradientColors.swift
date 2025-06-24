@@ -4,12 +4,13 @@ import SwiftUI
 struct ProGradientColors {
     static let proGradient = LinearGradient(
         colors: [
+            Color(#colorLiteral(red: 0.3609918654, green: 0.7860431075, blue: 0.9797958732, alpha: 1)),
             Color(#colorLiteral(red: 0.4925274849, green: 0.5225450397, blue: 0.9995061755, alpha: 1)),
-            Color(#colorLiteral(red: 0.6020479798, green: 0.4322265685, blue: 0.9930816293, alpha: 1)),
-            Color(#colorLiteral(red: 0.8248458505, green: 0.4217056334, blue: 0.8538249135, alpha: 1))
+            Color(#colorLiteral(red: 0.5651029348, green: 0.4914609194, blue: 0.9916761518, alpha: 1)),
+            Color(#colorLiteral(red: 0.8493401408, green: 0.3309155107, blue: 0.6768040061, alpha: 1))
         ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
+        startPoint: .bottomLeading,
+        endPoint: .topTrailing
     )
     
     static let proGradientSimple = LinearGradient(
@@ -18,8 +19,8 @@ struct ProGradientColors {
             Color(#colorLiteral(red: 0.6020479798, green: 0.4322265685, blue: 0.9930816293, alpha: 1)),
             Color(#colorLiteral(red: 0.8248458505, green: 0.4217056334, blue: 0.8538249135, alpha: 1))
         ],
-        startPoint: .bottomLeading,
-        endPoint: .topTrailing
+        startPoint: .leading,
+        endPoint: .trailing
     )
     
     // Для текста/иконок - берем средний цвет
