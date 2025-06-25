@@ -272,6 +272,12 @@
 "paywall_lifetime_description" = "Pay once, use forever";
 "paywall_one_time_payment" = "One-time payment";
 "paywall_get_lifetime_button" = "Get Lifetime Access";
+"paywall_save_badge" = "Save 60%";
+"paywall_get_lifetime" = "Get Lifetime";
+"paywall_subscribe" = "Subscribe";
+"paywall_start_trial_monthly" = "Start 7 days free %@/month";
+"paywall_continue" = "Continue";
+
 
 /* ===================== Settings: Teymia Habit - version===================== */
 "Teymia Habit – %@ %@" = "Teymia Habit – %1$@ %2$@";

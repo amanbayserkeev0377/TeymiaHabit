@@ -16,6 +16,14 @@ struct SettingsView: View {
                 
                 ProSettingsSection()
                 
+#if DEBUG
+                Section("Debug Controls") {
+                    Button("Toggle Pro Status") {
+                        ProManager.shared.toggleProStatusForTesting()
+                    }
+                }
+#endif
+                
                 // Appearance
                 Section(
                     header: Text("settings_header_appearance".localized),
@@ -148,15 +156,7 @@ struct SettingsView: View {
                     .tint(.primary)
                     .disabled(isRestoring)
                 }
-                
-#if DEBUG
-                Section("Debug Controls") {
-                    Button("Toggle Pro Status") {
-                        ProManager.shared.toggleProStatusForTesting()
-                    }
-                }
-#endif
-                
+                                
                 // Teymia Habit - version ...
                 Section {
                     VStack(spacing: 4) {

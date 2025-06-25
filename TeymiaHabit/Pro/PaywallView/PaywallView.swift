@@ -14,42 +14,50 @@ struct PaywallView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 32) {
-                    // Header with laurels and app icon
-                    PaywallHeaderSection(colorScheme: colorScheme)
-                    
-                    // Features grid
-                    PaywallFeaturesSection(colorScheme: colorScheme)
-                    
-                    // Pricing options
-                    if let offerings = proManager.offerings,
-                       let currentOffering = offerings.current,
-                       !currentOffering.availablePackages.isEmpty {
-                        pricingSection(currentOffering)
-                    } else {
-                        // Fallback UI for Apple reviewers
-                        PaywallFallbackView()
+            ZStack(alignment: .bottom) {
+                // Background
+                PaywallBackgroundGradient(colorScheme: colorScheme)
+                
+                // Main Content (ScrollView)
+                ScrollView {
+                    VStack(spacing: 32) {
+                        // Header with laurels
+                        PaywallHeaderSection(colorScheme: colorScheme)
+                        
+                        // Features section (теперь может быть сколько угодно длинным)
+                        PaywallExpandedFeaturesSection(colorScheme: colorScheme)
+                        
+                        // Additional content can go here
+                        // Testimonials, statistics, etc.
+                        
+                        // Bottom padding to account for overlay
+                        Color.clear
+                            .frame(height: 200) // Примерная высота overlay
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 20)
+                }
+                
+                // Bottom Overlay with Pricing
+                if let offerings = proManager.offerings,
+                   let currentOffering = offerings.current,
+                   !currentOffering.availablePackages.isEmpty {
                     
-                    // Purchase button
-                    PaywallPurchaseButton(
-                        selectedPackage: selectedPackage,
+                    PaywallBottomOverlay(
+                        offerings: offerings,
+                        selectedPackage: $selectedPackage,
                         isPurchasing: isPurchasing,
                         colorScheme: colorScheme
                     ) {
                         purchaseSelected()
                     }
+                    .ignoresSafeArea(.keyboard, edges: .bottom) // Поддержка клавиатуры
                     
-                    // Restore and legal
-                    PaywallFooterSection(colorScheme: colorScheme) {
-                        restorePurchases()
-                    }
+                } else {
+                    // Fallback for loading state
+                    PaywallFallbackOverlay(colorScheme: colorScheme)
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 20)
             }
-            .background(PaywallBackgroundGradient(colorScheme: colorScheme))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     XmarkView(action: {
@@ -72,61 +80,6 @@ struct PaywallView: View {
         }
     }
     
-    // MARK: - Pricing Section
-    private func pricingSection(_ offering: Offering) -> some View {
-        VStack(spacing: 16) {
-#if DEBUG
-            Text("DEBUG: \(offering.availablePackages.count) packages available")
-                .font(.caption)
-                .foregroundStyle(.red)
-#endif
-            // Sort packages: Lifetime first, then Yearly, then Monthly
-            let sortedPackages = offering.availablePackages.sorted { first, second in
-                // Lifetime first
-                if first.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase {
-                    return true
-                }
-                if second.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase {
-                    return false
-                }
-                // Then Yearly before Monthly
-                if first.packageType == .annual && second.packageType == .monthly {
-                    return true
-                }
-                if first.packageType == .monthly && second.packageType == .annual {
-                    return false
-                }
-                return false
-            }
-            
-            ForEach(sortedPackages, id: \.identifier) { package in
-                // Check if this is lifetime package
-                if package.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase {
-                    // Show Lifetime card
-                    LifetimePricingCard(
-                        package: package,
-                        isSelected: selectedPackage?.identifier == package.identifier,
-                        colorScheme: colorScheme
-                    ) {
-                        selectedPackage = package
-                        HapticManager.shared.playSelection()
-                    }
-                } else {
-                    // Show regular subscription card
-                    PricingCard(
-                        package: package,
-                        isSelected: selectedPackage?.identifier == package.identifier,
-                        offering: offering,
-                        colorScheme: colorScheme
-                    ) {
-                        selectedPackage = package
-                        HapticManager.shared.playSelection()
-                    }
-                }
-            }
-        }
-    }
-    
     // MARK: - Helper Methods
     
     private func selectDefaultPackage() {
@@ -134,7 +87,19 @@ struct PaywallView: View {
               let currentOffering = offerings.current,
               !currentOffering.availablePackages.isEmpty else { return }
         
-        // Find lifetime first
+        // ✅ ПРИОРИТЕТ 1: Yearly план (лучший для habit tracking)
+        if let yearlyPackage = currentOffering.annual {
+            selectedPackage = yearlyPackage
+            return
+        }
+        
+        // ✅ ПРИОРИТЕТ 2: Yearly через packageType (на случай если .annual не работает)
+        if let yearlyPackage = currentOffering.availablePackages.first(where: { $0.packageType == .annual }) {
+            selectedPackage = yearlyPackage
+            return
+        }
+        
+        // ✅ ПРИОРИТЕТ 3: Lifetime (если нет yearly)
         if let lifetimePackage = currentOffering.availablePackages.first(where: {
             $0.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase
         }) {
@@ -142,12 +107,8 @@ struct PaywallView: View {
             return
         }
         
-        // Otherwise prefer yearly, fallback to first package
-        if let yearlyPackage = currentOffering.annual {
-            selectedPackage = yearlyPackage
-        } else {
-            selectedPackage = currentOffering.availablePackages.first
-        }
+        // ✅ ПРИОРИТЕТ 4: Fallback на первый пакет
+        selectedPackage = currentOffering.availablePackages.first
     }
     
     private func purchaseSelected() {
@@ -192,5 +153,161 @@ struct PaywallView: View {
                 showingAlert = true
             }
         }
+    }
+}
+
+// MARK: - Expanded Features Section (больше фичей)
+struct PaywallExpandedFeaturesSection: View {
+    let colorScheme: ColorScheme
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Основные фичи
+            VStack(spacing: 20) {
+                ForEach(ProFeature.allFeatures, id: \.id) { feature in
+                    FeatureRow(feature: feature, colorScheme: colorScheme)
+                }
+            }
+            
+            // Дополнительные фичи (можно расширять)
+            VStack(spacing: 16) {
+                PaywallFeatureRowSimple(
+                    icon: "icloud.fill",
+                    title: "iCloud Sync",
+                    description: "Seamless synchronization across all your devices",
+                    color: .blue,
+                    colorScheme: colorScheme
+                )
+                
+                PaywallFeatureRowSimple(
+                    icon: "bell.fill",
+                    title: "Smart Reminders",
+                    description: "Intelligent notifications to keep you on track",
+                    color: .orange,
+                    colorScheme: colorScheme
+                )
+                
+                PaywallFeatureRowSimple(
+                    icon: "chart.line.uptrend.xyaxis",
+                    title: "Advanced Analytics",
+                    description: "Detailed insights and progress tracking",
+                    color: .green,
+                    colorScheme: colorScheme
+                )
+                
+                PaywallFeatureRowSimple(
+                    icon: "person.2.fill",
+                    title: "Family Sharing",
+                    description: "Share your Pro subscription with family members",
+                    color: .purple,
+                    colorScheme: colorScheme
+                )
+            }
+            
+            // Footer с restore и legal (перенесли в scroll content)
+            PaywallScrollableFooter(colorScheme: colorScheme) {
+                // Handle restore purchases
+                // Можно сделать через callback если нужно
+            }
+        }
+    }
+}
+
+// MARK: - Simple Feature Row (для дополнительных фичей)
+struct PaywallFeatureRowSimple: View {
+    let icon: String
+    let title: String
+    let description: String
+    let color: Color
+    let colorScheme: ColorScheme
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            // Simple icon
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(color)
+                .frame(width: 32, height: 32)
+            
+            // Text content
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
+                
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+                    .lineLimit(2)
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Scrollable Footer (restore + legal в content)
+struct PaywallScrollableFooter: View {
+    let colorScheme: ColorScheme
+    let onRestorePurchases: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // Restore button
+            Button("paywall_restore_purchases_button".localized) {
+                onRestorePurchases()
+            }
+            .font(.subheadline)
+            .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+            
+            // Legal text (более компактно)
+            Text("paywall_legal_text".localized)
+                .font(.caption)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+            
+            // Terms and Privacy
+            HStack(spacing: 30) {
+                Button("Terms of Service") {
+                    if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                
+                Button("Privacy Policy") {
+                    if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+            }
+        }
+        .padding(.top, 32)
+    }
+}
+
+// MARK: - Fallback Overlay (для loading state)
+struct PaywallFallbackOverlay: View {
+    let colorScheme: ColorScheme
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Loading subscription options...")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            
+            ProgressView()
+                .scaleEffect(1.2)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .padding(.horizontal, 20)
     }
 }

@@ -17,7 +17,7 @@ struct ProSettingsSection: View {
         }
     }
     
-    // MARK: - Pro Promo View (УЛУЧШЕННАЯ ВЕРСИЯ)
+    // MARK: - Pro Promo View (ЧИСТАЯ ВЕРСИЯ)
     private var proPromoView: some View {
         Button {
             showingPaywall = true
@@ -39,29 +39,19 @@ struct ProSettingsSection: View {
                     
                     // Центральный контент
                     VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text("Teymia Habit Pro")
-                                .font(.title3)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-                            
-                            Spacer()
-                            
-                            // Правая стрелочка
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.8))
-                        }
+                        Text("Teymia Habit Pro")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
                         
                         Text("paywall_7_days_free_trial".localized)
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.9))
+                            .foregroundStyle(.white)
                     }
-                }
-                
-                // Нижняя часть - FREE TRIAL кнопка
-                HStack(spacing: 12) {
-                    // FREE TRIAL кнопка - сразу запускает yearly подписку
+                    
+                    Spacer()
+                    
+                    // ✅ FREE TRIAL кнопка справа
                     Button {
                         startFreeTrial()
                     } label: {
@@ -76,7 +66,7 @@ struct ProSettingsSection: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: 16)
                                 .fill(.white.opacity(0.25))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
@@ -85,23 +75,10 @@ struct ProSettingsSection: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    
-                    Spacer()
-                    
-                    // Дополнительная информация - статичная (пока без ProManager расширения)
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("7 days")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.white)
-                        
-                        Text("then $19.99/year")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.8))
-                    }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 20) // Увеличили с 16 до 20 для большей высоты
+            .padding(.horizontal, 12)
+            .padding(.vertical, 20)
             .background(
                 // Многослойный background для объема
                 ZStack {
@@ -134,10 +111,9 @@ struct ProSettingsSection: View {
             )
             // Объемная тень
             .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
-            .shadow(color: Color.black.opacity(0.05), radius: 1, x: 0, y: 1) // Тонкая тень для четкости
+            .shadow(color: Color.black.opacity(0.05), radius: 1, x: 0, y: 1)
         }
         .buttonStyle(.plain)
-        .scaleEffect(1.0) // Убираем автоматический scale effect от Button
     }
     
     // MARK: - Start Free Trial (прямо запускает покупку yearly)
