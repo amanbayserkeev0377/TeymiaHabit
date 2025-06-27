@@ -229,8 +229,13 @@
 "contact_developer" = "Разработчик менен байланышуу";
 "report_bug" = "Катаны билдирүү";
 
+/* ===================== Settings: LEGAL ===================== */
+
 "terms_of_service" = "Кызмат шарттары";
 "privacy_policy" = "Купуялык Саясаты";
+"licenses" = "Лицензиялар";
+"licenses_section_attributions" = "Атрибуция";
+
 
 /* ===================== Settings - Purchases ===================== */
 "restore_purchases" = "Сатып алууларды кайталоо";
@@ -268,7 +273,6 @@
 "paywall_free_trial_label" = "АКЫСЫЗ";
 "paywall_7_days_free_trial" = "7 күн акысыз сыноо";
 "paywall_lifetime_plan" = "Түбөлүккө";
-"paywall_best_value" = "Эң пайдалуу";
 "paywall_lifetime_description" = "Бир жолу төлөп, түбөлүккө колдонуңуз";
 "paywall_one_time_payment" = "Бир жолку төлөм";
 "paywall_get_lifetime_button" = "Түбөлүк мүмкүнчүлүк алуу";

@@ -107,7 +107,7 @@ struct AboutSection: View {
                 .withExternalLinkIcon()
             }
             .tint(.primary)
-
+            
             // Contact Developer
             Button {
                 if let url = URL(string: "https://t.me/amanbayserkeev0377") {
@@ -160,7 +160,7 @@ struct AboutSection: View {
                 Label(
                     title: { Text("terms_of_service".localized) },
                     icon: {
-                        Image(systemName: "text.document")
+                        Image(systemName: "text.document.fill")
                             .withIOSSettingsIcon(lightColors: [
                                 Color(#colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)),
                                 Color(#colorLiteral(red: 0.3333333333, green: 0.3333333333, blue: 0.3333333333, alpha: 1))
@@ -180,7 +180,7 @@ struct AboutSection: View {
                 Label(
                     title: { Text("privacy_policy".localized) },
                     icon: {
-                        Image(systemName: "lock")
+                        Image(systemName: "lock.fill")
                             .withIOSSettingsIcon(lightColors: [
                                 Color(#colorLiteral(red: 0.5019607843, green: 0.5019607843, blue: 0.5019607843, alpha: 1)),
                                 Color(#colorLiteral(red: 0.2549019608, green: 0.2549019608, blue: 0.2549019608, alpha: 1))
@@ -190,6 +190,22 @@ struct AboutSection: View {
                 .withExternalLinkIcon()
             }
             .tint(.primary)
+            
+            // Licenses
+            NavigationLink {
+                LicensesView()
+            } label: {
+                Label(
+                    title: { Text("licenses".localized) },
+                    icon: {
+                        Image(systemName: "scroll.fill")
+                            .withIOSSettingsIcon(lightColors: [
+                                Color(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)),
+                                Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1))
+                                ])
+                    }
+                )
+            }
         }
     }
 }

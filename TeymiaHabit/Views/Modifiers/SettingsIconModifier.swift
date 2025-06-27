@@ -44,9 +44,8 @@ struct SettingsIconModifier: ViewModifier {
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .stroke(
-                                colorScheme == .dark ?
-                                Color.white.opacity(0.5) : Color.gray.opacity(0.5),
-                                lineWidth: colorScheme == .dark ? 0.2 : 0.4
+                                Color.gray.opacity(0.4),
+                                lineWidth:  0.4
                             )
                     )
             )
@@ -92,8 +91,8 @@ struct GradientIconModifier: ViewModifier {
                 .overlay(
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .stroke(
-                            Color.primary.opacity(0.1),
-                            lineWidth:  0.5
+                            Color.gray.opacity(0.4),
+                            lineWidth:  0.4
                         )
                 )
             

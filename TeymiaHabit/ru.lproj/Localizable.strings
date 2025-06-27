@@ -229,8 +229,13 @@
 "contact_developer" = "Связаться с разработчиком";
 "report_bug" = "Сообщить об ошибке";
 
+/* ===================== Settings: LEGAL ===================== */
+
 "terms_of_service" = "Условия использования";
 "privacy_policy" = "Политика конфиденциальности";
+"licenses" = "Лицензии";
+"licenses_section_attributions" = "Атрибуция";
+
 
 /* ===================== Settings - Purchases ===================== */
 "restore_purchases" = "Восстановить покупки";
@@ -268,7 +273,6 @@
 "paywall_free_trial_label" = "БЕСПЛАТНО";
 "paywall_7_days_free_trial" = "7 дней бесплатно";
 "paywall_lifetime_plan" = "Навсегда";
-"paywall_best_value" = "Выгодно";
 "paywall_lifetime_description" = "Заплати один раз, пользуйся всегда";
 "paywall_one_time_payment" = "Разовый платёж";
 "paywall_get_lifetime_button" = "Получить пожизненный доступ";

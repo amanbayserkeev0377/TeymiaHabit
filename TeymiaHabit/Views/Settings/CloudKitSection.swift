@@ -28,6 +28,21 @@ struct CloudKitSyncView: View {
     
     var body: some View {
         List {
+            Section {
+                HStack {
+                    Spacer()
+                    
+                    Image("3d_cloud_progradient")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 150, height: 125)
+                    
+                    Spacer()
+                }
+            }
+            .listRowBackground(Color.clear)
+            .listSectionSeparator(.hidden)
+            
             // Status Section
             Section {
                 HStack {
@@ -50,7 +65,6 @@ struct CloudKitSyncView: View {
                             .scaleEffect(0.8)
                     }
                 }
-                .padding(.vertical, 2)
             }
             
             // Manual Sync - только если CloudKit доступен

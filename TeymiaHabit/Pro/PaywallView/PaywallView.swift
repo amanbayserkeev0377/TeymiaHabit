@@ -271,7 +271,7 @@ struct PaywallScrollableFooter: View {
             
             // Terms and Privacy
             HStack(spacing: 30) {
-                Button("Terms of Service") {
+                Button("terms_of_service".localized) {
                     if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {
                         UIApplication.shared.open(url)
                     }
@@ -279,7 +279,7 @@ struct PaywallScrollableFooter: View {
                 .font(.caption)
                 .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
                 
-                Button("Privacy Policy") {
+                Button("privacy_policy".localized) {
                     if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
                         UIApplication.shared.open(url)
                     }

@@ -17,68 +17,73 @@ struct ProSettingsSection: View {
         }
     }
     
-    // MARK: - Pro Promo View (ЧИСТАЯ ВЕРСИЯ)
+    // MARK: - Pro Promo View (ПРОСТАЯ ВЕРСИЯ с высококонверсионными текстами)
     private var proPromoView: some View {
         Button {
             showingPaywall = true
         } label: {
             VStack(spacing: 16) {
-                // Верхняя часть - основная информация
-                HStack(spacing: 16) {
-                    // Левая иконка с объемным эффектом
-                    ZStack {
-                        Circle()
-                            .fill(.white.opacity(0.2))
-                            .frame(width: 44, height: 44)
-                        
-                        Image(systemName: "star.fill")
-                            .font(.title2)
-                            .foregroundStyle(.white)
-                            .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                    }
+                // Верхняя часть - иконка и заголовки
+                HStack(spacing: 12) {
+                    // Левая иконка - прям слева
+                    Image("3d_star_progradient")
+                        .resizable()
+                        .frame(width: 60, height: 60)
                     
-                    // Центральный контент
+                    // Текстовая информация
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Teymia Habit Pro")
-                            .font(.title3)
+                        Text("Get Teymia Habit Pro")
+                            .font(.title2)
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                         
-                        Text("paywall_7_days_free_trial".localized)
+                        Text("Unlock unlimited habits & premium features")
                             .font(.subheadline)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.white.opacity(0.85))
+                            .lineLimit(2)
                     }
                     
                     Spacer()
                     
-                    // ✅ FREE TRIAL кнопка справа
-                    Button {
-                        startFreeTrial()
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "gift.fill")
-                                .font(.system(size: 14, weight: .semibold))
-                            
-                            Text("FREE TRIAL")
-                                .font(.system(size: 14, weight: .bold))
-                        }
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(.white.opacity(0.25))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(.white.opacity(0.3), lineWidth: 1)
-                                )
-                        )
-                    }
-                    .buttonStyle(.plain)
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.white.opacity(0.5))
                 }
+                
+                // Нижняя часть - FREE TRIAL кнопка на всю ширину
+                Button {
+                    startFreeTrial()
+                } label: {
+                    HStack(spacing: 10) {
+                        Spacer()
+                        
+                        Image(systemName: "gift.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                        
+                        Text("Start Free Trial")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                        
+                        Spacer()
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.white.opacity(0.25))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(.white.opacity(0.4), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 24)
             .background(
                 // Многослойный background для объема
                 ZStack {
@@ -109,9 +114,6 @@ struct ProSettingsSection: View {
                         .blendMode(.overlay)
                 }
             )
-            // Объемная тень
-            .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
-            .shadow(color: Color.black.opacity(0.05), radius: 1, x: 0, y: 1)
         }
         .buttonStyle(.plain)
     }
@@ -119,14 +121,14 @@ struct ProSettingsSection: View {
     // MARK: - Start Free Trial (прямо запускает покупку yearly)
     private func startFreeTrial() {
         Task {
-            // Ищем yearly package в offerings
+            // Search for yearly package in offerings
             guard let offerings = proManager.offerings,
                   let currentOffering = offerings.current else {
                 print("❌ No offerings available for free trial")
                 return
             }
             
-            // Ищем yearly пакет (который содержит free trial)
+            // Find yearly package (which contains free trial)
             let yearlyPackage = currentOffering.annual ??
                                currentOffering.availablePackages.first { $0.packageType == .annual }
             
@@ -137,16 +139,16 @@ struct ProSettingsSection: View {
             
             print("🎯 Starting free trial with yearly package: \(package.storeProduct.localizedTitle)")
             
-            // Запускаем покупку yearly подписки (с free trial)
+            // Launch yearly subscription purchase (with free trial)
             let success = await proManager.purchase(package: package)
             
             if success {
                 print("✅ Free trial started successfully!")
-                // Показываем success haptic
+                // Show success haptic
                 HapticManager.shared.play(.success)
             } else {
                 print("❌ Free trial purchase failed")
-                // Показываем error haptic
+                // Show error haptic
                 HapticManager.shared.play(.error)
             }
         }

@@ -229,8 +229,12 @@
 "contact_developer" = "Contact Developer";
 "report_bug" = "Report a Bug";
 
+
+/* ===================== Settings: LEGAL ===================== */
 "terms_of_service" = "Terms of Service";
 "privacy_policy" = "Privacy Policy";
+"licenses" = "Licenses";
+"licenses_section_attributions" = "Attributions";
 
 /* ===================== Settings - Purchases ===================== */
 "restore_purchases" = "Restore Purchases";
@@ -268,7 +272,6 @@
 "paywall_free_trial_label" = "FREE TRIAL";
 "paywall_7_days_free_trial" = "7 days free trial";
 "paywall_lifetime_plan" = "Lifetime";
-"paywall_best_value" = "Best Value";
 "paywall_lifetime_description" = "Pay once, use forever";
 "paywall_one_time_payment" = "One-time payment";
 "paywall_get_lifetime_button" = "Get Lifetime Access";

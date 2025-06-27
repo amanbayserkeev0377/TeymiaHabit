@@ -9,11 +9,11 @@ final class AppColorManager: ObservableObject {
     
     // MARK: - Constants
     private struct ColorConstants {
-        static let completedLightGreen = Color(#colorLiteral(red: 0.48, green: 0.96, blue: 0.32, alpha: 1))
-        static let completedDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.7, blue: 0.1, alpha: 1))
+        static let completedLightGreen = Color(#colorLiteral(red: 0.5098039216, green: 0.8914806547, blue: 0.2757943802, alpha: 1))
+        static let completedDarkGreen = Color(#colorLiteral(red: 0.2784313725, green: 0.6745098039, blue: 0.02352941176, alpha: 1))
         
-        static let exceededLightMint = Color(#colorLiteral(red: 0.4, green: 0.9, blue: 1, alpha: 1))
-        static let exceededDarkGreen = Color(#colorLiteral(red: 0.15, green: 0.6, blue: 0.08, alpha: 1))
+        static let exceededLightMint = Color(#colorLiteral(red: 0.5019607843, green: 0.8549019608, blue: 0.9215686275, alpha: 1))
+        static let exceededDarkGreen = Color(#colorLiteral(red: 0.2784313725, green: 0.6745098039, blue: 0.02352941176, alpha: 1))
     }
     
     private let availableColors: [HabitIconColor] = [
