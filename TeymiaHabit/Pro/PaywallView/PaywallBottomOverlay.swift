@@ -174,7 +174,7 @@ struct PricingCard: View {
                             .fill(
                                 cardType == .lifetime ?
                                 LinearGradient(colors: [Color.orange, Color.red], startPoint: .top, endPoint: .bottom) :
-                                    ProGradientColors.proGradientSimple(startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    ProGradientColors.gradient(startPoint: .topLeading, endPoint: .bottomTrailing)
                             )
                     } else {
                         RoundedRectangle(cornerRadius: 16, style: .continuous)

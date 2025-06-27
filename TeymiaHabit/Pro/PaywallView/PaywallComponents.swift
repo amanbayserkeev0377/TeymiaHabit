@@ -35,8 +35,7 @@ struct PaywallHeaderSection: View {
             HStack {
                 Image(systemName: "laurel.leading")
                     .font(.system(size: 62))
-                    .foregroundStyle(ProGradientColors.proGradientSimple)
-                
+                    .foregroundStyle(ProGradientColors.proGradient)
                 Spacer()
                 
                 Text("paywall_header_title".localized)
@@ -49,7 +48,7 @@ struct PaywallHeaderSection: View {
                 
                 Image(systemName: "laurel.trailing")
                     .font(.system(size: 62))
-                    .foregroundStyle(ProGradientColors.proGradientSimple)
+                    .foregroundStyle(ProGradientColors.proGradient)
             }
         }
     }

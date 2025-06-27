@@ -43,30 +43,39 @@ struct StatisticsView: View {
                         }
                         .padding(.horizontal, 0)
                         .padding(.vertical, 16)
-                        
-                        // Habits Charts Section - БЕЗ горизонтальных отступов
-                        VStack(spacing: 12) {
+                                                
+                        LazyVStack(spacing: 12) {
                             if selectedTimeRange == .heatmap {
                                 ForEach(habits) { habit in
                                     HabitHeatmapCard(habit: habit, onTap: {
                                         selectedHabitForStats = habit
                                     })
+                                    .id("\(habit.id)-heatmap")
                                 }
                             } else {
                                 ForEach(habits) { habit in
-                                    HabitLineChartCard(
-                                        habit: habit, 
-                                        timeRange: selectedTimeRange,
-                                        onTap: {
+                                    if selectedTimeRange == .year {
+                                        // 🚀 Специальная ленивая карточка для Yearly
+                                        LazyYearlyHabitCard(habit: habit, onTap: {
                                             selectedHabitForStats = habit
-                                        }
-                                    )
+                                        })
+                                    } else {
+                                        // Обычные быстрые карточки для W/M
+                                        HabitLineChartCard(
+                                            habit: habit,
+                                            timeRange: selectedTimeRange,
+                                            onTap: {
+                                                selectedHabitForStats = habit
+                                            }
+                                        )
+                                    }
                                 }
+                                .id("\(selectedTimeRange.rawValue)")
                             }
                         }
-                        .padding(.horizontal, 0) // БЕЗ горизонтальных отступов
+                        .padding(.horizontal, 0)
+                        .id(selectedTimeRange)
                         
-                        // Нижний отступ
                         Spacer(minLength: 20)
                     }
                 }

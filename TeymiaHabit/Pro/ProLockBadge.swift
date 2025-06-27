@@ -14,7 +14,7 @@ struct ProLockBadge: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(ProGradientColors.proGradientSimple)
+        .background(ProGradientColors.gradient(startPoint: .leading, endPoint: .trailing))
         .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }

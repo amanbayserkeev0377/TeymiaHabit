@@ -5,7 +5,7 @@ struct HabitHeatmapCard: View {
     let onTap: () -> Void
     
     @State private var heatmapData: [HeatmapDataPoint] = []
-    @State private var appeared = false
+    @State private var isDataLoaded = false
     
     private var calendar: Calendar {
         Calendar.userPreferred
@@ -17,7 +17,7 @@ struct HabitHeatmapCard: View {
             onTap()
         }) {
             VStack(alignment: .leading, spacing: 12) {
-                // Header - консистентный с line charts
+                // Header (всегда показываем)
                 HStack {
                     if let iconName = habit.iconName {
                         Image(systemName: iconName)
@@ -33,151 +33,286 @@ struct HabitHeatmapCard: View {
                     
                     Spacer()
                     
-                    // Year stats
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(yearCompletionRate)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundStyle(habit.iconColor.color)
+                        if isDataLoaded {
+                            Text(yearCompletionRate)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundStyle(habit.iconColor.color)
+                        } else {
+                            Text("...")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.secondary)
+                        }
                         
                         Text("this_year".localized)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
                 }
-                .padding(.horizontal, 16) // Отступы только для хедера
+                .padding(.horizontal, 16)
                 
-                // Heatmap Grid с осями - ЕДИНЫЙ ScrollView
-                VStack(alignment: .leading, spacing: 4) {
-                    // Weekdays column (фиксированный слева)
-                    HStack(alignment: .top, spacing: 4) {
-                        // Fixed weekday labels
-                        VStack(spacing: 1) {
-                            // Empty space for month labels
-                            Rectangle()
-                                .fill(Color.clear)
-                                .frame(width: 12, height: 16) // Высота под месяцы
-                            
-                            // Weekday labels
-                            ForEach(0..<7, id: \.self) { dayIndex in
-                                Text(weekdayLabels[dayIndex])
+                // Heatmap Grid - ЛЕНИВАЯ ЗАГРУЗКА
+                if isDataLoaded {
+                    heatmapContent
+                    HeatmapLegend(habit: habit)
+                } else {
+                    // Placeholder пока данные загружаются
+                    loadingPlaceholder
+                }
+            }
+            .padding(.horizontal, 0)
+            .padding(.vertical, 12)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .onAppear {
+            // 🚀 КЛЮЧ: Загружаем данные только когда карточка появляется на экране
+            if !isDataLoaded {
+                Task {
+                    await loadDataAsync()
+                }
+            }
+        }
+    }
+    
+    // MARK: - Lazy Loading
+    
+    @MainActor
+    private func loadDataAsync() async {
+        // Небольшая задержка чтобы не все карточки загружались одновременно
+        try? await Task.sleep(nanoseconds: UInt64.random(in: 50_000_000...200_000_000)) // 50-200ms
+        
+        await Task {
+            generateHeatmapData()
+        }.value
+        
+        isDataLoaded = true
+    }
+    
+    // MARK: - Content Views
+    
+    private var heatmapContent: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .top, spacing: 4) {
+                // Fixed weekday labels
+                VStack(spacing: 1) {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width: 12, height: 16)
+                    
+                    ForEach(0..<7, id: \.self) { dayIndex in
+                        Text(weekdayLabels[dayIndex])
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 12, height: 12, alignment: .center)
+                    }
+                }
+                .frame(width: 16)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        HStack(spacing: 0) {
+                            ForEach(Array(monthLabels.enumerated()), id: \.offset) { index, month in
+                                Text(month)
                                     .font(.caption2)
                                     .foregroundStyle(.secondary)
-                                    .frame(width: 12, height: 12, alignment: .center)
+                                    .frame(width: 39, alignment: .leading)
                             }
                         }
-                        .frame(width: weekdayLabelWidth)
+                        .frame(height: 16)
                         
-                        // ЕДИНЫЙ ScrollView для месяцев и heatmap
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            VStack(alignment: .leading, spacing: 1) {
-                                // Month labels row - ПО ФАКТУ НЕДЕЛЬ
-                                HStack(spacing: 0) {
-                                    ForEach(monthLabelsForWeeks, id: \.week) { monthLabel in
-                                        Text(monthLabel.name)
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                            .frame(width: CGFloat(monthLabel.weeks) * 13, alignment: .leading)
-                                    }
-                                }
-                                .frame(height: 16)
-                                
-                                // Heatmap grid
-                                HStack(spacing: 1) {
-                                    ForEach(Array(yearlyWeeks.enumerated()), id: \.offset) { weekIndex, weekData in
-                                        VStack(spacing: 1) {
-                                            ForEach(0..<7, id: \.self) { dayIndex in
-                                                if dayIndex < weekData.days.count {
-                                                    RoundedRectangle(cornerRadius: 2)
-                                                        .fill(colorForCompletionRate(weekData.days[dayIndex].completionRate))
-                                                        .frame(width: 12, height: 12)
-                                                        .opacity(appeared ? 1 : 0)
-                                                        .scaleEffect(appeared ? 1 : 0.3)
-                                                        .animation(
-                                                            .easeOut(duration: 0.4)
-                                                            .delay(Double(weekIndex) * 0.01),
-                                                            value: appeared
-                                                        )
-                                                } else {
-                                                    RoundedRectangle(cornerRadius: 2)
-                                                        .fill(Color.clear)
-                                                        .frame(width: 12, height: 12)
-                                                }
-                                            }
+                        HStack(spacing: 1) {
+                            ForEach(yearlyWeeks, id: \.week) { weekData in
+                                VStack(spacing: 1) {
+                                    ForEach(0..<7, id: \.self) { dayIndex in
+                                        if dayIndex < weekData.days.count {
+                                            RoundedRectangle(cornerRadius: 2)
+                                                .fill(colorForCompletionRate(weekData.days[dayIndex].completionRate))
+                                                .frame(width: 12, height: 12)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 2)
+                                                .fill(Color.clear)
+                                                .frame(width: 12, height: 12)
                                         }
                                     }
                                 }
                             }
-                            .padding(.horizontal, 4)
                         }
                     }
+                    .padding(.horizontal, 4)
                 }
-                .padding(.horizontal, 8) // Как у line charts
-                
-                // Legend (GitHub-style)
-                HStack {
-                    Spacer()
-                    
-                    HStack(spacing: 6) {
-                        Text("less".localized)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        
-                        // 5-level legend squares
-                        ForEach(0..<5, id: \.self) { level in
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(legendColor(for: level))
-                                .frame(width: 12, height: 12)
-                        }
-                        
-                        Text("more".localized)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.horizontal, 16) // Как header
-                .padding(.top, 8)
             }
-            .padding(.horizontal, 0)  // Убираем лишние отступы
-            .padding(.vertical, 12)   // Только вертикальные отступы
         }
-        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, 8)
         .onAppear {
-            generateYearlyHeatmapData()
-            // Запускаем анимацию с небольшой задержкой для плавности
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                appeared = true
+            // Smooth fade-in animation когда данные готовы
+            withAnimation(.easeOut(duration: 0.3)) {
+                // Animation trigger if needed
             }
         }
     }
     
-    // MARK: - Constants
+    private var loadingPlaceholder: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .top, spacing: 4) {
+                // Weekday labels placeholder
+                VStack(spacing: 1) {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width: 12, height: 16)
+                    
+                    ForEach(0..<7, id: \.self) { _ in
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.gray.opacity(0.1))
+                            .frame(width: 12, height: 12)
+                    }
+                }
+                .frame(width: 16)
+                
+                // 🚀 НАТИВНЫЙ Loading с ProgressView
+                ScrollView(.horizontal, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        // Month labels placeholder
+                        HStack(spacing: 0) {
+                            ForEach(0..<12, id: \.self) { _ in
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(Color.gray.opacity(0.1))
+                                    .frame(width: 39, height: 12)
+                            }
+                        }
+                        .frame(height: 16)
+                        
+                        // 🎯 ЦЕНТРАЛЬНЫЙ ProgressView вместо fake grid
+                        HStack {
+                            Spacer()
+                            VStack(spacing: 8) {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .tint(habit.iconColor.color)
+                                
+                                Text("Loading...")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                        }
+                        .frame(height: 84) // Высота реального heatmap grid
+                    }
+                    .padding(.horizontal, 4)
+                }
+            }
+        }
+        .padding(.horizontal, 8)
+        .redacted(reason: .placeholder) // 🚀 НАТИВНЫЙ placeholder эффект
+    }
     
-    private let weekdayLabelWidth: CGFloat = 16
-    private let monthWidth: CGFloat = 50  // Фиксированная ширина для каждого месяца
+    // MARK: - Data Generation (оптимизированная версия)
     
-    // MARK: - Helper Functions
-    
-    private func monthLabel(for month: Int) -> some View {
+    private func generateHeatmapData() {
         let currentYear = calendar.component(.year, from: Date())
-        guard let monthDate = calendar.date(from: DateComponents(year: currentYear, month: month, day: 1)) else {
-            return Text("???")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+        guard let startOfYear = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)) else {
+            return
         }
         
-        let formatter = DateFormatter()
-        formatter.dateFormat = "LLLL"
-        let fullName = formatter.string(from: monthDate)
-        let shortName = String(fullName.prefix(3)).capitalized  // Первая буква заглавная
+        // Используем кэш для оптимизации
+        let progressCache = buildProgressCache()
         
-        return Text(shortName)
-            .font(.caption2)
-            .foregroundStyle(.secondary)
+        var data: [HeatmapDataPoint] = []
+        let today = Date()
+        let endDate = min(today, calendar.date(from: DateComponents(year: currentYear, month: 12, day: 31)) ?? today)
+        
+        var currentDate = startOfYear
+        while currentDate <= endDate {
+            let completionRate = calculateCompletionRateFromCache(for: currentDate, cache: progressCache)
+            data.append(HeatmapDataPoint(date: currentDate, completionRate: completionRate))
+            
+            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+            currentDate = nextDate
+        }
+        
+        heatmapData = data
+    }
+    
+    private func buildProgressCache() -> [String: Int] {
+        var cache: [String: Int] = [:]
+        
+        let currentYear = calendar.component(.year, from: Date())
+        guard let startOfYear = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)),
+              let endOfYear = calendar.date(from: DateComponents(year: currentYear, month: 12, day: 31)) else {
+            return cache
+        }
+        
+        guard let completions = habit.completions else { return cache }
+        
+        for completion in completions {
+            if completion.date >= startOfYear && completion.date <= endOfYear {
+                let dateKey = formatDateKey(completion.date)
+                cache[dateKey] = (cache[dateKey] ?? 0) + completion.value
+            }
+        }
+        
+        return cache
+    }
+    
+    private func calculateCompletionRateFromCache(for date: Date, cache: [String: Int]) -> Double {
+        guard date <= Date() && habit.isActiveOnDate(date) else { return 0 }
+        
+        let dateKey = formatDateKey(date)
+        let progress = cache[dateKey] ?? 0
+        let goal = habit.goal
+        
+        return goal > 0 ? min(Double(progress) / Double(goal), 1.0) : 0
+    }
+    
+    private func formatDateKey(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
+    
+    // MARK: - Helper Properties (without changes)
+    
+    private var yearlyWeeks: [WeekData] {
+        let currentYear = calendar.component(.year, from: Date())
+        guard let january1st = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)) else {
+            return []
+        }
+        
+        var startDate = january1st
+        while calendar.component(.weekday, from: startDate) != 1 {
+            startDate = calendar.date(byAdding: .day, value: -1, to: startDate)!
+        }
+        
+        var weeks: [WeekData] = []
+        
+        for weekIndex in 0..<52 {
+            var weekDays: [HeatmapDataPoint] = []
+            
+            for dayIndex in 0..<7 {
+                let currentDate = calendar.date(byAdding: .day, value: weekIndex * 7 + dayIndex, to: startDate)!
+                let currentDateYear = calendar.component(.year, from: currentDate)
+                
+                if currentDateYear == currentYear && currentDate <= Date() {
+                    let dataPoint = heatmapData.first { calendar.isDate($0.date, inSameDayAs: currentDate) } ??
+                                    HeatmapDataPoint(date: currentDate, completionRate: 0)
+                    weekDays.append(dataPoint)
+                } else {
+                    weekDays.append(HeatmapDataPoint(date: currentDate, completionRate: 0))
+                }
+            }
+            
+            weeks.append(WeekData(week: weekIndex, days: weekDays))
+        }
+        
+        return weeks
+    }
+    
+    private var monthLabels: [String] {
+        return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     }
     
     private var weekdayLabels: [String] {
-        // First letter of weekday names: M T W T F S S
         let firstWeekday = calendar.firstWeekday
         var labels: [String] = []
         
@@ -190,68 +325,21 @@ struct HabitHeatmapCard: View {
         return labels
     }
     
-    // MARK: - Data Generation
-    
-    private func generateYearlyHeatmapData() {
-        var data: [HeatmapDataPoint] = []
-        
-        // Start from January 1st of current year
-        let currentYear = calendar.component(.year, from: Date())
-        guard let startOfYear = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)),
-              let endOfYear = calendar.date(from: DateComponents(year: currentYear, month: 12, day: 31)) else {
-            return
-        }
-        
-        // Generate data for entire year
-        var currentDate = startOfYear
-        while currentDate <= min(endOfYear, Date()) {
-            let completionRate = calculateCompletionRate(for: currentDate)
-            data.append(HeatmapDataPoint(date: currentDate, completionRate: completionRate))
-            
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
-        }
-        
-        heatmapData = data
-    }
-    
-    private func calculateCompletionRate(for date: Date) -> Double {
-        // Only calculate for dates not in the future
-        guard date <= Date() else { return 0 }
-        
-        // Check if habit is active on this date
-        guard habit.isActiveOnDate(date) else { return 0 }
-        
-        let progress = habit.progressForDate(date)
-        let goal = habit.goal
-        
-        // Return actual completion rate (0.0 to 1.0+)
-        let rate = goal > 0 ? Double(progress) / Double(goal) : 0
-        return max(0.0, rate) // Allow over 100% completion
-    }
-    
     private func colorForCompletionRate(_ rate: Double) -> Color {
         let baseColor = habit.iconColor.color
         
-        // GitHub-style 5-level intensity system
         switch rate {
         case 0:
-            // No activity - light gray
             return Color.gray.opacity(0.1)
         case 0.01..<0.25:
-            // Low activity (1-24%) - very light color
             return baseColor.opacity(0.3)
         case 0.25..<0.50:
-            // Medium-low activity (25-49%) - light color
             return baseColor.opacity(0.5)
         case 0.50..<0.75:
-            // Medium activity (50-74%) - medium color
             return baseColor.opacity(0.7)
         case 0.75..<1.0:
-            // High activity (75-99%) - strong color
             return baseColor.opacity(0.9)
         default:
-            // Complete/exceeded (100%+) - full intensity
             return baseColor
         }
     }
@@ -260,110 +348,13 @@ struct HabitHeatmapCard: View {
         let baseColor = habit.iconColor.color
         
         switch level {
-        case 0: return Color.gray.opacity(0.1)      // No activity
-        case 1: return baseColor.opacity(0.3)       // Low activity
-        case 2: return baseColor.opacity(0.5)       // Medium-low activity
-        case 3: return baseColor.opacity(0.7)       // Medium activity
-        case 4: return baseColor                     // High activity
+        case 0: return Color.gray.opacity(0.1)
+        case 1: return baseColor.opacity(0.3)
+        case 2: return baseColor.opacity(0.5)
+        case 3: return baseColor.opacity(0.7)
+        case 4: return baseColor
         default: return baseColor
         }
-    }
-    
-    // MARK: - Computed Properties
-    
-    private var yearlyWeeks: [WeekData] {
-        // GitHub подход: показываем ровно 52 недели начиная с первой недели года
-        var weeks: [WeekData] = []
-        let currentYear = calendar.component(.year, from: Date())
-        
-        // Находим первое воскресенье года (или последнее воскресенье прошлого года)
-        guard let january1st = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)) else {
-            return []
-        }
-        
-        // Найти начало первой недели (воскресенье)
-        var startDate = january1st
-        while calendar.component(.weekday, from: startDate) != 1 { // 1 = Sunday
-            startDate = calendar.date(byAdding: .day, value: -1, to: startDate)!
-        }
-        
-        // Генерируем ровно 52 недели
-        for weekIndex in 0..<52 {
-            var weekDays: [HeatmapDataPoint] = []
-            
-            for dayIndex in 0..<7 {
-                let currentDate = calendar.date(byAdding: .day, value: weekIndex * 7 + dayIndex, to: startDate)!
-                
-                // Если дата в текущем году и не в будущем, берем реальные данные
-                let currentDateYear = calendar.component(.year, from: currentDate)
-                if currentDateYear == currentYear && currentDate <= Date() {
-                    let dataPoint = heatmapData.first { calendar.isDate($0.date, inSameDayAs: currentDate) } ?? 
-                                    HeatmapDataPoint(date: currentDate, completionRate: 0)
-                    weekDays.append(dataPoint)
-                } else {
-                    // Пустая ячейка для дат вне текущего года или в будущем
-                    weekDays.append(HeatmapDataPoint(date: currentDate, completionRate: 0))
-                }
-            }
-            
-            weeks.append(WeekData(week: weekIndex, days: weekDays))
-        }
-        
-        return weeks
-    }
-    
-    private var monthLabelsForWeeks: [MonthLabelInfo] {
-        let weeks = yearlyWeeks
-        var monthLabels: [MonthLabelInfo] = []
-        var currentMonth = -1
-        var weekCount = 0
-        
-        for week in weeks {
-            // Берем средний день недели для определения месяца
-            let middleDay = week.days[3] // Среда
-            let monthOfWeek = calendar.component(.month, from: middleDay.date)
-            let yearOfWeek = calendar.component(.year, from: middleDay.date)
-            
-            // Показываем только месяцы текущего года
-            guard yearOfWeek == calendar.component(.year, from: Date()) else {
-                continue
-            }
-            
-            if monthOfWeek != currentMonth {
-                // Сохраняем предыдущий месяц
-                if currentMonth > 0 && weekCount > 0 {
-                    if let monthDate = calendar.date(from: DateComponents(year: yearOfWeek, month: currentMonth, day: 1)) {
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "LLLL"
-                        let fullName = formatter.string(from: monthDate)
-                        let shortName = String(fullName.prefix(3)).capitalized
-                        
-                        monthLabels.append(MonthLabelInfo(name: shortName, weeks: weekCount, week: monthLabels.count))
-                    }
-                }
-                
-                // Начинаем новый месяц
-                currentMonth = monthOfWeek
-                weekCount = 1
-            } else {
-                weekCount += 1
-            }
-        }
-        
-        // Не забываем последний месяц
-        if currentMonth > 0 && weekCount > 0 {
-            let currentYear = calendar.component(.year, from: Date())
-            if let monthDate = calendar.date(from: DateComponents(year: currentYear, month: currentMonth, day: 1)) {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "LLLL"
-                let fullName = formatter.string(from: monthDate)
-                let shortName = String(fullName.prefix(3)).capitalized
-                
-                monthLabels.append(MonthLabelInfo(name: shortName, weeks: weekCount, week: monthLabels.count))
-            }
-        }
-        
-        return monthLabels
     }
     
     private var yearCompletionRate: String {
@@ -376,5 +367,47 @@ struct HabitHeatmapCard: View {
         let completedDays = activeDays.filter { $0.completionRate >= 1.0 }.count
         let percentage = (Double(completedDays) / Double(activeDays.count)) * 100
         return "\(Int(percentage))%"
+    }
+}
+
+// MARK: - Legend Component (вынеси в отдельный файл)
+struct HeatmapLegend: View {
+    let habit: Habit
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            
+            HStack(spacing: 6) {
+                Text("less".localized)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                
+                ForEach(0..<5, id: \.self) { level in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(legendColor(for: level))
+                        .frame(width: 12, height: 12)
+                }
+                
+                Text("more".localized)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+    
+    private func legendColor(for level: Int) -> Color {
+        let baseColor = habit.iconColor.color
+        
+        switch level {
+        case 0: return Color.gray.opacity(0.1)
+        case 1: return baseColor.opacity(0.3)
+        case 2: return baseColor.opacity(0.5)
+        case 3: return baseColor.opacity(0.7)
+        case 4: return baseColor
+        default: return baseColor
+        }
     }
 }
