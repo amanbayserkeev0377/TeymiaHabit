@@ -13,25 +13,25 @@ struct ProFeature {
             icon: "infinity",
             title: "paywall_unlimited_habits_title".localized,
             description: "paywall_unlimited_habits_description".localized,
-            colors: [Color.orange, Color.yellow]
+            colors: [Color.yellow, Color.orange]
         ),
         ProFeature(
             icon: "folder.fill",
             title: "paywall_habit_folders_title".localized,
             description: "paywall_habit_folders_description".localized,
-            colors: [Color.blue, Color.cyan]
+            colors: [Color.cyan, Color.blue]
         ),
         ProFeature(
             icon: "paintbrush.pointed.fill",
             title: "paywall_custom_colors_icons_title".localized,
             description: "paywall_custom_colors_icons_description".localized,
-            colors: [Color.purple, Color.pink]
+            colors: [Color.pink, Color.purple]
         ),
         ProFeature(
             icon: "heart.fill",
             title: "paywall_support_creator_title".localized,
             description: "paywall_support_creator_description".localized,
-            colors: [Color.red, Color.orange]
+            colors: [Color.orange, Color.red]
         )
     ]
 }
@@ -49,8 +49,8 @@ struct FeatureRow: View {
                     .fill(
                         LinearGradient(
                             colors: feature.colors,
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
                     )
                     .frame(width: 48, height: 48)

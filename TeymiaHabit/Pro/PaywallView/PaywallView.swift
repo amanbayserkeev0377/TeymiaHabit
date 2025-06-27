@@ -169,82 +169,12 @@ struct PaywallExpandedFeaturesSection: View {
                 }
             }
             
-            // Дополнительные фичи (можно расширять)
-            VStack(spacing: 16) {
-                PaywallFeatureRowSimple(
-                    icon: "icloud.fill",
-                    title: "iCloud Sync",
-                    description: "Seamless synchronization across all your devices",
-                    color: .blue,
-                    colorScheme: colorScheme
-                )
-                
-                PaywallFeatureRowSimple(
-                    icon: "bell.fill",
-                    title: "Smart Reminders",
-                    description: "Intelligent notifications to keep you on track",
-                    color: .orange,
-                    colorScheme: colorScheme
-                )
-                
-                PaywallFeatureRowSimple(
-                    icon: "chart.line.uptrend.xyaxis",
-                    title: "Advanced Analytics",
-                    description: "Detailed insights and progress tracking",
-                    color: .green,
-                    colorScheme: colorScheme
-                )
-                
-                PaywallFeatureRowSimple(
-                    icon: "person.2.fill",
-                    title: "Family Sharing",
-                    description: "Share your Pro subscription with family members",
-                    color: .purple,
-                    colorScheme: colorScheme
-                )
-            }
-            
             // Footer с restore и legal (перенесли в scroll content)
             PaywallScrollableFooter(colorScheme: colorScheme) {
                 // Handle restore purchases
                 // Можно сделать через callback если нужно
             }
         }
-    }
-}
-
-// MARK: - Simple Feature Row (для дополнительных фичей)
-struct PaywallFeatureRowSimple: View {
-    let icon: String
-    let title: String
-    let description: String
-    let color: Color
-    let colorScheme: ColorScheme
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            // Simple icon
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-            
-            // Text content
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(colorScheme == .dark ? .white : .black)
-                
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
-                    .lineLimit(2)
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 4)
     }
 }
 

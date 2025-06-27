@@ -290,55 +290,39 @@
 
 /* ===================== Statistics Overview ===================== */
 
-// Time Range Labels
-"last_7_days" = "Последние 7 дней";
-"last_30_days" = "Последние 30 дней";  
-"last_12_months" = "Последние 12 месяцев";
-"this_year" = "Этот год";
-"past_365_days" = "Последние 365 дней";
+// Overview Headers
+"overview" = "Overview";
+"your_total_progress" = "Your total progress";
 
 // Overview Stats Cards
-"active_habits" = "Активные привычки";
-"habits_done" = "Выполнено привычек"; 
-"completion_rate" = "Процент выполнения";
-
-// Activity Overview
-"activity_overview" = "Обзор активности";
-"combined_activity_description" = "Общая активность по всем привычкам (этот год)";
-
-// Heatmap Legend
-"less" = "Меньше";
-"more" = "Больше";
+"active_habits" = "Active Habits";
+"completed_total" = "Completed Total";
+"active_days_total" = "Active Days Total";
+"overall_completion" = "Overall Completion";
 
 /* ===================== Card Info Modal ===================== */
 
-// Section Headers
-"what_it_shows" = "Что показывает:";
-"how_its_calculated" = "Как рассчитывается:";  
-"example" = "Пример:";
+// Section Headers (оставить как есть)
+"what_it_shows" = "What it shows:";
+"how_its_calculated" = "How it's calculated:";
+"example" = "Example:";
 
-// Active Habits Card
-"active_habits_description" = "Общее количество привычек, которые вы отслеживаете в данный момент (не включая архивированные). Это дает представление о вашей текущей нагрузке.";
-"active_habits_calculation" = "Мы считаем все привычки, которые не архивированы. Это включает привычки, которые могут быть неактивными каждый день недели, но все еще являются частью вашего распорядка.";
-"active_habits_example" = "Если вы отслеживаете 'Утренние упражнения', 'Чтение книг' и 'Питье воды', но архивировали 'Изучение испанского', количество активных привычек равно 3.";
+// Completed Total Card
+"completed_total_description" = "Total number of successfully completed habits across all time. This shows your overall achievements and progress since you started tracking.";
+"completed_total_calculation" = "We count every day when you met or exceeded your daily goal for any habit, from the beginning of your habit tracking journey.";
+"completed_total_example" = "If you completed 'Exercise' 30 times, 'Reading' 45 times, and 'Water' 60 times, your total would be 135 completions.";
 
-// Active Days Card  
-"active_days_description" = "Количество дней, когда вы добились прогресса хотя бы в одной привычке. Даже небольшой прогресс считается активным днем!";
-"active_days_calculation" = "Мы считаем уникальные дни, в которые вы добились прогресса в любой привычке. Частичный прогресс (например, 1 из 3 стаканов воды) все равно считается активным днем.";
-"active_days_example" = "Если вы работаете над привычками в понедельник, вторник, четверг и субботу, это 4 активных дня, даже если вы не выполнили все цели в каждый день.";
+// Active Days Total Card
+"active_days_total_description" = "Total number of days when you made progress on at least one habit throughout your entire tracking history.";
+"active_days_total_calculation" = "We count unique days where you made any progress on any habit, from your very first tracked day until today.";
+"active_days_total_example" = "If you've been tracking for 100 days and made progress on 85 of those days, your active days total is 85.";
 
-// Habits Done Card
-"habits_done_description" = "Общее количество привычек, которые вы успешно выполнили за этот период. Привычка считается 'выполненной', когда вы достигаете или превышаете свою дневную цель.";
-"habits_done_calculation" = "Для каждого дня периода мы проверяем каждую активную привычку. Если ваш прогресс соответствует цели или превышает ее (например, 3 из 3 стаканов воды), это считается как одна выполненная привычка.";
-"habits_done_example" = "Если у вас есть 3 привычки и вы выполняете 2 из них сегодня, это добавляет 2 к вашему общему количеству. За 7 дней вы можете выполнить 12 привычек всего.";
+// Overall Completion Card
+"overall_completion_description" = "Your average completion rate across all habits and all time. This shows your overall consistency and performance.";
+"overall_completion_calculation" = "We calculate the completion percentage for each habit completion, then average all these percentages across your entire tracking history.";
+"overall_completion_example" = "If across all your habits and all time you average 78% completion, this shows you're consistently performing well.";
 
-// Completion Rate Card
-"completion_rate_description" = "Ваш средний процент выполнения по всем привычкам. Это показывает, насколько хорошо вы достигаете своих ежедневных целей в целом.";
-"completion_rate_calculation" = "Для каждой привычки и каждого дня мы рассчитываем: (достигнутый прогресс / дневная цель) × 100%. Затем мы усредняем все эти проценты по всем привычкам и дням в периоде.";
-"completion_rate_example" = "Если у вас есть 2 привычки: выпить 3 стакана воды (вы выпили 2 = 67%) и читать 30 минут (вы читали 30 = 100%), ваш средний процент выполнения составляет 83%.";
-
-/* ===================== Chart Accessibility ===================== */
-
-"chart_accessibility_habit" = "График для привычки %@";
-"heatmap_accessibility" = "Годовая тепловая карта для привычки %@";
-"overview_heatmap_accessibility" = "Общая тепловая карта активности для всех привычек";
+// Active Habits Card (оставить как есть)
+"active_habits_description" = "The total number of habits you're currently tracking (not including archived habits). This gives you an overview of your current habit workload.";
+"active_habits_calculation" = "We count all habits that are not archived. This includes habits that might not be active every day of the week, but are still part of your routine.";
+"active_habits_example" = "If you're tracking 'Morning Exercise', 'Read Books', and 'Drink Water', but archived 'Learn Spanish', your active habits count is 3.";

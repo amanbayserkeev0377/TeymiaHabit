@@ -3,7 +3,6 @@ import Charts
 
 struct HabitLineChartCard: View {
     let habit: Habit
-    let timeRange: OverviewTimeRange
     let onTap: () -> Void
     
     private var calendar: Calendar {
@@ -44,9 +43,9 @@ struct HabitLineChartCard: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .padding(.horizontal, 16) // Отступы только для хедера
+                .padding(.horizontal, 16)
                 
-                // Line Chart - используем отдельные компоненты
+                // Line Chart - только W/M (Y обрабатывается отдельно)
                 switch timeRange {
                 case .week:
                     WeeklyHabitLineChart(habit: habit)
@@ -57,70 +56,28 @@ struct HabitLineChartCard: View {
                         .padding(.horizontal, 8)
                         
                 case .year:
-                    YearlyHabitLineChart(habit: habit)
-                        .padding(.horizontal, 8)
-                        
-                case .heatmap:
-                    // Heatmap не использует этот компонент
+                    // Этот case не должен попадать сюда - Y обрабатывается в StatisticsView
                     EmptyView()
                 }
             }
-            .padding(.horizontal, 0)  // Убираем горизонтальные отступы полностью
-            .padding(.vertical, 12)   // Только вертикальные отступы
+            .padding(.horizontal, 0)
+            .padding(.vertical, 12)
         }
         .buttonStyle(PlainButtonStyle())
     }
     
-    // MARK: - Current Period Stats
+    // MARK: - ИСПРАВЛЕННЫЙ Current Period Stats (показывает средний %, не только 100% дни)
     
     private var currentPeriodProgress: String {
         switch timeRange {
         case .week:
-            // Считаем последние 7 дней - возвращаем процент
-            let today = Date()
-            
-            let weekCompletedDays = (0...6).filter { dayOffset in
-                guard let date = calendar.date(byAdding: .day, value: dayOffset - 6, to: today) else { return false }
-                return habit.isActiveOnDate(date) && habit.progressForDate(date) >= habit.goal
-            }.count
-            
-            let percentage = Int((Double(weekCompletedDays) / 7.0) * 100)
-            return "\(percentage)%"
+            return calculateAverageCompletionRate(days: 7, startOffset: -6)
             
         case .month:
-            // Считаем последние 30 дней - возвращаем процент
-            let today = Date()
-            let monthCompletedDays = (0..<30).filter { dayOffset in
-                guard let date = calendar.date(byAdding: .day, value: dayOffset - 29, to: today) else { return false }
-                return habit.isActiveOnDate(date) && habit.progressForDate(date) >= habit.goal
-            }.count
-            
-            let percentage = Int((Double(monthCompletedDays) / 30.0) * 100)
-            return "\(percentage)%"
+            return calculateAverageCompletionRate(days: 30, startOffset: -29)
             
         case .year:
-            // Считаем последние 365 дней - возвращаем процент
-            let today = Date()
-            
-            var totalActiveDays = 0
-            var completedDays = 0
-            
-            for dayOffset in 0..<365 {
-                guard let date = calendar.date(byAdding: .day, value: dayOffset - 364, to: today) else { continue }
-                
-                if habit.isActiveOnDate(date) && date <= Date() {
-                    totalActiveDays += 1
-                    if habit.progressForDate(date) >= habit.goal {
-                        completedDays += 1
-                    }
-                }
-            }
-            
-            let percentage = totalActiveDays > 0 ? Int((Double(completedDays) / Double(totalActiveDays)) * 100) : 0
-            return "\(percentage)%"
-            
-        case .heatmap:
-            return ""
+            return calculateAverageCompletionRate(days: 365, startOffset: -364)
         }
     }
     
@@ -129,33 +86,38 @@ struct HabitLineChartCard: View {
         case .week: return "last_7_days".localized
         case .month: return "last_30_days".localized
         case .year: return "last_12_months".localized
-        case .heatmap: return ""
         }
     }
     
-    // MARK: - Helper Methods
+    // MARK: - НОВЫЙ Helper Method - правильный расчёт среднего процента
     
-    private func calculateMonthlyCompletionRate(for monthDate: Date) -> Double {
-        // Получаем все дни в этом месяце
-        guard let range = calendar.range(of: .day, in: .month, for: monthDate),
-              let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: monthDate)) else {
-            return 0
-        }
-        
+    private func calculateAverageCompletionRate(days: Int, startOffset: Int) -> String {
+        let today = Date()
+        var totalProgress = 0.0
         var totalDays = 0
-        var completedDays = 0
         
-        for day in 1...range.count {
-            guard let currentDate = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else { continue }
+        // Проходим по всем дням в периоде
+        for dayOffset in 0..<days {
+            guard let date = calendar.date(byAdding: .day, value: startOffset + dayOffset, to: today) else {
+                continue
+            }
             
-            if habit.isActiveOnDate(currentDate) && currentDate <= Date() {
-                totalDays += 1
-                if habit.progressForDate(currentDate) >= habit.goal {
-                    completedDays += 1
+            // Учитываем только активные дни привычки
+            if habit.isActiveOnDate(date) && date <= Date() {
+                let progress = habit.progressForDate(date)
+                let goal = habit.goal
+                
+                if goal > 0 {
+                    // Рассчитываем процент выполнения (ограничиваем до 100%)
+                    let dayCompletionRate = min(Double(progress) / Double(goal), 1.0)
+                    totalProgress += dayCompletionRate
+                    totalDays += 1
                 }
             }
         }
         
-        return totalDays > 0 ? Double(completedDays) / Double(totalDays) : 0
+        // Возвращаем средний процент выполнения
+        let averagePercent = totalDays > 0 ? Int((totalProgress / Double(totalDays)) * 100) : 0
+        return "\(averagePercent)%"
     }
 }

@@ -6,9 +6,8 @@ struct StreaksView: View {
     var body: some View {
         HStack(spacing: 0) {
             Image(systemName: "laurel.leading")
-                .font(.system(size: 36))
+                .font(.system(size: 38))
                 .foregroundColor(.secondary)
-                .accessibility(hidden: true)
             
             Group {
                 // Streak
@@ -31,9 +30,8 @@ struct StreaksView: View {
             }
             
             Image(systemName: "laurel.trailing")
-                .font(.system(size: 36))
+                .font(.system(size: 38))
                 .foregroundColor(.secondary)
-                .accessibility(hidden: true)
         }
         .padding(.vertical, 8)
     }
@@ -59,7 +57,5 @@ struct StatColumn: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label): \(value)")
     }
 }

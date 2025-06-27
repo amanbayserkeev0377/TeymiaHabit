@@ -43,12 +43,6 @@ struct WhatsNewView: View {
             description: "whats_new_colorful_rings_description".localized,
             habitColor: .purple // Креативность и дизайн
         ),
-        WhatsNewFeature(
-            icon: "calendar.badge.checkmark",
-            title: "whats_new_activity_heatmap_title".localized,
-            description: "whats_new_activity_heatmap_description".localized,
-            habitColor: .green // Успех и завершение
-        )
     ]
     
     var body: some View {

@@ -1,92 +1,84 @@
 import SwiftUI
 import Charts
 
-struct LazyYearlyHabitCard: View {
+/// Максимально упрощенный и быстрый годовой график
+struct YearlyHabitLineChart: View {
     let habit: Habit
-    let onTap: () -> Void
     
+    @State private var chartData: [ChartDataPoint] = []
     @State private var isDataLoaded = false
-    @State private var chartData: [YearlyChartDataPoint] = []
     
-    private var calendar: Calendar {
-        Calendar.userPreferred
-    }
+    private let calendar = Calendar.current
+    private let monthFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        return formatter
+    }()
     
     var body: some View {
-        Button(action: {
-            HapticManager.shared.playSelection()
-            onTap()
-        }) {
-            VStack(alignment: .leading, spacing: 12) {
-                // Header (всегда показываем мгновенно)
-                HStack {
-                    if let iconName = habit.iconName {
-                        Image(systemName: iconName)
-                            .font(.system(size: 20))
-                            .foregroundStyle(habit.iconColor.color)
-                            .frame(width: 24, height: 24)
-                    }
-                    
-                    Text(habit.title)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                        .multilineTextAlignment(.leading)
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .trailing, spacing: 2) {
-                        if isDataLoaded {
-                            Text(currentPeriodProgress)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundStyle(habit.iconColor.color)
-                        } else {
-                            // Skeleton для статистики
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(width: 40, height: 16)
-                        }
-                        
-                        Text("last_12_months".localized)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.horizontal, 16)
-                
-                // Chart - ленивая загрузка
-                if isDataLoaded {
-                    yearlyChart
-                } else {
-                    yearlyChartSkeleton
-                }
+        VStack(alignment: .leading, spacing: 12) {
+            // Header - всегда отображается мгновенно
+            habitHeader
+            
+            // Chart section
+            if isDataLoaded {
+                yearlyChart
+                    .padding(.horizontal, 8)
+            } else {
+                yearlyChartSkeleton
+                    .padding(.horizontal, 8)
             }
-            .padding(.horizontal, 0)
-            .padding(.vertical, 12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, 0)
+        .padding(.vertical, 12)
         .onAppear {
-            if !isDataLoaded {
-                Task {
-                    // Небольшая задержка чтобы UI отрисовался
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-                    await loadDataAsync()
-                }
-            }
+            loadDataAsync()
+        }
+        .onChange(of: habit.completions?.count) { _, _ in
+            loadDataAsync()
+        }
+        .onChange(of: habit.goal) { _, _ in
+            loadDataAsync()
         }
     }
     
-    // MARK: - Async Data Loading
+    // MARK: - Header Component
     
-    @MainActor
-    private func loadDataAsync() async {
-        await Task {
-            generateOptimizedChartData()
-        }.value
-        
-        withAnimation(.easeOut(duration: 0.3)) {
-            isDataLoaded = true
+    private var habitHeader: some View {
+        HStack {
+            if let iconName = habit.iconName {
+                Image(systemName: iconName)
+                    .font(.system(size: 20))
+                    .foregroundStyle(habit.iconColor.color)
+                    .frame(width: 24, height: 24)
+            }
+            
+            Text(habit.title)
+                .font(.headline)
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.leading)
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 2) {
+                if isDataLoaded {
+                    Text(currentPeriodProgress)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(habit.iconColor.color)
+                } else {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: 40, height: 16)
+                        .shimmer()
+                }
+                
+                Text("last_12_months".localized)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
+        .padding(.horizontal, 16)
     }
     
     // MARK: - Chart Views
@@ -95,7 +87,7 @@ struct LazyYearlyHabitCard: View {
         Chart(chartData) { dataPoint in
             LineMark(
                 x: .value("Month", dataPoint.date, unit: .month),
-                y: .value("Progress", dataPoint.completionRate)
+                y: .value("Progress", dataPoint.completionPercentage)
             )
             .foregroundStyle(habit.iconColor.color)
             .lineStyle(StrokeStyle(lineWidth: 1.5))
@@ -103,7 +95,7 @@ struct LazyYearlyHabitCard: View {
             
             AreaMark(
                 x: .value("Month", dataPoint.date, unit: .month),
-                y: .value("Progress", dataPoint.completionRate)
+                y: .value("Progress", dataPoint.completionPercentage)
             )
             .foregroundStyle(
                 LinearGradient(
@@ -145,12 +137,10 @@ struct LazyYearlyHabitCard: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
     }
     
     private var yearlyChartSkeleton: some View {
         VStack(spacing: 8) {
-            // Chart area skeleton
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.gray.opacity(0.1))
                 .frame(height: 140)
@@ -165,143 +155,139 @@ struct LazyYearlyHabitCard: View {
                             .foregroundStyle(.secondary)
                     }
                 )
+                .shimmer()
             
-            // Axis labels skeleton
             HStack {
-                ForEach(0..<6, id: \.self) { _ in
+                ForEach(0..<6, id: \.self) { index in
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 12, height: 8)
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(width: 20, height: 8)
+                        .shimmer(delay: Double(index) * 0.1)
                     
-                    if _ < 5 { Spacer() }
+                    if index < 5 { Spacer() }
                 }
             }
-            .padding(.horizontal, 8)
         }
-        .padding(.horizontal, 8)
-        .redacted(reason: .placeholder)
     }
     
-    // MARK: - Data Generation (оптимизированная)
+    // MARK: - 🔥 ПРОСТАЯ И БЫСТРАЯ загрузка данных
     
-    private func generateOptimizedChartData() {
+    private func loadDataAsync() {
+        Task { @MainActor in
+            // Небольшая задержка для плавности
+            try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
+            
+            // Генерируем данные напрямую на главном потоке (проще и быстрее)
+            let data = generateSimpleChartData()
+            
+            withAnimation(.easeOut(duration: 0.3)) {
+                chartData = data
+                isDataLoaded = true
+            }
+        }
+    }
+    
+    // MARK: - 🔥 УПРОЩЕННАЯ но эффективная генерация данных
+    
+    private func generateSimpleChartData() -> [ChartDataPoint] {
         let today = Date()
-        let yearlyProgressCache = buildYearlyProgressCache()
+        var data: [ChartDataPoint] = []
         
-        var data: [YearlyChartDataPoint] = []
-        
+        // Простой подход: считаем статистику по месяцам напрямую
         for monthOffset in 0..<12 {
-            guard let date = calendar.date(byAdding: .month, value: -monthOffset, to: today) else {
+            guard let monthDate = calendar.date(byAdding: .month, value: -monthOffset, to: today) else {
                 continue
             }
             
-            let monthName = formatMonthName(date: date)
-            let completionRate = calculateMonthlyCompletionRateFromCache(for: date, cache: yearlyProgressCache)
+            let completionRate = calculateMonthCompletionRate(for: monthDate)
             
-            data.append(YearlyChartDataPoint(
-                monthName: monthName,
-                date: date,
-                completionRate: completionRate
+            data.append(ChartDataPoint(
+                date: monthDate,
+                value: Int(completionRate * 100),
+                goal: 100,
+                habit: habit
             ))
         }
         
-        chartData = data.reversed()
+        return data.reversed()
     }
     
-    // MARK: - Helper Methods (сохраняем оптимизированные версии)
-    
-    private func buildYearlyProgressCache() -> [String: Int] {
-        var cache: [String: Int] = [:]
-        
-        let today = Date()
-        guard let startDate = calendar.date(byAdding: .month, value: -11, to: today),
-              let completions = habit.completions else { return cache }
-        
-        for completion in completions {
-            if completion.date >= startDate && completion.date <= today {
-                let dateKey = formatDateKey(completion.date)
-                cache[dateKey] = (cache[dateKey] ?? 0) + completion.value
-            }
-        }
-        
-        return cache
-    }
-    
-    private func calculateMonthlyCompletionRateFromCache(for monthDate: Date, cache: [String: Int]) -> Double {
+    private func calculateMonthCompletionRate(for monthDate: Date) -> Double {
+        // Получаем диапазон дней в месяце
         guard let range = calendar.range(of: .day, in: .month, for: monthDate),
-              let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: monthDate)) else {
+              let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: monthDate)) else {
             return 0
         }
         
-        var totalDays = 0
-        var completedDays = 0
+        var totalProgress = 0.0
+        var activeDaysCount = 0
         
+        // Проходим по всем дням месяца
         for day in 1...range.count {
-            guard let currentDate = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else { continue }
+            guard let currentDate = calendar.date(byAdding: .day, value: day - 1, to: firstDay) else {
+                continue
+            }
             
+            // Проверяем только активные дни и не в будущем
             if habit.isActiveOnDate(currentDate) &&
                currentDate >= habit.startDate &&
                currentDate <= Date() {
-                totalDays += 1
                 
-                let dateKey = formatDateKey(currentDate)
-                let progress = cache[dateKey] ?? 0
+                activeDaysCount += 1
                 
-                if progress >= habit.goal {
-                    completedDays += 1
+                // Считаем прогресс для этого дня
+                let progress = habit.progressForDate(currentDate)
+                let goal = habit.goal
+                
+                if goal > 0 {
+                    let dayRate = min(Double(progress) / Double(goal), 1.0)
+                    totalProgress += dayRate
                 }
             }
         }
         
-        let rate = totalDays > 0 ? Double(completedDays) / Double(totalDays) : 0
-        return min(1.0, max(0.0, rate))
+        return activeDaysCount > 0 ? totalProgress / Double(activeDaysCount) : 0
     }
     
-    private func formatDateKey(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: date)
-    }
-    
-    private func formatMonthName(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
-        let monthName = formatter.string(from: date)
-        
-        let currentYear = calendar.component(.year, from: Date())
-        let monthYear = calendar.component(.year, from: date)
-        
-        if monthYear != currentYear {
-            return "\(String(monthName.prefix(1)))\(String(monthYear).suffix(2))"
-        } else {
-            return String(monthName.prefix(1)).uppercased()
-        }
-    }
-    
-    private var monthFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
-        return formatter
-    }
+    // MARK: - Helper Properties
     
     private var currentPeriodProgress: String {
-        let today = Date()
+        guard !chartData.isEmpty else { return "0%" }
         
-        var totalActiveDays = 0
-        var completedDays = 0
-        
-        for monthOffset in 0..<12 {
-            guard let date = calendar.date(byAdding: .month, value: monthOffset - 11, to: today) else { continue }
-            
-            if habit.isActiveOnDate(date) && date <= Date() {
-                totalActiveDays += 1
-                if habit.progressForDate(date) >= habit.goal {
-                    completedDays += 1
+        let averageCompletion = chartData.reduce(0) { $0 + $1.completionPercentage } / Double(chartData.count)
+        return "\(Int(averageCompletion * 100))%"
+    }
+}
+
+// MARK: - Shimmer Effect Extension
+
+extension View {
+    func shimmer(delay: Double = 0) -> some View {
+        self.modifier(ShimmerModifier(delay: delay))
+    }
+}
+
+struct ShimmerModifier: ViewModifier {
+    let delay: Double
+    @State private var isAnimating = false
+    
+    func body(content: Content) -> some View {
+        content
+            .opacity(isAnimating ? 0.5 : 1.0)
+            .animation(
+                .easeInOut(duration: 1.5)
+                .repeatForever(autoreverses: true)
+                .delay(delay),
+                value: isAnimating
+            )
+            .onAppear {
+                if delay == 0 {
+                    isAnimating = true
+                } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                        isAnimating = true
+                    }
                 }
             }
-        }
-        
-        let percentage = totalActiveDays > 0 ? Int((Double(completedDays) / Double(totalActiveDays)) * 100) : 0
-        return "\(percentage)%"
     }
 }

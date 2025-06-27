@@ -12,13 +12,13 @@ struct CardGradients {
     ]
     
     static let habitsDone = [
-        Color(#colorLiteral(red: 0.6588235294, green: 0.8784313725, blue: 0.3882352941, alpha: 1)),
+        Color(#colorLiteral(red: 0.5215686275, green: 0.8, blue: 0, alpha: 1)),
         Color(#colorLiteral(red: 0.337254902, green: 0.6705882353, blue: 0.1843137255, alpha: 1))
     ]
     
     static let activeHabits = [
-        Color(#colorLiteral(red: 0.4549019608, green: 0.6352941176, blue: 0.8823529412, alpha: 1)),
-        Color(#colorLiteral(red: 0.5411764706, green: 0.3019607843, blue: 0.6352941176, alpha: 1))
+        Color(#colorLiteral(red: 0.431372549, green: 0.6941176471, blue: 0.8392156863, alpha: 1)),
+        Color(#colorLiteral(red: 0.2156862745, green: 0.462745098, blue: 0.631372549, alpha: 1))
     ]
     
     static func adaptive(_ colors: [Color], colorScheme: ColorScheme) -> [Color] {
@@ -28,7 +28,6 @@ struct CardGradients {
 
 struct OverviewStatsView: View {
     let habits: [Habit]
-    let timeRange: OverviewTimeRange
     
     @State private var statsData: MotivatingOverviewStats = MotivatingOverviewStats()
     @State private var selectedInfoCard: InfoCard? = nil
@@ -42,11 +41,11 @@ struct OverviewStatsView: View {
         VStack(spacing: 16) {
             // Header - clean без фона
             VStack(alignment: .leading, spacing: 8) {
-                Text(headerTitle)
+                Text("overview".localized)
                     .font(.headline)
                     .fontWeight(.semibold)
                 
-                Text(headerSubtitle)
+                Text("your_total_progress".localized)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -57,8 +56,8 @@ struct OverviewStatsView: View {
             LazyVGrid(columns: gridColumns, spacing: 16) {
                 // 1. Completion Rate
                 StatCardInteractive(
-                    title: "completion_rate".localized,
-                    value: "\(Int(statsData.completionRate * 100))%",
+                    title: "overall_completion".localized,
+                    value: "\(Int(overallCompletionRate * 100))%",
                     onTap: { selectedInfoCard = .completionRate },
                     gradientColors: CardGradients.completionRate,
                     icon3DAsset: "CardInfo_completion_rate",
@@ -66,8 +65,8 @@ struct OverviewStatsView: View {
                 )
                 // 2. Active Days
                 StatCardInteractive(
-                    title: "active_days".localized,
-                    value: activeDaysDisplayValue,
+                    title: "active_days_total".localized,
+                    value: "\(totalActiveDays)",
                     onTap: { selectedInfoCard = .activeDays },
                     gradientColors: CardGradients.activeDays,
                     icon3DAsset: "CardInfo_active_days"
@@ -75,8 +74,8 @@ struct OverviewStatsView: View {
                 
                 // 3. Habits Done
                 StatCardInteractive(
-                    title: "habits_done".localized,
-                    value: "\(statsData.habitsCompleted)",
+                    title: "completed_total".localized,
+                    value: "\(totalCompletedHabits)",
                     onTap: { selectedInfoCard = .habitsDone },
                     gradientColors: CardGradients.habitsDone,
                     icon3DAsset: "CardInfo_habits_done"
@@ -84,7 +83,7 @@ struct OverviewStatsView: View {
                 // 4. Active Habits
                 StatCardInteractive(
                     title: "active_habits".localized,
-                    value: "\(statsData.activeHabitsCount)",
+                    value: "\(activeHabitsCount)",
                     onTap: { selectedInfoCard = .activeHabits },
                     gradientColors: CardGradients.activeHabits,
                     icon3DAsset: "CardInfo_active_habits"
@@ -99,17 +98,8 @@ struct OverviewStatsView: View {
         }
         .padding(.horizontal, 0)
         .padding(.vertical, 0)
-        .onAppear {
-            calculateStats()
-        }
-        .onChange(of: timeRange) { _, _ in
-            calculateStats()
-        }
-        .onChange(of: habits.count) { _, _ in
-            calculateStats()
-        }
         .sheet(item: $selectedInfoCard) { card in
-            CardInfoView(card: card, timeRange: timeRange)
+            CardInfoView(card: card)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
@@ -124,172 +114,57 @@ struct OverviewStatsView: View {
         ]
     }
     
-    // ✅ НОВОЕ: Active Days с отображением прогресса
-    private var activeDaysDisplayValue: String {
-        let activeDays = statsData.activeDays
-        let totalDays = getTotalDaysInRange()
-        return "\(activeDays)/\(totalDays)"
+    // ДОБАВИТЬ эти простые computed properties:
+    private var totalCompletedHabits: Int {
+        habits.reduce(0) { total, habit in
+            total + (habit.completions?.filter { $0.value >= habit.goal }.count ?? 0)
+        }
     }
-    
-    // ✅ Вычисляем общее количество дней в периоде
-    private func getTotalDaysInRange() -> Int {
 
-        switch timeRange {
-        case .week:
-            return 7
-            
-        case .month:
-            return 30
-            
-        case .year:
-            // ✅ ИСПРАВЛЕНИЕ: для Year всегда показываем 365 дней
-            return 365
-            
-        case .heatmap:
-            // Heatmap не использует Active Days карточку, но на всякий случай
-            return 365
-        }
-    }
-    
-    private var headerTitle: String {
-        switch timeRange {
-        case .week: return "last_7_days".localized
-        case .month: return "last_30_days".localized
-        case .year: return "last_12_months".localized
-        case .heatmap: return "activity_overview".localized
-        }
-    }
-    
-    private var headerSubtitle: String {
-        let formatter = DateFormatter()
-        let today = Date()
-        
-        switch timeRange {
-        case .week:
-            let weekStart = calendar.date(byAdding: .day, value: -6, to: today) ?? today
-            formatter.dateFormat = "MMM d"
-            let startString = formatter.string(from: weekStart)
-            let endString = formatter.string(from: today)
-            return "\(startString) - \(endString)"
-            
-        case .month:
-            let monthStart = calendar.date(byAdding: .day, value: -29, to: today) ?? today
-            formatter.dateFormat = "MMM d"
-            let startString = formatter.string(from: monthStart)
-            let endString = formatter.string(from: today)
-            return "\(startString) - \(endString)"
-            
-        case .year:
-            let yearStart = calendar.date(byAdding: .month, value: -11, to: today) ?? today
-            formatter.dateFormat = "MMM yyyy"
-            let startString = formatter.string(from: yearStart)
-            let endString = formatter.string(from: today)
-            return "\(startString) - \(endString)"
-            
-        case .heatmap:
-            return "past_365_days".localized
-        }
-    }
-    
-    // MARK: - Stats Calculation
-    
-    private func calculateStats() {
-        let now = Date()
-        let dateRange = getDateRange(for: timeRange, from: now)
-        
-        let habitsCompleted = calculateHabitsCompleted(in: dateRange)
-        let activeDays = calculateActiveDays(in: dateRange)
-        let completionRate = calculateCompletionRate(in: dateRange)
-        let activeHabitsCount = habits.filter { !$0.isArchived }.count
-        
-        statsData = MotivatingOverviewStats(
-            habitsCompleted: habitsCompleted,
-            activeDays: activeDays,
-            completionRate: completionRate,
-            activeHabitsCount: activeHabitsCount
-        )
-    }
-    
-    private func getDateRange(for timeRange: OverviewTimeRange, from date: Date) -> (start: Date, end: Date) {
-        switch timeRange {
-        case .week:
-            let start = calendar.date(byAdding: .day, value: -6, to: date) ?? date
-            return (start, date)
-            
-        case .month:
-            let start = calendar.date(byAdding: .day, value: -29, to: date) ?? date
-            return (start, date)
-            
-        case .year:
-            let start = calendar.date(byAdding: .month, value: -11, to: date) ?? date
-            return (start, date)
-            
-        case .heatmap:
-            let start = calendar.date(byAdding: .day, value: -364, to: date) ?? date
-            return (start, date)
-        }
-    }
-    
-    // MARK: - Individual Calculations
-    
-    private func calculateHabitsCompleted(in dateRange: (start: Date, end: Date)) -> Int {
-        var completed = 0
+    private var totalActiveDays: Int {
+        var activeDaysSet: Set<String> = []
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         
         for habit in habits {
-            var currentDate = dateRange.start
-            while currentDate <= min(dateRange.end, Date()) {
-                if habit.isActiveOnDate(currentDate) && habit.progressForDate(currentDate) >= habit.goal {
-                    completed += 1
+            guard let completions = habit.completions else { continue }
+            
+            for completion in completions {
+                if completion.value > 0 && habit.isActiveOnDate(completion.date) {
+                    let dateKey = dateFormatter.string(from: completion.date)
+                    activeDaysSet.insert(dateKey)
                 }
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
             }
-        }
-        
-        return completed
-    }
-    
-    private func calculateActiveDays(in dateRange: (start: Date, end: Date)) -> Int {
-        var activeDaysSet: Set<String> = []
-        
-        var currentDate = dateRange.start
-        while currentDate <= min(dateRange.end, Date()) {
-            
-            let hasAnyProgress = habits.contains { habit in
-                habit.isActiveOnDate(currentDate) && habit.progressForDate(currentDate) > 0
-            }
-            
-            if hasAnyProgress {
-                let dayKey = "\(calendar.component(.year, from: currentDate))-\(calendar.component(.month, from: currentDate))-\(calendar.component(.day, from: currentDate))"
-                activeDaysSet.insert(dayKey)
-            }
-            
-            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
         }
         
         return activeDaysSet.count
     }
-    
-    private func calculateCompletionRate(in dateRange: (start: Date, end: Date)) -> Double {
+
+    private var overallCompletionRate: Double {
         var totalProgress = 0.0
         var totalPossibleProgress = 0.0
         
         for habit in habits.filter({ !$0.isArchived }) {
-            var currentDate = dateRange.start
-            while currentDate <= min(dateRange.end, Date()) {
-                if habit.isActiveOnDate(currentDate) {
-                    let progress = habit.progressForDate(currentDate)
+            guard let completions = habit.completions else { continue }
+            
+            for completion in completions {
+                if habit.isActiveOnDate(completion.date) {
+                    let progress = completion.value
                     let goal = habit.goal
                     
                     if goal > 0 {
-                        totalProgress += min(Double(progress), Double(goal)) // Cap at goal to avoid over 100%
+                        totalProgress += min(Double(progress), Double(goal))
                         totalPossibleProgress += Double(goal)
                     }
                 }
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
             }
         }
         
         return totalPossibleProgress > 0 ? totalProgress / totalPossibleProgress : 0.0
+    }
+
+    private var activeHabitsCount: Int {
+        habits.filter { !$0.isArchived }.count
     }
 }
 
@@ -312,9 +187,9 @@ struct MotivatingOverviewStats {
 // MARK: - Info Models
 
 enum InfoCard: String, Identifiable {
-    case habitsDone = "habits_done"
-    case activeDays = "active_days"
-    case completionRate = "completion_rate"
+    case habitsDone = "overall_completion"
+    case activeDays = "active_days_total"
+    case completionRate = "completed_total"
     case activeHabits = "active_habits"
     
     var id: String { rawValue }
@@ -441,7 +316,6 @@ struct StatCardInteractive: View {
 
 struct CardInfoView: View {
     let card: InfoCard
-    let timeRange: OverviewTimeRange
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     
@@ -514,7 +388,7 @@ struct CardInfoView: View {
     }
     
     // MARK: - Computed Properties
-    
+
     private var cardIllustration: String {
         switch card {
         case .habitsDone: return "CardInfo_habits_done"
@@ -523,17 +397,17 @@ struct CardInfoView: View {
         case .activeHabits: return "CardInfo_active_habits"
         }
     }
-    
+
     private var cardImageSize: CGSize {
         // Единый размер для всех карточек
         return CGSize(width: 200, height: 160)
     }
-    
+
     private var cardColor: Color {
         let gradients = gradientForCard(card)
-        return colorScheme == .dark ? gradients[0] : gradients[1]  // Светлый для темной темы, темный для светлой
+        return colorScheme == .dark ? gradients[0] : gradients[1]
     }
-    
+
     private func gradientForCard(_ card: InfoCard) -> [Color] {
         switch card {
         case .completionRate: return CardGradients.completionRate
@@ -542,50 +416,50 @@ struct CardInfoView: View {
         case .activeHabits: return CardGradients.activeHabits
         }
     }
-    
+
     private var cardTitle: String {
         switch card {
-        case .habitsDone: return "habits_done".localized
-        case .activeDays: return "active_days".localized
-        case .completionRate: return "completion_rate".localized
+        case .habitsDone: return "completed_total".localized
+        case .activeDays: return "active_days_total".localized
+        case .completionRate: return "overall_completion".localized
         case .activeHabits: return "active_habits".localized
         }
     }
-    
+
     private var cardDescription: String {
         switch card {
         case .habitsDone:
-            return "habits_done_description".localized
+            return "completed_total_description".localized
         case .activeDays:
-            return "active_days_description".localized
+            return "active_days_total_description".localized
         case .completionRate:
-            return "completion_rate_description".localized
+            return "overall_completion_description".localized
         case .activeHabits:
             return "active_habits_description".localized
         }
     }
-    
+
     private var calculationDescription: String {
         switch card {
         case .habitsDone:
-            return "habits_done_calculation".localized
+            return "completed_total_calculation".localized
         case .activeDays:
-            return "active_days_calculation".localized
+            return "active_days_total_calculation".localized
         case .completionRate:
-            return "completion_rate_calculation".localized
+            return "overall_completion_calculation".localized
         case .activeHabits:
             return "active_habits_calculation".localized
         }
     }
-    
+
     private var exampleDescription: String {
         switch card {
         case .habitsDone:
-            return "habits_done_example".localized
+            return "completed_total_example".localized
         case .activeDays:
-            return "active_days_example".localized
+            return "active_days_total_example".localized
         case .completionRate:
-            return "completion_rate_example".localized
+            return "overall_completion_example".localized
         case .activeHabits:
             return "active_habits_example".localized
         }

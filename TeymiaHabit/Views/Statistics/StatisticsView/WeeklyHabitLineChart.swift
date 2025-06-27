@@ -17,8 +17,8 @@ struct WeeklyHabitLineChart: View {
                 y: .value("Progress", dataPoint.completionRate)
             )
             .foregroundStyle(habit.iconColor.color)
-            .lineStyle(StrokeStyle(lineWidth: 1.5)) // ✅ Тоньше линия
-            .interpolationMethod(.monotone) // ✅ Теперь и Weekly мягкий!
+            .lineStyle(StrokeStyle(lineWidth: 1.5))
+            .interpolationMethod(.monotone)
             
             AreaMark(
                 x: .value("Day", dataPoint.dayName),
@@ -34,10 +34,10 @@ struct WeeklyHabitLineChart: View {
                     endPoint: .bottom
                 )
             )
-            .interpolationMethod(.monotone) // ✅ И для области
+            .interpolationMethod(.monotone)
         }
         .frame(height: 140)
-        .chartYScale(domain: 0...1.0) // ✅ Строгие границы
+        .chartYScale(domain: 0...1.0)
         .chartXAxis {
             AxisMarks { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
@@ -65,6 +65,15 @@ struct WeeklyHabitLineChart: View {
             }
         }
         .onAppear {
+            // 🔧 ИСПРАВЛЕНИЕ: всегда обновляем данные при появлении
+            generateChartData()
+        }
+        .onChange(of: habit.completions?.count) { _, _ in
+            // 🔧 НОВОЕ: реактивное обновление при изменении данных
+            generateChartData()
+        }
+        .onChange(of: habit.goal) { _, _ in
+            // 🔧 НОВОЕ: обновляем при изменении цели
             generateChartData()
         }
     }
@@ -99,6 +108,6 @@ struct WeeklyHabitLineChart: View {
         let goal = habit.goal
         
         let rate = goal > 0 ? Double(progress) / Double(goal) : 0
-        return min(1.0, max(0.0, rate)) // ✅ Гарантируем 0-100%
+        return min(1.0, max(0.0, rate)) // Гарантируем 0-100%
     }
 }
