@@ -77,7 +77,7 @@
 
 /* ===================== New Habit View ===================== */
 "habit_name" = "Habit Name";
-"icon" = "Icon";
+"icon_and_color" = "Icon & Color";
 "goalsection_choose_time" = "Choose time (hr:min)";
 "goalsection_enter_count" = "Enter count";
 "active_days" = "Active days";

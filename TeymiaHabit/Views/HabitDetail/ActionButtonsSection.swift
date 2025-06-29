@@ -66,34 +66,10 @@ struct ActionButtonsSection: View {
     
     /// ✅ ИСПРАВЛЕННЫЙ адаптивный градиент с единой логикой приложения
     private var adaptivePlayButtonGradient: LinearGradient {
-        if habit.iconColor == .primary {
-            // ✅ Для primary используем ту же логику что в AppColorManager и BeautifulButtonStyle
-            return LinearGradient(
-                colors: colorScheme == .dark ? [
-                    Color.secondary.opacity(0.8),   // темная тема: серый вверх
-                    Color.primary                   // белый низ
-                ] : [
-                    Color.secondary.opacity(0.8),   // светлая тема: серый вверх
-                    Color.primary                   // черный низ
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        } else {
-            // ✅ Для остальных цветов используем единую логику
-            return LinearGradient(
-                colors: colorScheme == .dark ? [
-                    // ТЕМНАЯ тема: темный → светлый
-                    habit.iconColor.darkColor,
-                    habit.iconColor.lightColor.opacity(0.8)
-                ] : [
-                    // СВЕТЛАЯ тема: светлый → темный
-                    habit.iconColor.lightColor.opacity(0.8),
-                    habit.iconColor.darkColor
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
+        return habit.iconColor.adaptiveGradient(
+            for: colorScheme,
+            lightOpacity: 0.7,
+            darkOpacity: 1.0
+        )
     }
 }

@@ -77,7 +77,7 @@
 
 /* ===================== New Habit View ===================== */
 "habit_name" = "Название привычки";
-"icon" = "Иконка";
+"icon_and_color" = "Иконка и цвет";
 "goalsection_choose_time" = "Выберите время (ч:м)";
 "goalsection_enter_count" = "Введите число";
 "active_days" = "Активные дни";

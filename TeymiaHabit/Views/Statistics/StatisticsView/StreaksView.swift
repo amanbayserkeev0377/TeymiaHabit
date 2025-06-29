@@ -2,12 +2,13 @@ import SwiftUI
 
 struct StreaksView: View {
     let viewModel: HabitStatsViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         HStack(spacing: 0) {
             Image(systemName: "laurel.leading")
                 .font(.system(size: 38))
-                .foregroundColor(.secondary)
+                .foregroundStyle(laurelGradient)
             
             Group {
                 // Streak
@@ -31,9 +32,23 @@ struct StreaksView: View {
             
             Image(systemName: "laurel.trailing")
                 .font(.system(size: 38))
-                .foregroundColor(.secondary)
+                .foregroundStyle(laurelGradient)
         }
         .padding(.vertical, 8)
+    }
+    
+    // MARK: - Gradient for Laurel Branches
+    
+    private var laurelGradient: LinearGradient {
+        // Get habit color - viewModel.habit is not optional
+        let habitColor = viewModel.habit.iconColor
+        
+        // Use adaptive gradient: light theme = light top → dark bottom, dark theme = dark top → light bottom
+        return habitColor.adaptiveGradient(
+            for: colorScheme,
+            lightOpacity: 0.8,  // Slightly transparent for elegance
+            darkOpacity: 1.0
+        )
     }
 }
 

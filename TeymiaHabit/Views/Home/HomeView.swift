@@ -73,6 +73,7 @@ struct HomeView: View {
     @State private var selectedFolder: HabitFolder? = nil
     @State private var selectedForAction: Set<PersistentIdentifier> = []
     @State private var showingMoveToFolder = false
+    @State private var isPressed = false
     
     // Computed property for filtering habits based on selected date
     private var activeHabitsForDate: [Habit] {
@@ -119,13 +120,16 @@ struct HomeView: View {
             ZStack {
                 contentView(actionService: actionService)
                 
-                // FAB - показывать только если не в edit mode
+                // ✅ НОВЫЙ FAB с градиентом - показывать только если не в edit mode
                 if !isEditMode {
                     VStack {
                         Spacer()
                         HStack {
                             Spacer()
+                            
+                            // ✅ УЛУЧШЕННАЯ FAB кнопка
                             Button(action: {
+                                HapticManager.shared.playSelection()
                                 if !ProManager.shared.isPro && allBaseHabits.count >= 3 {
                                     showingPaywall = true
                                 } else {
@@ -134,21 +138,33 @@ struct HomeView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
-                                    .foregroundStyle(colorManager.selectedColor.color)
-                                    .frame(width: 52, height: 52)
+                                    .foregroundStyle(.white)  // ✅ Белая иконка для контраста
+                                    .frame(width: 56, height: 56)  // ✅ Чуть больше для лучшего касания
                                     .background(
                                         Circle()
-                                            .fill(colorManager.selectedColor.color.opacity(0.05))
-                                            .overlay(
-                                                Circle()
-                                                    .strokeBorder(
-                                                        colorManager.selectedColor.color.opacity(0.1),
-                                                        lineWidth: 0.7
-                                                    )
+                                            .fill(
+                                                // ✅ Красивый градиент как в кнопках
+                                                colorManager.selectedColor.adaptiveGradient(
+                                                    for: colorScheme,
+                                                    lightOpacity: 0.9,
+                                                    darkOpacity: 1.0
+                                                )
+                                            )
+                                            .shadow(
+                                                color: colorScheme == .dark ? .clear : .black.opacity(0.15),
+                                                radius: colorScheme == .dark ? 0 : 8,
+                                                x: 0,
+                                                y: colorScheme == .dark ? 0 : 4
                                             )
                                     )
                             }
+                            // ✅ ПРОСТЫЕ АНИМАЦИИ без хаков
                             .buttonStyle(.plain)
+                            .scaleEffect(isPressed ? 0.92 : 1.0)  // ✅ Простой scale эффект
+                            .animation(.easeInOut(duration: 0.15), value: isPressed)
+                            .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, perform: {}) { pressing in
+                                isPressed = pressing  // ✅ Отслеживаем нажатие
+                            }
                             .padding(.trailing, 20)
                             .padding(.bottom, 20)
                         }
@@ -166,10 +182,6 @@ struct HomeView: View {
                     date: selectedDate,
                     onDelete: {
                         selectedHabit = nil
-                    },
-                    onShowStats: {
-                        selectedHabit = nil
-                        selectedHabitForStats = habit
                     }
                 )
             }
@@ -182,12 +194,6 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
-        }
-        .sheet(item: $selectedHabitForStats) { habit in
-            NavigationStack {
-                HabitStatisticsView(habit: habit)
-            }
-            .presentationDragIndicator(.visible)
         }
         .sheet(item: $habitToEdit) { habit in
             NewHabitView(habit: habit)

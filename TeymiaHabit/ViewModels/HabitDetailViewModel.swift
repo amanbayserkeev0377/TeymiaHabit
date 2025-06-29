@@ -208,7 +208,7 @@ final class HabitDetailViewModel {
         // Update current progress from service to ensure consistency
         currentProgress = progressService.getCurrentProgress(for: habitId)
         
-        print("🔄 Synced with service: ViewModel=\(habitProgress.value), Service=\(currentProgress)")
+//        print("🔄 Synced with service: ViewModel=\(habitProgress.value), Service=\(currentProgress)")
     }
     
     // MARK: - Timer Management

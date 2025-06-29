@@ -4,6 +4,7 @@ struct HabitRowView: View {
     let habit: Habit
     let date: Date
     let onTap: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
     
     private let ringSize: CGFloat = 54
     private let lineWidth: CGFloat = 6.5
@@ -33,11 +34,15 @@ struct HabitRowView: View {
                     // Основная иконка
                     Image(systemName: iconName)
                         .font(.system(size: 26))
-                        .foregroundStyle(habit.iconColor.color)
-                        .frame(width: 52, height: 52)
+                        .foregroundStyle(.white)
+                        .frame(width: 56, height: 56)
                         .background(
                             Circle()
-                                .fill(habit.iconColor.color.opacity(0.1))
+                                .fill(habit.iconColor.adaptiveGradient(for: colorScheme,
+                                                                       lightOpacity: 0.8,
+                                                                       darkOpacity: 1.0
+                                                                      )
+                                )
                         )
                     
                     // Pin indicator badge

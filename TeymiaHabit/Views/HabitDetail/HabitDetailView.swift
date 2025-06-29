@@ -22,8 +22,7 @@ struct HabitDetailView: View {
     @State private var isContentReady = false
     @State private var navigateToStatistics = false
     @State private var isEditPresented = false
-    @State private var isTimerStopAlertPresented = false
-    @State private var isManuallyDismissing = false
+    @State private var selectedHabitForStats: Habit? = nil
     
     // MARK: - Body
     var body: some View {
@@ -32,35 +31,20 @@ struct HabitDetailView: View {
                 habitDetailContent(viewModel: viewModel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar { habitDetailToolbar }
-                    .onAppear {
-                        setupViewModel()
-                    }
                     .onChange(of: date) { _, newDate in
                         viewModel.saveIfNeeded()
                         setupViewModel(with: newDate)
                     }
                     .onDisappear {
-                        if !isManuallyDismissing {
-                            viewModel.saveIfNeeded()
-                            viewModel.cleanup(stopTimer: true)
-                        } else {
-                            viewModel.forceCleanup()
-                        }
+                        viewModel.saveIfNeeded()
+                        viewModel.cleanup(stopTimer: true)
                     }
-                    .alert("alert_close_timer".localized, isPresented: $isTimerStopAlertPresented) {
-                        Button("button_cancel".localized, role: .cancel) { }
-                            .withHabitColor(habit)
-                        Button("button_close".localized, role: .destructive) {
-                            isManuallyDismissing = true
-                            viewModel.saveIfNeeded()
-                            viewModel.cleanup(stopTimer: true)
-                            dismiss()
+                    .navigationDestination(item: $selectedHabitForStats) { habit in
+                            HabitStatisticsView(habit: habit)
                         }
-                    }
                     .sheet(isPresented: $isEditPresented) {
                         NewHabitView(habit: habit)
                     }
-                    .interactiveDismissDisabled(viewModel.isTimerRunning == true)
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                         viewModel.saveIfNeeded()
                     }
@@ -70,14 +54,10 @@ struct HabitDetailView: View {
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
                         viewModel.forceCleanup()
                     }
-            } else {
-                ProgressView()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar { habitDetailToolbar }
-                    .onAppear {
-                        setupViewModel()
-                    }
             }
+        }
+        .onAppear {
+            setupViewModel()
         }
     }
     
@@ -229,21 +209,10 @@ struct HabitDetailView: View {
     // Toolbar
     @ToolbarContentBuilder
     private var habitDetailToolbar: some ToolbarContent {
-        // Кнопка "Закрыть" только если таймер активен
-        ToolbarItem(placement: .cancellationAction) {
-            if viewModel?.isTimerRunning == true {
-                Button("button_close".localized) {
-                    isTimerStopAlertPresented = true
-                }
-                .withHabitColor(habit)
-            }
-        }
         
         ToolbarItem(placement: .primaryAction) {
             Button {
-                if let onShowStats = onShowStats {
-                    onShowStats()
-                }
+                selectedHabitForStats = habit
             } label: {
                 Image(systemName: "chart.line.text.clipboard")
                     .font(.system(size: 16))

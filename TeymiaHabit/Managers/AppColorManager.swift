@@ -9,11 +9,11 @@ final class AppColorManager: ObservableObject {
     
     // MARK: - Constants
     private struct ColorConstants {
-        static let completedLightGreen = Color(#colorLiteral(red: 0.5098039216, green: 0.8914806547, blue: 0.2757943802, alpha: 1))
-        static let completedDarkGreen = Color(#colorLiteral(red: 0.2784313725, green: 0.6745098039, blue: 0.02352941176, alpha: 1))
+        static let completedLightGreen = Color(#colorLiteral(red: 0.6, green: 0.92, blue: 0.35, alpha: 1))
+        static let completedDarkGreen = Color(#colorLiteral(red: 0.15, green: 0.5, blue: 0.0, alpha: 1))
         
-        static let exceededLightMint = Color(#colorLiteral(red: 0.5019607843, green: 0.8549019608, blue: 0.9215686275, alpha: 1))
-        static let exceededDarkGreen = Color(#colorLiteral(red: 0.2784313725, green: 0.6745098039, blue: 0.02352941176, alpha: 1))
+        static let exceededLightMint = Color(#colorLiteral(red: 0.6, green: 0.9, blue: 0.95, alpha: 1))
+        static let exceededDarkGreen = Color(#colorLiteral(red: 0.15, green: 0.5, blue: 0.0, alpha: 1))
     }
     
     private let availableColors: [HabitIconColor] = [
@@ -90,22 +90,13 @@ final class AppColorManager: ObservableObject {
         case .inProgress:
             let habitColor = habit?.iconColor ?? selectedColor
             
-            if habitColor == .primary {
-                // Primary uses system colors for best contrast
-                let visualTop = Color.secondary     // Gray at top (what user sees)
-                let visualBottom = Color.primary    // Black/White at bottom (what user sees)
-                
-                return (top: visualTop, bottom: visualBottom)
-            } else {
-                let lightColor = habitColor.lightColor
-                let darkColor = habitColor.darkColor
-                
-                // Standard logic: light theme = light top → dark bottom, dark theme = dark top → light bottom
-                let visualTop = colorScheme == .dark ? darkColor : lightColor
-                let visualBottom = colorScheme == .dark ? lightColor : darkColor
-                
-                return (top: visualTop, bottom: visualBottom)
-            }
+            let lightColor = habitColor.lightColor
+            let darkColor = habitColor.darkColor
+            
+            let visualTop = colorScheme == .dark ? darkColor : lightColor
+            let visualBottom = colorScheme == .dark ? lightColor : darkColor
+            
+            return (top: visualTop, bottom: visualBottom)
         }
     }
     
@@ -122,12 +113,6 @@ final class AppColorManager: ObservableObject {
             isExceeded: isExceeded,
             colorScheme: colorScheme
         )
-    }
-    
-    /// Get gradient for buttons (standard top→bottom without rotation)
-    func getButtonGradient(for habit: Habit?) -> LinearGradient {
-        let habitColor = habit?.iconColor ?? selectedColor
-        return habitColor.gradient
     }
 }
 
@@ -167,26 +152,26 @@ extension AppColorManager {
 // MARK: - 📝 DEVELOPER DOCUMENTATION
 
 /*
-🎯 RING GRADIENT SYSTEM EXPLANATION:
-
-WHY THE COMPLEXITY?
-ProgressRingCircle uses LinearGradient with .leading → .trailing direction and -90° rotation.
-This rotation is necessary so the ring starts at 12 o'clock (top) instead of 3 o'clock (right).
-
-COORDINATE TRANSFORMATION:
-- Without rotation: .leading = left, .trailing = right
-- With -90° rotation: .leading = top, .trailing = bottom (visually)
-- Gradient array [0, 1] maps to [.leading, .trailing] = [visual top, visual bottom]
-- BUT we want to think in visual terms: [visual bottom, visual top]
-
-SOLUTION:
-1. getVisualRingColors() - Think in visual terms: what does user see?
-2. getRingColors() - Convert visual order to gradient array order
-3. Result: Code reads naturally, works correctly
-
-VISUAL LOGIC (consistent across all states):
-- Light theme: light top → dark bottom
-- Dark theme: dark top → light bottom
-
-This creates natural depth perception and follows iOS design principles.
-*/
+ 🎯 RING GRADIENT SYSTEM EXPLANATION:
+ 
+ WHY THE COMPLEXITY?
+ ProgressRingCircle uses LinearGradient with .leading → .trailing direction and -90° rotation.
+ This rotation is necessary so the ring starts at 12 o'clock (top) instead of 3 o'clock (right).
+ 
+ COORDINATE TRANSFORMATION:
+ - Without rotation: .leading = left, .trailing = right
+ - With -90° rotation: .leading = top, .trailing = bottom (visually)
+ - Gradient array [0, 1] maps to [.leading, .trailing] = [visual top, visual bottom]
+ - BUT we want to think in visual terms: [visual bottom, visual top]
+ 
+ SOLUTION:
+ 1. getVisualRingColors() - Think in visual terms: what does user see?
+ 2. getRingColors() - Convert visual order to gradient array order
+ 3. Result: Code reads naturally, works correctly
+ 
+ VISUAL LOGIC (consistent across all states):
+ - Light theme: light top → dark bottom
+ - Dark theme: dark top → light bottom
+ 
+ This creates natural depth perception and follows iOS design principles.
+ */

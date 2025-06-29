@@ -57,14 +57,14 @@ struct ColorPickerSection: View {
             ZStack {
                 // Base circular color button
                 Circle()
-                    .fill(color.color)
+                    .fill(color.adaptiveGradient(for: colorScheme, lightOpacity: 0.8, darkOpacity: 1.0))
                     .frame(width: buttonSize, height: buttonSize)
                     .opacity(isLocked ? 0.7 : 1.0) // Слегка приглушаем заблокированные цвета
                     .overlay(
                         // Circular stroke for selected state (bigger, closer to edges)
                         Circle()
                             .strokeBorder(
-                                colorScheme == .dark ? .black : .white, 
+                                Color.white, 
                                 lineWidth: 2
                             )
                             .frame(width: buttonSize * 0.9, height: buttonSize * 0.9)

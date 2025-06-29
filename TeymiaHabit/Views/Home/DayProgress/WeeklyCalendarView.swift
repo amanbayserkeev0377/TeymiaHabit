@@ -256,7 +256,7 @@ struct WeeklyCalendarView: View {
         // DEBUG для всех вызовов
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/dd"
-        print("📅 calculateProgress: \(formatter.string(from: date)) = \(averageProgress)")
+//        print("📅 calculateProgress: \(formatter.string(from: date)) = \(averageProgress)")
         
         return averageProgress
     }

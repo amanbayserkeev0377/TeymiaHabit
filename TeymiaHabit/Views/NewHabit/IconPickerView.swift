@@ -51,6 +51,13 @@ struct IconPickerView: View {
         return Array(repeating: GridItem(.flexible()), count: adjustedCount)
     }
     
+    // MARK: - Selection Logic
+    
+    /// Check if icon is selected
+    private func isSelected(_ iconName: String) -> Bool {
+        return selectedIcon == iconName
+    }
+    
     // MARK: - Data
     
     private let categories: [IconCategory] = [
@@ -103,22 +110,15 @@ struct IconPickerView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(.regularMaterial) // Material для glassmorphism эффекта
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(.ultraThinMaterial)
                     .shadow(color: .primary.opacity(0.2), radius: 20, x: 0, y: -10)
             )
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
         }
-        .navigationTitle("choose_icon".localized)
+        .navigationTitle("icon_and_color".localized)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("button_done".localized) {
-                    dismiss()
-                }
-            }
-        }
         .onAppear {
             if selectedIcon == nil {
                 selectedIcon = defaultIcon
@@ -130,68 +130,79 @@ struct IconPickerView: View {
     
     /// Main icon grid section
     private var iconGridSection: some View {
-        List {
-            ForEach(categories, id: \.name) { category in
-                Section(header: Text(category.name)) {
-                    LazyVGrid(columns: adaptiveColumns, spacing: 10) {
-                        ForEach(category.icons, id: \.self) { iconName in
-                            iconButton(for: iconName, in: category)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 20) {
+                ForEach(categories, id: \.name) { category in
+                    VStack(alignment: .leading, spacing: 12) {
+                        // Section header
+                        Text(category.name)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .padding(.horizontal, 20)
+                        
+                        // Icons grid
+                        LazyVGrid(columns: adaptiveColumns, spacing: 12) {
+                            ForEach(category.icons, id: \.self) { iconName in
+                                iconButton(for: iconName, in: category)
+                            }
                         }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.vertical, 10)
                 }
-                .listSectionSeparator(.hidden)
-                .listRowBackground(Color(UIColor.systemGroupedBackground))
+                
+                // Padding для floating color picker
+                Color.clear.frame(height: 120)
             }
+            .padding(.top, 16)
         }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(Color(UIColor.systemGroupedBackground))
     }
     
     /// Individual icon button
     private func iconButton(for iconName: String, in category: IconCategory) -> some View {
-        Button {
+        let isSelected = isSelected(iconName)
+        
+        return Button {
             selectedIcon = iconName
+            HapticManager.shared.playSelection()
         } label: {
             VStack {
-                iconImage(for: iconName, isCustom: category.isCustom)
+                iconImage(for: iconName, isSelected: isSelected)
             }
             .frame(width: buttonSize, height: buttonSize)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(UIColor.systemBackground))
-                    .shadow(color: Color.primary.opacity(0.1), radius: 2, x: 0, y: 1)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        selectedIcon == iconName ? 
-                            (selectedColor == .colorPicker ? HabitIconColor.customColor : selectedColor.color) :
-                            Color.primary.opacity(0.1),
-                        lineWidth: selectedIcon == iconName ? 2 : 1
+                Circle()
+                    .fill(
+                        // ✅ ИСПРАВЛЕНО: только выбранная иконка получает градиент
+                        isSelected
+                        ? selectedColor.adaptiveGradient(
+                            for: colorScheme,
+                            lightOpacity: 0.8,
+                            darkOpacity: 1.0
+                        )
+                        : LinearGradient(
+                            colors: colorScheme == .dark
+                            ? [Color(.systemGray4), Color(.systemGray6)]  // Серый градиент для темной темы
+                            : [Color(.systemGray6), Color(.systemGray4)], // Серый градиент для светлой темы
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
             )
+            .scaleEffect(isSelected ? 1.08 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .animation(.easeInOut(duration: 0.25), value: selectedColor)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(iconAccessibilityLabel(for: iconName, isCustom: category.isCustom))
     }
     
-    /// Icon image with proper sizing and styling
-    private func iconImage(for iconName: String, isCustom: Bool) -> some View {
+    /// Icon image with proper color logic
+    private func iconImage(for iconName: String, isSelected: Bool) -> some View {
         Image(systemName: iconName)
-            .font(.system(size: iconSize * 0.8, weight: .medium))
-            .frame(width: iconSize, height: iconSize)
+            .font(.system(size: iconSize * 0.65, weight: .medium))
+            .frame(width: iconSize * 0.8, height: iconSize * 0.8)
             .foregroundStyle(
-                iconName == defaultIcon
-                ? colorManager.selectedColor.color
-                : (selectedColor == .colorPicker ? HabitIconColor.customColor : selectedColor.color)
+                isSelected ? .white : .secondary
             )
-    }
-    
-    /// Accessibility label for icons
-    private func iconAccessibilityLabel(for iconName: String, isCustom: Bool) -> String {
-        return "\(iconName) icon"
     }
 }
 

@@ -77,7 +77,7 @@
 
 /* ===================== New Habit View ===================== */
 "habit_name" = "Адаттын аты";
-"icon" = "Белги";
+"icon_and_color" = "Белги жана түс";
 "goalsection_choose_time" = "Убакытты тандаңыз (с:м)";
 "goalsection_enter_count" = "Санын жазыңыз";
 "active_days" = "Активдүү күндөр";

@@ -3,6 +3,7 @@ import SwiftUI
 struct IconSection: View {
     @Binding var selectedIcon: String?
     @Binding var selectedColor: HabitIconColor
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         NavigationLink {
@@ -19,15 +20,26 @@ struct IconSection: View {
                     ], fontSize: 16
                     )
                 
-                Text("icon".localized)
+                Text("icon_and_color".localized)
                 
                 Spacer()
                 
-                // Показываем выбранную иконку с ее цветом
+                // Показываем выбранную иконку с градиентным фоном и белой иконкой
                 if let selectedIcon = selectedIcon {
                     Image(systemName: selectedIcon)
-                        .foregroundStyle(selectedColor.color)
-                        .font(.system(size: 16))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.white)
+                        .frame(width: 32, height: 32)
+                        .background(
+                            Circle()
+                                .fill(
+                                    selectedColor.adaptiveGradient(
+                                        for: colorScheme,
+                                        lightOpacity: 0.8,
+                                        darkOpacity: 1.0
+                                    )
+                                )
+                        )
                 }
             }
         }

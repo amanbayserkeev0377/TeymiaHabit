@@ -38,6 +38,7 @@ struct AppColorSection: View {
 struct AppColorPickerView: View {
     @ObservedObject private var colorManager = AppColorManager.shared
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(ProManager.self) private var proManager
     @State private var showingPaywall = false
     
@@ -47,17 +48,17 @@ struct AppColorPickerView: View {
                 // Main content
                 Form {
                     Section {
-                        // Simple preview showing app color usage
-                        VStack(spacing: 16) {
+                        // Realistic preview showing actual app elements
+                        VStack(spacing: 20) {
                             appColorPreview
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 12)
                         
                     } header: {
-                        Text("App Color")
+                        Text("app_color_preview_header".localized)
                             .font(.headline)
                     } footer: {
-                        Text("Choose the color for app interface elements like navigation, buttons, and progress indicators in calendar view.")
+                        Text("app_color_preview_footer".localized)
                             .font(.footnote)
                     }
                 }
@@ -82,7 +83,7 @@ struct AppColorPickerView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(.regularMaterial)
+                        .fill(.ultraThinMaterial)
                         .shadow(color: .primary.opacity(0.2), radius: 20, x: 0, y: -10)
                 )
                 .padding(.horizontal, 16)
@@ -96,53 +97,72 @@ struct AppColorPickerView: View {
         }
     }
     
-    // MARK: - Preview
+    // MARK: - Realistic Preview
     
     @ViewBuilder
     private var appColorPreview: some View {
-        VStack(spacing: 12) {
-            Text("Preview")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            
-            // Sample UI elements using app color
+        VStack(spacing: 20) {
+            // 1. Floating Action Button (как в NewHabit)
             VStack(spacing: 8) {
-                // Navigation bar sample
-                HStack {
-                    Text("Habits")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    
-                    Spacer()
-                    
-                    Button {
-                        // Preview button
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.title3)
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(.quaternary.opacity(0.3))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                Text("Floating Action Button")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 
-                // Sample button
                 Button {
                     // Preview button
                 } label: {
-                    Text("Save Changes")
-                        .font(.body)
-                        .fontWeight(.medium)
+                    Image(systemName: "plus")
+                        .font(.system(size: 24, weight: .semibold))
                         .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(colorManager.selectedColor.color)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .frame(width: 56, height: 56)
+                        .background(
+                            Circle()
+                                .fill(
+                                    colorManager.selectedColor.adaptiveGradient(
+                                        for: colorScheme,
+                                        lightOpacity: 0.9,
+                                        darkOpacity: 1.0
+                                    )
+                                )
+                                .shadow(
+                                    color: colorScheme == .dark ? .clear : .black.opacity(0.15),
+                                    radius: colorScheme == .dark ? 0 : 8,
+                                    x: 0,
+                                    y: colorScheme == .dark ? 0 : 4
+                                )
+                        )
                 }
                 .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
+            }
+            
+            // 2. Beautiful Button (как в формах)
+            VStack(spacing: 8) {
+                Text("Action Button")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 
-                // Sample progress indicator (like calendar)
+                Button {
+                    // Preview button
+                } label: {
+                    HStack(spacing: 8) {
+                        Text("Save Changes")
+                        Image(systemName: "checkmark.circle.fill")
+                    }
+                }
+                .beautifulButton(
+                    habitColor: colorManager.selectedColor,
+                    isEnabled: true,
+                    style: .primary
+                )
+                .frame(maxWidth: 200) // Ограничиваем ширину для preview
+            }
+            
+            // 3. Progress Indicators (как в календаре)
+            VStack(spacing: 8) {
+                Text("Progress Indicators")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
                 HStack(spacing: 8) {
                     ForEach(0..<7, id: \.self) { index in
                         Circle()
@@ -150,6 +170,30 @@ struct AppColorPickerView: View {
                             .frame(width: 12, height: 12)
                     }
                 }
+                .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
+            }
+            
+            // 4. Navigation Link/Button (как в настройках)
+            VStack(spacing: 8) {
+                Text("Navigation Elements")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                HStack {
+                    Text("Example Setting")
+                        .font(.body)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(colorManager.selectedColor.color)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(.quaternary.opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
             }
         }
