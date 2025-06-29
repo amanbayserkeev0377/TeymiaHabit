@@ -4,7 +4,6 @@ import SwiftData
 struct MoveToFolderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     
     let habits: [Habit]
     @State private var selectedFolders: Set<HabitFolder> = []
@@ -81,7 +80,6 @@ struct MoveToFolderView: View {
         }
         
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.success)
         
         dismiss()

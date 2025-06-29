@@ -5,7 +5,6 @@ struct NewHabitView: View {
     // MARK: - Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     
     // Query for folders
     @Query(sort: [SortDescriptor(\HabitFolder.displayOrder)])
@@ -203,7 +202,6 @@ struct NewHabitView: View {
             }
             
             handleNotifications(for: existingHabit)
-            habitsUpdateService.triggerUpdate()
         } else {
             // Create new habit
             let newHabit = Habit(
@@ -226,7 +224,6 @@ struct NewHabitView: View {
             modelContext.insert(newHabit)
             
             handleNotifications(for: newHabit)
-            habitsUpdateService.triggerUpdate()
         }
         
         dismiss()

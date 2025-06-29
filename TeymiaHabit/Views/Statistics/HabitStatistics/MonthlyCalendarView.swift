@@ -14,7 +14,6 @@ struct MonthlyCalendarView: View {
     var onActionRequested: (CalendarAction, Date) -> Void = { _, _ in }
     
     @Environment(\.modelContext) private var modelContext
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
     
     // MARK: - State

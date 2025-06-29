@@ -11,7 +11,6 @@ struct FolderManagementView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     @Environment(\.editMode) private var editMode
     
     @Query(sort: [SortDescriptor(\HabitFolder.displayOrder)])
@@ -163,7 +162,7 @@ struct FolderManagementView: View {
         Button {
             // Только если НЕ в edit mode
             if editMode?.wrappedValue != .active {
-                withAnimation(.easeInOut) {
+                withAnimation(.easeInOut(duration: 0.1)) {
                     handleFolderTap(folder)
                 }
             }
@@ -181,7 +180,7 @@ struct FolderManagementView: View {
                     case .selection(let binding):
                         Image(systemName: "checkmark")
                             .opacity(binding.wrappedValue.contains(folder) ? 1 : 0)
-                            .animation(.easeInOut, value: binding.wrappedValue.contains(folder))
+                            .animation(.easeInOut(duration: 0.1), value: binding.wrappedValue.contains(folder))
                         
                     case .management:
                         Image(systemName: "chevron.right")
@@ -232,8 +231,8 @@ struct FolderManagementView: View {
         // Удаляем папку
         modelContext.delete(folder)
         
+        // Сохраняем изменения напрямую в SwiftData
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.error)
     }
     
@@ -249,8 +248,8 @@ struct FolderManagementView: View {
             modelContext.delete(folder)
         }
         
+        // Сохраняем изменения напрямую в SwiftData
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.error)
         
         selectedForDeletion.removeAll()
@@ -264,8 +263,8 @@ struct FolderManagementView: View {
             folder.displayOrder = index
         }
         
+        // Сохраняем изменения напрямую в SwiftData
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.playSelection()
     }
 }

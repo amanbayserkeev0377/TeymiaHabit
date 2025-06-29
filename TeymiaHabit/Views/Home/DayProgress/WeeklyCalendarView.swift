@@ -4,7 +4,6 @@ import SwiftData
 struct WeeklyCalendarView: View {
     @Binding var selectedDate: Date
     @Environment(\.modelContext) private var modelContext
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
     
     @Query private var habits: [Habit]
@@ -68,9 +67,6 @@ struct WeeklyCalendarView: View {
         .onChange(of: selectedDate) { _, newDate in
             handleSelectedDateChange(newDate)
         }
-        .onChange(of: habitsUpdateService.lastUpdateTimestamp) { _, _ in
-            handleHabitsUpdate()
-        }
         .onChange(of: weekdayPrefs.firstDayOfWeek) { _, _ in
             handleWeekdayPrefsChange()
         }
@@ -93,7 +89,6 @@ struct WeeklyCalendarView: View {
             withAnimation(.easeInOut(duration: 0.3)) {
                 selectedDate = date
             }
-            habitsUpdateService.triggerUpdate()
         }
     }
     
@@ -103,7 +98,6 @@ struct WeeklyCalendarView: View {
                 currentWeekIndex = weekIndex
             }
         }
-        habitsUpdateService.triggerUpdate()
     }
     
     private func handleHabitsUpdate() {

@@ -3,12 +3,12 @@ import SwiftData
 
 @Observable @MainActor
 final class HabitDetailViewModel {
-    // MARK: - Только необходимые зависимости
+    // MARK: - Dependencies
     private let habit: Habit
     private let date: Date
     private let modelContext: ModelContext
     
-    // MARK: - Локальное состояние
+    // MARK: - State
     private(set) var currentProgress: Int = 0
     private var timerStartTime: Date?
     private var timer: Timer?
@@ -35,7 +35,7 @@ final class HabitDetailViewModel {
     var formattedProgress: String {
         habit.type == .count ?
             "\(currentProgress)" :
-        currentProgress.formattedAsTime()
+            currentProgress.formattedAsTime()
     }
     
     var isAlreadyCompleted: Bool {
@@ -54,16 +54,16 @@ final class HabitDetailViewModel {
         Calendar.current.isDateInToday(date)
     }
     
-    // MARK: - Простая инициализация
+    // MARK: - Initialization
     init(habit: Habit, date: Date, modelContext: ModelContext) {
         self.habit = habit
         self.date = date
         self.modelContext = modelContext
         
-        // Просто загружаем прогресс из SwiftData
+        // Load current progress from SwiftData
         self.currentProgress = habit.progressForDate(date)
         
-        // Восстанавливаем таймер только для сегодняшнего дня
+        // Restore timer only for today and time habits
         if isToday && habit.type == .time {
             restoreTimerStateIfNeeded()
         }
@@ -109,7 +109,7 @@ final class HabitDetailViewModel {
         updateProgress(0)
     }
     
-    // MARK: - Timer Management
+    // MARK: - Timer Management (simple & reliable)
     
     func toggleTimer() {
         guard habit.type == .time && isToday else { return }
@@ -124,13 +124,19 @@ final class HabitDetailViewModel {
     private func startTimer() {
         timerStartTime = Date()
         
+        // Simple timer for UI updates
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                // Просто обновляем UI каждую секунду
+            Task { @MainActor in
+                // UI will automatically update because currentProgress is @Observable
+                guard let self = self, let startTime = self.timerStartTime else { return }
+                
+                let elapsed = Int(Date().timeIntervalSince(startTime))
+                let baseProgress = self.habit.progressForDate(self.date)
+                self.currentProgress = min(baseProgress + elapsed, Limits.maxTimeSeconds)
             }
         }
         
-        // Сохраняем время старта для восстановления при перезапуске
+        // Save timer start time for app restoration
         let timerKey = "timer_\(habit.uuid.uuidString)"
         UserDefaults.standard.set(Date(), forKey: timerKey)
     }
@@ -138,15 +144,16 @@ final class HabitDetailViewModel {
     private func stopTimer() {
         guard let startTime = timerStartTime else { return }
         
-        // Добавляем прошедшее время к прогрессу
+        // Add elapsed time to progress
         let elapsed = Int(Date().timeIntervalSince(startTime))
-        updateProgress(min(currentProgress + elapsed, Limits.maxTimeSeconds))
+        let baseProgress = habit.progressForDate(date)
+        updateProgress(min(baseProgress + elapsed, Limits.maxTimeSeconds))
         
         timer?.invalidate()
         timer = nil
         timerStartTime = nil
         
-        // Убираем сохраненное время
+        // Clear saved timer state
         let timerKey = "timer_\(habit.uuid.uuidString)"
         UserDefaults.standard.removeObject(forKey: timerKey)
     }
@@ -191,16 +198,16 @@ final class HabitDetailViewModel {
     
     private func saveToDatabase() {
         do {
-            // Удаляем старые записи для этой даты
-            let existingCompletions = habit.completions?.filter {
+            // Remove existing completions for this date
+            if let existingCompletions = habit.completions?.filter({
                 Calendar.current.isDate($0.date, inSameDayAs: date)
-            } ?? []
-            
-            for completion in existingCompletions {
-                modelContext.delete(completion)
+            }) {
+                for completion in existingCompletions {
+                    modelContext.delete(completion)
+                }
             }
             
-            // Добавляем новую запись если есть прогресс
+            // Add new completion if there's progress
             if currentProgress > 0 {
                 let completion = HabitCompletion(
                     date: date,
@@ -210,7 +217,7 @@ final class HabitDetailViewModel {
                 modelContext.insert(completion)
             }
             
-            // SwiftData автоматически синхронизируется с iCloud!
+            // SwiftData automatically syncs with iCloud!
             try modelContext.save()
             
         } catch {
@@ -271,7 +278,7 @@ final class HabitDetailViewModel {
     
     func saveIfNeeded() {
         saveWorkItem?.cancel()
-        saveToDatabase() // Немедленное сохранение при выходе
+        saveToDatabase() // Immediate save on exit
     }
     
     func cleanup() {
@@ -279,7 +286,7 @@ final class HabitDetailViewModel {
         timer?.invalidate()
         timer = nil
         
-        // Сохраняем состояние таймера если активен
+        // Save timer state if active
         if let startTime = timerStartTime {
             let timerKey = "timer_\(habit.uuid.uuidString)"
             UserDefaults.standard.set(startTime, forKey: timerKey)

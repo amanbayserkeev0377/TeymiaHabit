@@ -31,8 +31,6 @@ struct AlertState: Equatable {
 struct CountInputAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
     @Binding var inputText: String
-    let progressService: ProgressTrackingService
-    let habitId: String
     @Binding var successTrigger: Bool
     @Binding var errorTrigger: Bool
     let onCountInput: () -> Void
@@ -46,7 +44,6 @@ struct CountInputAlertModifier: ViewModifier {
                 Button("button_cancel".localized, role: .cancel) { }
                 Button("button_add".localized) {
                     if let count = Int(inputText) {
-                        progressService.addProgress(count, for: habitId)
                         onCountInput()
                         successTrigger.toggle()
                     } else {
@@ -67,8 +64,6 @@ struct TimeInputAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
     @Binding var hoursText: String
     @Binding var minutesText: String
-    let progressService: ProgressTrackingService
-    let habitId: String
     @Binding var successTrigger: Bool
     @Binding var errorTrigger: Bool
     let onTimeInput: () -> Void
@@ -189,8 +184,6 @@ extension View {
     func countInputAlert(
         isPresented: Binding<Bool>,
         inputText: Binding<String>,
-        progressService: ProgressTrackingService,
-        habitId: String,
         successTrigger: Binding<Bool>,
         errorTrigger: Binding<Bool>,
         onCountInput: @escaping () -> Void,
@@ -199,8 +192,6 @@ extension View {
         self.modifier(CountInputAlertModifier(
             isPresented: isPresented,
             inputText: inputText,
-            progressService: progressService,
-            habitId: habitId,
             successTrigger: successTrigger,
             errorTrigger: errorTrigger,
             onCountInput: onCountInput,
@@ -212,8 +203,6 @@ extension View {
         isPresented: Binding<Bool>,
         hoursText: Binding<String>,
         minutesText: Binding<String>,
-        progressService: ProgressTrackingService,
-        habitId: String,
         successTrigger: Binding<Bool>,
         errorTrigger: Binding<Bool>,
         onTimeInput: @escaping () -> Void,
@@ -223,8 +212,6 @@ extension View {
             isPresented: isPresented,
             hoursText: hoursText,
             minutesText: minutesText,
-            progressService: progressService,
-            habitId: habitId,
             successTrigger: successTrigger,
             errorTrigger: errorTrigger,
             onTimeInput: onTimeInput,
@@ -296,7 +283,6 @@ extension View {
     func habitAlerts(
         alertState: Binding<AlertState>,
         habit: Habit,
-        progressService: ProgressTrackingService,
         onDelete: @escaping () -> Void,
         onCountInput: @escaping () -> Void,
         onTimeInput: @escaping () -> Void
@@ -311,8 +297,6 @@ extension View {
             .countInputAlert(
                 isPresented: alertState.isCountAlertPresented,
                 inputText: alertState.countInputText,
-                progressService: progressService,
-                habitId: habit.uuid.uuidString,
                 successTrigger: alertState.successFeedbackTrigger,
                 errorTrigger: alertState.errorFeedbackTrigger,
                 onCountInput: onCountInput,
@@ -322,8 +306,6 @@ extension View {
                 isPresented: alertState.isTimeAlertPresented,
                 hoursText: alertState.hoursInputText,
                 minutesText: alertState.minutesInputText,
-                progressService: progressService,
-                habitId: habit.uuid.uuidString,
                 successTrigger: alertState.successFeedbackTrigger,
                 errorTrigger: alertState.errorFeedbackTrigger,
                 onTimeInput: onTimeInput,

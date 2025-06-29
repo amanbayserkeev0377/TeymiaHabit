@@ -1,19 +1,6 @@
 import SwiftUI
 import SwiftData
 
-// Временная заглушка для совместимости с habitAlerts
-private struct DummyProgressService: ProgressTrackingService {
-    var progressUpdates: [String: Int] = [:]
-    func getCurrentProgress(for habitId: String) -> Int { 0 }
-    func addProgress(_ value: Int, for habitId: String) {}
-    func resetProgress(for habitId: String) {}
-    func isTimerRunning(for habitId: String) -> Bool { false }
-    func startTimer(for habitId: String, initialProgress: Int) {}
-    func stopTimer(for habitId: String) {}
-    func persistCompletions(for habitId: String, in modelContext: ModelContext, date: Date) {}
-    func persistAllCompletionsToSwiftData(modelContext: ModelContext) {}
-}
-
 struct HabitDetailView: View {
     // MARK: - Properties
     let habit: Habit
@@ -48,10 +35,11 @@ struct HabitDetailView: View {
                     }
                     .onDisappear {
                         viewModel.saveIfNeeded()
-                        viewModel.cleanup()                    }
+                        viewModel.cleanup()
+                    }
                     .navigationDestination(item: $selectedHabitForStats) { habit in
-                            HabitStatisticsView(habit: habit)
-                        }
+                        HabitStatisticsView(habit: habit)
+                    }
                     .sheet(isPresented: $isEditPresented) {
                         NewHabitView(habit: habit)
                     }
@@ -119,13 +107,63 @@ struct HabitDetailView: View {
                 HapticManager.shared.play(.error)
             }
         }
-        .habitAlerts(
-            alertState: Binding<AlertState>(
-                get: { viewModel.alertState },
-                set: { viewModel.alertState = $0 }
+        // ✅ НОВЫЕ чистые alerts без progressService
+        .countInputAlert(
+            isPresented: Binding(
+                get: { viewModel.alertState.isCountAlertPresented },
+                set: { viewModel.alertState.isCountAlertPresented = $0 }
             ),
-            habit: habit,
-            progressService: DummyProgressService(), // Временный заглушка
+            inputText: Binding(
+                get: { viewModel.alertState.countInputText },
+                set: { viewModel.alertState.countInputText = $0 }
+            ),
+            successTrigger: Binding(
+                get: { viewModel.alertState.successFeedbackTrigger },
+                set: { viewModel.alertState.successFeedbackTrigger = $0 }
+            ),
+            errorTrigger: Binding(
+                get: { viewModel.alertState.errorFeedbackTrigger },
+                set: { viewModel.alertState.errorFeedbackTrigger = $0 }
+            ),
+            onCountInput: {
+                viewModel.handleCountInput()
+                viewModel.alertState.isCountAlertPresented = false
+            },
+            habit: habit
+        )
+        .timeInputAlert(
+            isPresented: Binding(
+                get: { viewModel.alertState.isTimeAlertPresented },
+                set: { viewModel.alertState.isTimeAlertPresented = $0 }
+            ),
+            hoursText: Binding(
+                get: { viewModel.alertState.hoursInputText },
+                set: { viewModel.alertState.hoursInputText = $0 }
+            ),
+            minutesText: Binding(
+                get: { viewModel.alertState.minutesInputText },
+                set: { viewModel.alertState.minutesInputText = $0 }
+            ),
+            successTrigger: Binding(
+                get: { viewModel.alertState.successFeedbackTrigger },
+                set: { viewModel.alertState.successFeedbackTrigger = $0 }
+            ),
+            errorTrigger: Binding(
+                get: { viewModel.alertState.errorFeedbackTrigger },
+                set: { viewModel.alertState.errorFeedbackTrigger = $0 }
+            ),
+            onTimeInput: {
+                viewModel.handleTimeInput()
+                viewModel.alertState.isTimeAlertPresented = false
+            },
+            habit: habit
+        )
+        .deleteSingleHabitAlert(
+            isPresented: Binding(
+                get: { viewModel.alertState.isDeleteAlertPresented },
+                set: { viewModel.alertState.isDeleteAlertPresented = $0 }
+            ),
+            habitName: habit.title,
             onDelete: {
                 viewModel.deleteHabit()
                 viewModel.alertState.isDeleteAlertPresented = false
@@ -135,17 +173,9 @@ struct HabitDetailView: View {
                     dismiss()
                 }
             },
-            onCountInput: {
-                viewModel.handleCountInput()
-                viewModel.alertState.isCountAlertPresented = false
-            },
-            onTimeInput: {
-                viewModel.handleTimeInput()
-                viewModel.alertState.isTimeAlertPresented = false
-            }
+            habit: habit
         )
     }
-    
     
     // Информация о цели привычки - центрированная с иконкой
     private func goalInfoView(viewModel: HabitDetailViewModel) -> some View {
@@ -191,7 +221,7 @@ struct HabitDetailView: View {
         )
     }
     
-    // Complete button с BeautifulButton - ОБНОВЛЕНО
+    // Complete button с BeautifulButton
     private func completeButtonView(viewModel: HabitDetailViewModel) -> some View {
         Button(action: {
             viewModel.completeHabit()
@@ -274,7 +304,7 @@ struct HabitDetailView: View {
     private func setupViewModel(with newDate: Date? = nil) {
         viewModel?.saveIfNeeded()
         viewModel?.cleanup()
-        // ✅ Убираем лишний Environment dependency
+        
         let vm = HabitDetailViewModel(
             habit: habit,
             date: newDate ?? date,

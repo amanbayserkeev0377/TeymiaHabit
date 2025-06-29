@@ -4,7 +4,6 @@ import SwiftData
 struct ArchivedHabitsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     @Environment(\.editMode) private var editMode
     @ObservedObject private var colorManager = AppColorManager.shared
     
@@ -194,7 +193,6 @@ struct ArchivedHabitsView: View {
     private func unarchiveHabit(_ habit: Habit) {
         habit.isArchived = false
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.success)
     }
     
@@ -206,7 +204,6 @@ struct ArchivedHabitsView: View {
         modelContext.delete(habit)
         
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.error)
     }
     
@@ -218,7 +215,6 @@ struct ArchivedHabitsView: View {
         }
         
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.success)
         
         selectedForDeletion.removeAll()
@@ -236,7 +232,6 @@ struct ArchivedHabitsView: View {
         }
         
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.error)
         
         selectedForDeletion.removeAll()

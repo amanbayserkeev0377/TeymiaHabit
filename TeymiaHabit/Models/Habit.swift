@@ -223,6 +223,29 @@ final class Habit {
         }
     }
     
+    func completeForDate(_ date: Date) {
+        // Remove existing completions for this date first
+        if let existingCompletions = completions?.filter({
+            Calendar.current.isDate($0.date, inSameDayAs: date)
+        }) {
+            for completion in existingCompletions {
+                completions?.removeAll { $0.id == completion.id }
+            }
+        }
+        
+        // Add new completion with full goal value
+        let completion = HabitCompletion(date: date, value: goal, habit: self)
+        addCompletion(completion)
+    }
+
+    /// Add completion to habit
+    func addCompletion(_ completion: HabitCompletion) {
+        if completions == nil {
+            completions = []
+        }
+        completions?.append(completion)
+    }
+    
     // Check if habit is completed for the day
     func isCompletedForDate(_ date: Date) -> Bool {
         return progressForDate(date) >= goal

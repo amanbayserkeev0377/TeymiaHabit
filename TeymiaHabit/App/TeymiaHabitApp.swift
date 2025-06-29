@@ -9,7 +9,6 @@ struct TeymiaHabitApp: App {
     @Environment(\.colorScheme) private var colorScheme
     
     let container: ModelContainer
-    let habitsUpdateService = HabitsUpdateService()
     
     @State private var weekdayPrefs = WeekdayPreferences.shared
     
@@ -47,7 +46,6 @@ struct TeymiaHabitApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environment(habitsUpdateService)
                 .environment(weekdayPrefs)
                 .environment(ProManager.shared)
         }
@@ -56,12 +54,6 @@ struct TeymiaHabitApp: App {
             switch newPhase {
             case .background:
                 handleAppBackground()
-                
-            case .active:
-                handleAppActive()
-                
-            case .inactive:
-                handleAppInactive()
                 
             @unknown default:
                 break
@@ -74,63 +66,11 @@ struct TeymiaHabitApp: App {
     private func handleAppBackground() {
         print("📱 App going to background")
         
-        // ✅ ONLY save current progress to SwiftData
-        // DON'T stop timers - let them continue in background
-        Task {
-            await saveTimerStates()
-        }
-        
-        // Save SwiftData
         do {
             try container.mainContext.save()
             print("✅ Data saved on background")
         } catch {
             print("❌ Failed to save on background: \(error)")
-        }
-    }
-
-    private func handleAppActive() {
-        print("📱 App became active")
-        
-        // ✅ НОВОЕ: Проверяем смену дня при активации приложения
-        checkDayChangeOnAppActive()
-        
-        // Just update UI - timers should still be running
-        habitsUpdateService.triggerUpdate()
-        print("✅ App became active, triggering UI update")
-    }
-    
-    private func checkDayChangeOnAppActive() {
-        // Force day change check in services
-        // Services will automatically clear progress if day changed
-        _ = HabitTimerService.shared.getCurrentProgress(for: "dummy") // This triggers checkDayChange
-        _ = HabitCounterService.shared.getCurrentProgress(for: "dummy") // This triggers checkDayChange
-        
-        print("✅ Day change check completed")
-    }
-
-    private func handleAppInactive() {
-        print("📱 App became inactive")
-        
-        // Save current state without stopping timers
-        Task {
-            await saveTimerStates()
-        }
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func saveTimerStates() async {
-        // Save all active timer states to SwiftData (but don't stop them)
-        HabitTimerService.shared.persistAllCompletionsToSwiftData(modelContext: container.mainContext)
-        HabitCounterService.shared.persistAllCompletionsToSwiftData(modelContext: container.mainContext)
-        
-        // Save SwiftData context
-        do {
-            try container.mainContext.save()
-            print("✅ Timer states saved to SwiftData")
-        } catch {
-            print("❌ Failed to save timer states: \(error)")
         }
     }
 }

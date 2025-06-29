@@ -5,7 +5,6 @@ struct HomeView: View {
     // MARK: - Properties
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     @ObservedObject private var colorManager = AppColorManager.shared
     @State private var isEditMode = false
     @State private var showingPaywall = false
@@ -108,17 +107,9 @@ struct HomeView: View {
     
     // MARK: - Body
     var body: some View {
-        let actionService = HabitActionService(
-            modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService,
-            onHabitSelected: { habit in selectedHabit = habit },
-            onHabitEditSelected: { habit in habitToEdit = habit },
-            onHabitStatsSelected: { habit in selectedHabitForStats = habit }
-        )
-        
         NavigationStack {
             ZStack {
-                contentView(actionService: actionService)
+                contentView
                 
                 // ✅ НОВЫЙ FAB с градиентом - показывать только если не в edit mode
                 if !isEditMode {
@@ -158,7 +149,7 @@ struct HomeView: View {
                             // ✅ ПРОСТЫЕ АНИМАЦИИ без хаков
                             .buttonStyle(.plain)
                             .scaleEffect(isPressed ? 0.92 : 1.0)  // ✅ Простой scale эффект
-                            .animation(.easeInOut(duration: 0.15), value: isPressed)
+                            .animation(.easeInOut(duration: 0.1), value: isPressed)
                             .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, perform: {}) { pressing in
                                 isPressed = pressing  // ✅ Отслеживаем нажатие
                             }
@@ -211,9 +202,6 @@ struct HomeView: View {
                 }
             }
         }
-        .onChange(of: selectedDate) { _, _ in
-            habitsUpdateService.triggerUpdate()
-        }
         .deleteSingleHabitAlert(
             isPresented: Binding(
                 get: { alertState.isDeleteAlertPresented && habitForProgress != nil },
@@ -222,7 +210,7 @@ struct HomeView: View {
             habitName: habitForProgress?.title ?? "",
             onDelete: {
                 if let habit = habitForProgress {
-                    actionService.deleteHabit(habit)
+                    deleteHabit(habit)
                 }
                 habitForProgress = nil
             },
@@ -239,11 +227,10 @@ struct HomeView: View {
                 habitForProgress = nil
             }
         )
-        }
+    }
     
-    private func contentView(actionService: HabitActionService) -> some View {
+    private var contentView: some View {
         VStack(spacing: 0) {
-            
             if allBaseHabits.isEmpty {
                 // Нет привычек вообще - показываем только EmptyStateView
                 EmptyStateView()
@@ -279,7 +266,7 @@ struct HomeView: View {
                 } else {
                     // Есть привычки для отображения
                     if hasHabitsForDate {
-                        habitList(actionService: actionService)
+                        habitList
                     } else {
                         Spacer()
                     }
@@ -409,6 +396,23 @@ struct HomeView: View {
         .contentShape(Rectangle()) // КРИТИЧЕСКИ ВАЖНО для selection
     }
     
+    // MARK: - Complete Habit Method
+    private func completeHabit(_ habit: Habit, for date: Date) {
+        if !habit.isCompletedForDate(date) {
+            habit.completeForDate(date)
+            try? modelContext.save()
+            HapticManager.shared.play(.success)
+        }
+    }
+    
+    // MARK: - Delete Habit Method
+    private func deleteHabit(_ habit: Habit) {
+        NotificationManager.shared.cancelNotifications(for: habit)
+        modelContext.delete(habit)
+        try? modelContext.save()
+        HapticManager.shared.play(.error)
+    }
+    
     // MARK: - Delete Selected Habits
     private func deleteSelectedHabits() {
         let habitsToDelete = activeHabitsForDate.filter { selectedForAction.contains($0.persistentModelID) }
@@ -419,7 +423,6 @@ struct HomeView: View {
         }
         
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.error)
         
         selectedForAction.removeAll()
@@ -485,7 +488,7 @@ struct HomeView: View {
     }
     
     // MARK: - Habit Views (Native List)
-    private func habitList(actionService: HabitActionService) -> some View {
+    private var habitList: some View {
         Group {
             if isEditMode {
                 List(selection: $selectedForAction) {
@@ -506,9 +509,7 @@ struct HomeView: View {
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             // Complete action (green)
                             Button {
-                                if !habit.isCompletedForDate(selectedDate) {
-                                    actionService.completeHabit(habit, for: selectedDate)
-                                }
+                                completeHabit(habit, for: selectedDate)
                             } label: {
                                 Label("complete".localized, systemImage: "checkmark")
                             }
@@ -525,7 +526,7 @@ struct HomeView: View {
                             }
                             .tint(.red)
                             
-                            // Archive
+                            // Edit
                             Button {
                                 habitToEdit = habit
                             } label: {
@@ -547,14 +548,13 @@ struct HomeView: View {
                         .contextMenu {
                             // Complete
                             Button {
-                                if !habit.isCompletedForDate(selectedDate) {
-                                    actionService.completeHabit(habit, for: selectedDate)
-                                }
+                                completeHabit(habit, for: selectedDate)
                             } label: {
                                 Label("complete".localized, systemImage: "checkmark")
                             }
                             .disabled(habit.isCompletedForDate(selectedDate))
-                            .withHabitColor(habit)                            
+                            .withHabitColor(habit)
+                            
                             Divider()
                             
                             // Move to Folder - Submenu
@@ -597,6 +597,7 @@ struct HomeView: View {
                                 }
                                 .withHabitColor(habit)
                             }
+                            
                             // Pin/Unpin
                             Button {
                                 pinHabit(habit)
@@ -658,7 +659,6 @@ struct HomeView: View {
             habit.addToFolder(folder)
         }
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.playSelection()
     }
     
@@ -666,7 +666,6 @@ struct HomeView: View {
     private func pinHabit(_ habit: Habit) {
         habit.togglePin()
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.playSelection()
     }
     
@@ -674,7 +673,6 @@ struct HomeView: View {
     private func archiveHabit(_ habit: Habit) {
         habit.isArchived = true
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.success)
     }
     
@@ -689,7 +687,6 @@ struct HomeView: View {
         }
         
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.playSelection()
     }
 }

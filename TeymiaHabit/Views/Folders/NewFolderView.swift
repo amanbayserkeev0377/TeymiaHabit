@@ -4,7 +4,6 @@ import SwiftData
 struct NewFolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     
     private let folder: HabitFolder?
     private let onFolderCreated: ((HabitFolder) -> Void)?
@@ -78,7 +77,6 @@ struct NewFolderView: View {
             existingFolder.name = name
             
             try? modelContext.save()
-            habitsUpdateService.triggerUpdate()
             dismiss()
         } else {
             let newFolder = HabitFolder(name: name, displayOrder: 999)
@@ -86,7 +84,6 @@ struct NewFolderView: View {
             
             do {
                 try modelContext.save()
-                habitsUpdateService.triggerUpdate()
                 onFolderCreated?(newFolder)
                 dismiss()
             } catch {

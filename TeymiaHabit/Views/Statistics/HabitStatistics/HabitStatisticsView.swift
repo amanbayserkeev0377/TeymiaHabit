@@ -6,7 +6,7 @@ struct HabitStatisticsView: View {
     let habit: Habit
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
+
     
     // MARK: - State
     @State private var selectedDate: Date = Date()
@@ -178,7 +178,6 @@ struct HabitStatisticsView: View {
         .habitAlerts(
             alertState: $alertState,
             habit: habit,
-            progressService: ProgressServiceProvider.getService(for: habit),
             onDelete: deleteHabit,
             onCountInput: { handleCountInput() },
             onTimeInput: { handleTimeInput() }
@@ -336,13 +335,11 @@ struct HabitStatisticsView: View {
             habit: habit,
             date: date,
             modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService
         )
         
         tempViewModel.completeHabit()
         tempViewModel.saveIfNeeded()
         viewModel.refresh()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.success)
         updateCounter += 1
     }
@@ -358,14 +355,12 @@ struct HabitStatisticsView: View {
             habit: habit,
             date: date,
             modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService
         )
         
         tempViewModel.alertState.countInputText = alertState.countInputText
         tempViewModel.handleCountInput()
         tempViewModel.saveIfNeeded()
         viewModel.refresh()
-        habitsUpdateService.triggerUpdate()
         updateCounter += 1
         alertState.countInputText = ""
     }
@@ -384,7 +379,6 @@ struct HabitStatisticsView: View {
             habit: habit,
             date: date,
             modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService
         )
         
         tempViewModel.alertState.hoursInputText = alertState.hoursInputText
@@ -392,7 +386,6 @@ struct HabitStatisticsView: View {
         tempViewModel.handleTimeInput()
         tempViewModel.saveIfNeeded()
         viewModel.refresh()
-        habitsUpdateService.triggerUpdate()
         updateCounter += 1
         alertState.hoursInputText = ""
         alertState.minutesInputText = ""
@@ -403,13 +396,11 @@ struct HabitStatisticsView: View {
             habit: habit,
             date: date,
             modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService
         )
         
         tempViewModel.resetProgress()
         tempViewModel.saveIfNeeded()
         viewModel.refresh()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.error)
         updateCounter += 1
     }
@@ -424,7 +415,6 @@ struct HabitStatisticsView: View {
         habit.completions = []
         try? modelContext.save()
         viewModel.refresh()
-        habitsUpdateService.triggerUpdate()
         updateCounter += 1
     }
     
@@ -432,7 +422,6 @@ struct HabitStatisticsView: View {
         NotificationManager.shared.cancelNotifications(for: habit)
         modelContext.delete(habit)
         HapticManager.shared.play(.error)
-        habitsUpdateService.triggerUpdate()
         dismiss()
     }
     
