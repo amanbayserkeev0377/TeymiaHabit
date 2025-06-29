@@ -39,8 +39,8 @@ struct BeautifulButtonStyle: ButtonStyle {
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .scaleEffect(parameters.isEnabled ? 1.0 : 0.95)
-            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
-            .animation(.easeInOut(duration: 0.2), value: parameters.isEnabled)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+            .animation(.easeInOut(duration: 0.1), value: parameters.isEnabled)
             .disabled(!parameters.isEnabled)
     }
     
@@ -65,7 +65,7 @@ struct BeautifulButtonStyle: ButtonStyle {
     }
     
     private var shadowRadius: CGFloat {
-        return colorScheme == .dark ? 0 : 6
+        return colorScheme == .dark ? 0 : 4
     }
     
     private var shadowOffset: CGFloat {

@@ -1,6 +1,19 @@
 import SwiftUI
 import SwiftData
 
+// Временная заглушка для совместимости с habitAlerts
+private struct DummyProgressService: ProgressTrackingService {
+    var progressUpdates: [String: Int] = [:]
+    func getCurrentProgress(for habitId: String) -> Int { 0 }
+    func addProgress(_ value: Int, for habitId: String) {}
+    func resetProgress(for habitId: String) {}
+    func isTimerRunning(for habitId: String) -> Bool { false }
+    func startTimer(for habitId: String, initialProgress: Int) {}
+    func stopTimer(for habitId: String) {}
+    func persistCompletions(for habitId: String, in modelContext: ModelContext, date: Date) {}
+    func persistAllCompletionsToSwiftData(modelContext: ModelContext) {}
+}
+
 struct HabitDetailView: View {
     // MARK: - Properties
     let habit: Habit
@@ -10,7 +23,6 @@ struct HabitDetailView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(HabitsUpdateService.self) private var habitsUpdateService
     @Environment(\.dismiss) private var dismiss
     
     private var isSmallDevice: Bool {
@@ -19,7 +31,6 @@ struct HabitDetailView: View {
     
     // MARK: - State Properties
     @State private var viewModel: HabitDetailViewModel?
-    @State private var isContentReady = false
     @State private var navigateToStatistics = false
     @State private var isEditPresented = false
     @State private var selectedHabitForStats: Habit? = nil
@@ -27,7 +38,7 @@ struct HabitDetailView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            if let viewModel = viewModel, isContentReady {
+            if let viewModel = viewModel {
                 habitDetailContent(viewModel: viewModel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar { habitDetailToolbar }
@@ -37,8 +48,7 @@ struct HabitDetailView: View {
                     }
                     .onDisappear {
                         viewModel.saveIfNeeded()
-                        viewModel.cleanup(stopTimer: true)
-                    }
+                        viewModel.cleanup()                    }
                     .navigationDestination(item: $selectedHabitForStats) { habit in
                             HabitStatisticsView(habit: habit)
                         }
@@ -47,12 +57,6 @@ struct HabitDetailView: View {
                     }
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                         viewModel.saveIfNeeded()
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-                        viewModel.refreshFromService()
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
-                        viewModel.forceCleanup()
                     }
             }
         }
@@ -121,7 +125,7 @@ struct HabitDetailView: View {
                 set: { viewModel.alertState = $0 }
             ),
             habit: habit,
-            progressService: viewModel.progressService,
+            progressService: DummyProgressService(), // Временный заглушка
             onDelete: {
                 viewModel.deleteHabit()
                 viewModel.alertState.isDeleteAlertPresented = false
@@ -268,26 +272,21 @@ struct HabitDetailView: View {
     
     // MARK: - Helper Methods
     private func setupViewModel(with newDate: Date? = nil) {
-        isContentReady = false
         viewModel?.saveIfNeeded()
-        viewModel?.cleanup(stopTimer: false)
-        
+        viewModel?.cleanup()
+        // ✅ Убираем лишний Environment dependency
         let vm = HabitDetailViewModel(
             habit: habit,
             date: newDate ?? date,
-            modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService
+            modelContext: modelContext
         )
         vm.onHabitDeleted = onDelete
-        
         viewModel = vm
-        isContentReady = true
     }
     
     private func archiveHabit() {
         habit.isArchived = true
         try? modelContext.save()
-        habitsUpdateService.triggerUpdate()
         HapticManager.shared.play(.success)
         
         if let onDelete = onDelete {

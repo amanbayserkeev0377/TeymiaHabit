@@ -61,7 +61,7 @@ struct ProgressControlSection: View {
             .decreaseHaptic(trigger: decrementTrigger)
             // ✅ ДОБАВЛЯЕМ анимацию нажатия
             .scaleEffect(isDecrementPressed ? 0.92 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: isDecrementPressed)
+            .animation(.easeInOut(duration: 0.1), value: isDecrementPressed)
             .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, perform: {}) { pressing in
                 isDecrementPressed = pressing
             }

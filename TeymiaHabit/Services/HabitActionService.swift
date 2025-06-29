@@ -40,7 +40,6 @@ class HabitActionService {
             habit: habit,
             date: date,
             modelContext: modelContext,
-            habitsUpdateService: habitsUpdateService
         )
         viewModel.completeHabit()
         viewModel.saveIfNeeded()

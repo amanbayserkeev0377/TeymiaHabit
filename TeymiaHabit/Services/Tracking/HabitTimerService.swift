@@ -186,7 +186,6 @@ final class HabitTimerService: ProgressTrackingService {
     }
     
     func resetProgress(for habitId: String) {
-        print("🔄 Resetting progress for \(habitId)")
         
         // Check for day change first
         checkDayChange()
