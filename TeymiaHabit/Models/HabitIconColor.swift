@@ -174,7 +174,7 @@ extension HabitIconColor {
         }
     }
     
-    // MARK: - ✅ Упрощенный adaptive gradient без opacity параметров
+    // MARK: - Adaptive Gradient
     func adaptiveGradient(for colorScheme: ColorScheme) -> LinearGradient {
         let topColor = colorScheme == .dark ? darkColor : lightColor
         let bottomColor = colorScheme == .dark ? lightColor : darkColor

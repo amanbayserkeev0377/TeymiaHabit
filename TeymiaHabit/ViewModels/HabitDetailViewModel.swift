@@ -21,6 +21,11 @@ final class HabitDetailViewModel {
     var habitsUpdateService: HabitsUpdateService
     var progressService: ProgressTrackingService
     
+    // MARK: - NEW
+    private var saveWorkItem: DispatchWorkItem?
+    private let saveDebounceDelay: TimeInterval = 0.3
+    private var lastCalculatedProgress: Int = -1
+    
     // MARK: - State Properties
     private(set) var currentProgress: Int = 0
     private(set) var completionPercentage: Double = 0
@@ -175,10 +180,14 @@ final class HabitDetailViewModel {
     
     // MARK: - Progress Management
     private func updateProgressMetrics() {
+        // ✅ OPTIMIZATION: Обновляем только при изменении
+        guard currentProgress != lastCalculatedProgress else { return }
+        
+        lastCalculatedProgress = currentProgress
         completionPercentage = habit.goal > 0 ? Double(currentProgress) / Double(habit.goal) : 0
         formattedProgress = habit.type == .count ?
-        currentProgress.formattedAsProgress(total: habit.goal) :
-        currentProgress.formattedAsTime()
+            currentProgress.formattedAsProgress(total: habit.goal) :
+            currentProgress.formattedAsTime()
     }
     
     @MainActor
@@ -196,6 +205,42 @@ final class HabitDetailViewModel {
             isTimerRunning = isRunning
         }
     }
+    
+    // MARK: - NEW FOR OPTIMIZATION
+    private func debouncedSave() {
+        // Отменяем предыдущую операцию сохранения
+        saveWorkItem?.cancel()
+        
+        // Создаем новую операцию сохранения с задержкой
+        let workItem = DispatchWorkItem { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.saveProgress()
+            }
+        }
+        
+        saveWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + saveDebounceDelay, execute: workItem)
+    }
+    
+    private func updateProgress(_ newValue: Int) {
+        guard newValue != habitProgress.value else { return }
+        
+        habitProgress.value = newValue
+        habitProgress.isDirty = true
+        currentProgress = newValue
+        hasChanges = true
+        
+        // Синхронизация только если нужно
+        syncWithProgressService()
+        
+        // UI обновления только при изменении
+        updateProgressMetrics()
+        
+        // Debounced save вместо немедленного
+        debouncedSave()
+    }
+    
+    
     
     // MARK: - Helper method for syncing with service
     private func syncWithProgressService() {
@@ -279,15 +324,7 @@ final class HabitDetailViewModel {
     func incrementProgress() {
         if habit.type == .count {
             if habitProgress.value < Limits.maxCount {
-                habitProgress.value += 1
-                habitProgress.isDirty = true
-                currentProgress = habitProgress.value
-                
-                // ✅ FIXED: Sync with progress service for ALL dates
-                syncWithProgressService()
-                
-                updateProgressMetrics()
-                hasChanges = true
+                updateProgress(habitProgress.value + 1)
             } else {
                 alertState.errorFeedbackTrigger.toggle()
             }
@@ -298,30 +335,13 @@ final class HabitDetailViewModel {
                 isTimerRunning = false
             }
             
-            if habitProgress.value + 60 <= Limits.maxTimeSeconds {
-                habitProgress.value += 60
-                habitProgress.isDirty = true
-                currentProgress = habitProgress.value
-                
-                // ✅ FIXED: Sync with progress service for ALL dates
-                syncWithProgressService()
-                
-                updateProgressMetrics()
-                hasChanges = true
-            } else {
-                habitProgress.value = Limits.maxTimeSeconds
-                habitProgress.isDirty = true
-                currentProgress = Limits.maxTimeSeconds
-                
-                // ✅ FIXED: Sync with progress service for ALL dates
-                syncWithProgressService()
-                
-                updateProgressMetrics()
-                hasChanges = true
+            let newValue = min(habitProgress.value + 60, Limits.maxTimeSeconds)
+            updateProgress(newValue)
+            
+            if newValue == Limits.maxTimeSeconds {
                 alertState.successFeedbackTrigger.toggle()
             }
         }
-        saveProgress()
     }
     
     /// Decrements progress by 1 for count habits or by 1 minute (60 seconds) for time habits.
@@ -329,15 +349,7 @@ final class HabitDetailViewModel {
     func decrementProgress() {
         if habit.type == .count {
             if habitProgress.value > 0 {
-                habitProgress.value -= 1
-                habitProgress.isDirty = true
-                currentProgress = habitProgress.value
-                
-                // ✅ FIXED: Sync with progress service for ALL dates
-                syncWithProgressService()
-                
-                updateProgressMetrics()
-                hasChanges = true
+                updateProgress(habitProgress.value - 1)
             }
         } else {
             // Stop timer first if running
@@ -346,29 +358,9 @@ final class HabitDetailViewModel {
                 isTimerRunning = false
             }
             
-            if habitProgress.value >= 60 {
-                habitProgress.value -= 60
-                habitProgress.isDirty = true
-                currentProgress = habitProgress.value
-                
-                // ✅ FIXED: Sync with progress service for ALL dates
-                syncWithProgressService()
-                
-                updateProgressMetrics()
-                hasChanges = true
-            } else if habitProgress.value > 0 {
-                habitProgress.value = 0
-                habitProgress.isDirty = true
-                currentProgress = 0
-                
-                // ✅ FIXED: Sync with progress service for ALL dates
-                syncWithProgressService()
-                
-                updateProgressMetrics()
-                hasChanges = true
-            }
+            let newValue = max(habitProgress.value - 60, 0)
+            updateProgress(newValue)
         }
-        saveProgress()
     }
     
     func resetProgress() {
@@ -377,35 +369,14 @@ final class HabitDetailViewModel {
             isTimerRunning = false
         }
         progressService.resetProgress(for: habitId)
-        habitProgress.value = 0
-        habitProgress.isDirty = true
-        currentProgress = 0
-        updateProgressMetrics()
-        hasChanges = true
-        saveProgress()
-        if !isTodayView {
-            let serviceProgress = progressService.getCurrentProgress(for: habitId)
-            if serviceProgress > 0 {
-                progressService.resetProgress(for: habitId)
-                saveProgress()
-            }
-        }
+        updateProgress(0)
     }
     
     func completeHabit() {
         if currentProgress >= habit.goal {
             return
         }
-        habitProgress.value = habit.goal
-        habitProgress.isDirty = true
-        currentProgress = habit.goal
-        
-        // ✅ FIXED: Sync with progress service for ALL dates
-        syncWithProgressService()
-        
-        updateProgressMetrics()
-        hasChanges = true
-        saveProgress()
+        updateProgress(habit.goal)
         alertState.successFeedbackTrigger.toggle()
     }
     
@@ -543,30 +514,26 @@ final class HabitDetailViewModel {
     }
     
     func saveIfNeeded() {
+        saveWorkItem?.cancel() // Отменяем debounced save
         if hasChanges || habitProgress.isDirty {
-            saveProgress()
+            saveProgress() // Немедленное сохранение при выходе
         }
     }
     
     func forceCleanup() {
-        cancellables?.cancel()
-        cancellables = nil
+        saveWorkItem?.cancel()
+        saveIfNeeded()
         onHabitDeleted = nil
         
         if isTimerRunning {
             progressService.stopTimer(for: habitId)
             isTimerRunning = false
         }
-        
-        saveIfNeeded()
     }
     
     func cleanup(stopTimer: Bool = true) {
-        cancellables?.cancel()
-        cancellables = nil
-        if hasChanges || habitProgress.isDirty {
-            saveProgress()
-        }
+        saveWorkItem?.cancel()
+        saveIfNeeded()
         onHabitDeleted = nil
         if stopTimer && isTimerRunning {
             progressService.stopTimer(for: habitId)
