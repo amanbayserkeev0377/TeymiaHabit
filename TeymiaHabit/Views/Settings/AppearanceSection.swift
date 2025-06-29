@@ -12,62 +12,202 @@ struct ThemeOption {
 }
 
 struct AppearanceSection: View {
-    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
+    @ObservedObject private var colorManager = AppColorManager.shared
+    @Environment(ProManager.self) private var proManager
+    @Environment(\.colorScheme) private var colorScheme
+    
     
     var body: some View {
-        HStack {
-            Label(
-                title: { Text("appearance".localized) },
-                icon: {
-                    Image(systemName: "swirl.circle.righthalf.filled.inverse")
-                        .withIOSSettingsIcon(lightColors: [
-                            Color(#colorLiteral(red: 0.4274509804, green: 0.5019607843, blue: 0.6823529412, alpha: 1)),
-                            Color(#colorLiteral(red: 0.1490196078, green: 0.2196078431, blue: 0.3568627451, alpha: 1))
-                        ])
-                }
-            )
-            
-            Spacer()
-            
-            // Показываем текущую выбранную тему с меню
-            Menu {
-                ForEach(ThemeMode.allCases, id: \.self) { mode in
-                    Button {
-                        themeMode = mode
-                    } label: {
-                        HStack {
-                            Image(systemName: ThemeOption.allOptions[mode.rawValue].iconName)
-                                .frame(width: 24, alignment: .leading)
-                            
-                            Text(ThemeOption.allOptions[mode.rawValue].name)
-                            
-                            Spacer()
-                        }
+        NavigationLink {
+            AppColorPickerView()
+        } label: {
+            HStack {
+                Label(
+                    title: { Text("appearance".localized) },
+                    icon: {
+                        Image(systemName: "paintbrush.pointed.fill")
+                            .withIOSSettingsIcon(lightColors: [
+                                Color(.purple),
+                                Color(.pink)
+                            ])
                     }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text(ThemeOption.allOptions[themeMode.rawValue].name)
-                        .foregroundStyle(.secondary)
-                    
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.tertiary)
-                }
+                )
+                
+                Spacer()
+                
+                Circle()
+                    .fill(colorManager.selectedColor.adaptiveGradient(for: colorScheme))
+                    .frame(width: 24, height: 24)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
+                    .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
             }
-            .tint(.primary)
         }
     }
 }
 
-struct ThemeHelper {
-    static func colorSchemeFromThemeMode(_ themeMode: Int) -> ColorScheme? {
-        switch themeMode {
-        case 0: return nil        // System
-        case 1: return .light     // Light
-        case 2: return .dark      // Dark
-        default: return nil
+struct AppColorPickerView: View {
+    @ObservedObject private var colorManager = AppColorManager.shared
+    @ObservedObject private var iconManager = AppIconManager.shared
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(ProManager.self) private var proManager
+    @State private var showingPaywall = false
+    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                // MARK: - Appearance Section
+                Section {
+                    ForEach(ThemeMode.allCases, id: \.self) { mode in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                themeMode = mode
+                            }
+                            HapticManager.shared.playSelection()
+                        } label: {
+                            HStack {
+                                Image(systemName: ThemeOption.allOptions[mode.rawValue].iconName)
+                                    .foregroundStyle(colorManager.selectedColor.color)
+                                    .frame(width: 24)
+                                
+                                Text(ThemeOption.allOptions[mode.rawValue].name)
+                                    .foregroundStyle(.primary)
+                                
+                                Spacer()
+                                
+                                if themeMode == mode {
+                                    Circle()
+                                        .fill(
+                                            colorManager.selectedColor.adaptiveGradient(for: colorScheme)
+                                        )
+                                        .frame(width: 24, height: 24)
+                                        .overlay(
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 12, weight: .bold))
+                                                .foregroundStyle(.white)
+                                        )
+                                }
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } header: {
+                    Text("appearance_mode".localized)
+                }
+                
+                // MARK: - App Color Section
+                Section {
+                    ColorPickerSection.forAppColorPicker(
+                        selectedColor: Binding(
+                            get: { colorManager.selectedColor },
+                            set: { colorManager.setAppColor($0) }
+                        ),
+                        onProRequired: {
+                            showingPaywall = true
+                        }
+                    )
+                } header: {
+                    Text("app_color".localized)
+                }
+                
+                // MARK: - App Icon Section
+                Section {
+                    AppIconGridView(
+                        selectedIcon: iconManager.currentIcon,
+                        onIconSelected: { icon in
+                            let isLocked = !proManager.isPro && icon.requiresPro
+                            if isLocked {
+                                showingPaywall = true
+                            } else {
+                                iconManager.setAppIcon(icon)
+                            }
+                        },
+                        onProRequired: {
+                            showingPaywall = true
+                        }
+                    )
+                } header: {
+                    Text("app_icon".localized)
+                }
+            }
+            .navigationTitle("appearance".localized)
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
+            }
         }
+    }
+}
+
+// MARK: - App Icon Grid Component
+struct AppIconGridView: View {
+    let selectedIcon: AppIcon
+    let onIconSelected: (AppIcon) -> Void
+    let onProRequired: () -> Void
+    
+    @Environment(ProManager.self) private var proManager
+    
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 3)
+    
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(AppIcon.allIcons, id: \.id) { icon in
+                AppIconButton(
+                    icon: icon,
+                    isSelected: selectedIcon.id == icon.id,
+                    isLocked: !proManager.isPro && icon.requiresPro,
+                    onTap: {
+                        onIconSelected(icon)
+                    }
+                )
+            }
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+// MARK: - Individual App Icon Button
+struct AppIconButton: View {
+    let icon: AppIcon
+    let isSelected: Bool
+    let isLocked: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 8) {
+                ZStack {
+                    // Icon image
+                    Image(icon.preview)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(12)
+                        .opacity(isLocked ? 0.6 : 1.0)
+                    
+                    // Selection indicator
+                    if isSelected && !isLocked {
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray, lineWidth: 2)
+                            .frame(width: 60, height: 60)
+                    }
+                    
+                    // Pro lock overlay
+                    if isLocked {
+                        VStack {
+                            ProLockBadge()
+                                .scaleEffect(0.7) // Делаем поменьше
+                            Spacer()
+                        }
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 }

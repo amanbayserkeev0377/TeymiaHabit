@@ -118,41 +118,14 @@
 "notifications_habit_time" = "Адатыңа убакыт келди!";
 "notifications_dont_forget" = "Унутпаңыз: %@";
 
-/* ===================== Settings: Section Headers & Footers ===================== */
-"settings_header_appearance" = "Көрүнүш жана тил";
-"settings_header_data" = "Маалымат жана уюштуруу";
-"settings_header_sounds_feedback" = "Үндөр жана жооп";
-"settings_header_support" = "Колдоо жана пикир";
-"settings_header_legal" = "Юридикалык маалымат";
-"settings_footer_language" = "Тилди тутум жөндөөлөрүнөн өзгөртсөңүз болот.";
-
-/* ===================== Settings: App Color ===================== */
-"app_color" = "Колдонмо түсү";
-"app_color_preview_header" = "Алдын ала көрүү";
-"app_color_preview_footer" = "Колдонмо түсү сиз тандаган түскө жараша өзгөрөт.";
-"app_color_colors_header" = "Түстөр";
-
-/* ===================== Settings: App Icon ===================== */
-"app_icon" = "Колдонмо белгиси";
-"app_icon_aura_name" = "Аура";
-"app_icon_blaze_name" = "Жалын";
-"app_icon_bliss_name" = "Бакыт";
-"app_icon_chill_name" = "Салкын";
-"app_icon_dark_name" = "Түн";
-"app_icon_dream_name" = "Үмүт";
-"app_icon_light_name" = "Күн";
-"app_icon_main_name" = "Негизги";
-"app_icon_minimal_dark_name" = "Түнкү Минимализм";
-"app_icon_minimal_light_name" = "Күндүзгү Минимализм";
-"app_icon_paper_name" = "Кагаз";
-"app_icon_silver_wire_name" = "Көк Күмүш";
-"app_icon_sunrise_name" = "Таң";
-
 /* ===================== Settings: Appearance ===================== */
 "appearance" = "Көрүнүш";
+"appearance_mode" = "Көрүнүш режими";
 "appearance_dark" = "Түн";
 "appearance_light" = "Күндүз";
 "appearance_system" = "Тутумдук";
+"app_color" = "Колдонмо түсү";
+"app_icon" = "Колдонмо белгиси";
 
 /* ===================== Settings: Week Start ===================== */
 "week_start_day" = "Жуманын башталышы";

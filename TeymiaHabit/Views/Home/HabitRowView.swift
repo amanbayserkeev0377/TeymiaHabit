@@ -6,9 +6,9 @@ struct HabitRowView: View {
     let onTap: () -> Void
     @Environment(\.colorScheme) private var colorScheme
     
-    private let ringSize: CGFloat = 54
-    private let lineWidth: CGFloat = 6.5
-    private let iconSize: CGFloat = 21
+    private let ringSize: CGFloat = 58
+    private let lineWidth: CGFloat = 7.0
+    private let iconSize: CGFloat = 23
     
     private var adaptedFontSize: CGFloat {
         let value = habit.formattedProgressValue(for: date)
@@ -33,15 +33,12 @@ struct HabitRowView: View {
                 ZStack(alignment: .topTrailing) {
                     // Основная иконка
                     Image(systemName: iconName)
-                        .font(.system(size: 26))
+                        .font(.system(size: 28))
                         .foregroundStyle(.white)
-                        .frame(width: 56, height: 56)
+                        .frame(width: 60, height: 60)
                         .background(
                             Circle()
-                                .fill(habit.iconColor.adaptiveGradient(for: colorScheme,
-                                                                       lightOpacity: 0.8,
-                                                                       darkOpacity: 1.0
-                                                                      )
+                                .fill(habit.iconColor.adaptiveGradient(for: colorScheme)
                                 )
                         )
                     
@@ -50,7 +47,7 @@ struct HabitRowView: View {
                         Image(systemName: "pin.fill")
                             .font(.system(size: 10))
                             .foregroundStyle(AppColorManager.shared.selectedColor.color)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 18, height: 18)
                     }
                 }
                 

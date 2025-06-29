@@ -67,9 +67,6 @@ struct ActionButtonsSection: View {
     /// ✅ ИСПРАВЛЕННЫЙ адаптивный градиент с единой логикой приложения
     private var adaptivePlayButtonGradient: LinearGradient {
         return habit.iconColor.adaptiveGradient(
-            for: colorScheme,
-            lightOpacity: 0.7,
-            darkOpacity: 1.0
-        )
+            for: colorScheme)
     }
 }

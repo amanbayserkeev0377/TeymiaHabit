@@ -24,20 +24,14 @@ struct SettingsView: View {
                 }
 #endif
                 
-                // Appearance
-                Section(
-                    header: Text("settings_header_appearance".localized),
-                    footer: Text("settings_footer_language")
-                ) {
-                    AppColorSection()
-                    AppIconSection()
+                Section {
                     AppearanceSection()
                     WeekStartSection()
                     LanguageSection()
                 }
                 
                 // Data
-                Section(header: Text("settings_header_data".localized)) {
+                Section {
                     
                     // Folders
                     if ProManager.shared.canUseFolders {
@@ -119,43 +113,13 @@ struct SettingsView: View {
                     }
                 }
                 
-                // Sounds & Feedback
-                Section(header: Text("settings_header_sounds_feedback".localized)) {
+                Section {
                     NotificationsSection()
                     HapticsSection()
                 }
                 
                 // Legal
                 AboutSection()
-                
-                // MARK: - Purchases Section
-                Section {
-                    Button {
-                        restorePurchases()
-                    } label: {
-                        HStack {
-                            Label(
-                                title: { Text("restore_purchases".localized) },
-                                icon: {
-                                    Image(systemName: "dollarsign.arrow.trianglehead.counterclockwise.rotate.90")
-                                        .withIOSSettingsIcon(lightColors: [
-                                            Color(#colorLiteral(red: 0.4666666667, green: 0.8666666667, blue: 0.4, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.1176470588, green: 0.5647058824, blue: 0.1176470588, alpha: 1))
-                                        ])
-                                }
-                            )
-                            
-                            Spacer()
-                            
-                            if isRestoring {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                            }
-                        }
-                    }
-                    .tint(.primary)
-                    .disabled(isRestoring)
-                }
                                 
                 // Teymia Habit - version ...
                 Section {
@@ -191,35 +155,6 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
-        }
-        .alert("restore_purchases".localized, isPresented: $showingRestoreAlert) {
-            Button("button_ok".localized) { }
-        } message: {
-            Text(restoreAlertMessage)
-        }
-        .preferredColorScheme(themeMode.colorScheme)
-    }
-    
-    // MARK: - Helper Methods
-    private func restorePurchases() {
-        isRestoring = true
-        HapticManager.shared.playImpact(.light)
-        
-        Task {
-            let success = await ProManager.shared.restorePurchases()
-            
-            await MainActor.run {
-                isRestoring = false
-                
-                if success {
-                    restoreAlertMessage = "restore_purchases_success".localized
-                    HapticManager.shared.play(.success)
-                } else {
-                    restoreAlertMessage = "restore_purchases_no_purchases".localized
-                }
-                
-                showingRestoreAlert = true
-            }
         }
     }
 }

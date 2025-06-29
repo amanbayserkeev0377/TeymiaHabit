@@ -45,33 +45,14 @@ struct HabitStatsListCard: View {
                     
                     // Navigate indicator
                     Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                        .foregroundStyle(habit.iconColor.color)
                 }
                 
                 // Individual StreaksView for this habit
                 StreaksView(viewModel: viewModel)
                     .padding(.horizontal, 8)
-                
-                // Recent progress indicator
-                HStack {
-                    recentProgressView
-                    
-                    Spacer()
-                    
-                    // Last completed info
-                    if let lastCompletedDate = lastCompletedDate {
-                        VStack(alignment: .trailing, spacing: 2) {
-                            Text("Last completed")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                            
-                            Text(formatRelativeDate(lastCompletedDate))
-                                .font(.caption)
-                                .foregroundStyle(habit.iconColor.color)
-                        }
-                    }
-                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 16)
@@ -84,23 +65,6 @@ struct HabitStatsListCard: View {
         .onAppear {
             // Refresh stats when card appears
             viewModel.refresh()
-        }
-    }
-    
-    // MARK: - Recent Progress View
-    
-    @ViewBuilder
-    private var recentProgressView: some View {
-        HStack(spacing: 4) {
-            ForEach(0..<7, id: \.self) { dayOffset in
-                let date = Calendar.current.date(byAdding: .day, value: -dayOffset, to: Date()) ?? Date()
-                let isActive = habit.isActiveOnDate(date)
-                let isCompleted = habit.isCompletedForDate(date)
-                
-                Circle()
-                    .fill(progressColor(isActive: isActive, isCompleted: isCompleted))
-                    .frame(width: 8, height: 8)
-            }
         }
     }
     

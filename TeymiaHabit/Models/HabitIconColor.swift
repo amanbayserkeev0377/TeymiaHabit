@@ -106,92 +106,83 @@ enum HabitIconColor: String, CaseIterable, Codable {
 
 
 extension HabitIconColor {
-    // MARK: - ✅ УЛУЧШЕННЫЕ Dark Colors (контраст 3.0+)
+    // MARK: - ✅ Dark Colors (контраст 2.5)
     var darkColor: Color {
         switch self {
         case .primary:
-            return Color(#colorLiteral(red: 0.2, green: 0.2, blue: 0.2, alpha: 1))    // darkColor
+            return Color(#colorLiteral(red: 0.25, green: 0.25, blue: 0.25, alpha: 1))   // Мягкий темно-серый
         case .red:
-            return Color(#colorLiteral(red: 0.6, green: 0.1, blue: 0.08, alpha: 1))  // ✅ темнее: было 0.75→0.6
+            return Color(#colorLiteral(red: 0.65, green: 0.15, blue: 0.12, alpha: 1))   // Было 0.6 → 0.65
         case .orange:
-            return Color(#colorLiteral(red: 0.75, green: 0.35, blue: 0, alpha: 1))   // ✅ темнее: было 0.9→0.75
+            return Color(#colorLiteral(red: 0.8, green: 0.4, blue: 0.05, alpha: 1))     // Было 0.75 → 0.8
         case .yellow:
-            return Color(#colorLiteral(red: 0.7, green: 0.5, blue: 0, alpha: 1))     // ✅ темнее: было 0.851→0.7
+            return Color(#colorLiteral(red: 0.75, green: 0.55, blue: 0.05, alpha: 1))   // Было 0.7 → 0.75
         case .mint:
-            return Color(#colorLiteral(red: 0.0, green: 0.45, blue: 0.38, alpha: 1)) // ✅ темнее: было 0.643→0.45
+            return Color(#colorLiteral(red: 0.05, green: 0.5, blue: 0.42, alpha: 1))    // Было 0.45 → 0.5
         case .green:
-            return Color(#colorLiteral(red: 0.08, green: 0.45, blue: 0.24, alpha: 1)) // ✅ темнее: было 0.627→0.45
+            return Color(#colorLiteral(red: 0.12, green: 0.5, blue: 0.28, alpha: 1))    // Было 0.45 → 0.5
         case .blue:
-            return Color(#colorLiteral(red: 0.08, green: 0.3, blue: 0.55, alpha: 1))  // ✅ темнее: было 0.467→0.3
+            return Color(#colorLiteral(red: 0.12, green: 0.35, blue: 0.6, alpha: 1))    // Было 0.3 → 0.35
         case .purple:
-            return Color(#colorLiteral(red: 0.4, green: 0.2, blue: 0.5, alpha: 1))    // ✅ темнее: было 0.302→0.2
+            return Color(#colorLiteral(red: 0.45, green: 0.25, blue: 0.55, alpha: 1))   // Было 0.2 → 0.25
         case .softLavender:
-            return Color(#colorLiteral(red: 0.35, green: 0.38, blue: 0.6, alpha: 1))  // ✅ темнее: было 0.48→0.38
+            return Color(#colorLiteral(red: 0.4, green: 0.42, blue: 0.65, alpha: 1))    // Было 0.38 → 0.42
         case .pink:
-            return Color(#colorLiteral(red: 0.7, green: 0.25, blue: 0.45, alpha: 1))  // ✅ темнее: было 0.4→0.25
+            return Color(#colorLiteral(red: 0.75, green: 0.3, blue: 0.5, alpha: 1))     // Было 0.25 → 0.3
         case .sky:
-            return Color(#colorLiteral(red: 0.1, green: 0.45, blue: 0.7, alpha: 1))   // ✅ темнее: было 0.6→0.45
+            return Color(#colorLiteral(red: 0.15, green: 0.5, blue: 0.75, alpha: 1))    // Было 0.45 → 0.5
         case .brown:
-            return Color(#colorLiteral(red: 0.4, green: 0.28, blue: 0.22, alpha: 1))  // ✅ темнее: было 0.38→0.28
+            return Color(#colorLiteral(red: 0.45, green: 0.32, blue: 0.26, alpha: 1))   // Было 0.28 → 0.32
         case .gray:
-            return Color(#colorLiteral(red: 0.3, green: 0.3, blue: 0.3, alpha: 1))    // ✅ темнее: было 0.451→0.3
+            return Color(#colorLiteral(red: 0.35, green: 0.35, blue: 0.35, alpha: 1))   // Было 0.3 → 0.35
         case .colorPicker:
             return Self.customColor
         }
     }
     
-    // MARK: - ✅ УЛУЧШЕННЫЕ Light Colors (контраст 3.0+)
+    // MARK: - ✅ Light Colors (контраст 2.5)
     var lightColor: Color {
         switch self {
         case .primary:
-            return Color(#colorLiteral(red: 0.8, green: 0.8, blue: 0.82, alpha: 1))   // lightColor
+            return Color(#colorLiteral(red: 0.75, green: 0.75, blue: 0.77, alpha: 1))   // Мягкий светло-серый
         case .red:
-            return Color(#colorLiteral(red: 1.0, green: 0.55, blue: 0.5, alpha: 1))   // ✅ светлее: было 0.45→0.55
+            return Color(#colorLiteral(red: 0.95, green: 0.5, blue: 0.45, alpha: 1))    // Было 1.0 → 0.95
         case .orange:
-            return Color(#colorLiteral(red: 1.0, green: 0.8, blue: 0.3, alpha: 1))    // ✅ светлее: было 0.7→0.8
+            return Color(#colorLiteral(red: 0.95, green: 0.75, blue: 0.25, alpha: 1))   // Было 0.8 → 0.75
         case .yellow:
-            return Color(#colorLiteral(red: 1.0, green: 0.9, blue: 0.1, alpha: 1))    // ✅ светлее: было 0.839→0.9
+            return Color(#colorLiteral(red: 0.95, green: 0.85, blue: 0.15, alpha: 1))   // Было 0.9 → 0.85
         case .mint:
-            return Color(#colorLiteral(red: 0.3, green: 0.9, blue: 0.8, alpha: 1))    // ✅ светлее: было 0.784→0.9
+            return Color(#colorLiteral(red: 0.25, green: 0.85, blue: 0.75, alpha: 1))   // Было 0.9 → 0.85
         case .green:
-            return Color(#colorLiteral(red: 0.4, green: 0.9, blue: 0.6, alpha: 1))    // ✅ светлее: было 0.820→0.9
+            return Color(#colorLiteral(red: 0.35, green: 0.85, blue: 0.55, alpha: 1))   // Было 0.9 → 0.85
         case .blue:
-            return Color(#colorLiteral(red: 0.45, green: 0.75, blue: 1.0, alpha: 1))  // ✅ светлее: было 0.659→0.75
+            return Color(#colorLiteral(red: 0.4, green: 0.7, blue: 0.95, alpha: 1))     // Было 0.75 → 0.7
         case .purple:
-            return Color(#colorLiteral(red: 0.8, green: 0.6, blue: 0.95, alpha: 1))   // ✅ светлее: было 0.482→0.6
+            return Color(#colorLiteral(red: 0.75, green: 0.55, blue: 0.9, alpha: 1))    // Было 0.6 → 0.55
         case .softLavender:
-            return Color(#colorLiteral(red: 0.8, green: 0.82, blue: 0.95, alpha: 1))  // ✅ светлее: было 0.733→0.82
+            return Color(#colorLiteral(red: 0.75, green: 0.77, blue: 0.9, alpha: 1))    // Было 0.82 → 0.77
         case .pink:
-            return Color(#colorLiteral(red: 1.0, green: 0.75, blue: 0.9, alpha: 1))   // ✅ светлее: было 0.671→0.75
+            return Color(#colorLiteral(red: 0.95, green: 0.7, blue: 0.85, alpha: 1))    // Было 0.75 → 0.7
         case .sky:
-            return Color(#colorLiteral(red: 0.5, green: 0.9, blue: 1.0, alpha: 1))    // ✅ светлее: было 0.824→0.9
+            return Color(#colorLiteral(red: 0.45, green: 0.85, blue: 0.95, alpha: 1))   // Было 0.9 → 0.85
         case .brown:
-            return Color(#colorLiteral(red: 0.9, green: 0.75, blue: 0.65, alpha: 1))  // ✅ светлее: было 0.62→0.75
+            return Color(#colorLiteral(red: 0.85, green: 0.7, blue: 0.6, alpha: 1))     // Было 0.75 → 0.7
         case .gray:
-            return Color(#colorLiteral(red: 0.85, green: 0.85, blue: 0.87, alpha: 1)) // ✅ светлее: было 0.780→0.85
+            return Color(#colorLiteral(red: 0.8, green: 0.8, blue: 0.82, alpha: 1))     // Было 0.85 → 0.8
         case .colorPicker:
             return Self.customColor
         }
     }
     
-    // MARK: - ✅ ИСПРАВЛЕННЫЕ градиенты с ЕДИНОЙ ПРАВИЛЬНОЙ логикой
-    
-    func adaptiveGradient(
-            for colorScheme: ColorScheme,
-            lightOpacity: Double = 1.0,
-            darkOpacity: Double = 1.0
-        ) -> LinearGradient {
-            // ✅ ЕДИНАЯ ЛОГИКА для ВСЕХ цветов (включая primary)
-            let topColor = colorScheme == .dark ? darkColor : lightColor
-            let bottomColor = colorScheme == .dark ? lightColor : darkColor
-            
-            return LinearGradient(
-                colors: [
-                    topColor.opacity(colorScheme == .dark ? darkOpacity : lightOpacity),
-                    bottomColor.opacity(colorScheme == .dark ? lightOpacity : darkOpacity)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
+    // MARK: - ✅ Упрощенный adaptive gradient без opacity параметров
+    func adaptiveGradient(for colorScheme: ColorScheme) -> LinearGradient {
+        let topColor = colorScheme == .dark ? darkColor : lightColor
+        let bottomColor = colorScheme == .dark ? lightColor : darkColor
+        
+        return LinearGradient(
+            colors: [topColor, bottomColor],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
 }

@@ -48,10 +48,7 @@ struct ProgressControlSection: View {
                             .fill(
                                 // ✅ НОВЫЙ градиентный дизайн
                                 habit.iconColor.adaptiveGradient(
-                                    for: colorScheme,
-                                    lightOpacity: 0.8,
-                                    darkOpacity: 1.0
-                                )
+                                    for: colorScheme)
                             )
                             .shadow(
                                 color: colorScheme == .dark ? .clear : .black.opacity(0.1),
@@ -99,10 +96,7 @@ struct ProgressControlSection: View {
                             .fill(
                                 // ✅ НОВЫЙ градиентный дизайн
                                 habit.iconColor.adaptiveGradient(
-                                    for: colorScheme,
-                                    lightOpacity: 0.8,
-                                    darkOpacity: 1.0
-                                )
+                                    for: colorScheme)
                             )
                             .shadow(
                                 color: colorScheme == .dark ? .clear : .black.opacity(0.1),

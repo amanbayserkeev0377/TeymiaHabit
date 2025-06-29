@@ -67,7 +67,7 @@ struct AboutSection: View {
     var body: some View {
         
         // MARK: - Support & Feedback
-        Section(header: Text("settings_header_support".localized)) {
+        Section {
             // Rate App
             Button {
                 if let url = URL(string: "https://apps.apple.com/app/id6746747903") {
@@ -150,7 +150,7 @@ struct AboutSection: View {
         }
         
         // MARK: - Legal (ОБНОВЛЕННЫЙ РАЗДЕЛ)
-        Section(header: Text("settings_header_legal".localized)) {
+        Section {
             // Terms of Service - прямая ссылка
             Button {
                 if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {
@@ -182,8 +182,8 @@ struct AboutSection: View {
                     icon: {
                         Image(systemName: "lock.fill")
                             .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.5019607843, green: 0.5019607843, blue: 0.5019607843, alpha: 1)),
-                                Color(#colorLiteral(red: 0.2549019608, green: 0.2549019608, blue: 0.2549019608, alpha: 1))
+                                Color(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)),
+                                Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1))
                             ])
                     }
                 )

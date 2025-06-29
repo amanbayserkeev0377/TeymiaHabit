@@ -45,10 +45,7 @@ struct StreaksView: View {
         
         // Use adaptive gradient: light theme = light top → dark bottom, dark theme = dark top → light bottom
         return habitColor.adaptiveGradient(
-            for: colorScheme,
-            lightOpacity: 0.8,  // Slightly transparent for elegance
-            darkOpacity: 1.0
-        )
+            for: colorScheme)
     }
 }
 

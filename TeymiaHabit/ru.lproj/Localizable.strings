@@ -118,41 +118,14 @@
 "notifications_habit_time" = "Время для привычки!";
 "notifications_dont_forget" = "Не забудьте выполнить: %@";
 
-/* ===================== Settings: Section Headers & Footers ===================== */
-"settings_header_appearance" = "Внешний вид и язык";
-"settings_header_data" = "Данные и организация";
-"settings_header_sounds_feedback" = "Звуки и отклик";
-"settings_header_support" = "Поддержка и обратная связь";
-"settings_header_legal" = "Правовая информация";
-"settings_footer_language" = "Язык приложения можно изменить в системных настройках.";
-
-/* ===================== Settings: App Color ===================== */
-"app_color" = "Цвет приложения";
-"app_color_preview_header" = "Предпросмотр";
-"app_color_preview_footer" = "Цвет приложения изменяется в зависимости от выбранного вами цвета.";
-"app_color_colors_header" = "Цвета";
-
-/* ===================== Settings: App Icon ===================== */
-"app_icon" = "Иконка приложения";
-"app_icon_aura_name" = "Аура";
-"app_icon_blaze_name" = "Пламя";
-"app_icon_bliss_name" = "Блаженство";
-"app_icon_chill_name" = "Спокойствие";
-"app_icon_dark_name" = "Тёмная";
-"app_icon_dream_name" = "Мечта";
-"app_icon_light_name" = "Светлая";
-"app_icon_main_name" = "Основная";
-"app_icon_minimal_dark_name" = "Тёмный минимализм";
-"app_icon_minimal_light_name" = "Светлый минимализм";
-"app_icon_paper_name" = "Бумага";
-"app_icon_silver_blue_name" = "Металлик Блюз";
-"app_icon_sunrise_name" = "Восход";
-
 /* ===================== Settings: Appearance ===================== */
-"appearance" = "Внешний вид";
+"appearance" = "Оформление";
+"appearance_mode" = "Режим оформления";
 "appearance_dark" = "Тёмный";
 "appearance_light" = "Светлый";
 "appearance_system" = "Системный";
+"app_color" = "Цвет приложения";
+"app_icon" = "Иконка приложения";
 
 /* ===================== Settings: Week Start ===================== */
 "week_start_day" = "Начало недели";

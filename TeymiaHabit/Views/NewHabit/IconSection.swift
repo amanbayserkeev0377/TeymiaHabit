@@ -34,10 +34,7 @@ struct IconSection: View {
                             Circle()
                                 .fill(
                                     selectedColor.adaptiveGradient(
-                                        for: colorScheme,
-                                        lightOpacity: 0.8,
-                                        darkOpacity: 1.0
-                                    )
+                                        for: colorScheme)
                                 )
                         )
                 }

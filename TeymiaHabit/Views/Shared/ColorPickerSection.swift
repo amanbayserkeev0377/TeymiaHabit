@@ -57,7 +57,7 @@ struct ColorPickerSection: View {
             ZStack {
                 // Base circular color button
                 Circle()
-                    .fill(color.adaptiveGradient(for: colorScheme, lightOpacity: 0.8, darkOpacity: 1.0))
+                    .fill(color.adaptiveGradient(for: colorScheme))
                     .frame(width: buttonSize, height: buttonSize)
                     .opacity(isLocked ? 0.7 : 1.0) // Слегка приглушаем заблокированные цвета
                     .overlay(
@@ -100,7 +100,6 @@ struct ColorPickerSection: View {
             ColorPicker("", selection: $customColor)
                 .labelsHidden()
                 .disabled(isLocked)
-                .opacity(isLocked ? 0.7 : 1.0) // Слегка приглушаем заблокированный picker
                 .onChange(of: customColor) { _, newColor in
                     if !isLocked {
                         HabitIconColor.customColor = newColor

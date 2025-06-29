@@ -119,41 +119,15 @@
 "notifications_habit_time" = "Time for your habit!";
 "notifications_dont_forget" = "Don't forget to do: %@";
 
-/* ===================== Settings: Section Headers & Footers ===================== */
-"settings_header_appearance" = "Appearance & Language";
-"settings_header_data" = "Data & Organization";
-"settings_header_sounds_feedback" = "Sounds & Feedback";
-"settings_header_support" = "Support & Feedback";
-"settings_header_legal" = "Legal";
-"settings_footer_language" = "You can change the app language in the system settings.";
-
-/* ===================== Settings: App Color ===================== */
-"app_color" = "App Color";
-"app_color_preview_header" = "Preview";
-"app_color_preview_footer" = "The app color changes according to your selected color.";
-"app_color_colors_header" = "Colors";
-
-/* ===================== Settings: App Icon ===================== */
-"app_icon" = "App Icon";
-"app_icon_aura_name" = "Aura";
-"app_icon_blaze_name" = "Blaze";
-"app_icon_bliss_name" = "Bliss";
-"app_icon_chill_name" = "Chill";
-"app_icon_dark_name" = "Dark";
-"app_icon_dream_name" = "Dream";
-"app_icon_light_name" = "Light";
-"app_icon_main_name" = "Main";
-"app_icon_minimal_dark_name" = "Minimal Dark";
-"app_icon_minimal_light_name" = "Minimal Light";
-"app_icon_paper_name" = "Paper";
-"app_icon_silver_blue_name" = "Silver Blue";
-"app_icon_sunrise_name" = "Sunrise";
-
 /* ===================== Settings: Appearance ===================== */
 "appearance" = "Appearance";
+"appearance_mode" = "Appearance mode";
 "appearance_dark" = "Dark";
 "appearance_light" = "Light";
 "appearance_system" = "System";
+"app_color" = "App Color";
+"app_icon" = "App Icon";
+
 
 /* ===================== Settings: Week Start ===================== */
 "week_start_day" = "Week Start";

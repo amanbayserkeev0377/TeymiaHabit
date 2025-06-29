@@ -145,10 +145,7 @@ struct HomeView: View {
                                             .fill(
                                                 // ✅ Красивый градиент как в кнопках
                                                 colorManager.selectedColor.adaptiveGradient(
-                                                    for: colorScheme,
-                                                    lightOpacity: 0.9,
-                                                    darkOpacity: 1.0
-                                                )
+                                                    for: colorScheme)
                                             )
                                             .shadow(
                                                 color: colorScheme == .dark ? .clear : .black.opacity(0.15),
@@ -388,12 +385,12 @@ struct HomeView: View {
             let iconName = habit.iconName ?? "checkmark"
             
             Image(systemName: iconName)
-                .font(.system(size: 26))
-                .foregroundStyle(habit.iconName == nil ? colorManager.selectedColor.color : habit.iconColor.color)
-                .frame(width: 52, height: 52)
+                .font(.system(size: 28))
+                .foregroundStyle(.white)
+                .frame(width: 60, height: 60)
                 .background(
                     Circle()
-                        .fill((habit.iconName == nil ? colorManager.selectedColor.color : habit.iconColor.color).opacity(0.1))
+                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme))
                 )
             
             VStack(alignment: .leading, spacing: 2) {
@@ -438,27 +435,21 @@ struct HomeView: View {
                         selectedFolder = nil
                     }
                 } label: {
-                    Text("folders_all".localized)
-                        .font(.footnote)
-                        .fontWeight(selectedFolder == nil ? .semibold : .medium)
-                        .foregroundStyle(selectedFolder == nil ? .primary : .secondary)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(selectedFolder == nil ?
-                                      AppColorManager.shared.selectedColor.color.opacity(0.1) :
-                                        Color.clear)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .strokeBorder(
-                                            selectedFolder == nil ?
-                                            AppColorManager.shared.selectedColor.color.opacity(0.2) :
-                                                Color.clear,
-                                            lineWidth: 1
-                                        )
-                                )
-                        )
+                    VStack(spacing: 4) {
+                        Text("folders_all".localized)
+                            .font(.footnote)
+                            .fontWeight(selectedFolder == nil ? .semibold : .medium)
+                            .foregroundStyle(selectedFolder == nil ? .primary : .secondary)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                        
+                        // Нижняя черточка
+                        Rectangle()
+                            .fill(AppColorManager.shared.selectedColor.color)
+                            .frame(height: 2)
+                            .opacity(selectedFolder == nil ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.3), value: selectedFolder == nil)
+                    }
                 }
                 .buttonStyle(.plain)
                 
@@ -469,27 +460,21 @@ struct HomeView: View {
                             selectedFolder = selectedFolder?.uuid == folder.uuid ? nil : folder
                         }
                     } label: {
-                        Text(folder.name)
-                            .font(.footnote)
-                            .fontWeight(selectedFolder?.uuid == folder.uuid ? .semibold : .medium)
-                            .foregroundStyle(selectedFolder?.uuid == folder.uuid ? .primary : .secondary)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(selectedFolder?.uuid == folder.uuid ?
-                                          AppColorManager.shared.selectedColor.color.opacity(0.1) :
-                                            Color.clear)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .strokeBorder(
-                                                selectedFolder?.uuid == folder.uuid ?
-                                                AppColorManager.shared.selectedColor.color.opacity(0.2) :
-                                                    Color.clear,
-                                                lineWidth: 1
-                                            )
-                                    )
-                            )
+                        VStack(spacing: 4) {
+                            Text(folder.name)
+                                .font(.footnote)
+                                .fontWeight(selectedFolder?.uuid == folder.uuid ? .semibold : .medium)
+                                .foregroundStyle(selectedFolder?.uuid == folder.uuid ? .primary : .secondary)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                            
+                            // Нижняя черточка
+                            Rectangle()
+                                .fill(AppColorManager.shared.selectedColor.color)
+                                .frame(height: 2)
+                                .opacity(selectedFolder?.uuid == folder.uuid ? 1 : 0)
+                                .animation(.easeInOut(duration: 0.3), value: selectedFolder?.uuid == folder.uuid)
+                        }
                     }
                     .buttonStyle(.plain)
                 }

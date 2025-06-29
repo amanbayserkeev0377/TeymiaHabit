@@ -175,10 +175,7 @@ struct IconPickerView: View {
                         // ✅ ИСПРАВЛЕНО: только выбранная иконка получает градиент
                         isSelected
                         ? selectedColor.adaptiveGradient(
-                            for: colorScheme,
-                            lightOpacity: 0.8,
-                            darkOpacity: 1.0
-                        )
+                            for: colorScheme)
                         : LinearGradient(
                             colors: colorScheme == .dark
                             ? [Color(.systemGray4), Color(.systemGray6)]  // Серый градиент для темной темы

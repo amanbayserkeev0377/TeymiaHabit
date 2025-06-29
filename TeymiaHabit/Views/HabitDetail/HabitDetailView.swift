@@ -215,8 +215,14 @@ struct HabitDetailView: View {
                 selectedHabitForStats = habit
             } label: {
                 Image(systemName: "chart.line.text.clipboard")
-                    .font(.system(size: 16))
-                    .withHabitColor(habit)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(habit.iconColor.color)
+                    .frame(width: 32, height: 32)
+                    .background(
+                        Circle()
+                            .fill(habit.iconColor.adaptiveGradient(for: colorScheme)
+                                .opacity(0.1))
+                    )
             }
         }
         
@@ -248,12 +254,14 @@ struct HabitDetailView: View {
                 .tint(.red)
             } label: {
                 Image(systemName: "ellipsis")
-                    .font(.system(size: 14, weight: .medium))
-                    .withHabitColor(habit)
-                    .frame(width: 28, height: 28)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(habit.iconColor.color)
+                    .frame(width: 32, height: 32)
                     .background(
                         Circle()
-                            .fill(habit.iconColor.color.opacity(0.1))                    )
+                            .fill(habit.iconColor.adaptiveGradient(for: colorScheme)
+                                .opacity(0.1))
+                    )
             }
         }
     }
