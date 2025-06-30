@@ -19,13 +19,24 @@ struct HabitLiveActivityWidget: Widget {
                 }
             } compactLeading: {
                 Text(context.state.formattedTime)
+                    .onAppear {
+                        print("🎨 Widget compactLeading displaying: \(context.state.formattedTime)")
+                        print("🎨 Current progress: \(context.state.currentProgress)")
+                        print("🎨 Timer running: \(context.state.isTimerRunning)")
+                    }
                     .font(.caption2)
                     .fontWeight(.semibold)
             } compactTrailing: {
                 Image(systemName: context.state.isTimerRunning ? "play.fill" : "pause.fill")
+                    .onAppear {
+                        print("🎨 Widget compactTrailing icon: \(context.state.isTimerRunning ? "play" : "pause")")
+                    }
                     .foregroundColor(context.state.isTimerRunning ? .green : .orange)
             } minimal: {
                 Image(systemName: context.state.isTimerRunning ? "play.fill" : "pause.fill")
+                    .onAppear {
+                        print("🎨 Widget minimal icon displayed")
+                    }
                     .foregroundColor(context.state.isTimerRunning ? .green : .orange)
             }
         }
@@ -77,6 +88,11 @@ struct LockScreenView: View {
                 .tint(.blue)
             }
         }
+        .onAppear {
+                print("🎨 LockScreenView appeared!")
+                print("🎨 Habit: \(context.attributes.habitName)")
+                print("🎨 Time: \(context.state.formattedTime)")
+            }
         .padding()
     }
 }

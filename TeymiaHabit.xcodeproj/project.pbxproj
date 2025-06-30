@@ -8,19 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		072DD4152DE8243500157BF8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 072DD4142DE8243500157BF8 /* RevenueCat */; };
-		076E63192E123CA7002272B1 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 076E63182E123CA6002272B1 /* WidgetKit.framework */; };
-		076E631B2E123CA7002272B1 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 076E631A2E123CA7002272B1 /* SwiftUI.framework */; };
-		076E632C2E123CA9002272B1 /* TeymiaHabitLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 076E63162E123CA6002272B1 /* TeymiaHabitLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		077FAE522E12B52A007790C5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 076E63182E123CA6002272B1 /* WidgetKit.framework */; };
+		077FAE532E12B52A007790C5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 076E631A2E123CA7002272B1 /* SwiftUI.framework */; };
+		077FAE642E12B52C007790C5 /* LiveActivityDevExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 077FAE512E12B52A007790C5 /* LiveActivityDevExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		07971CFA2DF2AD66006B9C21 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 07971CF62DF2AD66006B9C21 /* RevenueCat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		076E632A2E123CA9002272B1 /* PBXContainerItemProxy */ = {
+		077FAE622E12B52C007790C5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 07A95EF22D9849F300044A7A /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 076E63152E123CA6002272B1;
-			remoteInfo = TeymiaHabitLiveActivityExtension;
+			remoteGlobalIDString = 077FAE502E12B52A007790C5;
+			remoteInfo = LiveActivityDevExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -30,16 +30,24 @@
 			dstPath = "";
 			dstSubfolder = PlugIns;
 			files = (
-				076E632C2E123CA9002272B1 /* TeymiaHabitLiveActivityExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+		077FAE692E12B52C007790C5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				077FAE642E12B52C007790C5 /* LiveActivityDevExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		076E63162E123CA6002272B1 /* TeymiaHabitLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TeymiaHabitLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		076E63182E123CA6002272B1 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		076E631A2E123CA7002272B1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		077FAE512E12B52A007790C5 /* LiveActivityDevExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiveActivityDevExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		07971D002DF2AD66006B9C21 /* TeymiaHabit Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TeymiaHabit Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A95EFA2D9849F300044A7A /* TeymiaHabit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeymiaHabit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -54,20 +62,12 @@
 			);
 			target = 07A95EF92D9849F300044A7A /* TeymiaHabit */;
 		};
-		076E63302E123CA9002272B1 /* Exceptions for "TeymiaHabitLiveActivity" folder in "TeymiaHabitLiveActivityExtension" target */ = {
+		077FAE682E12B52C007790C5 /* Exceptions for "LiveActivityDev" folder in "LiveActivityDevExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 076E63152E123CA6002272B1 /* TeymiaHabitLiveActivityExtension */;
-		};
-		077FAE3D2E124937007790C5 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabitLiveActivityExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Views/Shared/LiveActivityTypes.swift,
-				Views/Shared/TimeFormatting.swift,
-			);
-			target = 076E63152E123CA6002272B1 /* TeymiaHabitLiveActivityExtension */;
+			target = 077FAE502E12B52A007790C5 /* LiveActivityDevExtension */;
 		};
 		07971D012DF2AD67006B9C21 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabit Dev" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -83,10 +83,15 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		076E631C2E123CA7002272B1 /* TeymiaHabitLiveActivity */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				076E63302E123CA9002272B1 /* Exceptions for "TeymiaHabitLiveActivity" folder in "TeymiaHabitLiveActivityExtension" target */,
-			);
 			path = TeymiaHabitLiveActivity;
+			sourceTree = "<group>";
+		};
+		077FAE542E12B52A007790C5 /* LiveActivityDev */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				077FAE682E12B52C007790C5 /* Exceptions for "LiveActivityDev" folder in "LiveActivityDevExtension" target */,
+			);
+			path = LiveActivityDev;
 			sourceTree = "<group>";
 		};
 		07A95EFC2D9849F300044A7A /* TeymiaHabit */ = {
@@ -94,7 +99,6 @@
 			exceptions = (
 				073339882DEEECEA00F43D31 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabit" target */,
 				07971D012DF2AD67006B9C21 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabit Dev" target */,
-				077FAE3D2E124937007790C5 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabitLiveActivityExtension" target */,
 			);
 			path = TeymiaHabit;
 			sourceTree = "<group>";
@@ -102,11 +106,11 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		076E63132E123CA6002272B1 /* Frameworks */ = {
+		077FAE4E2E12B52A007790C5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
-				076E631B2E123CA7002272B1 /* SwiftUI.framework in Frameworks */,
-				076E63192E123CA7002272B1 /* WidgetKit.framework in Frameworks */,
+				077FAE532E12B52A007790C5 /* SwiftUI.framework in Frameworks */,
+				077FAE522E12B52A007790C5 /* WidgetKit.framework in Frameworks */,
 			);
 		};
 		07971CF92DF2AD66006B9C21 /* Frameworks */ = {
@@ -138,6 +142,7 @@
 			children = (
 				07A95EFC2D9849F300044A7A /* TeymiaHabit */,
 				076E631C2E123CA7002272B1 /* TeymiaHabitLiveActivity */,
+				077FAE542E12B52A007790C5 /* LiveActivityDev */,
 				076E63172E123CA6002272B1 /* Frameworks */,
 				07A95EFB2D9849F300044A7A /* Products */,
 			);
@@ -148,7 +153,7 @@
 			children = (
 				07A95EFA2D9849F300044A7A /* TeymiaHabit.app */,
 				07971D002DF2AD66006B9C21 /* TeymiaHabit Dev.app */,
-				076E63162E123CA6002272B1 /* TeymiaHabitLiveActivityExtension.appex */,
+				077FAE512E12B52A007790C5 /* LiveActivityDevExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -156,22 +161,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		076E63152E123CA6002272B1 /* TeymiaHabitLiveActivityExtension */ = {
+		077FAE502E12B52A007790C5 /* LiveActivityDevExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 076E632D2E123CA9002272B1 /* Build configuration list for PBXNativeTarget "TeymiaHabitLiveActivityExtension" */;
+			buildConfigurationList = 077FAE652E12B52C007790C5 /* Build configuration list for PBXNativeTarget "LiveActivityDevExtension" */;
 			buildPhases = (
-				076E63122E123CA6002272B1 /* Sources */,
-				076E63132E123CA6002272B1 /* Frameworks */,
-				076E63142E123CA6002272B1 /* Resources */,
+				077FAE4D2E12B52A007790C5 /* Sources */,
+				077FAE4E2E12B52A007790C5 /* Frameworks */,
+				077FAE4F2E12B52A007790C5 /* Resources */,
 			);
 			buildRules = (
 			);
 			fileSystemSynchronizedGroups = (
-				076E631C2E123CA7002272B1 /* TeymiaHabitLiveActivity */,
+				077FAE542E12B52A007790C5 /* LiveActivityDev */,
 			);
-			name = TeymiaHabitLiveActivityExtension;
-			productName = TeymiaHabitLiveActivityExtension;
-			productReference = 076E63162E123CA6002272B1 /* TeymiaHabitLiveActivityExtension.appex */;
+			name = LiveActivityDevExtension;
+			productName = LiveActivityDevExtension;
+			productReference = 077FAE512E12B52A007790C5 /* LiveActivityDevExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		07971CF52DF2AD66006B9C21 /* TeymiaHabit Dev */ = {
@@ -181,8 +186,12 @@
 				07971CF82DF2AD66006B9C21 /* Sources */,
 				07971CF92DF2AD66006B9C21 /* Frameworks */,
 				07971CFC2DF2AD66006B9C21 /* Resources */,
+				077FAE692E12B52C007790C5 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				077FAE632E12B52C007790C5 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				07A95EFC2D9849F300044A7A /* TeymiaHabit */,
@@ -206,9 +215,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-				076E632B2E123CA9002272B1 /* PBXTargetDependency */,
-			);
 			fileSystemSynchronizedGroups = (
 				07A95EFC2D9849F300044A7A /* TeymiaHabit */,
 			);
@@ -230,7 +236,7 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
-					076E63152E123CA6002272B1 = {
+					077FAE502E12B52A007790C5 = {
 						CreatedOnToolsVersion = 16.4;
 					};
 					07A95EF92D9849F300044A7A = {
@@ -259,13 +265,13 @@
 			targets = (
 				07A95EF92D9849F300044A7A /* TeymiaHabit */,
 				07971CF52DF2AD66006B9C21 /* TeymiaHabit Dev */,
-				076E63152E123CA6002272B1 /* TeymiaHabitLiveActivityExtension */,
+				077FAE502E12B52A007790C5 /* LiveActivityDevExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		076E63142E123CA6002272B1 /* Resources */ = {
+		077FAE4F2E12B52A007790C5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -283,7 +289,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		076E63122E123CA6002272B1 /* Sources */ = {
+		077FAE4D2E12B52A007790C5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
@@ -301,26 +307,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		076E632B2E123CA9002272B1 /* PBXTargetDependency */ = {
+		077FAE632E12B52C007790C5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 076E63152E123CA6002272B1 /* TeymiaHabitLiveActivityExtension */;
-			targetProxy = 076E632A2E123CA9002272B1 /* PBXContainerItemProxy */;
+			target = 077FAE502E12B52A007790C5 /* LiveActivityDevExtension */;
+			targetProxy = 077FAE622E12B52C007790C5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		076E632E2E123CA9002272B1 /* Debug configuration for PBXNativeTarget "TeymiaHabitLiveActivityExtension" */ = {
+		077FAE662E12B52C007790C5 /* Debug configuration for PBXNativeTarget "LiveActivityDevExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = TeymiaHabitLiveActivity/TeymiaHabitLiveActivity.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SXCBCPV7Y9;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TeymiaHabitLiveActivity/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TeymiaHabitLiveActivity;
+				INFOPLIST_FILE = LiveActivityDev/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LiveActivityDev;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -329,27 +334,30 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit.liveactivity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit.dev.LiveActivityDev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		076E632F2E123CA9002272B1 /* Release configuration for PBXNativeTarget "TeymiaHabitLiveActivityExtension" */ = {
+		077FAE672E12B52C007790C5 /* Release configuration for PBXNativeTarget "LiveActivityDevExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = TeymiaHabitLiveActivity/TeymiaHabitLiveActivity.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SXCBCPV7Y9;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TeymiaHabitLiveActivity/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TeymiaHabitLiveActivity;
+				INFOPLIST_FILE = LiveActivityDev/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LiveActivityDev;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -358,9 +366,13 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit.liveactivity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit.dev.LiveActivityDev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -671,11 +683,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		076E632D2E123CA9002272B1 /* Build configuration list for PBXNativeTarget "TeymiaHabitLiveActivityExtension" */ = {
+		077FAE652E12B52C007790C5 /* Build configuration list for PBXNativeTarget "LiveActivityDevExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				076E632E2E123CA9002272B1 /* Debug configuration for PBXNativeTarget "TeymiaHabitLiveActivityExtension" */,
-				076E632F2E123CA9002272B1 /* Release configuration for PBXNativeTarget "TeymiaHabitLiveActivityExtension" */,
+				077FAE662E12B52C007790C5 /* Debug configuration for PBXNativeTarget "LiveActivityDevExtension" */,
+				077FAE672E12B52C007790C5 /* Release configuration for PBXNativeTarget "LiveActivityDevExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};
