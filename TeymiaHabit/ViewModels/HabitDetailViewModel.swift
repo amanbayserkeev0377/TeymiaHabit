@@ -32,12 +32,6 @@ final class HabitDetailViewModel {
         habit.goal > 0 ? Double(currentProgress) / Double(habit.goal) : 0
     }
     
-    var formattedProgress: String {
-        habit.type == .count ?
-            "\(currentProgress)" :
-            currentProgress.formattedAsTime()
-    }
-    
     var isAlreadyCompleted: Bool {
         currentProgress >= habit.goal
     }
@@ -62,6 +56,15 @@ final class HabitDetailViewModel {
         
         // Load current progress from SwiftData
         self.currentProgress = habit.progressForDate(date)
+        
+        // NEW: Live Activity setup
+            setupLiveActivityListener()
+        
+        Task {
+                await liveActivityManager.restoreActiveActivityIfNeeded()
+                await updateLiveActivityState()
+                liveActivityManager.startListeningForWidgetActions()
+            }
         
         // Restore timer only for today and time habits
         if isToday && habit.type == .time {
@@ -102,6 +105,12 @@ final class HabitDetailViewModel {
         stopTimerIfRunning()
         updateProgress(habit.goal)
         alertState.successFeedbackTrigger.toggle()
+        
+        // NEW: End Live Activity when completed
+        Task {
+            await liveActivityManager.endCurrentActivity()
+            await updateLiveActivityState()
+        }
     }
     
     func resetProgress() {
@@ -124,27 +133,35 @@ final class HabitDetailViewModel {
     private func startTimer() {
         timerStartTime = Date()
         
-        // Simple timer for UI updates
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                // UI will automatically update because currentProgress is @Observable
                 guard let self = self, let startTime = self.timerStartTime else { return }
                 
                 let elapsed = Int(Date().timeIntervalSince(startTime))
                 let baseProgress = self.habit.progressForDate(self.date)
                 self.currentProgress = min(baseProgress + elapsed, Limits.maxTimeSeconds)
+                
+                // Update Live Activity every 5 seconds to save battery
+                if elapsed % 5 == 0 {
+                    await self.updateLiveActivityIfNeeded()
+                }
             }
         }
         
-        // Save timer start time for app restoration
         let timerKey = "timer_\(habit.uuid.uuidString)"
         UserDefaults.standard.set(Date(), forKey: timerKey)
+        
+        // NEW: Start Live Activity automatically for time habits
+        if habit.type == .time && isToday {
+            Task {
+                await startLiveActivity()
+            }
+        }
     }
     
     private func stopTimer() {
         guard let startTime = timerStartTime else { return }
         
-        // Add elapsed time to progress
         let elapsed = Int(Date().timeIntervalSince(startTime))
         let baseProgress = habit.progressForDate(date)
         updateProgress(min(baseProgress + elapsed, Limits.maxTimeSeconds))
@@ -153,9 +170,13 @@ final class HabitDetailViewModel {
         timer = nil
         timerStartTime = nil
         
-        // Clear saved timer state
         let timerKey = "timer_\(habit.uuid.uuidString)"
         UserDefaults.standard.removeObject(forKey: timerKey)
+        
+        // NEW: Update Live Activity
+        Task {
+            await updateLiveActivityIfNeeded()
+        }
     }
     
     private func stopTimerIfRunning() {
@@ -286,13 +307,107 @@ final class HabitDetailViewModel {
         timer?.invalidate()
         timer = nil
         
-        // Save timer state if active
         if let startTime = timerStartTime {
             let timerKey = "timer_\(habit.uuid.uuidString)"
             UserDefaults.standard.set(startTime, forKey: timerKey)
         }
         
+        // NEW: Keep Live Activity running if timer is active, end if not
+        Task {
+            if !isTimerRunning {
+                await liveActivityManager.endCurrentActivity()
+            }
+        }
+        
         saveIfNeeded()
         onHabitDeleted = nil
+        
+        // NEW: Remove notification observers
+        NotificationCenter.default.removeObserver(self)
     }
+    
+    // MARK: - LiveActivities
+    
+    private let liveActivityManager = HabitLiveActivityManager()
+    var hasActiveLiveActivity: Bool = false
+
+    private func setupLiveActivityListener() {
+        let habitId = habit.uuid.uuidString
+        
+        NotificationCenter.default.addObserver(
+            forName: .widgetActionReceived,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self,
+                  let action = notification.object as? WidgetActionNotification,
+                  action.habitId == habitId else { return }
+            
+            Task { @MainActor in
+                await self.handleWidgetAction(action.action)
+            }
+        }
+    }
+    
+    private func handleWidgetAction(_ action: WidgetAction) async {
+        switch action {
+        case .toggleTimer:
+            if isTimerRunning {
+                stopTimer()
+            } else {
+                startTimer()
+            }
+            
+        case .complete:
+            completeHabit()
+            
+        case .addTime:
+            // Add 1 minute
+            updateProgress(min(currentProgress + 60, Limits.maxTimeSeconds))
+        }
+        
+        await updateLiveActivityState()
+    }
+
+    private func updateLiveActivityState() async {
+        hasActiveLiveActivity = liveActivityManager.hasActiveActivity
+    }
+    
+    private func startLiveActivity() async {
+        guard let startTime = timerStartTime else { return }
+        
+        await liveActivityManager.startActivity(
+            for: habit,
+            currentProgress: currentProgress,
+            timerStartTime: startTime
+        )
+        
+        await updateLiveActivityState()
+    }
+
+    private func updateLiveActivityIfNeeded() async {
+        guard hasActiveLiveActivity else { return }
+        
+        await liveActivityManager.updateActivity(
+            currentProgress: currentProgress,
+            isTimerRunning: isTimerRunning,
+            timerStartTime: timerStartTime
+        )
+    }
+
+    func startLiveActivityManually() async {
+        guard habit.type == .time, isToday else { return }
+        
+        if !isTimerRunning {
+            startTimer()
+        } else {
+            await startLiveActivity()
+        }
+    }
+
+    func endLiveActivityManually() async {
+        await liveActivityManager.endCurrentActivity()
+        await updateLiveActivityState()
+    }
+
 }

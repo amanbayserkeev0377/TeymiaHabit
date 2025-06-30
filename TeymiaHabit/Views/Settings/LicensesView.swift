@@ -34,6 +34,12 @@ struct LicensesView: View {
                     attribution: "3d Chart PNGs by Vecteezy",
                     url: "https://www.vecteezy.com/png/46893434-menu-icon-blue-and-yellow-cartoon-design-cut-out-stock-3d"
                 )
+                LicenseRow(
+                    iconName: "3d_bar_chart", attribution: "3d Bar Graph PNGs by Vecteezy", url: "https://www.vecteezy.com/png/54585147-3d-bar-graph-data-visualization-growth-chart-progress-report-statistical-analysis-business-analytics-market-trends-financial-performance-data-analysis-information-graphics-data-representation"
+                )
+                LicenseRow(
+                    iconName: "3d_line_chart", attribution: "Data Visualization PNGs by Vecteezy", url: "https://www.vecteezy.com/png/54716611-growth-chart-data-cube-visualization-of-progress"
+                )
             }
         }
         .navigationTitle("licenses".localized)

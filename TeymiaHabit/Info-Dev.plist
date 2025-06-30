@@ -48,5 +48,9 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
         <string>UIInterfaceOrientationPortrait</string>
     </array>
+    <key>NSSupportsLiveActivities</key>
+    <true/>
+    <key>NSSupportsLiveActivitiesFrequentUpdates</key>
+    <true/>
 </dict>
 </plist>

@@ -33,6 +33,16 @@ enum AppConfig {
             }
         }
         
+        /// App Groups ID для Live Activities
+        var appGroupsID: String {
+            switch self {
+            case .production:
+                return "group.com.amanbayserkeev.teymiahabit"
+            case .development:
+                return "group.com.amanbayserkeev.teymiahabit.dev"
+            }
+        }
+        
         /// Название для логов
         var displayName: String {
             switch self {
