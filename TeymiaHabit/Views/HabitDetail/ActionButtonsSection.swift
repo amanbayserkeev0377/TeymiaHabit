@@ -32,6 +32,7 @@ struct ActionButtonsSection: View {
             if habit.type == .time {
                 // 2. Play/Pause - ✅ ИСПРАВЛЕННЫЙ градиент с единой логикой
                 Button {
+                    print("🎯 Timer button tapped")
                     togglePressed.toggle()
                     onTimerToggle()
                 } label: {

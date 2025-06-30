@@ -130,10 +130,3 @@ struct ControlsView: View {
         }
     }
 }
-
-@main
-struct LiveActivityWidgetBundle: WidgetBundle {
-    var body: some Widget {
-        HabitLiveActivityWidget()
-    }
-}

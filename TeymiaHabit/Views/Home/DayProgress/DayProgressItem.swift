@@ -45,7 +45,7 @@ struct DayProgressItem: View, Equatable {
                 
                 // DEBUG для отладки
                 if Calendar.current.isDateInToday(date) {
-                    print("🎯 DayProgressItem: Today progress=\(progress), isExceeded=\(isExceeded), isOverallProgress=\(isOverallProgress)")
+                    print("delete debug")
                 }
             } else {
                 // Для отдельной привычки: используем метод habit

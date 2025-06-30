@@ -413,3 +413,16 @@ final class Habit {
         )
     }
 }
+
+// MARK: - Live Progress Support
+extension Habit {
+    /// FormattedProgress with custom currentProgress (for live timer updates)
+    func formattedProgress(for date: Date, currentProgress: Int) -> String {
+        switch type {
+        case .count:
+            return currentProgress.formattedAsProgress(total: goal)
+        case .time:
+            return currentProgress.formattedAsTime()
+        }
+    }
+}

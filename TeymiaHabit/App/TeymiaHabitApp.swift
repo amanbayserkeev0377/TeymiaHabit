@@ -55,7 +55,17 @@ struct TeymiaHabitApp: App {
             case .background:
                 handleAppBackground()
                 
+            case .inactive:
+                print("📱 App becoming inactive")
+                // Save data when app becomes inactive
+                saveDataContext()
+                
+            case .active:
+                print("📱 App became active")
+                handleAppForeground()
+                
             @unknown default:
+                print("📱 Unknown scene phase")
                 break
             }
         }
@@ -65,7 +75,17 @@ struct TeymiaHabitApp: App {
 
     private func handleAppBackground() {
         print("📱 App going to background")
-        
+        saveDataContext()
+        // Note: Live Activities continue running in background automatically
+    }
+    
+    private func handleAppForeground() {
+        print("DEBUG: ℹ️ applicationWillEnterForeground")
+        // Live Activities will automatically sync when app becomes active
+        // TimerService continues running, no need to restore
+    }
+    
+    private func saveDataContext() {
         do {
             try container.mainContext.save()
             print("✅ Data saved on background")

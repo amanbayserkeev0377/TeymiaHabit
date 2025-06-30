@@ -64,6 +64,10 @@ final class HabitLiveActivityManager {
         )
         
         do {
+            print("🔍 Attempting to start Live Activity...")
+                print("🔍 Activities enabled: \(ActivityAuthorizationInfo().areActivitiesEnabled)")
+                print("🔍 Habit: \(habit.title), Progress: \(currentProgress)")
+            
             let activity = try Activity.request(
                 attributes: attributes,
                 content: activityContent,
@@ -72,8 +76,12 @@ final class HabitLiveActivityManager {
             
             currentActivity = activity
             print("✅ Live Activity started: \(activity.id)")
+            print("🔍 Activity state: \(activity.activityState)")
+
             
         } catch {
+            print("❌ Live Activity error: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
             handleActivityError(error)
         }
     }

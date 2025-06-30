@@ -22,6 +22,9 @@ struct HabitDetailView: View {
     @State private var isEditPresented = false
     @State private var selectedHabitForStats: Habit? = nil
     
+    // CRITICAL: Add explicit observation of TimerService
+    @State private var timerService = TimerService.shared
+    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -29,6 +32,18 @@ struct HabitDetailView: View {
                 habitDetailContent(viewModel: viewModel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar { habitDetailToolbar }
+                    // CRITICAL: Force UI updates when timer state changes
+                    .onChange(of: timerService.updateTrigger) { _, _ in
+                        // This will trigger recomputation of currentProgress
+                        print("🔄 UI Update triggered: \(timerService.updateTrigger)")
+                    }
+                    .onChange(of: timerService.liveProgress) { _, newProgress in
+                        // Force view refresh when progress changes
+                        let habitId = habit.uuid.uuidString
+                        if let progress = newProgress[habitId] {
+                            print("📊 Progress updated for \(habitId): \(progress)")
+                        }
+                    }
                     .onChange(of: date) { _, newDate in
                         viewModel.saveIfNeeded()
                         setupViewModel(with: newDate)
@@ -77,7 +92,7 @@ struct HabitDetailView: View {
                 habit: habit,
                 currentProgress: .constant(viewModel.currentProgress),
                 completionPercentage: viewModel.completionPercentage,
-                formattedProgress: viewModel.formattedProgress,
+                formattedProgress: habit.formattedProgress(for: date, currentProgress: viewModel.currentProgress),
                 onIncrement: viewModel.incrementProgress,
                 onDecrement: viewModel.decrementProgress
             )
@@ -107,7 +122,6 @@ struct HabitDetailView: View {
                 HapticManager.shared.play(.error)
             }
         }
-        // ✅ НОВЫЕ чистые alerts без progressService
         .countInputAlert(
             isPresented: Binding(
                 get: { viewModel.alertState.isCountAlertPresented },
@@ -179,21 +193,23 @@ struct HabitDetailView: View {
     
     // Информация о цели привычки - центрированная с иконкой
     private func goalInfoView(viewModel: HabitDetailViewModel) -> some View {
-        // Центрированный контейнер с иконкой (если она есть) и текстом
-        HStack(spacing: 8) {
-            // Иконка слева от текста Goal (если она установлена)
-            if let iconName = habit.iconName {
-                Image(systemName: iconName)
+        VStack(spacing: 8) {
+            // Основная информация о цели
+            HStack(spacing: 8) {
+                // Иконка слева от текста Goal (если она установлена)
+                if let iconName = habit.iconName {
+                    Image(systemName: iconName)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                
+                // Текст goal по центру
+                Text("goal".localized(with: viewModel.formattedGoal))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            
-            // Текст goal по центру
-            Text("goal".localized(with: viewModel.formattedGoal))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
-        .frame(maxWidth: .infinity, alignment: .center)
         .padding(.vertical, 8)
     }
     
@@ -207,11 +223,11 @@ struct HabitDetailView: View {
                 viewModel.alertState.errorFeedbackTrigger.toggle()
             },
             onTimerToggle: {
-                // Только для таймера
+                print("🎯 Timer button tapped")
+                print("🔄 Timer toggle requested from view")
                 viewModel.toggleTimer()
             },
             onManualEntry: {
-                // Разная логика в зависимости от типа привычки
                 if habit.type == .time {
                     viewModel.alertState.isTimeAlertPresented = true
                 } else {
