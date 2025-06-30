@@ -4,25 +4,28 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>LiveActivityDevExtension.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>7</integer>
-		</dict>
-		<key>TeymiaHabit Dev.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
 		<key>TeymiaHabit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>TeymiaHabitLiveActivityExtension.xcscheme_^#shared#^_</key>
+		<key>liveactivityExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>7</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>077FAE6D2E12DE7C007790C5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>07A95EF92D9849F300044A7A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

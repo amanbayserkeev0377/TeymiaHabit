@@ -8,19 +8,7 @@ import SwiftUI
 final class HabitLiveActivityManager {
     private var currentActivity: Activity<HabitActivityAttributes>?
     
-    // App Groups identifier - используем напрямую для избежания ошибок
-    private var appGroupsID: String {
-        // Определяем bundle ID для выбора правильного App Groups
-        guard let bundleId = Bundle.main.bundleIdentifier else {
-            return "group.com.amanbayserkeev.teymiahabit"
-        }
-        
-        if bundleId.contains(".dev") {
-            return "group.com.amanbayserkeev.teymiahabit.dev"
-        } else {
-            return "group.com.amanbayserkeev.teymiahabit"
-        }
-    }
+    private let appGroupsID = "group.com.amanbayserkeev.teymiahabit"
     
     // MARK: - Public Interface
     

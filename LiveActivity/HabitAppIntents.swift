@@ -11,15 +11,7 @@ struct StopTimerIntent: LiveActivityIntent {
     init(habitId: String) { self.habitId = habitId }
     
     func perform() async throws -> some IntentResult {
-        // Use development or production App Groups based on bundle ID
-        let appGroupsID: String
-        if Bundle.main.bundleIdentifier?.contains(".dev") == true {
-            appGroupsID = "group.com.amanbayserkeev.teymiahabit.dev"
-        } else {
-            appGroupsID = "group.com.amanbayserkeev.teymiahabit"
-        }
-        
-        let userDefaults = UserDefaults(suiteName: appGroupsID)
+        let userDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit")
         
         let update = [
             "action": "toggleTimer",
@@ -43,14 +35,7 @@ struct CompleteHabitIntent: LiveActivityIntent {
     init(habitId: String) { self.habitId = habitId }
     
     func perform() async throws -> some IntentResult {
-        let appGroupsID: String
-        if Bundle.main.bundleIdentifier?.contains(".dev") == true {
-            appGroupsID = "group.com.amanbayserkeev.teymiahabit.dev"
-        } else {
-            appGroupsID = "group.com.amanbayserkeev.teymiahabit"
-        }
-        
-        let userDefaults = UserDefaults(suiteName: appGroupsID)
+        let userDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit")
         
         let update = [
             "action": "complete",
@@ -74,14 +59,7 @@ struct AddTimeIntent: LiveActivityIntent {
     init(habitId: String) { self.habitId = habitId }
     
     func perform() async throws -> some IntentResult {
-        let appGroupsID: String
-        if Bundle.main.bundleIdentifier?.contains(".dev") == true {
-            appGroupsID = "group.com.amanbayserkeev.teymiahabit.dev"
-        } else {
-            appGroupsID = "group.com.amanbayserkeev.teymiahabit"
-        }
-        
-        let userDefaults = UserDefaults(suiteName: appGroupsID)
+        let userDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit")
         
         let update = [
             "action": "addTime",
