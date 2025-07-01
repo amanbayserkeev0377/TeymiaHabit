@@ -53,8 +53,6 @@
 		077FAE852E12DE7E007790C5 /* Exceptions for "LiveActivity" folder in "liveactivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HabitAppIntents.swift,
-				HabitLiveActivityWidget.swift,
 				Info.plist,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
@@ -63,6 +61,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Views/Shared/LiveActivityTypes.swift,
+				Views/Shared/TimeFormatting.swift,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 		};
@@ -262,7 +261,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = LiveActivity.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LiveActivity/LiveActivity.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SXCBCPV7Y9;
@@ -295,7 +294,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = LiveActivity.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LiveActivity/LiveActivity.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SXCBCPV7Y9;

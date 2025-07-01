@@ -15,54 +15,46 @@ class ProManager {
     
     private init() {
         // ✅ AUTO-ENABLE PRO for Development version
-        #if DEBUG
-        // Check if this is development bundle ID
-        if AppConfig.current == .development {
-            isPro = true
-            hasLifetimePurchase = true
-            print("🧪 DEBUG: Auto-enabled Pro status for Development version")
-        }
-        #endif
+#if DEBUG
+        isPro = true
+        hasLifetimePurchase = true
+        print("🧪 DEBUG: Auto-enabled Pro status for Debug build")
+#endif
         
         checkProStatus()
         loadOfferings()
     }
     
 #if DEBUG
-// MARK: - Debug Methods (только для тестирования)
-@MainActor
-func resetProStatusForTesting() {
-    isPro = false
-    hasLifetimePurchase = false
-    hasActiveSubscription = false
-    print("🧪 Pro status reset for testing")
-}
-
-@MainActor
-func setProStatusForTesting(_ status: Bool) {
-    isPro = status
-    print("🧪 Pro status set to: \(status)")
-}
-
-func toggleProStatusForTesting() {
-    Task { @MainActor in
-        isPro.toggle()
-        print("🧪 Pro status toggled to: \(isPro)")
+    // MARK: - Debug Methods (только для тестирования)
+    @MainActor
+    func resetProStatusForTesting() {
+        isPro = false
+        hasLifetimePurchase = false
+        hasActiveSubscription = false
+        print("🧪 Pro status reset for testing")
     }
-}
+    
+    @MainActor
+    func setProStatusForTesting(_ status: Bool) {
+        isPro = status
+        print("🧪 Pro status set to: \(status)")
+    }
+    
+    func toggleProStatusForTesting() {
+        Task { @MainActor in
+            isPro.toggle()
+            print("🧪 Pro status toggled to: \(isPro)")
+        }
+    }
 #endif
     
     // MARK: - Pro Status
     
     func checkProStatus() {
-        // ✅ Don't override Pro status for development version
-        #if DEBUG
-        if AppConfig.current == .development {
-            print("🧪 DEBUG: Skipping RevenueCat check for Development version")
-            return
-        }
-        #endif
-        
+    #if DEBUG
+        print("🧪 DEBUG: Skipping RevenueCat check for Debug build")
+    #else
         Task {
             await MainActor.run {
                 isLoading = true
@@ -88,6 +80,7 @@ func toggleProStatusForTesting() {
                 }
             }
         }
+    #endif
     }
     
     // MARK: - Offerings
@@ -186,14 +179,9 @@ func toggleProStatusForTesting() {
     }
     
     private func updateProStatusFromCustomerInfo(_ customerInfo: CustomerInfo) async {
-        // ✅ Don't override Pro status for development version
-        #if DEBUG
-        if AppConfig.current == .development {
-            print("🧪 DEBUG: Keeping Pro status for Development version")
-            return
-        }
-        #endif
-        
+    #if DEBUG
+        print("🧪 DEBUG: Keeping Pro status for Debug build")
+    #else
         // Check subscription entitlement
         let hasActiveEntitlement = customerInfo.entitlements[RevenueCatConfig.Entitlements.pro]?.isActive == true
         
@@ -210,6 +198,7 @@ func toggleProStatusForTesting() {
             self.hasActiveSubscription = hasActiveEntitlement
             self.hasLifetimePurchase = hasLifetime
         }
+    #endif
     }
     
     // MARK: - Public method to find lifetime package

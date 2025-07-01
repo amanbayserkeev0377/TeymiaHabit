@@ -202,7 +202,7 @@ struct CloudKitSyncView: View {
                 try await Task.sleep(nanoseconds: 3_000_000_000) // 3 секунды
                 
                 // 3. Проверяем доступность CloudKit
-                let container = CKContainer(identifier: AppConfig.current.cloudKitContainerID)
+                let container = CKContainer(identifier: "iCloud.com.amanbayserkeev.teymiahabit")
                 let accountStatus = try await container.accountStatus()
                 
                 guard accountStatus == .available else {
@@ -349,7 +349,7 @@ struct CloudKitSyncView: View {
         do {
             // 🔍 ДИАГНОСТИКА
             let bundleId = Bundle.main.bundleIdentifier ?? "unknown"
-            let expectedContainerID = AppConfig.current.cloudKitContainerID
+            let expectedContainerID = "iCloud.com.amanbayserkeev.teymiahabit"
             
             print("🔍 [CloudKit Debug]")
             print("🔍 Bundle ID: \(bundleId)")

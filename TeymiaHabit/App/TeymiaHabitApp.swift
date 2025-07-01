@@ -17,10 +17,9 @@ struct TeymiaHabitApp: App {
         RevenueCatConfig.configure()
         
         // Print current app configuration
-        let appVersion = AppConfig.current
-        print("🚀 Starting \(appVersion.displayName) version")
+        print("🚀 Starting Teymia Habit")
         print("📦 Bundle ID: \(Bundle.main.bundleIdentifier ?? "unknown")")
-        print("☁️ CloudKit Container: \(appVersion.cloudKitContainerID)")
+        print("☁️ CloudKit Container: iCloud.com.amanbayserkeev.teymiahabit")
         
         do {
             let schema = Schema([Habit.self, HabitCompletion.self, HabitFolder.self])
@@ -28,7 +27,7 @@ struct TeymiaHabitApp: App {
             let modelConfiguration = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false,
-                cloudKitDatabase: .private(appVersion.cloudKitContainerID)
+                cloudKitDatabase: .private("iCloud.com.amanbayserkeev.teymiahabit")
             )
             container = try ModelContainer(
                 for: schema,
@@ -36,7 +35,7 @@ struct TeymiaHabitApp: App {
             )
             
             print("✅ Local storage initialized successfully")
-            print("✅ CloudKit container initialized: \(appVersion.cloudKitContainerID)")
+            print("✅ CloudKit container initialized: iCloud.com.amanbayserkeev.teymiahabit")
         } catch {
             print("❌ ModelContainer initialization error: \(error)")
             fatalError("Не удалось создать ModelContainer: \(error)")
