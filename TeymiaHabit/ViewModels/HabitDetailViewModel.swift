@@ -9,11 +9,14 @@ final class HabitDetailViewModel {
     private let modelContext: ModelContext
     private let progressService = ProgressService.shared
     private let timerService = TimerService.shared
-    private let liveActivityManager = HabitLiveActivityManager()
+    private let liveActivityManager = HabitLiveActivityManager.shared
+    private let widgetActionService = WidgetActionService.shared
+    private var widgetActionTask: Task<Void, Never>?
     
     // MARK: - UI State
     var alertState = AlertState()
     var onHabitDeleted: (() -> Void)?
+    var hasActiveLiveActivity: Bool = false
     
     // MARK: - Constants
     private enum Limits {
@@ -55,6 +58,11 @@ final class HabitDetailViewModel {
         timerService.remainingSlots
     }
     
+    var timerStartTime: Date? {
+        let habitId = habit.uuid.uuidString
+        return timerService.getTimerStartTime(for: habitId)
+    }
+    
     private var isToday: Bool {
         Calendar.current.isDateInToday(date)
     }
@@ -90,43 +98,90 @@ final class HabitDetailViewModel {
     // MARK: - Live Activities Setup
     
     private func setupLiveActivities() {
-        // Only for time habits on today
         guard habit.type == .time && isToday else { return }
         
+        print("🔧 Setting up Live Activities for: \(habit.title)")
+        
         Task {
-            await liveActivityManager.restoreActiveActivityIfNeeded()
-            liveActivityManager.startListeningForWidgetActions()
+            await liveActivityManager.restoreActiveActivitiesIfNeeded()
+            await updateLiveActivityState()
+            
+            // Start global listener only once
+            if !liveActivityManager.isListeningForWidgetActions {
+                liveActivityManager.startListeningForWidgetActions()
+                print("🔧 Started global widget listener for app")
+            }
         }
         
-        // Listen for widget actions
-        NotificationCenter.default.addObserver(
-            forName: .widgetActionReceived,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            Task { @MainActor in
-                await self?.handleWidgetAction(notification)
+        // Start observing widget actions through service
+        startObservingWidgetActions()
+    }
+    
+    private func startObservingWidgetActions() {
+        let habitId = habit.uuid.uuidString
+        let habitTitle = habit.title
+        
+        widgetActionTask = Task { [weak self] in
+            for await action in WidgetActionService.shared.observeActions(for: habitId) {
+                guard let self = self else { break }
+                print("🔔 Widget action received: \(action) for \(habitTitle)")
+                await self.handleWidgetAction(action)
             }
         }
     }
     
-    private func handleWidgetAction(_ notification: Notification) async {
-        guard let actionNotification = notification.object as? WidgetActionNotification,
-              actionNotification.habitId == habit.uuid.uuidString else { return }
+    private func handleWidgetAction(_ action: WidgetAction) async {
+        print("🔍 Processing widget action: \(action) for habit: \(habit.title)")
+        print("🔍 Current timer state: \(isTimerRunning)")
         
-        switch actionNotification.action {
+        switch action {
         case .toggleTimer:
+            print("🔄 Widget requested timer toggle for \(habit.title)")
             toggleTimer()
-        case .complete:
-            completeHabit()
-        case .addTime:
-            // Add 1 minute
-            do {
-                try progressService.addProgress(60, for: habit, date: date, modelContext: modelContext)
-            } catch {
-                print("❌ Add time failed: \(error)")
+            
+            // ВАЖНО: Принудительно обновляем Live Activity
+            print("🔄 Force updating Live Activity after widget action")
+            Task {
+                await updateLiveActivity()
             }
+            
+        case .dismissActivity:
+            print("❌ Widget requested dismiss for \(habit.title)")
+            await liveActivityManager.endActivity(for: habit.uuid.uuidString)
+            await updateLiveActivityState()
+            return
         }
+        
+        await updateLiveActivityState()
+    }
+    
+    private func updateLiveActivityState() async {
+        hasActiveLiveActivity = liveActivityManager.hasActiveActivity(for: habit.uuid.uuidString)
+    }
+
+    // MARK: - Manual Live Activity Controls
+
+    func startLiveActivityManually() async {
+        guard habit.type == .time, isToday else { return }
+        
+        if !isTimerRunning {
+            startTimer()
+        }
+        
+        guard let startTime = timerStartTime else { return }
+        
+        await liveActivityManager.startActivity(
+            for: habit,
+            currentProgress: currentProgress,
+            timerStartTime: startTime
+        )
+        
+        await updateLiveActivityState()
+    }
+
+    func endLiveActivityManually() async {
+        await liveActivityManager.endActivity(for: habit.uuid.uuidString)
+        await updateLiveActivityState()
     }
     
     // MARK: - Timer Management
@@ -162,14 +217,59 @@ final class HabitDetailViewModel {
         }
     }
     
-    private func updateLiveActivity() async {
+    // MARK: - Private Timer Methods
+    
+    private func startTimer() {
         guard habit.type == .time && isToday else { return }
+        guard canStartTimer else {
+            showTimerLimitAlert()
+            return
+        }
+        
+        do {
+            let success = try progressService.toggleTimer(for: habit, date: date, modelContext: modelContext)
+            if success {
+                // Start Live Activity
+                Task {
+                    await updateLiveActivity()
+                }
+            }
+        } catch {
+            print("❌ Start timer failed: \(error)")
+            alertState.errorFeedbackTrigger.toggle()
+        }
+    }
+    
+    private func stopTimer() {
+        guard habit.type == .time && isToday else { return }
+        
+        do {
+            _ = try progressService.toggleTimer(for: habit, date: date, modelContext: modelContext)
+            // Update Live Activity
+            Task {
+                await updateLiveActivity()
+            }
+        } catch {
+            print("❌ Stop timer failed: \(error)")
+            alertState.errorFeedbackTrigger.toggle()
+        }
+    }
+    
+    private func updateLiveActivity() async {
+        print("🔍 updateLiveActivity called for: \(habit.title)")
+        print("🔍 habitId: \(habit.uuid.uuidString)")
+        print("🔍 isTimerRunning: \(isTimerRunning)")
+        
+        guard habit.type == .time && isToday else {
+            print("❌ Guard failed - not time habit or not today")
+            return
+        }
         
         let habitId = habit.uuid.uuidString
         
         if isTimerRunning {
-            // Get the actual timer start time from TimerService
             let timerStartTime = timerService.getTimerStartTime(for: habitId) ?? Date()
+            print("🎬 Starting Live Activity for \(habit.title)")
             
             await liveActivityManager.startActivity(
                 for: habit,
@@ -178,13 +278,22 @@ final class HabitDetailViewModel {
             )
             print("🎬 Live Activity started for \(habit.title)")
         } else {
-            await liveActivityManager.updateActivity(
-                currentProgress: currentProgress,
-                isTimerRunning: false,
-                timerStartTime: nil
-            )
-            print("⏸️ Live Activity updated - timer stopped")
+            // ВАЖНО: НЕ обновляйте Live Activity при остановке таймера!
+            // Live Activity должна продолжать показывать финальный результат
+            print("⏸️ Timer stopped for \(habit.title) - Live Activity continues showing final result")
+            
+            // Только обновляем финальное состояние если Live Activity активна
+            if liveActivityManager.hasActiveActivity(for: habitId) {
+                await liveActivityManager.updateActivity(
+                    for: habitId,
+                    currentProgress: currentProgress,
+                    isTimerRunning: false,
+                    timerStartTime: nil
+                )
+            }
         }
+        
+        await updateLiveActivityState()
     }
     
     private func showTimerLimitAlert() {
@@ -228,10 +337,11 @@ final class HabitDetailViewModel {
             try progressService.completeHabit(habit, date: date, modelContext: modelContext)
             alertState.successFeedbackTrigger.toggle()
             
-            // End Live Activity when completed
+            // ТОЛЬКО тут завершаем Live Activity - когда цель достигнута
             if habit.type == .time && isToday {
                 Task {
-                    await liveActivityManager.endCurrentActivity()
+                    await liveActivityManager.endActivity(for: habit.uuid.uuidString)
+                    await updateLiveActivityState()
                 }
             }
         } catch {
@@ -300,6 +410,13 @@ final class HabitDetailViewModel {
     
     func deleteHabit() {
         do {
+            // Завершаем Live Activity при удалении привычки
+            if habit.type == .time && isToday && hasActiveLiveActivity {
+                Task {
+                    await liveActivityManager.endActivity(for: habit.uuid.uuidString)
+                }
+            }
+            
             cleanup()
             modelContext.delete(habit)
             try modelContext.save()
@@ -315,7 +432,11 @@ final class HabitDetailViewModel {
     }
     
     func cleanup() {
-        // Remove notification observer
+        // Cancel widget action observation
+        widgetActionTask?.cancel()
+        widgetActionTask = nil
+        
+        // Remove any remaining observers
         NotificationCenter.default.removeObserver(self)
         onHabitDeleted = nil
     }

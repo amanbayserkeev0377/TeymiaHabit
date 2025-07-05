@@ -25,8 +25,8 @@ struct StopTimerIntent: LiveActivityIntent {
     }
 }
 
-struct CompleteHabitIntent: LiveActivityIntent {
-    static var title: LocalizedStringResource = "Complete Habit"
+struct OpenHabitIntent: LiveActivityIntent {
+    static var title: LocalizedStringResource = "Open Habit"
     
     @Parameter(title: "Habit ID")
     var habitId: String
@@ -35,22 +35,27 @@ struct CompleteHabitIntent: LiveActivityIntent {
     init(habitId: String) { self.habitId = habitId }
     
     func perform() async throws -> some IntentResult {
+        // ИСПРАВЛЕНО: Widget extensions не имеют доступа к UIApplication
+        // Вместо этого используем URL схему через App Intents
+        
+        // Записываем deep link action в UserDefaults для основного приложения
         let userDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit")
         
-        let update = [
-            "action": "complete",
+        let deepLinkAction = [
+            "action": "openHabit",
             "habitId": habitId,
             "timestamp": Date().timeIntervalSince1970
         ] as [String: Any]
         
-        userDefaults?.set(update, forKey: "live_activity_action")
+        userDefaults?.set(deepLinkAction, forKey: "deep_link_action")
         
         return .result()
     }
 }
 
-struct AddTimeIntent: LiveActivityIntent {
-    static var title: LocalizedStringResource = "Add Time"
+// NEW: Intent for dismissing the Live Activity
+struct DismissActivityIntent: LiveActivityIntent {
+    static var title: LocalizedStringResource = "Dismiss Activity"
     
     @Parameter(title: "Habit ID")
     var habitId: String
@@ -62,7 +67,7 @@ struct AddTimeIntent: LiveActivityIntent {
         let userDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit")
         
         let update = [
-            "action": "addTime",
+            "action": "dismissActivity",
             "habitId": habitId,
             "timestamp": Date().timeIntervalSince1970
         ] as [String: Any]

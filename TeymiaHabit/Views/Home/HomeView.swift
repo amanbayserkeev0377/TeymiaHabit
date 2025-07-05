@@ -173,12 +173,7 @@ struct HomeView: View {
                     }
                 )
             }
-            .presentationDetents([
-                UIDevice.current.userInterfaceIdiom == .pad ? .large :
-                    UIScreen.main.bounds.height <= 667 ? .fraction(0.8) : .fraction(0.7)
-            ])
             .presentationDragIndicator(.visible)
-            .presentationCornerRadius(30)
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()

@@ -34,7 +34,7 @@ struct HabitRowView: View {
                     // Основная иконка
                     Image(systemName: iconName)
                         .font(.system(size: 28))
-                        .foregroundStyle(habit.iconColor.color)
+                        .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
                         .frame(width: 60, height: 60)
                         .background(
                             Circle()

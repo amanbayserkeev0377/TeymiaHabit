@@ -41,20 +41,14 @@ struct ProgressControlSection: View {
             }) {
                 Image(systemName: "minus")
                     .font(.system(size: isSmallDevice ? 22 : 24, weight: .semibold))  // ✅ Добавляем weight
-                    .foregroundStyle(.white)  // ✅ Белая иконка для контраста
+                    .foregroundStyle(habit.iconColor.color)  // ✅ Белая иконка для контраста
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
                             .fill(
-                                // ✅ НОВЫЙ градиентный дизайн
                                 habit.iconColor.adaptiveGradient(
                                     for: colorScheme)
-                            )
-                            .shadow(
-                                color: colorScheme == .dark ? .clear : .black.opacity(0.1),
-                                radius: colorScheme == .dark ? 0 : 4,
-                                x: 0,
-                                y: colorScheme == .dark ? 0 : 2
+                                .opacity(0.15)
                             )
                     )
             }
@@ -89,20 +83,15 @@ struct ProgressControlSection: View {
             }) {
                 Image(systemName: "plus")
                     .font(.system(size: isSmallDevice ? 22 : 24, weight: .semibold))  // ✅ Добавляем weight
-                    .foregroundStyle(.white)  // ✅ Белая иконка для контраста
+                    .foregroundStyle(habit.iconColor.color)  // ✅ Белая иконка для контраста
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Circle()
                             .fill(
                                 // ✅ НОВЫЙ градиентный дизайн
                                 habit.iconColor.adaptiveGradient(
-                                    for: colorScheme)
-                            )
-                            .shadow(
-                                color: colorScheme == .dark ? .clear : .black.opacity(0.1),
-                                radius: colorScheme == .dark ? 0 : 4,
-                                x: 0,
-                                y: colorScheme == .dark ? 0 : 2
+                                    for: colorScheme,)
+                                .opacity(0.15)
                             )
                     )
             }

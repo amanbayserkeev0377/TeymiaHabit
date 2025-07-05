@@ -90,7 +90,7 @@ struct ProgressRing: View {
                 ringColors: ringColors,
                 lineWidth: adaptiveLineWidth
             )
-            .animation(.easeInOut(duration: 0.3), value: progress)
+            .animation(.easeInOut(duration: 0.15), value: progress)
             
             // Текст в центре или галочка для выполненных привычек БЕЗ анимации
             if isCompleted && !isExceeded {

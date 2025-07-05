@@ -14,6 +14,8 @@ struct HabitActivityAttributes: ActivityAttributes {
     let habitName: String
     let habitGoal: Int
     let habitType: HabitActivityType
+    let habitIcon: String
+    let habitIconColor: HabitIconColor // NEW: Use enum instead of String
 }
 
 // MARK: - Shared Habit Type for Live Activities
@@ -25,8 +27,7 @@ enum HabitActivityType: String, Codable {
 // MARK: - Widget Action Types
 enum WidgetAction: String {
     case toggleTimer = "toggleTimer"
-    case complete = "complete"
-    case addTime = "addTime"
+    case dismissActivity = "dismissActivity"
 }
 
 struct WidgetActionNotification {

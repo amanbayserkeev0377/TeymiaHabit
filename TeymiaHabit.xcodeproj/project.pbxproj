@@ -60,8 +60,12 @@
 		077FAE882E12E028007790C5 /* Exceptions for "TeymiaHabit" folder in "liveactivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Views/Shared/LiveActivityTypes.swift,
-				Views/Shared/TimeFormatting.swift,
+				"/Localized: Localizable.strings",
+				Models/HabitIconColor.swift,
+				"Shared/Color+Hex.swift",
+				Shared/LiveActivityTypes.swift,
+				"Shared/String+Localization.swift",
+				Shared/TimeFormatting.swift,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 		};
