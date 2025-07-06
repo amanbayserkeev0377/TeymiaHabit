@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ActionButtonsSection: View {
     let habit: Habit
+    let date: Date
     let isTimerRunning: Bool
     
     var onReset: () -> Void
@@ -13,6 +14,10 @@ struct ActionButtonsSection: View {
     @State private var manualEntryPressed = false
     
     @Environment(\.colorScheme) private var colorScheme
+    
+    private var isToday: Bool {
+            Calendar.current.isDateInToday(date)
+        }
         
     var body: some View {
         HStack(spacing: 18) {
@@ -29,7 +34,7 @@ struct ActionButtonsSection: View {
             }
             .errorHaptic(trigger: resetPressed)
             
-            if habit.type == .time {
+            if habit.type == .time && isToday {
                 // 2. Play/Pause - ✅ ИСПРАВЛЕННЫЙ градиент с единой логикой
                 Button {
                     print("🎯 Timer button tapped")

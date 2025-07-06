@@ -42,11 +42,6 @@ struct DayProgressItem: View, Equatable {
             if isOverallProgress {
                 // Для общего прогресса: exceeded если средний progress > 1.0
                 isExceeded = progress > 1.0
-                
-                // DEBUG для отладки
-                if Calendar.current.isDateInToday(date) {
-                    print("delete debug")
-                }
             } else {
                 // Для отдельной привычки: используем метод habit
                 isExceeded = habit?.isExceededForDate(date) ?? false

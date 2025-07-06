@@ -6,7 +6,6 @@ struct YearlyHabitLineChart: View {
     let habit: Habit
     
     @State private var chartData: [ChartDataPoint] = []
-    @State private var isDataLoaded = false
     
     private let calendar = Calendar.current
     private let monthFormatter: DateFormatter = {
@@ -16,74 +15,6 @@ struct YearlyHabitLineChart: View {
     }()
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header - всегда отображается мгновенно
-            habitHeader
-            
-            // Chart section
-            if isDataLoaded {
-                yearlyChart
-                    .padding(.horizontal, 8)
-            } else {
-                yearlyChartSkeleton
-                    .padding(.horizontal, 8)
-            }
-        }
-        .padding(.horizontal, 0)
-        .padding(.vertical, 12)
-        .onAppear {
-            loadDataAsync()
-        }
-        .onChange(of: habit.completions?.count) { _, _ in
-            loadDataAsync()
-        }
-        .onChange(of: habit.goal) { _, _ in
-            loadDataAsync()
-        }
-    }
-    
-    // MARK: - Header Component
-    
-    private var habitHeader: some View {
-        HStack {
-            if let iconName = habit.iconName {
-                Image(systemName: iconName)
-                    .font(.system(size: 20))
-                    .foregroundStyle(habit.iconColor.color)
-                    .frame(width: 24, height: 24)
-            }
-            
-            Text(habit.title)
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .multilineTextAlignment(.leading)
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 2) {
-                if isDataLoaded {
-                    Text(currentPeriodProgress)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(habit.iconColor.color)
-                } else {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 40, height: 16)
-                        .shimmer()
-                }
-                
-                Text("last_12_months".localized)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.horizontal, 16)
-    }
-    
-    // MARK: - Chart Views
-    
-    private var yearlyChart: some View {
         Chart(chartData) { dataPoint in
             LineMark(
                 x: .value("Month", dataPoint.date, unit: .month),
@@ -137,53 +68,14 @@ struct YearlyHabitLineChart: View {
                 }
             }
         }
-    }
-    
-    private var yearlyChartSkeleton: some View {
-        VStack(spacing: 8) {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.gray.opacity(0.1))
-                .frame(height: 140)
-                .overlay(
-                    VStack(spacing: 8) {
-                        ProgressView()
-                            .scaleEffect(0.8)
-                            .tint(habit.iconColor.color)
-                        
-                        Text("Loading chart...")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                )
-                .shimmer()
-            
-            HStack {
-                ForEach(0..<6, id: \.self) { index in
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.gray.opacity(0.15))
-                        .frame(width: 20, height: 8)
-                        .shimmer(delay: Double(index) * 0.1)
-                    
-                    if index < 5 { Spacer() }
-                }
-            }
+        .onAppear {
+            generateChartData()
         }
-    }
-    
-    // MARK: - 🔥 ПРОСТАЯ И БЫСТРАЯ загрузка данных
-    
-    private func loadDataAsync() {
-        Task { @MainActor in
-            // Небольшая задержка для плавности
-            try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
-            
-            // Генерируем данные напрямую на главном потоке (проще и быстрее)
-            let data = generateSimpleChartData()
-            
-            withAnimation(.easeOut(duration: 0.3)) {
-                chartData = data
-                isDataLoaded = true
-            }
+        .onChange(of: habit.completions?.count) { _, _ in
+            generateChartData()
+        }
+        .onChange(of: habit.goal) { _, _ in
+            generateChartData()
         }
     }
     
@@ -212,6 +104,10 @@ struct YearlyHabitLineChart: View {
         return data.reversed()
     }
     
+    private func generateChartData() {
+        chartData = generateSimpleChartData()
+    }
+    
     private func calculateMonthCompletionRate(for monthDate: Date) -> Double {
         // Получаем диапазон дней в месяце
         guard let range = calendar.range(of: .day, in: .month, for: monthDate),
@@ -230,8 +126,8 @@ struct YearlyHabitLineChart: View {
             
             // Проверяем только активные дни и не в будущем
             if habit.isActiveOnDate(currentDate) &&
-               currentDate >= habit.startDate &&
-               currentDate <= Date() {
+                currentDate >= habit.startDate &&
+                currentDate <= Date() {
                 
                 activeDaysCount += 1
                 
@@ -247,47 +143,5 @@ struct YearlyHabitLineChart: View {
         }
         
         return activeDaysCount > 0 ? totalProgress / Double(activeDaysCount) : 0
-    }
-    
-    // MARK: - Helper Properties
-    
-    private var currentPeriodProgress: String {
-        guard !chartData.isEmpty else { return "0%" }
-        
-        let averageCompletion = chartData.reduce(0) { $0 + $1.completionPercentage } / Double(chartData.count)
-        return "\(Int(averageCompletion * 100))%"
-    }
-}
-
-// MARK: - Shimmer Effect Extension
-
-extension View {
-    func shimmer(delay: Double = 0) -> some View {
-        self.modifier(ShimmerModifier(delay: delay))
-    }
-}
-
-struct ShimmerModifier: ViewModifier {
-    let delay: Double
-    @State private var isAnimating = false
-    
-    func body(content: Content) -> some View {
-        content
-            .opacity(isAnimating ? 0.5 : 1.0)
-            .animation(
-                .easeInOut(duration: 1.5)
-                .repeatForever(autoreverses: true)
-                .delay(delay),
-                value: isAnimating
-            )
-            .onAppear {
-                if delay == 0 {
-                    isAnimating = true
-                } else {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                        isAnimating = true
-                    }
-                }
-            }
     }
 }

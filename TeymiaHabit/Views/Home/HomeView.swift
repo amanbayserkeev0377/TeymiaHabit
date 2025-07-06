@@ -118,7 +118,7 @@ struct HomeView: View {
                         HStack {
                             Spacer()
                             
-                            // ✅ УЛУЧШЕННАЯ FAB кнопка
+                            // FAB
                             Button(action: {
                                 HapticManager.shared.playSelection()
                                 if !ProManager.shared.isPro && allBaseHabits.count >= 3 {
@@ -129,30 +129,23 @@ struct HomeView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .font(.system(size: 24, weight: .semibold))
-                                    .foregroundStyle(.white)  // ✅ Белая иконка для контраста
-                                    .frame(width: 56, height: 56)  // ✅ Чуть больше для лучшего касания
+                                    .foregroundStyle(.white)
+                                    .frame(width: 56, height: 56)
                                     .background(
                                         Circle()
                                             .fill(
-                                                // ✅ Красивый градиент как в кнопках
                                                 colorManager.selectedColor.adaptiveGradient(
-                                                    for: colorScheme)
+                                                    for: colorScheme).opacity(0.8)
                                             )
                                             .shadow(
-                                                color: colorScheme == .dark ? .clear : .black.opacity(0.15),
-                                                radius: colorScheme == .dark ? 0 : 8,
+                                                color: .primary.opacity(0.2),
+                                                radius: 8,
                                                 x: 0,
-                                                y: colorScheme == .dark ? 0 : 4
+                                                y: 4
                                             )
                                     )
                             }
-                            // ✅ ПРОСТЫЕ АНИМАЦИИ без хаков
                             .buttonStyle(.plain)
-                            .scaleEffect(isPressed ? 0.92 : 1.0)  // ✅ Простой scale эффект
-                            .animation(.easeInOut(duration: 0.1), value: isPressed)
-                            .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, perform: {}) { pressing in
-                                isPressed = pressing  // ✅ Отслеживаем нажатие
-                            }
                             .padding(.trailing, 20)
                             .padding(.bottom, 20)
                         }

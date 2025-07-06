@@ -5,8 +5,10 @@ import SwiftUI
 struct HabitLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: HabitActivityAttributes.self) { context in
-            CompactLiveActivityView(context: context)
+            // ПРЯМО используем контент без TimelineView
+            CompactLiveActivityContent(context: context)
         } dynamicIsland: { context in
+            // Dynamic Island остается без изменений
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     HabitInfoView(context: context)
@@ -18,7 +20,6 @@ struct HabitLiveActivityWidget: Widget {
                     ControlsView(context: context)
                 }
             } compactLeading: {
-                // Native iOS timer that automatically updates - shows total time
                 if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
                     let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(context.state.currentProgress))
                     Text(adjustedStartTime, style: .timer)
@@ -40,22 +41,9 @@ struct HabitLiveActivityWidget: Widget {
     }
 }
 
-// MARK: - Compact Notification-Style View
-struct CompactLiveActivityView: View {
-    let context: ActivityViewContext<HabitActivityAttributes>
-    
-    var body: some View {
-        // Only use TimelineView for percentage calculations, not for timer display
-        TimelineView(.periodic(from: Date(), by: 1.0)) { timeline in
-            CompactLiveActivityContent(context: context, currentTime: timeline.date)
-        }
-    }
-}
-
 // MARK: - Compact Live Activity Content
 struct CompactLiveActivityContent: View {
     let context: ActivityViewContext<HabitActivityAttributes>
-    let currentTime: Date
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -87,12 +75,10 @@ struct CompactLiveActivityContent: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
                     }
+                    Text("goal_format".localized(with: context.attributes.habitGoal.formattedAsGoal()))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                     
-                    HStack(spacing: 4) {
-                        Text("goal_format".localized(with: context.attributes.habitGoal.formattedAsGoal()))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
                 }
             }
             // ДОБАВЛЕНО: Если нужен deep linking, добавим позже через отдельную невидимую кнопку
@@ -104,22 +90,23 @@ struct CompactLiveActivityContent: View {
                 // Play/Pause button - uses habit color with adaptive gradient
                 Button(intent: StopTimerIntent(habitId: context.attributes.habitId)) {
                     Image(systemName: context.state.isTimerRunning ? "pause.fill" : "play.fill")
-                        .font(.system(size: 24))
+                        .font(.system(size: 26))
                         .foregroundStyle(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme))
-                        .frame(width: 50, height: 50)
+                        .frame(width: 52, height: 52)
                         .background(
                             Circle()
                                 .fill(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
                         )
+                        .contentShape(Circle())
                 }
                 .buttonStyle(PlainButtonStyle())
                 
                 // Dismiss button - neutral color
                 Button(intent: DismissActivityIntent(habitId: context.attributes.habitId)) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundStyle(Color(.systemGray))
-                        .frame(width: 50, height: 50)
+                        .frame(width: 52, height: 52)
                         .background(
                             Circle()
                                 .fill(Color(.systemGray5))
