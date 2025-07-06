@@ -16,6 +16,7 @@ final class HabitDetailViewModel {
     
     // MARK: - UI State
     var alertState = AlertState()
+    var isTimeInputPresented: Bool = false  // ✅ ДОБАВЛЕНО
     var onHabitDeleted: (() -> Void)?
     var hasActiveLiveActivity: Bool = false
     
@@ -25,15 +26,13 @@ final class HabitDetailViewModel {
         static let maxTimeSeconds = 86400 // 24 hours
     }
     
-    // MARK: - ✅ НОВЫЕ Computed Properties БЕЗ ProgressService
+    // MARK: - Computed Properties
     
     var currentProgress: Int {
         if Calendar.current.isDateInToday(date) {
-            // ✅ Для сегодня - из TimerService
             let habitId = habit.uuid.uuidString
             return timerService.getCurrentProgress(for: habitId)
         } else {
-            // ✅ Для прошлых дат - из модели
             return habit.progressForDate(date)
         }
     }
@@ -51,7 +50,6 @@ final class HabitDetailViewModel {
     }
     
     var isTimerRunning: Bool {
-        // ✅ Прямо из TimerService
         let habitId = habit.uuid.uuidString
         return timerService.isTimerRunning(for: habitId)
     }
@@ -105,7 +103,7 @@ final class HabitDetailViewModel {
         setupLiveActivities()
     }
     
-    // MARK: - Live Activities Setup (остается без изменений)
+    // MARK: - Live Activities Setup
     
     private func setupLiveActivities() {
         guard habit.type == .time && isToday else { return }
@@ -160,9 +158,9 @@ final class HabitDetailViewModel {
     private func updateLiveActivityState() async {
         hasActiveLiveActivity = liveActivityManager.hasActiveActivity(for: habit.uuid.uuidString)
     }
-
+    
     // MARK: - Manual Live Activity Controls
-
+    
     func startLiveActivityManually() async {
         guard habit.type == .time, isToday else { return }
         
@@ -180,13 +178,13 @@ final class HabitDetailViewModel {
         
         await updateLiveActivityState()
     }
-
+    
     func endLiveActivityManually() async {
         await liveActivityManager.endActivity(for: habit.uuid.uuidString)
         await updateLiveActivityState()
     }
     
-    // MARK: - ✅ НОВЫЙ Timer Management БЕЗ ProgressService
+    // MARK: - Timer Management
     
     func toggleTimer() {
         print("🔄 toggleTimer() called for: \(habit.title)")
@@ -299,7 +297,7 @@ final class HabitDetailViewModel {
         print("❌ Timer limit reached: \(activeTimerCount)/5")
     }
     
-    // MARK: - ✅ НОВЫЕ Progress Operations БЕЗ ProgressService
+    // MARK: - Progress Operations
     
     func completeHabit() {
         guard !isAlreadyCompleted else { return }
@@ -337,16 +335,13 @@ final class HabitDetailViewModel {
         
         Task {
             if Calendar.current.isDateInToday(date) {
-                // СЕГОДНЯ: Добавляем к текущему прогрессу
                 let habitId = habit.uuid.uuidString
                 let currentProgress = timerService.getCurrentProgress(for: habitId)
                 let newProgress = currentProgress + value
                 
-                // ✅ setProgress сам остановит таймер если нужно
                 timerService.setProgress(newProgress, for: habitId)
                 await saveProgressToDatabase(newProgress)
             } else {
-                // ПРОШЛЫЕ ДАТЫ: Прямо в базу
                 await addProgressToDatabase(value)
             }
             
@@ -354,41 +349,30 @@ final class HabitDetailViewModel {
             alertState.countInputText = ""
         }
     }
-
-    func handleTimeInput() {
-        let hours = Int(alertState.hoursInputText) ?? 0
-        let minutes = Int(alertState.minutesInputText) ?? 0
+    
+    // ✅ НОВЫЙ метод для кастомного time input
+    func handleCustomTimeInput(hours: Int, minutes: Int) {
         let totalSeconds = (hours * 3600) + (minutes * 60)
         
         guard totalSeconds > 0 else {
             alertState.errorFeedbackTrigger.toggle()
-            clearTimeInputs()
             return
         }
         
         Task {
             if Calendar.current.isDateInToday(date) {
-                // СЕГОДНЯ: Добавляем к текущему прогрессу
                 let habitId = habit.uuid.uuidString
                 let currentProgress = timerService.getCurrentProgress(for: habitId)
                 let newProgress = currentProgress + totalSeconds
                 
-                // ✅ setProgress сам остановит таймер если нужно
                 timerService.setProgress(newProgress, for: habitId)
                 await saveProgressToDatabase(newProgress)
             } else {
-                // ПРОШЛЫЕ ДАТЫ: Прямо в базу
                 await addProgressToDatabase(totalSeconds)
             }
             
             alertState.successFeedbackTrigger.toggle()
-            clearTimeInputs()
         }
-    }
-    
-    private func clearTimeInputs() {
-        alertState.hoursInputText = ""
-        alertState.minutesInputText = ""
     }
     
     // MARK: - Delete Operations
@@ -423,91 +407,67 @@ final class HabitDetailViewModel {
     }
 }
 
-// MARK: - ✅ НОВЫЕ Асинхронные методы БЕЗ ProgressService
+// MARK: - Async Extensions
 
 extension HabitDetailViewModel {
     
-    /// Универсальное увеличение для ЛЮБОЙ даты
     func incrementProgressAsync() async throws {
         let value = habit.type == .count ? 1 : 60
         
         if Calendar.current.isDateInToday(date) {
-            // СЕГОДНЯ: Просто обновляем через TimerService
             let habitId = habit.uuid.uuidString
             let currentProgress = timerService.getCurrentProgress(for: habitId)
             let newProgress = currentProgress + value
             
-            // ✅ setProgress сам остановит таймер если нужно
             timerService.setProgress(newProgress, for: habitId)
-            
-            // Сохраняем в базу
             await saveProgressToDatabase(newProgress)
         } else {
-            // ПРОШЛЫЕ ДАТЫ: Прямо в базу
             await addProgressToDatabase(value)
         }
     }
     
-    /// Универсальное уменьшение для ЛЮБОЙ даты
     func decrementProgressAsync() async throws {
         let value = habit.type == .count ? 1 : 60
         
         if Calendar.current.isDateInToday(date) {
-            // СЕГОДНЯ: Просто обновляем через TimerService
             let habitId = habit.uuid.uuidString
             let currentProgress = timerService.getCurrentProgress(for: habitId)
             let newProgress = max(0, currentProgress - value)
             
-            // ✅ setProgress сам остановит таймер если нужно
             timerService.setProgress(newProgress, for: habitId)
-            
-            // Сохраняем в базу
             await saveProgressToDatabase(newProgress)
         } else {
-            // ПРОШЛЫЕ ДАТЫ: Из базы
             let currentDb = habit.progressForDate(date)
             let newProgress = max(0, currentDb - value)
             await saveProgressToDatabase(newProgress)
         }
     }
     
-    /// Универсальное завершение для ЛЮБОЙ даты
     func completeHabitAsync() async throws {
         if Calendar.current.isDateInToday(date) {
-            // СЕГОДНЯ: Просто устанавливаем goal через TimerService
             let habitId = habit.uuid.uuidString
-            
-            // ✅ setProgress сам остановит таймер если нужно
             timerService.setProgress(habit.goal, for: habitId)
         }
         
-        // Сохраняем в базу для любой даты
         await saveProgressToDatabase(habit.goal)
         
-        // Live Activity для временных привычек
         if habit.type == .time && Calendar.current.isDateInToday(date) {
             await liveActivityManager.endActivity(for: habit.uuid.uuidString)
             await updateLiveActivityState()
         }
     }
     
-    /// Универсальный сброс для ЛЮБОЙ даты
     func resetProgressAsync() async throws {
         if Calendar.current.isDateInToday(date) {
-            // СЕГОДНЯ: Просто сбрасываем через TimerService
             let habitId = habit.uuid.uuidString
-            
-            // ✅ setProgress сам остановит таймер если нужно
             timerService.setProgress(0, for: habitId)
         }
         
-        // Сбрасываем в базе для любой даты
         await saveProgressToDatabase(0)
     }
     
-    // MARK: - 🛠 Вспомогательные методы для работы с базой
+    // MARK: - Database Helpers
     
-    /// Добавление прогресса в базу (для прошлых дат)
     private func addProgressToDatabase(_ value: Int) async {
         let completion = HabitCompletion(
             date: date,
@@ -518,7 +478,6 @@ extension HabitDetailViewModel {
         await MainActor.run {
             modelContext.insert(completion)
             
-            // Быстрое сохранение для сегодня, отложенное для прошлых дат
             if Calendar.current.isDateInToday(date) {
                 try? modelContext.save()
             } else {
@@ -530,10 +489,8 @@ extension HabitDetailViewModel {
         }
     }
     
-    /// Сохранение точного прогресса в базу - ✅ ПУБЛИЧНЫЙ метод
     func saveProgressToDatabase(_ progress: Int) async {
         await MainActor.run {
-            // Удаляем существующие completion'ы для этой даты
             let existingCompletions = habit.completions?.filter {
                 Calendar.current.isDate($0.date, inSameDayAs: date)
             } ?? []
@@ -542,7 +499,6 @@ extension HabitDetailViewModel {
                 modelContext.delete(completion)
             }
             
-            // Добавляем новый с нужным значением
             if progress > 0 {
                 let completion = HabitCompletion(
                     date: date,
@@ -552,7 +508,6 @@ extension HabitDetailViewModel {
                 modelContext.insert(completion)
             }
             
-            // Быстрое сохранение для сегодня, отложенное для прошлых дат
             if Calendar.current.isDateInToday(date) {
                 try? modelContext.save()
             } else {

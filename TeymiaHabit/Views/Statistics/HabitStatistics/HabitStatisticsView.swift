@@ -15,6 +15,7 @@ struct HabitStatisticsView: View {
     @State private var showingResetAlert = false
     @State private var alertState = AlertState()
     @State private var updateCounter = 0
+    @State private var isTimeInputPresented: Bool = false
     
     // 🔥 NEW: Separate time range controls for each section
     @State private var barChartTimeRange: ChartTimeRange = .month
@@ -175,12 +176,19 @@ struct HabitStatisticsView: View {
             }
         }
         // Alerts
-        .habitAlerts(
-            alertState: $alertState,
-            habit: habit,
-            onDelete: deleteHabit,
+        .countInputAlert(
+            isPresented: $alertState.isCountAlertPresented,
+            inputText: $alertState.countInputText,
+            successTrigger: $alertState.successFeedbackTrigger,
+            errorTrigger: $alertState.errorFeedbackTrigger,
             onCountInput: { handleCountInput() },
-            onTimeInput: { handleTimeInput() }
+            habit: habit
+        )
+        .deleteSingleHabitAlert(
+            isPresented: $alertState.isDeleteAlertPresented,
+            habitName: habit.title,
+            onDelete: deleteHabit,
+            habit: habit
         )
         .alert("alert_reset_history", isPresented: $showingResetAlert) {
             Button("button_cancel".localized, role: .cancel) { }
@@ -191,6 +199,19 @@ struct HabitStatisticsView: View {
             Text("alert_reset_history_message".localized)
         }
         .withHabitTint(habit)
+        .overlay {
+            if isTimeInputPresented {
+                TimeInputView(
+                    habit: habit,
+                    isPresented: $isTimeInputPresented,
+                    onConfirm: { hours, minutes in
+                        handleCustomTimeInput(hours: hours, minutes: minutes)
+                    }
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                .animation(.spring(duration: 0.3), value: isTimeInputPresented)
+            }
+        }
     }
     
     // MARK: - 🎨 Bar Charts Header with 3D Illustration
@@ -307,7 +328,7 @@ struct HabitStatisticsView: View {
             if habit.type == .count {
                 alertState.isCountAlertPresented = true
             } else {
-                alertState.isTimeAlertPresented = true
+                isTimeInputPresented = true
             }
         case .resetProgress:
             resetProgressDirectly(for: date)
@@ -365,12 +386,11 @@ struct HabitStatisticsView: View {
         alertState.countInputText = ""
     }
     
-    private func handleTimeInput() {
+    private func handleCustomTimeInput(hours: Int, minutes: Int) {
         guard let date = alertState.date else { return }
-        let hours = Int(alertState.hoursInputText) ?? 0
-        let minutes = Int(alertState.minutesInputText) ?? 0
+        let totalSeconds = (hours * 3600) + (minutes * 60)
         
-        if hours == 0 && minutes == 0 {
+        if totalSeconds == 0 {
             alertState.errorFeedbackTrigger.toggle()
             return
         }
@@ -378,17 +398,14 @@ struct HabitStatisticsView: View {
         let tempViewModel = HabitDetailViewModel(
             habit: habit,
             date: date,
-            modelContext: modelContext,
+            modelContext: modelContext
         )
         
-        tempViewModel.alertState.hoursInputText = alertState.hoursInputText
-        tempViewModel.alertState.minutesInputText = alertState.minutesInputText
-        tempViewModel.handleTimeInput()
+        tempViewModel.handleCustomTimeInput(hours: hours, minutes: minutes)
         tempViewModel.saveIfNeeded()
         viewModel.refresh()
         updateCounter += 1
-        alertState.hoursInputText = ""
-        alertState.minutesInputText = ""
+        alertState.successFeedbackTrigger.toggle()
     }
     
     private func resetProgressDirectly(for date: Date) {

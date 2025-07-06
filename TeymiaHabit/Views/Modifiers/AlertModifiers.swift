@@ -3,24 +3,18 @@ import SwiftUI
 // MARK: - Common AlertState
 struct AlertState: Equatable {
     var isCountAlertPresented: Bool = false
-    var isTimeAlertPresented: Bool = false
     var isDeleteAlertPresented: Bool = false
     var date: Date? = nil
     
     var countInputText: String = ""
-    var hoursInputText: String = ""
-    var minutesInputText: String = ""
     
     var successFeedbackTrigger: Bool = false
     var errorFeedbackTrigger: Bool = false
     
     static func == (lhs: AlertState, rhs: AlertState) -> Bool {
         return lhs.isCountAlertPresented == rhs.isCountAlertPresented &&
-        lhs.isTimeAlertPresented == rhs.isTimeAlertPresented &&
         lhs.isDeleteAlertPresented == rhs.isDeleteAlertPresented &&
         lhs.countInputText == rhs.countInputText &&
-        lhs.hoursInputText == rhs.hoursInputText &&
-        lhs.minutesInputText == rhs.minutesInputText &&
         lhs.date?.timeIntervalSince1970 == rhs.date?.timeIntervalSince1970
     }
 }
@@ -53,35 +47,6 @@ struct CountInputAlertModifier: ViewModifier {
                 }
             } message: {
                 Text("alert_add_count_message".localized)
-            }
-            // ✅ Цвет привычки для alert
-            .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
-    }
-}
-
-// Time Input Alert
-struct TimeInputAlertModifier: ViewModifier {
-    @Binding var isPresented: Bool
-    @Binding var hoursText: String
-    @Binding var minutesText: String
-    @Binding var successTrigger: Bool
-    @Binding var errorTrigger: Bool
-    let onTimeInput: () -> Void
-    let habit: Habit?
-    
-    func body(content: Content) -> some View {
-        content
-            .alert("alert_add_time".localized, isPresented: $isPresented) {
-                TextField("hours_less_than_24".localized, text: $hoursText)
-                    .keyboardType(.numberPad)
-                TextField("minutes_less_than_60".localized, text: $minutesText)
-                    .keyboardType(.numberPad)
-                Button("button_cancel".localized, role: .cancel) { }
-                Button("button_add".localized) {
-                    onTimeInput()
-                }
-            } message: {
-                Text("alert_add_time_message".localized)
             }
             // ✅ Цвет привычки для alert
             .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
@@ -199,26 +164,6 @@ extension View {
         ))
     }
     
-    func timeInputAlert(
-        isPresented: Binding<Bool>,
-        hoursText: Binding<String>,
-        minutesText: Binding<String>,
-        successTrigger: Binding<Bool>,
-        errorTrigger: Binding<Bool>,
-        onTimeInput: @escaping () -> Void,
-        habit: Habit? = nil
-    ) -> some View {
-        self.modifier(TimeInputAlertModifier(
-            isPresented: isPresented,
-            hoursText: hoursText,
-            minutesText: minutesText,
-            successTrigger: successTrigger,
-            errorTrigger: errorTrigger,
-            onTimeInput: onTimeInput,
-            habit: habit
-        ))
-    }
-    
     // MARK: - Unified Delete Alert Extensions
     
     /// Alert for deleting a single habit
@@ -300,15 +245,6 @@ extension View {
                 successTrigger: alertState.successFeedbackTrigger,
                 errorTrigger: alertState.errorFeedbackTrigger,
                 onCountInput: onCountInput,
-                habit: habit
-            )
-            .timeInputAlert(
-                isPresented: alertState.isTimeAlertPresented,
-                hoursText: alertState.hoursInputText,
-                minutesText: alertState.minutesInputText,
-                successTrigger: alertState.successFeedbackTrigger,
-                errorTrigger: alertState.errorFeedbackTrigger,
-                onTimeInput: onTimeInput,
                 habit: habit
             )
     }

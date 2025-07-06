@@ -126,7 +126,83 @@ struct HabitDetailView: View {
                 .padding(.bottom, isSmallDevice ? 0 : 8)
                 .padding(.vertical, isSmallDevice ? 4 : 8)
         }
-        // Остальные onChange и alert modifiers остаются без изменений...
+        .onChange(of: viewModel.alertState.successFeedbackTrigger) { _, newValue in
+            if newValue {
+                HapticManager.shared.play(.success)
+            }
+        }
+        .onChange(of: viewModel.alertState.errorFeedbackTrigger) { _, newValue in
+            if newValue {
+                HapticManager.shared.play(.error)
+            }
+        }
+        .overlay {
+            if viewModel.isTimeInputPresented {
+                // Фон с анимацией
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        viewModel.isTimeInputPresented = false
+                    }
+                    .transition(.opacity)
+            }
+        }
+        .overlay {
+            if viewModel.isTimeInputPresented {
+                // Карточка с усиленной анимацией
+                TimeInputView(
+                    habit: habit,
+                    isPresented: Binding(
+                        get: { viewModel.isTimeInputPresented },
+                        set: { viewModel.isTimeInputPresented = $0 }
+                    ),
+                    onConfirm: { hours, minutes in
+                        viewModel.handleCustomTimeInput(hours: hours, minutes: minutes)
+                    }
+                )
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.7).combined(with: .opacity).combined(with: .move(edge: .bottom)),
+                    removal: .scale(scale: 0.9).combined(with: .opacity)
+                ))
+            }
+        }
+        .animation(.spring(duration: 0.6, bounce: 0.3), value: viewModel.isTimeInputPresented)
+        .countInputAlert(
+            isPresented: Binding(
+                get: { viewModel.alertState.isCountAlertPresented },
+                set: { viewModel.alertState.isCountAlertPresented = $0 }
+            ),
+            inputText: Binding(
+                get: { viewModel.alertState.countInputText },
+                set: { viewModel.alertState.countInputText = $0 }
+            ),
+            successTrigger: Binding(
+                get: { viewModel.alertState.successFeedbackTrigger },
+                set: { viewModel.alertState.successFeedbackTrigger = $0 }
+            ),
+            errorTrigger: Binding(
+                get: { viewModel.alertState.errorFeedbackTrigger },
+                set: { viewModel.alertState.errorFeedbackTrigger = $0 }
+            ),
+            onCountInput: { viewModel.handleCountInput() },
+            habit: habit
+        )
+        .deleteSingleHabitAlert(
+            isPresented: Binding(
+                get: { viewModel.alertState.isDeleteAlertPresented },
+                set: { viewModel.alertState.isDeleteAlertPresented = $0 }
+            ),
+            habitName: habit.title,
+            onDelete: {
+                viewModel.deleteHabit()
+                if let onDelete = onDelete {
+                    onDelete()
+                } else {
+                    dismiss()
+                }
+            },
+            habit: habit
+        )
     }
     
     // MARK: - ✅ НОВЫЕ МЕТОДЫ: Optimistic UI Updates
@@ -296,11 +372,8 @@ struct HabitDetailView: View {
             date: date,
             isTimerRunning: viewModel.isTimerRunning,
             onReset: {
-                // ✅ Мгновенно сбрасываем optimistic progress
                 optimisticProgress = 0
                 HapticManager.shared.play(.error)
-                
-                // ✅ Асинхронно сохраняем в фоне
                 Task {
                     do {
                         try await viewModel.resetProgressAsync()
@@ -317,7 +390,7 @@ struct HabitDetailView: View {
             },
             onManualEntry: {
                 if habit.type == .time {
-                    viewModel.alertState.isTimeAlertPresented = true
+                    viewModel.isTimeInputPresented = true
                 } else {
                     viewModel.alertState.isCountAlertPresented = true
                 }
