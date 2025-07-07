@@ -7,12 +7,6 @@
 "alert_delete_multiple_habits" = "Удалить выбранные привычки";
 "alert_delete_multiple_habits_message" = "Вы уверены, что хотите удалить %d выбранных привычек?";
 
-// Folder Delete Alerts
-"alert_delete_folder" = "Удалить папку";
-"alert_delete_folder_message" = "Удалить «%@»? Ваши привычки останутся без изменений.";
-
-"alert_delete_folders" = "Удалить папки";
-"alert_delete_folders_message" = "Удалить %d папок? Ваши привычки останутся без изменений.";
 
 // Progress Input Alerts
 "alert_add_count" = "Добавить количество";
@@ -40,8 +34,6 @@
 "button_delete" = "Удалить";
 "button_cancel" = "Отмена";
 "button_close" = "Закрыть";
-"button_pin" = "Закрепить";
-"button_unpin" = "Открепить";
 "button_edit" = "Изменить";
 "button_save" = "Сохранить";
 "button_ok" = "OK";
@@ -143,22 +135,6 @@
 "archived_date_format" = "Архивировано %@";
 "archived_habits_footer" = "Смахните влево, чтобы восстановить из архива или удалить";
 
-
-/* ===================== Settings & General: Folders ===================== */
-"folders" = "Папки";
-"folders_all" = "Все";
-"folders_move" = "Переместить";
-"folders_new_folder" = "Новая папка";
-"folders_edit_folder" = "Редактировать папку";
-"folders_create_folder" = "Создать папку";
-"folders_select_folder" = "Выберите папку";
-"folders_folder_name" = "Название папки";
-"folders_edit_footer" = "Нажмите «Редактировать» для изменения порядка или удаления папок. Управление папками также доступно в настройках.";
-"folders_none_selected" = "Нет";
-"folders_move_to_folder" = "Переместить в папку";
-"folders_no_folder" = "Без папки";
-"folders_no_habits" = "В этой папке нет привычек";
-
 /* ===================== Settings: iCloud Sync ===================== */
 "icloud_sync" = "iCloud синхронизация";
 "icloud_sync_status" = "Статус синхронизации";
@@ -233,8 +209,6 @@
 "paywall_no_purchases_to_restore_message" = "Нет покупок для восстановления.";
 "paywall_unlimited_habits_title" = "Неограниченные привычки";
 "paywall_unlimited_habits_description" = "Создавайте столько привычек, сколько нужно";
-"paywall_habit_folders_title" = "Папки для привычек";
-"paywall_habit_folders_description" = "Организуйте привычки в папки";
 "paywall_custom_colors_icons_title" = "Цвета и иконки";
 "paywall_custom_colors_icons_description" = "Настраивайте темы и иконки";
 "paywall_support_creator_title" = "Поддержите автора";

@@ -17,7 +17,7 @@ struct BeautifulButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(parameters.isEnabled ? .white : .secondary)  // ✅ ПРОСТО!
+            .foregroundStyle(parameters.isEnabled ? .white : .secondary)
             .frame(maxWidth: .infinity)
             .frame(height: parameters.styleType.height)
             .background(
@@ -37,10 +37,6 @@ struct BeautifulButtonStyle: ButtonStyle {
                 radius: parameters.isEnabled ? shadowRadius : 0,
                 x: 0, y: parameters.isEnabled ? shadowOffset : 0
             )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .scaleEffect(parameters.isEnabled ? 1.0 : 0.95)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-            .animation(.easeInOut(duration: 0.1), value: parameters.isEnabled)
             .disabled(!parameters.isEnabled)
     }
     

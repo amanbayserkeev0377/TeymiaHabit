@@ -22,7 +22,7 @@ struct TeymiaHabitApp: App {
         print("☁️ CloudKit Container: iCloud.com.amanbayserkeev.teymiahabit")
         
         do {
-            let schema = Schema([Habit.self, HabitCompletion.self, HabitFolder.self])
+            let schema = Schema([Habit.self, HabitCompletion.self])
             
             let modelConfiguration = ModelConfiguration(
                 schema: schema,

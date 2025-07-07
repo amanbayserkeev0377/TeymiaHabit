@@ -4,7 +4,6 @@ import SwiftData
 struct ArchivedHabitsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.editMode) private var editMode
     @ObservedObject private var colorManager = AppColorManager.shared
     
     // Query only archived habits
@@ -16,69 +15,17 @@ struct ArchivedHabitsView: View {
     )
     private var archivedHabits: [Habit]
     
-    @State private var selectedForDeletion: Set<Habit.ID> = []
-    @State private var isDeleteSelectedAlertPresented = false
     @State private var selectedHabitForStats: Habit? = nil
     @State private var habitToDelete: Habit? = nil
     @State private var isDeleteSingleAlertPresented = false
     
     var body: some View {
-        Group {
-            if editMode?.wrappedValue == .active {
-                List(selection: $selectedForDeletion) {
-                    listContent
-                }
-            } else {
-                List {
-                    listContent
-                }
-            }
+        List {
+            listContent
         }
         .listStyle(.insetGrouped)
-        .navigationTitle(navigationTitle)
+        .navigationTitle("archived_habits".localized)
         .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            if !archivedHabits.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
-                    EditButton()
-                }
-            }
-            
-            if !selectedForDeletion.isEmpty {
-                ToolbarItem(placement: .bottomBar) {
-                    HStack {
-                        // Unarchive button
-                        Button {
-                            unarchiveSelectedHabits()
-                        } label: {
-                            HStack {
-                                Text("unarchive".localized)
-                                Image(systemName: "tray.and.arrow.up")
-                            }
-                        }
-                        .tint(.cyan)
-                        
-                        Spacer()
-                        
-                        // Delete button
-                        Button {
-                            isDeleteSelectedAlertPresented = true
-                        } label: {
-                            HStack {
-                                Text("button_delete".localized)
-                                Image(systemName: "trash")
-                            }
-                        }
-                        .tint(.red)
-                    }
-                }
-            }
-        }
-        .onChange(of: editMode?.wrappedValue) { _, newValue in
-            if newValue != .active {
-                selectedForDeletion.removeAll()
-            }
-        }
         .deleteSingleHabitAlert(
             isPresented: $isDeleteSingleAlertPresented,
             habitName: habitToDelete?.title ?? "",
@@ -90,27 +37,11 @@ struct ArchivedHabitsView: View {
             },
             habit: habitToDelete
         )
-        .deleteMultipleHabitsAlert(
-            isPresented: $isDeleteSelectedAlertPresented,
-            habitsCount: selectedForDeletion.count,
-            onDelete: {
-                deleteSelectedHabits()
-            }
-        )
         .sheet(item: $selectedHabitForStats) { habit in
             NavigationStack {
                 HabitStatisticsView(habit: habit)
             }
             .presentationDragIndicator(.visible)
-        }
-    }
-    
-    // MARK: - Navigation Title
-    private var navigationTitle: String {
-        if editMode?.wrappedValue == .active && !selectedForDeletion.isEmpty {
-            return "items_selected".localized(with: selectedForDeletion.count)
-        } else {
-            return "archived_habits".localized
         }
     }
     
@@ -124,7 +55,7 @@ struct ArchivedHabitsView: View {
             )
             .listRowBackground(Color.clear)
         } else {
-            // ИСПРАВЛЕНО: Добавлен footer с подсказкой
+            // Footer с подсказкой о swipe actions
             Section(
                 footer: Text("archived_habits_footer".localized)
                     .font(.footnote)
@@ -159,10 +90,7 @@ struct ArchivedHabitsView: View {
     @ViewBuilder
     private func archivedHabitRow(_ habit: Habit) -> some View {
         Button {
-            // Только если НЕ в edit mode - открываем статистику
-            if editMode?.wrappedValue != .active {
-                selectedHabitForStats = habit
-            }
+            selectedHabitForStats = habit
         } label: {
             HStack {
                 // Icon слева
@@ -205,36 +133,6 @@ struct ArchivedHabitsView: View {
         
         try? modelContext.save()
         HapticManager.shared.play(.error)
-    }
-    
-    private func unarchiveSelectedHabits() {
-        let habitsToUnarchive = archivedHabits.filter { selectedForDeletion.contains($0.id) }
-        
-        for habit in habitsToUnarchive {
-            habit.isArchived = false
-        }
-        
-        try? modelContext.save()
-        HapticManager.shared.play(.success)
-        
-        selectedForDeletion.removeAll()
-    }
-    
-    private func deleteSelectedHabits() {
-        let habitsToDelete = archivedHabits.filter { selectedForDeletion.contains($0.id) }
-        
-        for habit in habitsToDelete {
-            // Cancel notifications
-            NotificationManager.shared.cancelNotifications(for: habit)
-            
-            // Delete from model context
-            modelContext.delete(habit)
-        }
-        
-        try? modelContext.save()
-        HapticManager.shared.play(.error)
-        
-        selectedForDeletion.removeAll()
     }
 }
 

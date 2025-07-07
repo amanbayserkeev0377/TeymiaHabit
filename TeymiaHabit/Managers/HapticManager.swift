@@ -92,20 +92,10 @@ extension View {
         modifier(HapticManager.shared.sensoryFeedback(feedback, trigger: trigger))
     }
     
-    // Часто используемые shortcuts
-    func increaseHaptic(trigger: Bool) -> some View {
-        hapticFeedback(.increase, trigger: trigger)
-    }
-    
-    func decreaseHaptic(trigger: Bool) -> some View {
-        hapticFeedback(.decrease, trigger: trigger)
-    }
-    
     func errorHaptic(trigger: Bool) -> some View {
         hapticFeedback(.error, trigger: trigger)
     }
     
-    // Оставляем остальные для совместимости (если где-то используются)
     func successHaptic(trigger: Bool) -> some View {
         hapticFeedback(.success, trigger: trigger)
     }

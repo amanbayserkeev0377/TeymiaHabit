@@ -16,12 +16,6 @@ struct ProFeature {
             colors: [Color.yellow, Color.orange]
         ),
         ProFeature(
-            icon: "folder.fill",
-            title: "paywall_habit_folders_title".localized,
-            description: "paywall_habit_folders_description".localized,
-            colors: [Color.cyan, Color.blue]
-        ),
-        ProFeature(
             icon: "paintbrush.pointed.fill",
             title: "paywall_custom_colors_icons_title".localized,
             description: "paywall_custom_colors_icons_description".localized,

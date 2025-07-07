@@ -40,7 +40,7 @@ struct ProgressRing: View {
             return customFontSize
         }
         
-        let baseSize = size * 0.25
+        let baseSize = size * 0.20
         let digitsCount = currentValue.filter { $0.isNumber }.count
         
         let factor: CGFloat
@@ -65,7 +65,6 @@ struct ProgressRing: View {
             Circle()
                 .stroke(Color.secondary.opacity(0.1), lineWidth: adaptiveLineWidth)
             
-            // ✅ Кольцо прогресса с МИНИМАЛЬНОЙ анимацией
             Circle()
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(
@@ -80,10 +79,8 @@ struct ProgressRing: View {
                     )
                 )
                 .rotationEffect(.degrees(-90))
-                // ✅ БЫСТРАЯ анимация только для прогресса
-                .animation(.linear(duration: 0.1), value: progress)
+                .animation(.easeInOut(duration: 0.3), value: progress)
             
-            // ✅ Центральный контент БЕЗ анимаций
             if isCompleted && !isExceeded {
                 Image(systemName: "checkmark")
                     .font(.system(size: adaptedIconSize, weight: .bold))
@@ -98,28 +95,5 @@ struct ProgressRing: View {
             }
         }
         .frame(width: size, height: size)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(accessibilityLabel)
-        .accessibilityValue(accessibilityValue)
-    }
-    
-    private var accessibilityLabel: String {
-        if isCompleted {
-            return "habit_completed".localized
-        } else if isExceeded {
-            return "habit_exceeded".localized
-        } else {
-            return "habit_progress".localized
-        }
-    }
-    
-    private var accessibilityValue: String {
-        if isCompleted {
-            return "completion_100_percent".localized
-        } else if isExceeded {
-            return "completion_exceeded".localized(with: Int(progress * 100))
-        } else {
-            return "completion_percent".localized(with: Int(progress * 100))
-        }
     }
 }

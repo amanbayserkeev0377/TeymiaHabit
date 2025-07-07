@@ -30,7 +30,7 @@ struct ActionButtonsSection: View {
                     .font(.system(size: 24))
                     .withHabitColor(habit)
                     .frame(minWidth: 44, minHeight: 44)
-                    .symbolEffect(.rotate, options: .speed(4.5), value: resetPressed)
+                    .symbolEffect(.rotate, options: .speed(6.0), value: resetPressed)
             }
             .errorHaptic(trigger: resetPressed)
             
@@ -42,9 +42,10 @@ struct ActionButtonsSection: View {
                     onTimerToggle()
                 } label: {
                     Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
-                        .font(.system(size: 42))
+                        .font(.system(size: 46))
                         .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
-                        .foregroundStyle(adaptivePlayButtonGradient)
+                        .foregroundStyle(habit.iconColor.adaptiveGradient(
+                            for: colorScheme))
                         .frame(minWidth: 52, minHeight: 52)
                 }
                 .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
@@ -61,18 +62,9 @@ struct ActionButtonsSection: View {
                     .frame(minWidth: 44, minHeight: 44)
             }
             .hapticFeedback(.impact(weight: .medium), trigger: manualEntryPressed)
-            .accessibilityLabel("manual_entry_button_label".localized)
         }
         .frame(maxWidth: 300)
         .frame(maxWidth: .infinity)
         .frame(height: 80)
-    }
-    
-    // MARK: - Computed Properties
-    
-    /// ✅ ИСПРАВЛЕННЫЙ адаптивный градиент с единой логикой приложения
-    private var adaptivePlayButtonGradient: LinearGradient {
-        return habit.iconColor.adaptiveGradient(
-            for: colorScheme)
     }
 }

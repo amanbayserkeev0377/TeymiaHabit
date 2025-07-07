@@ -32,48 +32,6 @@ struct SettingsView: View {
                 
                 // Data
                 Section {
-                    
-                    // Folders
-                    if ProManager.shared.canUseFolders {
-                        // Pro users - normal navigation
-                        NavigationLink {
-                            FolderManagementView(mode: .management)
-                        } label: {
-                            Label(
-                                title: { Text("folders".localized) },
-                                icon: {
-                                    Image(systemName: "folder.fill")
-                                        .withIOSSettingsIcon(lightColors: [
-                                            Color(#colorLiteral(red: 0.4, green: 0.7843137255, blue: 1, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.0, green: 0.4784313725, blue: 0.8, alpha: 1))
-                                        ])
-                                }
-                            )
-                        }
-                    } else {
-                        // Free users - show Pro badge and paywall
-                        Button {
-                            showingPaywall = true
-                        } label: {
-                            HStack {
-                                Label(
-                                    title: { Text("folders".localized) },
-                                    icon: {
-                                        Image(systemName: "folder.fill")
-                                            .withIOSSettingsIcon(lightColors: [
-                                                Color(#colorLiteral(red: 0.4, green: 0.7843137255, blue: 1, alpha: 1)),
-                                                Color(#colorLiteral(red: 0.0, green: 0.4784313725, blue: 0.8, alpha: 1))
-                                            ])
-                                    }
-                                )
-                                
-                                Spacer()
-                                
-                                ProLockBadge()
-                            }
-                        }
-                        .tint(.primary)
-                    }
                     NavigationLink {
                         CloudKitSyncView()
                     } label: {

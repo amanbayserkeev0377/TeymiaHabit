@@ -76,6 +76,10 @@ struct TimeInputView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(.regularMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(Color(.separator).opacity(0.6), lineWidth: 0.7)
+                )
         )
         .padding(.horizontal, 32)
     }

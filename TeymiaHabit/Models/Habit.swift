@@ -6,10 +6,6 @@ final class Habit {
     
     var uuid: UUID = UUID()
     
-    // Multiple folders support
-    @Relationship(deleteRule: .nullify)
-    var folders: [HabitFolder]? = []
-    
     // Basic properties
     var title: String = ""
     var type: HabitType = HabitType.count
@@ -17,9 +13,8 @@ final class Habit {
     var iconName: String? = "checkmark"
     var iconColor: HabitIconColor = HabitIconColor.primary
     
-    // Archive and pin functionality
+    // Archive functionality
     var isArchived: Bool = false
-    var isPinned: Bool = false
     
     // System properties
     var createdAt: Date = Date()
@@ -29,9 +24,28 @@ final class Habit {
     
     // Settings for days and reminders
     var activeDaysBitmask: Int = 0b1111111
-    var reminderTimes: [Date]?
+    
+    // ✅ ИСПРАВЛЕНО: Используем Data для хранения массива дат
+    @Attribute(.externalStorage)
+    private var reminderTimesData: Data?
+    
     var startDate: Date = Date()
     var displayOrder: Int = 0
+    
+    // ✅ Computed property для работы с reminderTimes
+    var reminderTimes: [Date]? {
+        get {
+            guard let data = reminderTimesData else { return nil }
+            return try? JSONDecoder().decode([Date].self, from: data)
+        }
+        set {
+            if let times = newValue, !times.isEmpty {
+                reminderTimesData = try? JSONEncoder().encode(times)
+            } else {
+                reminderTimesData = nil
+            }
+        }
+    }
     
     // Computed property for compatibility with existing UI
     var activeDays: [Bool] {
@@ -51,63 +65,12 @@ final class Habit {
         }
     }
     
-    // MARK: - Pin Methods
-    
-    /// Pin the habit to the top
-    func pin() {
-        isPinned = true
-    }
-    
-    /// Unpin the habit
-    func unpin() {
-        isPinned = false
-    }
-    
-    /// Toggle pin status
-    func togglePin() {
-        isPinned.toggle()
-    }
-    
-    // MARK: - Folder Methods
-
-    /// Add habit to a folder
-    func addToFolder(_ folder: HabitFolder) {
-        if folders == nil {
-            folders = []
-        }
-        if !folders!.contains(where: { $0.uuid == folder.uuid }) {
-            folders!.append(folder)
-        }
-    }
-    
-    /// Remove habit from a folder
-    func removeFromFolder(_ folder: HabitFolder) {
-        folders?.removeAll { $0.uuid == folder.uuid }
-    }
-
-    /// Remove from all folders
-    func removeFromAllFolders() {
-        folders?.removeAll()
-    }
-    
-    /// Check if habit belongs to a specific folder
-    func belongsToFolder(_ folder: HabitFolder) -> Bool {
-        return folders?.contains(where: { $0.uuid == folder.uuid }) ?? false
-    }
-    
-    /// Check if habit has any folders
-    var hasFolders: Bool {
-        return !(folders?.isEmpty ?? true)
-    }
-    
     // MARK: - Методы для работы с активными днями
     
-    // Проверить активен ли конкретный день недели
     func isActive(on weekday: Weekday) -> Bool {
         return (activeDaysBitmask & (1 << weekday.rawValue)) != 0
     }
     
-    // Изменить активность конкретного дня недели
     func setActive(_ active: Bool, for weekday: Weekday) {
         if active {
             activeDaysBitmask |= (1 << weekday.rawValue)
@@ -116,11 +79,9 @@ final class Habit {
         }
     }
     
-    // Проверить активен ли день для конкретной даты
     func isActiveOnDate(_ date: Date) -> Bool {
         let calendar = Calendar.userPreferred
         
-        // Проверяем, что дата не раньше даты начала привычки
         let dateStartOfDay = calendar.startOfDay(for: date)
         let startDateOfDay = calendar.startOfDay(for: startDate)
         
@@ -128,49 +89,11 @@ final class Habit {
             return false
         }
         
-        // Проверяем, активен ли день недели
         let weekday = Weekday.from(date: date)
         return isActive(on: weekday)
     }
     
     // MARK: - Методы для работы с напоминаниями
-    
-    // ОБРАТНАЯ СОВМЕСТИМОСТЬ: для поддержки старого кода
-    var reminderTime: Date? {
-        get {
-            return reminderTimes?.first
-        }
-        set {
-            if let newTime = newValue {
-                reminderTimes = [newTime]
-            } else {
-                reminderTimes = nil
-            }
-        }
-    }
-    
-    // Добавить новое напоминание
-    func addReminderTime(_ time: Date) {
-        if reminderTimes == nil {
-            reminderTimes = [time]
-        } else {
-            reminderTimes?.append(time)
-        }
-    }
-    
-    // Удалить напоминание
-    func removeReminderTime(at index: Int) {
-        guard var times = reminderTimes, times.count > index else { return }
-        times.remove(at: index)
-        reminderTimes = times.isEmpty ? nil : times
-    }
-    
-    // Обновить напоминание
-    func updateReminderTime(_ time: Date, at index: Int) {
-        guard var times = reminderTimes, times.count > index else { return }
-        times[index] = time
-        reminderTimes = times
-    }
     
     // Проверка наличия напоминаний
     var hasReminders: Bool {
@@ -179,7 +102,6 @@ final class Habit {
     
     // MARK: - Методы для работы с прогрессом
     
-    // Get progress for specific date
     func progressForDate(_ date: Date) -> Int {
         guard let completions = completions else { return 0 }
         
@@ -190,7 +112,6 @@ final class Habit {
         return total
     }
     
-    // FormattedProgress
     func formattedProgress(for date: Date) -> String {
         let progress = progressForDate(date)
         
@@ -202,7 +123,6 @@ final class Habit {
         }
     }
     
-    // FormattedGoal
     var formattedGoal: String {
         switch type {
         case .count:
@@ -224,7 +144,6 @@ final class Habit {
     }
     
     func completeForDate(_ date: Date) {
-        // Remove existing completions for this date first
         if let existingCompletions = completions?.filter({
             Calendar.current.isDate($0.date, inSameDayAs: date)
         }) {
@@ -233,12 +152,10 @@ final class Habit {
             }
         }
         
-        // Add new completion with full goal value
         let completion = HabitCompletion(date: date, value: goal, habit: self)
         addCompletion(completion)
     }
 
-    /// Add completion to habit
     func addCompletion(_ completion: HabitCompletion) {
         if completions == nil {
             completions = []
@@ -246,17 +163,14 @@ final class Habit {
         completions?.append(completion)
     }
     
-    // Check if habit is completed for the day
     func isCompletedForDate(_ date: Date) -> Bool {
         return progressForDate(date) >= goal
     }
     
-    // Check if habit is exceeded for the day
     func isExceededForDate(_ date: Date) -> Bool {
         return progressForDate(date) > goal
     }
     
-    // Get formatted progress value for specific date
     func formattedProgressValue(for date: Date) -> String {
         let progress = progressForDate(date)
         
@@ -268,7 +182,6 @@ final class Habit {
         }
     }
     
-    // Calculate completion percentage for the day
     func completionPercentageForDate(_ date: Date) -> Double {
         let progress = min(progressForDate(date), 999999)
         
@@ -277,10 +190,9 @@ final class Habit {
         }
         
         let percentage = Double(progress) / Double(goal)
-        return min(percentage, 1.0) // Cap at 100%
+        return min(percentage, 1.0)
     }
     
-    // Add progress value
     func addProgress(_ value: Int, for date: Date = .now) {
         let completion = HabitCompletion(date: date, value: value, habit: self)
         
@@ -290,19 +202,17 @@ final class Habit {
         completions?.append(completion)
     }
     
-    // MARK: - Инициализаторы и обновление
+    // MARK: - Инициализаторы
     
-    // Helper to create active days bitmask
     static func createDefaultActiveDaysBitMask() -> Int {
-        return 0b1111111 // All days active
+        return 0b1111111
     }
     
-    // Computed property for string ID
     var id: String {
         return uuid.uuidString
     }
     
-    // Initializer with default values
+    // ✅ ПРОСТОЙ инициализатор - только то что нужно
     init(
         title: String = "",
         type: HabitType = .count,
@@ -322,7 +232,6 @@ final class Habit {
         self.iconColor = iconColor
         self.createdAt = createdAt
         self.completions = []
-        self.folders = []
         
         if let days = activeDays {
             let orderedWeekdays = Weekday.orderedByUserPreference
@@ -342,33 +251,7 @@ final class Habit {
         self.startDate = Calendar.current.startOfDay(for: startDate)
     }
     
-    // СОВМЕСТИМОСТЬ: конструктор с одним reminderTime
-    convenience init(
-        title: String,
-        type: HabitType = .count,
-        goal: Int = 0,
-        iconName: String? = nil,
-        createdAt: Date = .now,
-        activeDays: [Bool]? = nil,
-        reminderTime: Date? = nil,  // Один reminderTime для совместимости
-        startDate: Date = .now
-    ) {
-        let reminderTimesArray: [Date]? = reminderTime != nil ? [reminderTime!] : nil
-        
-        self.init(
-            title: title,
-            type: type,
-            goal: goal,
-            iconName: iconName,
-            createdAt: createdAt,
-            activeDays: activeDays,
-            reminderTimes: reminderTimesArray,
-            startDate: startDate
-        )
-    }
-    
-    // MARK: - Методы обновления свойств
-    
+    // ✅ ПРОСТОЙ метод обновления
     func update(
         title: String,
         type: HabitType,
@@ -388,35 +271,10 @@ final class Habit {
         self.reminderTimes = reminderTimes
         self.startDate = startDate
     }
-    
-    // СОВМЕСТИМОСТЬ: обновление с одним reminderTime
-    func update(
-        title: String,
-        type: HabitType,
-        goal: Int,
-        iconName: String?,
-        iconColor: HabitIconColor = .primary,
-        activeDays: [Bool],
-        reminderTime: Date?,  // Один reminderTime для совместимости
-        startDate: Date
-    ) {
-        let reminderTimesArray: [Date]? = reminderTime != nil ? [reminderTime!] : nil
-        update(
-            title: title,
-            type: type,
-            goal: goal,
-            iconName: iconName,
-            iconColor: iconColor,
-            activeDays: activeDays,
-            reminderTimes: reminderTimesArray,
-            startDate: startDate
-        )
-    }
 }
 
-// MARK: - Live Progress Support
+// MARK: - Live Progress Support + Native Methods
 extension Habit {
-    /// FormattedProgress with custom currentProgress (for live timer updates)
     func formattedProgress(for date: Date, currentProgress: Int) -> String {
         switch type {
         case .count:
@@ -424,5 +282,61 @@ extension Habit {
         case .time:
             return currentProgress.formattedAsTime()
         }
+    }
+    
+    func updateProgress(to newValue: Int, for date: Date, modelContext: ModelContext) {
+        if let existingCompletions = completions?.filter({
+            Calendar.current.isDate($0.date, inSameDayAs: date)
+        }) {
+            for completion in existingCompletions {
+                modelContext.delete(completion)
+            }
+        }
+        
+        if newValue > 0 {
+            let completion = HabitCompletion(
+                date: date,
+                value: newValue,
+                habit: self
+            )
+            modelContext.insert(completion)
+        }
+        
+        try? modelContext.save()
+    }
+    
+    func addToProgress(_ additionalValue: Int, for date: Date, modelContext: ModelContext) {
+        let currentValue = progressForDate(date)
+        let newValue = max(0, currentValue + additionalValue)
+        updateProgress(to: newValue, for: date, modelContext: modelContext)
+    }
+    
+    func complete(for date: Date, modelContext: ModelContext) {
+        updateProgress(to: goal, for: date, modelContext: modelContext)
+    }
+    
+    func resetProgress(for date: Date, modelContext: ModelContext) {
+        updateProgress(to: 0, for: date, modelContext: modelContext)
+    }
+    
+    @MainActor
+    func getCurrentProgress(for date: Date) -> Int {
+        if Calendar.current.isDateInToday(date) {
+            let habitId = uuid.uuidString
+            return TimerService.shared.getCurrentProgress(for: habitId)
+        } else {
+            return progressForDate(date)
+        }
+    }
+    
+    @MainActor
+    func isCompleted(for date: Date) -> Bool {
+        return getCurrentProgress(for: date) >= goal
+    }
+    
+    @MainActor
+    func completionPercentage(for date: Date) -> Double {
+        guard goal > 0 else { return 0 }
+        return Double(getCurrentProgress(for: date)) / Double(goal)
     }
 }

@@ -236,10 +236,6 @@ extension ProManager {
     var canUseMultipleReminders: Bool {
         isPro
     }
-    
-    var canUseFolders: Bool {
-        isPro
-    }
 }
 
 struct TimeoutError: Error {}

@@ -40,8 +40,6 @@
 "button_delete" = "Delete";
 "button_cancel" = "Cancel";
 "button_close" = "Close";
-"button_pin" = "Pin";
-"button_unpin" = "Unpin";
 "button_edit" = "Edit";
 "button_save" = "Save";
 "button_ok" = "OK";
@@ -145,21 +143,6 @@
 "archived_date_format" = "Archived %@";
 
 
-/* ===================== Settings & General: Folders ===================== */
-"folders" = "Folders";
-"folders_all" = "All";
-"folders_move" = "Move";
-"folders_new_folder" = "New Folder";
-"folders_edit_folder" = "Edit Folder";
-"folders_create_folder" = "Create a Folder";
-"folders_select_folder" = "Select a Folder";
-"folders_folder_name" = "Folder Name";
-"folders_edit_footer" = "Tap 'Edit' to change the order or delete folders. Folder management is also available in the Settings.";
-"folders_none_selected" = "None";
-"folders_move_to_folder" = "Move to folder";
-"folders_no_folder" = "No folder";
-"folders_no_habits" = "No habits in this folder";
-
 /* ===================== Settings: iCloud Sync ===================== */
 "icloud_sync" = "iCloud Sync";
 "icloud_sync_status" = "Sync Status";
@@ -233,8 +216,6 @@
 "paywall_no_purchases_to_restore_message" = "No purchases to restore.";
 "paywall_unlimited_habits_title" = "Unlimited Habits";
 "paywall_unlimited_habits_description" = "Create as many habits as you need";
-"paywall_habit_folders_title" = "Habit Folders";
-"paywall_habit_folders_description" = "Organize habits in custom folders";
 "paywall_custom_colors_icons_title" = "Custom Colors & Icons";
 "paywall_custom_colors_icons_description" = "Personalize with themes and app icons";
 "paywall_support_creator_title" = "Support the Creator";

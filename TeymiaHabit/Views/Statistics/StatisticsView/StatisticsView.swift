@@ -14,9 +14,6 @@ struct StatisticsView: View {
     
     private var habits: [Habit] {
         allHabits.sorted { first, second in
-            if first.isPinned != second.isPinned {
-                return first.isPinned && !second.isPinned
-            }
             return first.createdAt < second.createdAt
         }
     }

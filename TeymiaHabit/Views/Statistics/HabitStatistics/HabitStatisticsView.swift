@@ -16,6 +16,7 @@ struct HabitStatisticsView: View {
     @State private var alertState = AlertState()
     @State private var updateCounter = 0
     @State private var isTimeInputPresented: Bool = false
+    @State private var isCountInputPresented: Bool = false
     
     // 🔥 NEW: Separate time range controls for each section
     @State private var barChartTimeRange: ChartTimeRange = .month
@@ -176,14 +177,6 @@ struct HabitStatisticsView: View {
             }
         }
         // Alerts
-        .countInputAlert(
-            isPresented: $alertState.isCountAlertPresented,
-            inputText: $alertState.countInputText,
-            successTrigger: $alertState.successFeedbackTrigger,
-            errorTrigger: $alertState.errorFeedbackTrigger,
-            onCountInput: { handleCountInput() },
-            habit: habit
-        )
         .deleteSingleHabitAlert(
             isPresented: $alertState.isDeleteAlertPresented,
             habitName: habit.title,
@@ -200,6 +193,39 @@ struct HabitStatisticsView: View {
         }
         .withHabitTint(habit)
         .overlay {
+            if isCountInputPresented {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isCountInputPresented = false
+                    }
+                    .transition(.opacity)
+            }
+        }
+        .overlay {
+            if isCountInputPresented {
+                CountInputView(
+                    habit: habit,
+                    isPresented: $isCountInputPresented,
+                    onConfirm: { count in
+                        handleCustomCountInput(count: count)
+                    }
+                )
+                .transition(.scale(scale: 0.85).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: isCountInputPresented)
+        .overlay {
+            if isTimeInputPresented {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isTimeInputPresented = false
+                    }
+                    .transition(.opacity)
+            }
+        }
+        .overlay {
             if isTimeInputPresented {
                 TimeInputView(
                     habit: habit,
@@ -208,10 +234,10 @@ struct HabitStatisticsView: View {
                         handleCustomTimeInput(hours: hours, minutes: minutes)
                     }
                 )
-                .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                .animation(.spring(duration: 0.3), value: isTimeInputPresented)
+                .transition(.scale(scale: 0.85).combined(with: .opacity))
             }
         }
+        .animation(.easeInOut(duration: 0.25), value: isTimeInputPresented)
     }
     
     // MARK: - 🎨 Bar Charts Header with 3D Illustration
@@ -326,7 +352,7 @@ struct HabitStatisticsView: View {
             alertState.date = date
             
             if habit.type == .count {
-                alertState.isCountAlertPresented = true
+                isCountInputPresented = true
             } else {
                 isTimeInputPresented = true
             }
@@ -365,25 +391,20 @@ struct HabitStatisticsView: View {
         updateCounter += 1
     }
     
-    private func handleCountInput() {
-        guard let date = alertState.date, let count = Int(alertState.countInputText), count > 0 else {
-            alertState.errorFeedbackTrigger.toggle()
-            alertState.countInputText = ""
-            return
-        }
+    private func handleCustomCountInput(count: Int) {
+        guard let date = alertState.date else { return }
         
         let tempViewModel = HabitDetailViewModel(
             habit: habit,
             date: date,
-            modelContext: modelContext,
+            modelContext: modelContext
         )
         
-        tempViewModel.alertState.countInputText = alertState.countInputText
-        tempViewModel.handleCountInput()
+        tempViewModel.handleCustomCountInput(count: count)
         tempViewModel.saveIfNeeded()
         viewModel.refresh()
         updateCounter += 1
-        alertState.countInputText = ""
+        alertState.successFeedbackTrigger.toggle()
     }
     
     private func handleCustomTimeInput(hours: Int, minutes: Int) {

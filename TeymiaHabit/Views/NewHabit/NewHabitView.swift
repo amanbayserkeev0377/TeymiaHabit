@@ -6,13 +6,8 @@ struct NewHabitView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    // Query for folders
-    @Query(sort: [SortDescriptor(\HabitFolder.displayOrder)])
-    private var allFolders: [HabitFolder]
-    
     // MARK: - Properties
     private let habit: Habit?
-    private let initialFolder: HabitFolder?
     
     // MARK: - State
     @State private var title = ""
@@ -26,15 +21,13 @@ struct NewHabitView: View {
     @State private var startDate = Date()
     @State private var selectedIcon: String? = "checkmark"
     @State private var selectedIconColor: HabitIconColor = .primary
-    @State private var selectedFolders: Set<HabitFolder> = []
     
     @FocusState private var isTitleFocused: Bool
     @FocusState private var isCountFocused: Bool
     
     // MARK: - Initialization
-    init(habit: Habit? = nil, initialFolder: HabitFolder? = nil) {
+    init(habit: Habit? = nil) {
         self.habit = habit
-        self.initialFolder = initialFolder
         
         if let habit = habit {
             _title = State(initialValue: habit.title)
@@ -48,9 +41,6 @@ struct NewHabitView: View {
             _startDate = State(initialValue: habit.startDate)
             _selectedIcon = State(initialValue: habit.iconName ?? "checkmark")
             _selectedIconColor = State(initialValue: habit.iconColor)
-            _selectedFolders = State(initialValue: Set(habit.folders ?? []))
-        } else if let initialFolder = initialFolder {
-            _selectedFolders = State(initialValue: Set([initialFolder]))
         }
     }
     
@@ -94,9 +84,6 @@ struct NewHabitView: View {
                     // Icon
                     IconSection(selectedIcon: $selectedIcon, selectedColor: $selectedIconColor)
                 }
-                
-                // Folder
-                FolderSection(selectedFolders: $selectedFolders)
                 
                 // Goal
                 GoalSection(
@@ -163,7 +150,6 @@ struct NewHabitView: View {
                 .padding(.bottom, 20)
             }
         }
-        // ИСПРАВЛЕНО: убираем анимацию которая могла вызывать глитчи
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
@@ -195,12 +181,6 @@ struct NewHabitView: View {
                 startDate: Calendar.current.startOfDay(for: startDate)
             )
             
-            // Update folders
-            existingHabit.removeFromAllFolders()
-            for folder in selectedFolders {
-                existingHabit.addToFolder(folder)
-            }
-            
             handleNotifications(for: existingHabit)
         } else {
             // Create new habit
@@ -215,11 +195,6 @@ struct NewHabitView: View {
                 reminderTimes: isReminderEnabled ? reminderTimes : nil,
                 startDate: startDate
             )
-            
-            // Assign to folders
-            for folder in selectedFolders {
-                newHabit.addToFolder(folder)
-            }
             
             modelContext.insert(newHabit)
             

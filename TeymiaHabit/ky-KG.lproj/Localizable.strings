@@ -7,13 +7,6 @@
 "alert_delete_multiple_habits" = "Тандалган адаттарды өчүрүү";
 "alert_delete_multiple_habits_message" = "Сиз чындап эле %d тандалган адатты түбөлүккө өчүргүңүз келеби?";
 
-// Folder Delete Alerts
-"alert_delete_folder" = "Папканы өчүрүү";
-"alert_delete_folder_message" = "«%@» папканы өчүрсөң, адаттарың өзгөрбөйт. Жалгашасыңбы?";
-
-"alert_delete_folders" = "Папкаларды өчүрүү";
-"alert_delete_folders_message" = "%d папканы өчүрсөң, адаттарың өзгөрбөйт. Жалгашасыңбы?";
-
 // Progress Input Alerts
 "alert_add_count" = "Саан кошуу";
 "alert_add_count_message" = "Кошулуучу аткарылган иштердин санын киргизиңиз";
@@ -40,8 +33,6 @@
 "button_delete" = "Жоюу";
 "button_cancel" = "Токтотуу";
 "button_close" = "Жабуу";
-"button_pin" = "Тиктеп коюу";
-"button_unpin" = "Тиктеп коюуну алуу";
 "button_edit" = "Түзөтүү";
 "button_save" = "Сактоо";
 "button_ok" = "OK";
@@ -143,22 +134,6 @@
 "archived_date_format" = "Архивделди %@";
 "archived_habits_footer" = "Солго сүрүңүз, архивден чыгаруу же өчүрүү үчүн";
 
-
-/* ===================== Settings & General: Folders ===================== */
-"folders" = "Папкалар";
-"folders_all" = "Баары";
-"folders_move" = "Жылдыруу";
-"folders_new_folder" = "Жаңы папка";
-"folders_edit_folder" = "Папканы оңдоо";
-"folders_create_folder" = "Папка түзүү";
-"folders_select_folder" = "Папканы тандаңыз";
-"folders_folder_name" = "Папканын аты";
-"folders_edit_footer" = "Тартипти өзгөртүү же папканы жоюу үчүн «Түзөтүү» баскычын басыңыз. Папкаларды жөндөөлөрдөн да башкара аласыз.";
-"folders_none_selected" = "Жок";
-"folders_move_to_folder" = "Папкага көчүрүү";
-"folders_no_folder" = "Папкасыз";
-"folders_no_habits" = "Бул папкада адаттар жок";
-
 /* ===================== Settings: iCloud Sync ===================== */
 "icloud_sync" = "iCloud байланыш";
 "icloud_sync_status" = "Синхрондоштуруу абалы";
@@ -233,8 +208,6 @@
 "paywall_no_purchases_to_restore_message" = "Калыбына келтирүү үчүн сатып алуулар жок.";
 "paywall_unlimited_habits_title" = "Чексиз адаттар";
 "paywall_unlimited_habits_description" = "Керектүү өлчөмдө адаттарды түзүңүз";
-"paywall_habit_folders_title" = "Адаттар папкалары";
-"paywall_habit_folders_description" = "Адаттарды өз папкаларыңызга иреттеңиз";
 "paywall_custom_colors_icons_title" = "Түстөр жана иконкалар";
 "paywall_custom_colors_icons_description" = "Темалар жана иконкалар менен жекелештириңиз";
 "paywall_support_creator_title" = "Жаратуучуну колдоо";
