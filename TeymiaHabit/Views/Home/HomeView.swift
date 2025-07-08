@@ -223,7 +223,7 @@ struct HomeView: View {
             return formatter.string(from: date).capitalized
         }
     }
-        
+    
     // MARK: - Helper Methods
     private func isToday(_ date: Date) -> Bool {
         return Calendar.current.isDateInToday(date)
@@ -235,7 +235,9 @@ struct HomeView: View {
     
     // MARK: - Actions
     private func completeHabit(_ habit: Habit, for date: Date) {
-        if !habit.isCompletedForDate(date) {
+        let currentProgress = habit.progressForDate(date)
+        
+        if currentProgress < habit.goal {
             habit.completeForDate(date)
             try? modelContext.save()
             HapticManager.shared.play(.success)
@@ -272,8 +274,35 @@ struct HabitCardView: View {
     private let lineWidth: CGFloat = 6.5
     private let iconSize: CGFloat = 26
     
+    private var cardProgress: Int {
+        // Для главного списка всегда берем только из базы данных
+        return habit.progressForDate(date)
+    }
+    
+    private var cardCompletionPercentage: Double {
+        guard habit.goal > 0 else { return 0 }
+        return Double(cardProgress) / Double(habit.goal)
+    }
+    
+    private var cardFormattedProgressValue: String {
+        switch habit.type {
+        case .count:
+            return cardProgress.formattedAsProgressForRing()
+        case .time:
+            return cardProgress.formattedAsTimeForRing()
+        }
+    }
+    
+    private var cardIsCompleted: Bool {
+        return cardProgress >= habit.goal
+    }
+    
+    private var cardIsExceeded: Bool {
+        return cardProgress > habit.goal
+    }
+    
     private var adaptedFontSize: CGFloat {
-        let value = habit.formattedProgressValue(for: date)
+        let value = cardFormattedProgressValue
         let baseSize = ringSize * 0.26
         
         let digitsCount = value.filter { $0.isNumber }.count
@@ -289,15 +318,15 @@ struct HabitCardView: View {
         }) {
             HStack(spacing: 16) {
                 // Left side - Icon
-                    let iconName = habit.iconName ?? "checkmark"
-                    Image(systemName: iconName)
-                        .font(.system(size: 30, weight: .medium))
-                        .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
-                        .frame(width: 60, height: 60)
-                        .background(
-                            Circle()
-                                .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
-                        )
+                let iconName = habit.iconName ?? "checkmark"
+                Image(systemName: iconName)
+                    .font(.system(size: 30, weight: .medium))
+                    .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+                    .frame(width: 60, height: 60)
+                    .background(
+                        Circle()
+                            .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                    )
                 
                 // Middle - Title and goal
                 VStack(alignment: .leading, spacing: 5) {
@@ -313,12 +342,12 @@ struct HabitCardView: View {
                 
                 Spacer()
                 
-                // Right side - Progress ring
+                // ✅ Right side - Progress ring БЕЗ TimerService
                 ProgressRing(
-                    progress: habit.completionPercentageForDate(date),
-                    currentValue: habit.formattedProgressValue(for: date),
-                    isCompleted: habit.isCompletedForDate(date),
-                    isExceeded: habit.isExceededForDate(date),
+                    progress: cardCompletionPercentage,  // ← Локальные данные!
+                    currentValue: cardFormattedProgressValue,  // ← Локальные данные!
+                    isCompleted: cardIsCompleted,  // ← Локальные данные!
+                    isExceeded: cardIsExceeded,  // ← Локальные данные!
                     habit: habit,
                     size: ringSize,
                     lineWidth: lineWidth,
@@ -335,7 +364,7 @@ struct HabitCardView: View {
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .strokeBorder(
                                 Color(.separator).opacity(0.5),
-                                          lineWidth: 0.5
+                                lineWidth: 0.5
                             )
                     )
                     .shadow(
@@ -354,7 +383,7 @@ struct HabitCardView: View {
             } label: {
                 Label("complete".localized, systemImage: "checkmark")
             }
-            .disabled(habit.isCompletedForDate(date))
+            .disabled(cardIsCompleted)
             .withHabitColor(habit)
             
             Divider()

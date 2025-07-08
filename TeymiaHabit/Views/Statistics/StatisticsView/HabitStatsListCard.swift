@@ -4,6 +4,8 @@ struct HabitStatsListCard: View {
     let habit: Habit
     let onTap: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+
     // Create individual ViewModel for each habit
     @State private var viewModel: HabitStatsViewModel
     
@@ -26,8 +28,8 @@ struct HabitStatsListCard: View {
                     if let iconName = habit.iconName {
                         Image(systemName: iconName)
                             .font(.system(size: 24, weight: .medium))
-                            .foregroundStyle(habit.iconColor.color)
-                            .frame(width: 32, height: 32)
+                            .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+                            .frame(width: 40, height: 40)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -40,14 +42,6 @@ struct HabitStatsListCard: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                    
-                    Spacer()
-                    
-                    // Navigate indicator
-                    Image(systemName: "chevron.right")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundStyle(habit.iconColor.color)
                 }
                 
                 // Individual StreaksView for this habit
@@ -56,50 +50,28 @@ struct HabitStatsListCard: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 16)
-            .background {
-                RoundedRectangle(cornerRadius: 16)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .fill(Color(UIColor.secondarySystemGroupedBackground))
-            }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .strokeBorder(
+                                Color(.separator).opacity(0.5),
+                                          lineWidth: 0.5
+                            )
+                    )
+                    .shadow(
+                        color: Color(.systemGray4).opacity(0.6),
+                        radius: 4,
+                        x: 0,
+                        y: 2
+                    )
+            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .onAppear {
             // Refresh stats when card appears
             viewModel.refresh()
-        }
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func progressColor(isActive: Bool, isCompleted: Bool) -> Color {
-        if !isActive {
-            return Color.gray.opacity(0.2)
-        } else if isCompleted {
-            return habit.iconColor.color
-        } else {
-            return Color.gray.opacity(0.4)
-        }
-    }
-    
-    private var lastCompletedDate: Date? {
-        guard let completions = habit.completions else { return nil }
-        
-        return completions
-            .filter { $0.value >= habit.goal }
-            .map { $0.date }
-            .max()
-    }
-    
-    private func formatRelativeDate(_ date: Date) -> String {
-        let calendar = Calendar.current
-        let now = Date()
-        
-        if calendar.isDateInToday(date) {
-            return "Today"
-        } else if calendar.isDateInYesterday(date) {
-            return "Yesterday"
-        } else {
-            let days = calendar.dateComponents([.day], from: date, to: now).day ?? 0
-            return "\(days) days ago"
         }
     }
 }

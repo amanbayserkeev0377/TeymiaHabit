@@ -117,23 +117,10 @@ struct HabitDetailContentView: View {
     @State private var isEditPresented = false
     @State private var showStatistics = false
     
-    // Computed properties (копируем из HabitDetailView)
-    private var displayProgress: Int {
-        return viewModel?.currentProgress ?? 0
-    }
-    
-    private var displayCompletionPercentage: Double {
-        guard habit.goal > 0 else { return 0 }
-        return Double(displayProgress) / Double(habit.goal)
-    }
-    
-    private var displayFormattedProgress: String {
-        return habit.formattedProgress(for: date, currentProgress: displayProgress)
-    }
-    
-    private var isAlreadyCompleted: Bool {
-        return displayProgress >= habit.goal
-    }
+    @State private var localProgress: Int = 0
+    @State private var localCompletionPercentage: Double = 0
+    @State private var localFormattedProgress: String = ""
+    @State private var localIsCompleted: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -156,6 +143,9 @@ struct HabitDetailContentView: View {
             viewModel?.saveIfNeeded()
             viewModel?.cleanup()
         }
+        .onChange(of: viewModel?.localUpdateTrigger) { _, _ in
+                    updateLocalProgress()
+                }
         .sheet(isPresented: $isEditPresented) {
             NewHabitView(habit: habit)
         }
@@ -194,14 +184,27 @@ struct HabitDetailContentView: View {
     // MARK: - Setup & Components
     
     private func setupViewModel() {
-        let vm = HabitDetailViewModel(
-            habit: habit,
-            date: date,
-            modelContext: modelContext
-        )
-        vm.onHabitDeleted = onDelete
-        viewModel = vm
-    }
+            let vm = HabitDetailViewModel(
+                habit: habit,
+                date: date,
+                modelContext: modelContext
+            )
+            vm.onHabitDeleted = onDelete
+            viewModel = vm
+            
+            // ✅ Инициализируем локальные значения
+            updateLocalProgress()
+        }
+        
+        // ✅ НОВЫЙ метод для обновления локального состояния
+        private func updateLocalProgress() {
+            guard let viewModel = viewModel else { return }
+            
+            localProgress = viewModel.currentProgress
+            localCompletionPercentage = habit.goal > 0 ? Double(localProgress) / Double(habit.goal) : 0
+            localFormattedProgress = habit.formattedProgress(for: date, currentProgress: localProgress)
+            localIsCompleted = localProgress >= habit.goal
+        }
     
     @ViewBuilder
     private func headerContent(viewModel: HabitDetailViewModel) -> some View {
@@ -290,14 +293,16 @@ struct HabitDetailContentView: View {
                 // Progress control с кнопками +/-
                 ProgressControlSection(
                     habit: habit,
-                    currentProgress: .constant(displayProgress),
-                    completionPercentage: displayCompletionPercentage,
-                    formattedProgress: displayFormattedProgress,
+                    currentProgress: .constant(localProgress),
+                    completionPercentage: localCompletionPercentage,
+                    formattedProgress: localFormattedProgress,
                     onIncrement: {
                         viewModel.incrementProgress()
+                        updateLocalProgress()
                     },
                     onDecrement: {
                         viewModel.decrementProgress()
+                        updateLocalProgress()
                     }
                 )
                 
@@ -309,6 +314,7 @@ struct HabitDetailContentView: View {
                         isTimerRunning: viewModel.isTimerRunning,
                         onReset: {
                             viewModel.resetProgress()
+                            updateLocalProgress()
                         },
                         onTimerToggle: {
                             viewModel.toggleTimer()
@@ -331,12 +337,13 @@ struct HabitDetailContentView: View {
     private func bottomButtonContent(viewModel: HabitDetailViewModel) -> some View {
         Button(action: {
             viewModel.completeHabit()
+            updateLocalProgress()
         }) {
-            Text(isAlreadyCompleted ? "completed".localized : "complete".localized)
+            Text(localIsCompleted ? "completed".localized : "complete".localized)
         }
         .beautifulButton(
             habit: habit,
-            isEnabled: !isAlreadyCompleted,
+            isEnabled: !localIsCompleted,
             lightOpacity: 0.8,
             darkOpacity: 1.0
         )
@@ -357,6 +364,7 @@ struct HabitDetailContentView: View {
                     ),
                     onConfirm: { count in
                         viewModel?.handleCustomCountInput(count: count)
+                        updateLocalProgress()
                     }
                 )
                 .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -374,6 +382,7 @@ struct HabitDetailContentView: View {
                     ),
                     onConfirm: { hours, minutes in
                         viewModel?.handleCustomTimeInput(hours: hours, minutes: minutes)
+                        updateLocalProgress()
                     }
                 )
                 .ignoresSafeArea(.keyboard, edges: .bottom)

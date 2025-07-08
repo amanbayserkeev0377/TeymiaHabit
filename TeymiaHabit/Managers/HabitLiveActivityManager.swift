@@ -217,8 +217,7 @@ final class HabitLiveActivityManager {
         }
         
         guard let actionData = userDefaults.dictionary(forKey: "live_activity_action") else {
-            // Нет действий - это нормально, не логируем каждую секунду
-            return
+            return // Нет действий - это нормально
         }
         
         print("🔍 Found widget action data: \(actionData)")
@@ -227,50 +226,89 @@ final class HabitLiveActivityManager {
               let habitId = actionData["habitId"] as? String,
               let timestamp = actionData["timestamp"] as? TimeInterval else {
             print("❌ Invalid action data format")
-            userDefaults.removeObject(forKey: "live_activity_action") // Очищаем битые данные
+            userDefaults.removeObject(forKey: "live_activity_action")
             return
         }
         
-        print("🔍 Parsed action: \(action), habitId: \(habitId)")
-        
-        // Check if this is a new action (prevent duplicate processing)
+        // Check if this is a new action
         let lastProcessedKey = "last_processed_timestamp"
         let lastProcessed = UserDefaults.standard.double(forKey: lastProcessedKey)
         
         guard timestamp > lastProcessed else {
-            print("🔍 Action already processed (timestamp: \(timestamp) <= \(lastProcessed))")
+            print("🔍 Action already processed")
             return
         }
         
-        print("🔍 Processing new widget action: \(action) for habit: \(habitId)")
+        print("🔍 Processing widget action: \(action) for habit: \(habitId)")
         
-        // Mark as processed FIRST
+        // ✅ КРИТИЧНО: Сразу очищаем действие и помечаем как обработанное
         UserDefaults.standard.set(timestamp, forKey: lastProcessedKey)
-        
-        // Clear the action FIRST
         userDefaults.removeObject(forKey: "live_activity_action")
-        print("🔍 Cleared action data from UserDefaults")
         
-        // Handle dismissActivity action locally before notifying
-        if action == "dismissActivity" {
-            print("🔍 Handling dismissActivity locally for: \(habitId)")
+        // ✅ Для toggleTimer нужно дополнительно обновить Live Activity
+        if action == "toggleTimer" {
+            print("🔍 Widget requested timer toggle for: \(habitId)")
+            
+            // Сначала отправляем уведомление приложению
+            let notification = WidgetActionNotification(
+                action: .toggleTimer,
+                habitId: habitId,
+                timestamp: Date(timeIntervalSince1970: timestamp)
+            )
+            
+            NotificationCenter.default.post(
+                name: .widgetActionReceived,
+                object: notification
+            )
+            
+            // ✅ Ждем немного чтобы приложение обработало действие
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 секунды
+            
+            // ✅ Затем принудительно обновляем Live Activity
+            await forceUpdateActivityAfterWidgetAction(habitId: habitId)
+            
+        } else if action == "dismissActivity" {
+            print("🔍 Widget requested dismiss for: \(habitId)")
             await endActivity(for: habitId)
+        } else {
+            // Другие действия
+            let notification = WidgetActionNotification(
+                action: WidgetAction(rawValue: action) ?? .toggleTimer,
+                habitId: habitId,
+                timestamp: Date(timeIntervalSince1970: timestamp)
+            )
+            
+            NotificationCenter.default.post(
+                name: .widgetActionReceived,
+                object: notification
+            )
+        }
+    }
+    
+    private func forceUpdateActivityAfterWidgetAction(habitId: String) async {
+        guard let activity = activeActivities[habitId] else {
+            print("⚠️ No activity found for force update: \(habitId)")
             return
         }
         
-        // Notify the app about other actions
-        let notification = WidgetActionNotification(
-            action: WidgetAction(rawValue: action) ?? .toggleTimer,
-            habitId: habitId,
-            timestamp: Date(timeIntervalSince1970: timestamp)
-        )
+        print("🔄 Force updating Live Activity after widget action for: \(habitId)")
         
-        print("🔍 Posting notification for action: \(action) to habit: \(habitId)")
-        NotificationCenter.default.post(
-            name: .widgetActionReceived,
-            object: notification
+        // ✅ Получаем актуальное состояние из TimerService
+        let timerService = TimerService.shared
+        let isRunning = timerService.isTimerRunning(for: habitId)
+        
+        // ✅ ИСПРАВЛЕНО: используем getLiveProgress вместо getCurrentProgress
+        let currentProgress = timerService.getLiveProgress(for: habitId) ?? 0
+        let startTime = timerService.getTimerStartTime(for: habitId)
+        
+        print("🔄 Current state: running=\(isRunning), progress=\(currentProgress)")
+        
+        await updateActivity(
+            for: habitId,
+            currentProgress: currentProgress,
+            isTimerRunning: isRunning,
+            timerStartTime: startTime
         )
-        print("🔍 Notification posted successfully")
     }
     
     // MARK: - Error Handling

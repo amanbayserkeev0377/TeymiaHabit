@@ -318,25 +318,4 @@ extension Habit {
     func resetProgress(for date: Date, modelContext: ModelContext) {
         updateProgress(to: 0, for: date, modelContext: modelContext)
     }
-    
-    @MainActor
-    func getCurrentProgress(for date: Date) -> Int {
-        if Calendar.current.isDateInToday(date) {
-            let habitId = uuid.uuidString
-            return TimerService.shared.getCurrentProgress(for: habitId)
-        } else {
-            return progressForDate(date)
-        }
-    }
-    
-    @MainActor
-    func isCompleted(for date: Date) -> Bool {
-        return getCurrentProgress(for: date) >= goal
-    }
-    
-    @MainActor
-    func completionPercentage(for date: Date) -> Double {
-        guard goal > 0 else { return 0 }
-        return Double(getCurrentProgress(for: date)) / Double(goal)
-    }
 }

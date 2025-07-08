@@ -1,29 +1,11 @@
 import SwiftUI
 
-struct CardGradients {
-    static let completionRate = [
-        Color(#colorLiteral(red: 0.4901960784, green: 0.5607843137, blue: 0.6196078431, alpha: 1)),
-        Color(#colorLiteral(red: 0.1215686275, green: 0.1568627451, blue: 0.2705882353, alpha: 1))
-    ]
-    
-    static let activeDays = [
-        Color(#colorLiteral(red: 0.9921568627, green: 0.4745098039, blue: 0.4352941176, alpha: 1)),
-        Color(#colorLiteral(red: 0.7490196078, green: 0.262745098, blue: 0.2509803922, alpha: 1))
-    ]
-    
-    static let habitsDone = [
-        Color(#colorLiteral(red: 0.5215686275, green: 0.8, blue: 0, alpha: 1)),
-        Color(#colorLiteral(red: 0.337254902, green: 0.6705882353, blue: 0.1843137255, alpha: 1))
-    ]
-    
-    static let activeHabits = [
-        Color(#colorLiteral(red: 0.431372549, green: 0.6941176471, blue: 0.8392156863, alpha: 1)),
-        Color(#colorLiteral(red: 0.2156862745, green: 0.462745098, blue: 0.631372549, alpha: 1))
-    ]
-    
-    static func adaptive(_ colors: [Color], colorScheme: ColorScheme) -> [Color] {
-            return colorScheme == .dark ? colors.reversed() : colors
-        }
+struct CardColors {
+    // ✅ Простые цвета для каждой карточки
+    static let completionRate = Color(#colorLiteral(red: 0.2627380788, green: 0.2627506256, blue: 0.4563500881, alpha: 1))
+    static let activeDays = Color(#colorLiteral(red: 0.9803726077, green: 0.4384494722, blue: 0.4061130285, alpha: 1))
+    static let habitsDone = Color(#colorLiteral(red: 0.4411377907, green: 0.7888615131, blue: 0.2720118761, alpha: 1))
+    static let activeHabits = Color(#colorLiteral(red: 0.433128655, green: 0.6248013973, blue: 0.8752619624, alpha: 1))
 }
 
 struct OverviewStatsView: View {
@@ -39,19 +21,6 @@ struct OverviewStatsView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Header - clean без фона
-            VStack(alignment: .leading, spacing: 8) {
-                Text("overview".localized)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                
-                Text("your_total_progress".localized)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
-            
             // ✅ Stats Grid - новые градиентные карточки с 3D иконками
             LazyVGrid(columns: gridColumns, spacing: 16) {
                 // 1. Completion Rate
@@ -59,7 +28,7 @@ struct OverviewStatsView: View {
                     title: "overall_completion".localized,
                     value: "\(Int(overallCompletionRate * 100))%",
                     onTap: { selectedInfoCard = .completionRate },
-                    gradientColors: CardGradients.completionRate,
+                    cardColor: CardColors.completionRate,
                     icon3DAsset: "CardInfo_completion_rate",
                     iconSize: 46
                 )
@@ -68,7 +37,7 @@ struct OverviewStatsView: View {
                     title: "active_days_total".localized,
                     value: "\(totalActiveDays)",
                     onTap: { selectedInfoCard = .activeDays },
-                    gradientColors: CardGradients.activeDays,
+                    cardColor: CardColors.activeDays,
                     icon3DAsset: "CardInfo_active_days"
                 )
                 
@@ -77,7 +46,7 @@ struct OverviewStatsView: View {
                     title: "completed_total".localized,
                     value: "\(totalCompletedHabits)",
                     onTap: { selectedInfoCard = .habitsDone },
-                    gradientColors: CardGradients.habitsDone,
+                    cardColor: CardColors.habitsDone,
                     icon3DAsset: "CardInfo_habits_done"
                 )
                 // 4. Active Habits
@@ -85,16 +54,11 @@ struct OverviewStatsView: View {
                     title: "active_habits".localized,
                     value: "\(activeHabitsCount)",
                     onTap: { selectedInfoCard = .activeHabits },
-                    gradientColors: CardGradients.activeHabits,
+                    cardColor: CardColors.activeHabits,
                     icon3DAsset: "CardInfo_active_habits"
                 )
             }
-            .padding(.horizontal, 16)
-            
-            // Divider для отделения от привычек
-            Divider()
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
+            .padding(.horizontal, 8)
         }
         .padding(.horizontal, 0)
         .padding(.vertical, 0)
@@ -120,7 +84,7 @@ struct OverviewStatsView: View {
             total + (habit.completions?.filter { $0.value >= habit.goal }.count ?? 0)
         }
     }
-
+    
     private var totalActiveDays: Int {
         var activeDaysSet: Set<String> = []
         let dateFormatter = DateFormatter()
@@ -139,7 +103,7 @@ struct OverviewStatsView: View {
         
         return activeDaysSet.count
     }
-
+    
     private var overallCompletionRate: Double {
         var totalProgress = 0.0
         var totalPossibleProgress = 0.0
@@ -162,7 +126,7 @@ struct OverviewStatsView: View {
         
         return totalPossibleProgress > 0 ? totalProgress / totalPossibleProgress : 0.0
     }
-
+    
     private var activeHabitsCount: Int {
         habits.filter { !$0.isArchived }.count
     }
@@ -201,7 +165,7 @@ struct StatCardInteractive: View {
     let title: String
     let value: String
     let onTap: () -> Void
-    let gradientColors: [Color]
+    let cardColor: Color
     let icon3DAsset: String
     let iconSize: CGFloat
     
@@ -214,14 +178,14 @@ struct StatCardInteractive: View {
         title: String,
         value: String,
         onTap: @escaping () -> Void,
-        gradientColors: [Color],
+        cardColor: Color,
         icon3DAsset: String,
         iconSize: CGFloat = StatCardInteractive.defaultIconSize
     ) {
         self.title = title
         self.value = value
         self.onTap = onTap
-        self.gradientColors = gradientColors
+        self.cardColor = cardColor
         self.icon3DAsset = icon3DAsset
         self.iconSize = iconSize
     }
@@ -232,7 +196,7 @@ struct StatCardInteractive: View {
                 Text(title)
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(cardColor)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
@@ -256,7 +220,7 @@ struct StatCardInteractive: View {
                     Text(value)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(cardColor)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                 }
@@ -266,24 +230,17 @@ struct StatCardInteractive: View {
             .frame(height: 120)
             .background {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(
-                        LinearGradient(
-                            colors: CardGradients.adaptive(gradientColors, colorScheme: colorScheme),
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
+                    .fill(cardColor.opacity(0.1))
             }
-            .background(cardShadow)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(
-                        Color.gray.opacity(0.2),
-                        lineWidth: 0.7
+                        Color.primary.opacity(0.1),
+                        lineWidth: 0.3
                     )
             )
             .scaleEffect(isPressed ? 0.97 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.8, blendDuration: 0), value: isPressed)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isPressed)
             .hapticFeedback(.selection, trigger: isPressed)
         }
         .buttonStyle(PlainButtonStyle())
@@ -298,17 +255,6 @@ struct StatCardInteractive: View {
                     isPressed = false
                 }
         )
-    }
-    
-    private var cardShadow: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(Color.clear)
-            .shadow(
-                color: Color.primary.opacity(0.2),
-                radius: 8,
-                x: 0,
-                y: 4
-            )
     }
 }
 
@@ -388,7 +334,7 @@ struct CardInfoView: View {
     }
     
     // MARK: - Computed Properties
-
+    
     private var cardIllustration: String {
         switch card {
         case .habitsDone: return "CardInfo_habits_done"
@@ -397,26 +343,21 @@ struct CardInfoView: View {
         case .activeHabits: return "CardInfo_active_habits"
         }
     }
-
+    
     private var cardImageSize: CGSize {
         // Единый размер для всех карточек
         return CGSize(width: 200, height: 160)
     }
-
+    
     private var cardColor: Color {
-        let gradients = gradientForCard(card)
-        return colorScheme == .dark ? gradients[0] : gradients[1]
-    }
-
-    private func gradientForCard(_ card: InfoCard) -> [Color] {
         switch card {
-        case .completionRate: return CardGradients.completionRate
-        case .activeDays: return CardGradients.activeDays
-        case .habitsDone: return CardGradients.habitsDone
-        case .activeHabits: return CardGradients.activeHabits
+        case .completionRate: return CardColors.completionRate
+        case .activeDays: return CardColors.activeDays
+        case .habitsDone: return CardColors.habitsDone
+        case .activeHabits: return CardColors.activeHabits
         }
     }
-
+    
     private var cardTitle: String {
         switch card {
         case .habitsDone: return "completed_total".localized
@@ -425,7 +366,7 @@ struct CardInfoView: View {
         case .activeHabits: return "active_habits".localized
         }
     }
-
+    
     private var cardDescription: String {
         switch card {
         case .habitsDone:
@@ -438,7 +379,7 @@ struct CardInfoView: View {
             return "active_habits_description".localized
         }
     }
-
+    
     private var calculationDescription: String {
         switch card {
         case .habitsDone:
@@ -451,7 +392,7 @@ struct CardInfoView: View {
             return "active_habits_calculation".localized
         }
     }
-
+    
     private var exampleDescription: String {
         switch card {
         case .habitsDone:

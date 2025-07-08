@@ -75,11 +75,19 @@ struct TeymiaHabitApp: App {
     private func handleAppBackground() {
         print("📱 App going to background")
         saveDataContext()
+        
+        // ✅ ДОБАВЛЕНО: Сообщаем TimerService о переходе в фон
+        TimerService.shared.handleAppDidEnterBackground()
+        
         // Note: Live Activities continue running in background automatically
     }
     
     private func handleAppForeground() {
-        print("DEBUG: ℹ️ applicationWillEnterForeground")
+        print("📱 App will enter foreground")
+        
+        // ✅ ДОБАВЛЕНО: Сообщаем TimerService о возврате на передний план
+        TimerService.shared.handleAppWillEnterForeground()
+        
         // Live Activities will automatically sync when app becomes active
         // TimerService continues running, no need to restore
     }

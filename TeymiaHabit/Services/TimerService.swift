@@ -6,16 +6,12 @@ final class TimerService {
     static let shared = TimerService()
     
     // MARK: - State
-    private(set) var liveProgress: [String: Int] = [:]
+    private var activeTimers: [String: TimerData] = [:]
+    private var uiTimer: Timer?
     
     // MARK: - UI Update Trigger
     private(set) var updateTrigger: Int = 0
-    
-    // MARK: - Internal State
-    @ObservationIgnored private var activeTimers: [String: TimerData] = [:]
-    @ObservationIgnored private var uiTimer: Timer?
-    @ObservationIgnored private var lastSaveDate: String = ""
-    
+        
     // MARK: - Configuration
     private let maxTimers = 5
     
@@ -23,175 +19,139 @@ final class TimerService {
     private struct TimerData {
         let habitId: String
         let startTime: Date
-        let baseProgress: Int
+        let baseProgress: Int // Progress when timer started
     }
     
-    private init() {
-        migrateFromOldTimer()
-        restoreState()
-        checkDayChange()
-    }
+    private init() {}
     
     // MARK: - Public API
     
-    func getCurrentProgress(for habitId: String) -> Int {
-        checkDayChange()
-        
-        if let timerData = activeTimers[habitId] {
-            let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
-            return timerData.baseProgress + elapsed
-        }
-        
-        return liveProgress[habitId] ?? 0
+    /// Get current live progress for active timer (returns nil if timer not running)
+    func getLiveProgress(for habitId: String) -> Int? {
+        guard let timerData = activeTimers[habitId] else { return nil }
+        let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
+        let currentProgress = timerData.baseProgress + elapsed
+        return min(currentProgress, 86400) // Cap at 24 hours
     }
     
+    /// Check if timer is running for habit
     func isTimerRunning(for habitId: String) -> Bool {
-        checkDayChange()
         return activeTimers[habitId] != nil
     }
     
-    func startTimer(for habitId: String, initialProgress: Int) -> Bool {
-        checkDayChange()
-        
-        // Check limit
-        if activeTimers[habitId] == nil && activeTimers.count >= maxTimers {
-            return false
-        }
-        
-        // Already running
+    /// Start timer for habit with base progress
+    func startTimer(for habitId: String, baseProgress: Int) -> Bool {
+        // Check if already running
         if activeTimers[habitId] != nil {
+            print("⚠️ Timer already running for: \(habitId)")
             return true
         }
         
-        // Start new timer
+        // Check timer limit
+        guard activeTimers.count < maxTimers else {
+            print("❌ Timer limit reached: \(activeTimers.count)/\(maxTimers)")
+            return false
+        }
+        
+        // Create new timer
         activeTimers[habitId] = TimerData(
             habitId: habitId,
             startTime: Date(),
-            baseProgress: initialProgress
+            baseProgress: baseProgress
         )
         
-        // Start UI timer if first
+        // Start UI updates if this is the first timer
         if activeTimers.count == 1 {
             startUITimer()
         }
         
-        saveState()
-        triggerUIUpdate() // ✅ Force UI update immediately
-        print("✅ Timer started: \(habitId) (\(activeTimers.count)/\(maxTimers))")
+        triggerUIUpdate()
+        print("✅ Timer started: \(habitId), base: \(baseProgress) (\(activeTimers.count)/\(maxTimers))")
         return true
     }
     
-    func stopTimer(for habitId: String) {
-        checkDayChange()
-        
-        guard let timerData = activeTimers[habitId] else { return }
+    /// Stop timer and return final progress
+    func stopTimer(for habitId: String) -> Int? {
+        guard let timerData = activeTimers[habitId] else {
+            print("⚠️ Timer was not running for: \(habitId)")
+            return nil
+        }
         
         // Calculate final progress
         let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
-        let finalProgress = timerData.baseProgress + elapsed
-        
-        // Save progress
-        liveProgress[habitId] = finalProgress
+        let finalProgress = min(timerData.baseProgress + elapsed, 86400) // Cap at 24 hours
         
         // Remove timer
         activeTimers.removeValue(forKey: habitId)
         
-        // CRITICAL: Stop UI timer immediately if no active timers
+        // Stop UI updates if no more timers
         if activeTimers.isEmpty {
             stopUITimer()
-            print("🛑 UI Timer stopped - no active timers")
         }
         
-        saveState()
-        triggerUIUpdate() // ✅ Final UI update after stopping
-        print("✅ Timer stopped: \(habitId), final: \(finalProgress)")
+        triggerUIUpdate()
+        print("✅ Timer stopped: \(habitId), final: \(finalProgress) (remaining: \(activeTimers.count))")
+        return finalProgress
     }
     
-    func setProgress(_ progress: Int, for habitId: String) {
-        if activeTimers[habitId] != nil {
-            stopTimer(for: habitId)
-        }
-        liveProgress[habitId] = progress
-        triggerUIUpdate() // ✅ Force UI update
-        saveState()
-    }
-    
-    func resetProgress(for habitId: String) {
-        if activeTimers[habitId] != nil {
-            stopTimer(for: habitId)
-        }
-        liveProgress[habitId] = 0
-        triggerUIUpdate() // ✅ Force UI update
-        saveState()
+    /// Get timer start time (for Live Activities)
+    func getTimerStartTime(for habitId: String) -> Date? {
+        return activeTimers[habitId]?.startTime
     }
     
     // MARK: - Status
     
     var activeTimerCount: Int {
-        checkDayChange()
         return activeTimers.count
     }
     
     var canStartNewTimer: Bool {
-        checkDayChange()
         return activeTimers.count < maxTimers
     }
     
     var remainingSlots: Int {
-        checkDayChange()
         return maxTimers - activeTimers.count
     }
     
-    func getTimerStartTime(for habitId: String) -> Date? {
-        return activeTimers[habitId]?.startTime
+    var hasActiveTimers: Bool {
+        return !activeTimers.isEmpty
     }
     
-    // MARK: - UI Timer
+    // MARK: - Cleanup
+    
+    /// Stop all timers (useful for app lifecycle events)
+    func stopAllTimers() -> [String: Int] {
+        var finalProgresses: [String: Int] = [:]
+        
+        for habitId in activeTimers.keys {
+            if let finalProgress = stopTimer(for: habitId) {
+                finalProgresses[habitId] = finalProgress
+            }
+        }
+        
+        return finalProgresses
+    }
+    
+    // MARK: - UI Timer Management
     
     private func startUITimer() {
         // Stop existing timer first
         uiTimer?.invalidate()
-        uiTimer = nil
         
+        // Create new timer that triggers UI updates every second
         uiTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.updateLiveProgress()
+                self?.triggerUIUpdate()
             }
         }
+        
+        print("⏱️ UI Timer started for \(activeTimers.count) active timers")
     }
     
     private func stopUITimer() {
         uiTimer?.invalidate()
         uiTimer = nil
-    }
-    
-    private func updateLiveProgress() {
-        // CRITICAL: Stop updating if no active timers
-        guard !activeTimers.isEmpty else {
-            return
-        }
-        
-        var hasChanges = false
-        
-        for (habitId, timerData) in activeTimers {
-            let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
-            let newProgress = timerData.baseProgress + elapsed
-            
-            if liveProgress[habitId] != newProgress {
-                liveProgress[habitId] = newProgress
-                hasChanges = true
-            }
-        }
-        
-        // ONLY trigger UI update if there are actual changes
-        if hasChanges {
-            triggerUIUpdate()
-        }
-        
-        // Debug print every 5 seconds
-        if hasChanges && (liveProgress.values.first ?? 0) % 5 == 0 {
-            print("⏱️ UI Update: \(liveProgress)")
-        }
+        print("⏱️ UI Timer stopped")
     }
     
     // MARK: - UI Update Helper
@@ -200,147 +160,85 @@ final class TimerService {
         updateTrigger += 1
     }
     
-    // MARK: - Day Change
+    // MARK: - App Lifecycle Support
     
-    private var currentDateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: Date())
-    }
-    
-    private func checkDayChange() {
-        let today = currentDateString
+    /// Call when app enters background (for Live Activities)
+    func handleAppDidEnterBackground() {
+        print("🌙 TimerService: App entered background with \(activeTimers.count) active timers")
         
-        if lastSaveDate != today && lastSaveDate != "" {
-            print("🗓️ Day changed from \(lastSaveDate) to \(today)")
-            
-            // Stop all timers
-            let habitIds = Array(activeTimers.keys)
-            for habitId in habitIds {
-                stopTimer(for: habitId)
-            }
-            
-            // Clear state
-            liveProgress.removeAll()
-            clearState()
-        }
-        
-        lastSaveDate = today
-    }
-    
-    // MARK: - Persistence
-    
-    private func saveState() {
-        let state = TimerState(
-            activeTimers: activeTimers.mapValues { timer in
-                SavedTimer(
-                    habitId: timer.habitId,
-                    startTime: timer.startTime,
-                    baseProgress: timer.baseProgress
-                )
-            },
-            liveProgress: liveProgress,
-            lastSaveDate: lastSaveDate
-        )
-        
-        if let encoded = try? JSONEncoder().encode(state) {
-            UserDefaults.standard.set(encoded, forKey: "TimerService_v1")
+        // Print debug info for Live Activities
+        for (habitId, timerData) in activeTimers {
+            let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
+            let currentProgress = timerData.baseProgress + elapsed
+            print("   - \(habitId): \(currentProgress) total (\(elapsed)s elapsed)")
         }
     }
     
-    private func restoreState() {
-        guard let data = UserDefaults.standard.data(forKey: "TimerService_v1"),
-              let state = try? JSONDecoder().decode(TimerState.self, from: data) else {
-            return
-        }
+    /// Call when app enters foreground
+    func handleAppWillEnterForeground() {
+        print("☀️ TimerService: App entering foreground")
         
-        // Check same day
-        let today = currentDateString
-        guard state.lastSaveDate == today else {
-            clearState()
-            return
-        }
-        
-        // Restore timers
-        for (habitId, savedTimer) in state.activeTimers {
-            activeTimers[habitId] = TimerData(
-                habitId: savedTimer.habitId,
-                startTime: savedTimer.startTime,
-                baseProgress: savedTimer.baseProgress
-            )
-        }
-        
-        // Restore progress
-        liveProgress = state.liveProgress
-        lastSaveDate = state.lastSaveDate
-        
-        // Start UI timer if needed
-        if !activeTimers.isEmpty {
+        // Restart UI timer if we have active timers but no UI timer
+        if !activeTimers.isEmpty && uiTimer == nil {
+            print("☀️ Restarting UI timer for \(activeTimers.count) active timers")
             startUITimer()
         }
         
-        print("🔄 Restored \(activeTimers.count) timers")
+        // Force UI update to refresh all views
+        triggerUIUpdate()
+        
+        // Debug current state
+        if !activeTimers.isEmpty {
+            print("☀️ Active timers after foreground:")
+            for (habitId, timerData) in activeTimers {
+                let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
+                let currentProgress = timerData.baseProgress + elapsed
+                print("   - \(habitId): \(currentProgress) total (\(elapsed)s elapsed)")
+            }
+        }
     }
     
-    // MARK: - Migration from old ViewModel timer
-    
-    private func migrateFromOldTimer() {
-        // Check for old timer format from your current ViewModel
-        let userDefaults = UserDefaults.standard
-        let keys = userDefaults.dictionaryRepresentation().keys
+    /// Check if any timers are from previous day and clean them up
+    func cleanupStaleTimers() {
+        let calendar = Calendar.current
+        let now = Date()
+        var staleTimers: [String] = []
         
-        for key in keys {
-            if key.hasPrefix("timer_") {
-                // Extract habit ID from key
-                let habitId = String(key.dropFirst(6)) // Remove "timer_" prefix
-                
-                if let startTime = userDefaults.object(forKey: key) as? Date {
-                    // Check if it's from today
-                    if Calendar.current.isDate(startTime, inSameDayAs: Date()) {
-                        print("🔄 Migrating timer for habit: \(habitId)")
-                        
-                        // Calculate elapsed time as progress
-                        let elapsed = Int(Date().timeIntervalSince(startTime))
-                        liveProgress[habitId] = elapsed
-                        
-                        // Remove old key
-                        userDefaults.removeObject(forKey: key)
-                    } else {
-                        // Remove stale timer
-                        userDefaults.removeObject(forKey: key)
-                    }
-                }
+        for (habitId, timerData) in activeTimers {
+            // If timer is from a different day, mark as stale
+            if !calendar.isDate(timerData.startTime, inSameDayAs: now) {
+                staleTimers.append(habitId)
             }
         }
         
-        if !liveProgress.isEmpty {
-            saveState()
+        // Remove stale timers
+        for habitId in staleTimers {
+            print("🗑️ Removing stale timer: \(habitId)")
+            activeTimers.removeValue(forKey: habitId)
+        }
+        
+        // Stop UI timer if no timers left
+        if activeTimers.isEmpty && uiTimer != nil {
+            stopUITimer()
+        }
+        
+        if !staleTimers.isEmpty {
+            triggerUIUpdate()
         }
     }
     
-    private func clearState() {
-        UserDefaults.standard.removeObject(forKey: "TimerService_v1")
-        activeTimers.removeAll()
-        liveProgress.removeAll()
-    }
+    // MARK: - Debug Helpers
     
-    deinit {
-        // Can't call @MainActor methods in deinit
-        uiTimer?.invalidate()
-        uiTimer = nil
+    func debugCurrentState() {
+        print("🔍 TimerService Debug State:")
+        print("   Active timers: \(activeTimers.count)/\(maxTimers)")
+        print("   UI Timer running: \(uiTimer != nil)")
+        print("   Update trigger: \(updateTrigger)")
+        
+        for (habitId, timerData) in activeTimers {
+            let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
+            let currentProgress = timerData.baseProgress + elapsed
+            print("   - \(habitId): base=\(timerData.baseProgress), elapsed=\(elapsed), current=\(currentProgress)")
+        }
     }
-}
-
-// MARK: - State Structures
-
-private struct TimerState: Codable {
-    let activeTimers: [String: SavedTimer]
-    let liveProgress: [String: Int]
-    let lastSaveDate: String
-}
-
-private struct SavedTimer: Codable {
-    let habitId: String
-    let startTime: Date
-    let baseProgress: Int
 }

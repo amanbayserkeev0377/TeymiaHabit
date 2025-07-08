@@ -22,29 +22,34 @@ struct StatisticsView: View {
     
     var body: some View {
         NavigationStack {
-            if habits.isEmpty {
-                StatisticsEmptyStateView()
-            } else {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Overview Section
-                        VStack(spacing: 16) {
-                            OverviewStatsView(habits: habits)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        
-                        // Habits List with individual StreaksView
-                        LazyVStack(spacing: 12) {
-                            ForEach(habits) { habit in
-                                HabitStatsListCard(habit: habit) {
-                                    selectedHabitForStats = habit
+            ZStack {
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea(.all)
+                
+                if habits.isEmpty {
+                    StatisticsEmptyStateView()
+                } else {
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // Overview Section
+                            VStack(spacing: 16) {
+                                OverviewStatsView(habits: habits)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.top, 16)
+                            
+                            // Habits List with individual StreaksView
+                            LazyVStack(spacing: 12) {
+                                ForEach(habits) { habit in
+                                    HabitStatsListCard(habit: habit) {
+                                        selectedHabitForStats = habit
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 16)
+                            
+                            Spacer(minLength: 20)
                         }
-                        .padding(.horizontal, 16)
-                        
-                        Spacer(minLength: 20)
                     }
                 }
             }
@@ -58,7 +63,7 @@ struct StatisticsView: View {
     }
 }
 
-// MARK: - Statistics Empty State (без изменений)
+// MARK: - Statistics Empty State
 
 struct StatisticsEmptyStateView: View {
     @State private var isAnimating = false
