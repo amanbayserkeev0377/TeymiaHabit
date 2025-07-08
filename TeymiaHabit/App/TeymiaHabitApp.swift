@@ -47,6 +47,10 @@ struct TeymiaHabitApp: App {
             MainTabView()
                 .environment(weekdayPrefs)
                 .environment(ProManager.shared)
+                // ✅ КРИТИЧНО: Добавляем инициализацию Live Activity listener'а
+                .onAppear {
+                    setupLiveActivities()
+                }
         }
         .modelContainer(container)
         .onChange(of: scenePhase) { _, newPhase in
@@ -70,26 +74,51 @@ struct TeymiaHabitApp: App {
         }
     }
     
+    // MARK: - Live Activities Setup
+    
+    private func setupLiveActivities() {
+        print("🎬 Setting up Live Activities...")
+        
+        // ✅ КРИТИЧНО: Запускаем listener для Widget Actions
+        HabitLiveActivityManager.shared.startListeningForWidgetActions()
+        
+        // ✅ Восстанавливаем существующие Live Activities при запуске
+        Task {
+            await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
+        }
+        
+        print("✅ Live Activities setup completed")
+    }
+    
     // MARK: - App Lifecycle Methods
 
     private func handleAppBackground() {
         print("📱 App going to background")
         saveDataContext()
         
-        // ✅ ДОБАВЛЕНО: Сообщаем TimerService о переходе в фон
+        // ✅ Сообщаем TimerService о переходе в фон
         TimerService.shared.handleAppDidEnterBackground()
         
-        // Note: Live Activities continue running in background automatically
+        // ✅ НЕ останавливаем Live Activity listener в фоне - он должен работать!
+        // HabitLiveActivityManager продолжает слушать Widget Actions в фоне
     }
     
     private func handleAppForeground() {
         print("📱 App will enter foreground")
         
-        // ✅ ДОБАВЛЕНО: Сообщаем TimerService о возврате на передний план
+        // ✅ Сообщаем TimerService о возврате на передний план
         TimerService.shared.handleAppWillEnterForeground()
         
-        // Live Activities will automatically sync when app becomes active
-        // TimerService continues running, no need to restore
+        // ✅ Убеждаемся что Live Activity listener работает
+        if !HabitLiveActivityManager.shared.isListeningForWidgetActions {
+            print("🔄 Restarting Live Activity listener")
+            HabitLiveActivityManager.shared.startListeningForWidgetActions()
+        }
+        
+        // ✅ Синхронизируем состояние Live Activities
+        Task {
+            await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
+        }
     }
     
     private func saveDataContext() {

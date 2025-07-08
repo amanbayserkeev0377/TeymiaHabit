@@ -1,28 +1,27 @@
 import SwiftUI
 
 enum ChartTimeRange: String, CaseIterable {
-    case week = "W"
-    case month = "M"
-    case year = "Y"
-    
+    case week
+    case month
+    case year
+
     var localized: String {
         switch self {
-        case .week: return "W"
-        case .month: return "M"
-        case .year: return "Y"
+        case .week: return "week".localized
+        case .month: return "month".localized
+        case .year: return "year".localized
         }
     }
-    
+
     var days: Int {
         let calendar = Calendar.current
         switch self {
-        case .week: 
+        case .week:
             return 7
-        case .month: 
+        case .month:
             let range = calendar.range(of: .day, in: .month, for: Date())
             return range?.count ?? 30
-        case .year: 
-            // Динамическое вычисление дней в году (учитывает високосные годы)
+        case .year:
             let range = calendar.range(of: .day, in: .year, for: Date())
             return range?.count ?? 365
         }
@@ -31,10 +30,10 @@ enum ChartTimeRange: String, CaseIterable {
 
 struct TimeRangePicker: View {
     @Binding var selection: ChartTimeRange
-    
+
     var body: some View {
         Picker("Time Range", selection: $selection) {
-            ForEach(ChartTimeRange.allCases, id: \.self) { range in 
+            ForEach(ChartTimeRange.allCases, id: \.self) { range in
                 Text(range.localized).tag(range)
             }
         }

@@ -287,7 +287,6 @@ struct HabitCardView: View {
     
     private var cardProgress: Int {
         let progress = habit.progressForDate(date)
-        print("🏠 HabitCardView progress for \(habit.title): \(progress)")
         return progress
     }
     

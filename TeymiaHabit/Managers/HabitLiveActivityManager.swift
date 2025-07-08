@@ -206,10 +206,6 @@ final class HabitLiveActivityManager {
         return isListening
     }
     
-    // ИСПРАВЛЕНИЕ: просто убираем deinit - timer будет остановлен при stopListeningForWidgetActions()
-    // deinit убран, так как требует экспериментальные флаги
-    // Вместо этого полагаемся на явный вызов stopListeningForWidgetActions()
-    
     private func checkForWidgetActions() async {
         guard let userDefaults = UserDefaults(suiteName: appGroupsID) else {
             print("❌ Cannot access UserDefaults for app group: \(appGroupsID)")
@@ -245,71 +241,29 @@ final class HabitLiveActivityManager {
         UserDefaults.standard.set(timestamp, forKey: lastProcessedKey)
         userDefaults.removeObject(forKey: "live_activity_action")
         
-        // ✅ Для toggleTimer нужно дополнительно обновить Live Activity
+        // ✅ УПРОЩЕНО: Прямое уведомление через NotificationCenter
+        let notification = WidgetActionNotification(
+            action: WidgetAction(rawValue: action) ?? .toggleTimer,
+            habitId: habitId,
+            timestamp: Date(timeIntervalSince1970: timestamp)
+        )
+        
+        NotificationCenter.default.post(
+            name: .widgetActionReceived,
+            object: notification
+        )
+        
+        print("📡 Posted notification for action: \(action)")
+        
+        // Для toggleTimer дополнительно принудительно обновляем Live Activity
         if action == "toggleTimer" {
-            print("🔍 Widget requested timer toggle for: \(habitId)")
-            
-            // Сначала отправляем уведомление приложению
-            let notification = WidgetActionNotification(
-                action: .toggleTimer,
-                habitId: habitId,
-                timestamp: Date(timeIntervalSince1970: timestamp)
-            )
-            
-            NotificationCenter.default.post(
-                name: .widgetActionReceived,
-                object: notification
-            )
-            
-            // ✅ Ждем немного чтобы приложение обработало действие
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 секунды
-            
-            // ✅ Затем принудительно обновляем Live Activity
-            await forceUpdateActivityAfterWidgetAction(habitId: habitId)
-            
+            // Ждем немного чтобы приложение обработало действие
+            try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 секунды
         } else if action == "dismissActivity" {
-            print("🔍 Widget requested dismiss for: \(habitId)")
             await endActivity(for: habitId)
-        } else {
-            // Другие действия
-            let notification = WidgetActionNotification(
-                action: WidgetAction(rawValue: action) ?? .toggleTimer,
-                habitId: habitId,
-                timestamp: Date(timeIntervalSince1970: timestamp)
-            )
-            
-            NotificationCenter.default.post(
-                name: .widgetActionReceived,
-                object: notification
-            )
         }
     }
     
-    private func forceUpdateActivityAfterWidgetAction(habitId: String) async {
-        guard let activity = activeActivities[habitId] else {
-            print("⚠️ No activity found for force update: \(habitId)")
-            return
-        }
-        
-        print("🔄 Force updating Live Activity after widget action for: \(habitId)")
-        
-        // ✅ Получаем актуальное состояние из TimerService
-        let timerService = TimerService.shared
-        let isRunning = timerService.isTimerRunning(for: habitId)
-        
-        // ✅ ИСПРАВЛЕНО: используем getLiveProgress вместо getCurrentProgress
-        let currentProgress = timerService.getLiveProgress(for: habitId) ?? 0
-        let startTime = timerService.getTimerStartTime(for: habitId)
-        
-        print("🔄 Current state: running=\(isRunning), progress=\(currentProgress)")
-        
-        await updateActivity(
-            for: habitId,
-            currentProgress: currentProgress,
-            isTimerRunning: isRunning,
-            timerStartTime: startTime
-        )
-    }
     
     // MARK: - Error Handling
     
