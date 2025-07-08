@@ -7,20 +7,9 @@
 "alert_delete_multiple_habits" = "Тандалган адаттарды өчүрүү";
 "alert_delete_multiple_habits_message" = "Сиз чындап эле %d тандалган адатты түбөлүккө өчүргүңүз келеби?";
 
-// Progress Input Alerts
-"alert_add_count" = "Саан кошуу";
-"alert_add_count_message" = "Кошулуучу аткарылган иштердин санын киргизиңиз";
-
-"alert_add_time" = "Убакыт кошуу";
-"alert_add_time_message" = "Бул адатка сарптаган убакытыңызды киргизиңиз";
-
 // History Reset Alert
 "alert_reset_history" = "Тарыхты өчүрүү";
 "alert_reset_history_message" = "Бул адаттын бардык аткарылган маалыматын биротоло өчүрөт. Бул аракетти кайтарууга болбойт.";
-
-// Timer Close Alert
-"alert_close_timer" = "Таймерди токтотуу";
-"alert_close_timer_message" = "Жабуу иштеп жаткан таймерди токтотот. Улантасыңбы?";
 
 // Notifications Permission Alert
 "alert_notifications_permission" = "Эскертме үчүн уруксат керек";
@@ -52,10 +41,8 @@
 "goal" = "Максат: %@";
 "minutes_format" = "%d м";
 "hours_format" = "%d с";
-"hours_less_than_24" = "сааттар (24төн аз)";
 "hours_minutes_format" = "%d с %d м";
 "minutes" = "Мүнөт";
-"minutes_less_than_60" = "мүнөттөр (60тан аз)";
 "streak" = "Катасыз";
 "best" = "Мыкты";
 "total" = "Жалпы";

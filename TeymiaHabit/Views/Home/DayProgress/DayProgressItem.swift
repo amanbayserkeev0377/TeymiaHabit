@@ -138,6 +138,7 @@ struct DayProgressItem: View, Equatable {
                                 )
                             )
                             .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut(duration: 0.3), value: progress)
                     }
                     
                     // Число дня месяца

@@ -7,27 +7,9 @@
 "alert_delete_multiple_habits" = "Delete Selected Habits";
 "alert_delete_multiple_habits_message" = "Are you sure you want to delete %d selected habits?";
 
-// Folder Delete Alerts
-"alert_delete_folder" = "Delete Folder";
-"alert_delete_folder_message" = "Delete «%@»? Your habits won't be deleted.";
-
-"alert_delete_folders" = "Delete Folders";
-"alert_delete_folders_message" = "Delete %d folders? Your habits won't be deleted.";
-
-// Progress Input Alerts
-"alert_add_count" = "Add Count";
-"alert_add_count_message" = "Enter the number of completions to add";
-
-"alert_add_time" = "Add Time";
-"alert_add_time_message" = "Enter the time you spent on this habit";
-
 // History Reset Alert
 "alert_reset_history" = "Reset History";
 "alert_reset_history_message" = "This will permanently delete all habit completion data. This action cannot be undone.";
-
-// Timer Close Alert
-"alert_close_timer" = "Stop Timer";
-"alert_close_timer_message" = "Closing will stop the running timer. Continue?";
 
 // Notifications Permission Alert
 "alert_notifications_permission" = "Notification Permission Required";
@@ -59,10 +41,8 @@
 "goal" = "Goal: %@";
 "minutes_format" = "%d m";
 "hours_format" = "%d hr";
-"hours_less_than_24" = "hours (less than 24)";
 "hours_minutes_format" = "%d hr %d m";
 "minutes" = "Minutes";
-"minutes_less_than_60" = "minutes (less than 60)";
 "streak" = "Streak";
 "best" = "Best";
 "total" = "Total";

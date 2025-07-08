@@ -33,12 +33,12 @@ extension Int {
         
         if hours > 0 {
             if minutes > 0 {
-                return "\(hours) hr \(minutes) min"
+                return "hours_minutes_format".localized(with: hours, minutes)
             } else {
-                return "\(hours) hr"
+                return "hours_format".localized(with: hours)
             }
         } else {
-            return "\(minutes) min"
+            return "minutes_format".localized(with: minutes)
         }
     }
     

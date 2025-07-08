@@ -12,8 +12,11 @@ final class HabitDetailViewModel {
     private var widgetActionTask: Task<Void, Never>?
     
     // MARK: - State
-        private(set) var localUpdateTrigger: Int = 0
-        private var updateTimer: Timer?
+    private(set) var localUpdateTrigger: Int = 0
+    private var updateTimer: Timer?
+    
+    // ✅ НОВОЕ: отдельное хранение прогресса для ЭТОЙ привычки
+    private(set) var cachedProgress: Int = 0
     
     // MARK: - UI State
     var alertState = AlertState()
@@ -22,25 +25,24 @@ final class HabitDetailViewModel {
     var onHabitDeleted: (() -> Void)?
     var hasActiveLiveActivity: Bool = false
     
-    
-    
     // MARK: - Computed Properties
     
     var currentProgress: Int {
-        // Подписываемся на localUpdateTrigger для UI обновлений
-        _ = localUpdateTrigger
+        // ✅ ИСПРАВЛЕНО: Подписываемся на localUpdateTrigger только если таймер активен
+        let habitId = habit.uuid.uuidString
         
-        let dbProgress = habit.progressForDate(date)
-        
-        // Если сегодня и таймер активен - берем live прогресс
-        if isToday && habit.type == .time {
-            let habitId = habit.uuid.uuidString
+        // Если сегодня и таймер активен - берем live прогресс И подписываемся на обновления
+        if isToday && habit.type == .time && timerService.isTimerRunning(for: habitId) {
+            // ✅ КРИТИЧНО: Подписываемся на обновления только для активного таймера
+            _ = localUpdateTrigger
+            
             if let liveProgress = timerService.getLiveProgress(for: habitId) {
                 return liveProgress
             }
         }
         
-        return dbProgress
+        // ✅ Для всех остальных случаев - кэшированный прогресс без подписки на обновления
+        return cachedProgress
     }
     
     var completionPercentage: Double {
@@ -83,12 +85,30 @@ final class HabitDetailViewModel {
         
         print("🚀 HabitDetailViewModel init for habit: \(habit.title)")
         print("   habitId: \(habitId)")
+        print("   habit.uuid: \(habit.uuid)")
+
+        // ✅ КРИТИЧНО: Инициализируем кэшированный прогресс из БД
+        self.cachedProgress = habit.progressForDate(date)
+        print("   initial cached progress: \(cachedProgress)")
+
+        // ✅ ДОБАВЛЯЕМ ДЕТАЛЬНУЮ ОТЛАДКУ
+        print("   habit completions count: \(habit.completions?.count ?? 0)")
+        if let completions = habit.completions {
+            for completion in completions {
+                print("     completion: date=\(completion.date), value=\(completion.value)")
+            }
+        }
+
+        // ✅ Проверяем прогресс из БД еще раз для уверенности
+        let directProgress = habit.progressForDate(date)
+        print("   direct progress check: \(directProgress)")
+
+        if cachedProgress != directProgress {
+            print("   ⚠️ ПРОБЛЕМА: cachedProgress != directProgress!")
+        }
         
-        // ✅ Инициализируем прогресс в TimerService если сегодня
-        if isToday {
-            // ✅ КРИТИЧНО: Берем прогресс ТОЛЬКО из базы данных, избегая циклической зависимости
-            let dbProgress = habit.progressForDate(date) // ← Берем напрямую из БД!
-            
+        // ✅ Для сегодняшних time привычек запускаем локальные обновления если таймер активен
+        if isToday && habit.type == .time {
             if timerService.isTimerRunning(for: habitId) {
                 startLocalUpdates()
             }
@@ -102,21 +122,24 @@ final class HabitDetailViewModel {
     
     // MARK: - Public UI Update Method
     func forceUIUpdate() {
+        // ✅ ИСПРАВЛЕНО: обновляем кэш И триггер
+        cachedProgress = habit.progressForDate(date)
         localUpdateTrigger += 1
+        print("🔄 UI updated for \(habit.title): cached progress = \(cachedProgress)")
     }
     
     // MARK: - Progress Methods
     
     func incrementProgress() {
-        let incrementValue = habit.type == .count ? 1 : 60
+        print("🔄 incrementProgress called for: \(habit.title)")
+        print("   habit.uuid: \(habit.uuid)")
         
-        // 1. Добавляем к существующему прогрессу в базе
+        let incrementValue = habit.type == .count ? 1 : 60
         habit.addToProgress(incrementValue, for: date, modelContext: modelContext)
         
-        // 2. Обновляем TimerService если сегодня
-        if isToday {
-            let habitId = habit.uuid.uuidString
-            forceUIUpdate()        }
+        print("   after addToProgress, direct check: \(habit.progressForDate(date))")
+        
+        forceUIUpdate()
     }
     
     func decrementProgress() {
@@ -130,18 +153,15 @@ final class HabitDetailViewModel {
         // 1. Добавляем к существующему прогрессу в базе
         habit.addToProgress(decrementValue, for: date, modelContext: modelContext)
         
-        // 2. Обновляем TimerService если сегодня
-        if isToday {
-            let habitId = habit.uuid.uuidString
-            forceUIUpdate()        }
+        // 2. ✅ КРИТИЧНО: Обновляем кэш сразу после изменения БД
+        forceUIUpdate()
     }
     
     func handleCustomCountInput(count: Int) {
         habit.addToProgress(count, for: date, modelContext: modelContext)
         
-        if isToday {
-            let habitId = habit.uuid.uuidString
-            forceUIUpdate()        }
+        // ✅ КРИТИЧНО: Обновляем кэш сразу после изменения БД
+        forceUIUpdate()
         
         alertState.successFeedbackTrigger.toggle()
     }
@@ -156,9 +176,8 @@ final class HabitDetailViewModel {
         
         habit.addToProgress(totalSeconds, for: date, modelContext: modelContext)
         
-        if isToday {
-            let habitId = habit.uuid.uuidString
-            forceUIUpdate()        }
+        // ✅ КРИТИЧНО: Обновляем кэш сразу после изменения БД
+        forceUIUpdate()
         
         alertState.successFeedbackTrigger.toggle()
     }
@@ -168,9 +187,8 @@ final class HabitDetailViewModel {
         
         habit.complete(for: date, modelContext: modelContext)
         
-        if isToday {
-            let habitId = habit.uuid.uuidString
-            forceUIUpdate()        }
+        // ✅ КРИТИЧНО: Обновляем кэш сразу после изменения БД
+        forceUIUpdate()
         
         alertState.successFeedbackTrigger.toggle()
         
@@ -186,35 +204,35 @@ final class HabitDetailViewModel {
     func resetProgress() {
         habit.resetProgress(for: date, modelContext: modelContext)
         
-        if isToday {
-            let habitId = habit.uuid.uuidString
-            forceUIUpdate()        }
+        // ✅ КРИТИЧНО: Обновляем кэш сразу после изменения БД
+        forceUIUpdate()
     }
     
     // MARK: - Timer Management
     
     private func startLocalUpdates() {
-            guard habit.type == .time && isToday else { return }
-            
-            updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-                Task { @MainActor [weak self] in
-                    guard let self = self else { return }
-                    let habitId = self.habit.uuid.uuidString
-                    
-                    // Обновляем только если наш таймер активен
-                    if self.timerService.isTimerRunning(for: habitId) {
-                        self.localUpdateTrigger += 1
-                    }
+        guard habit.type == .time && isToday else { return }
+        
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                let habitId = self.habit.uuid.uuidString
+                
+                // ✅ ИСПРАВЛЕНО: Обновляем UI только если ЭТОТ таймер активен
+                if self.timerService.isTimerRunning(for: habitId) {
+                    // ✅ НЕ обновляем кэш здесь - live прогресс берется из TimerService
+                    self.localUpdateTrigger += 1
                 }
             }
-            print("⏱️ Started local updates for: \(habit.title)")
         }
-        
-        private func stopLocalUpdates() {
-            updateTimer?.invalidate()
-            updateTimer = nil
-            print("⏱️ Stopped local updates for: \(habit.title)")
-        }
+        print("⏱️ Started local updates for: \(habit.title)")
+    }
+    
+    private func stopLocalUpdates() {
+        updateTimer?.invalidate()
+        updateTimer = nil
+        print("⏱️ Stopped local updates for: \(habit.title)")
+    }
     
     func toggleTimer() {
         guard habit.type == .time && isToday else { return }
@@ -231,6 +249,10 @@ final class HabitDetailViewModel {
             // ✅ Останавливаем таймер и получаем финальный прогресс
             if let finalProgress = timerService.stopTimer(for: habitId) {
                 habit.updateProgress(to: finalProgress, for: date, modelContext: modelContext)
+                
+                // ✅ КРИТИЧНО: Обновляем кэш после сохранения в БД
+                forceUIUpdate()
+                
                 print("   Saved final progress to DB: \(finalProgress)")
                 
                 // ✅ Обновляем Live Activity
@@ -253,8 +275,8 @@ final class HabitDetailViewModel {
                 return
             }
             
-            let dbProgress = habit.progressForDate(date)
-            let success = timerService.startTimer(for: habitId, baseProgress: dbProgress)
+            // ✅ ИСПРАВЛЕНО: используем кэшированный прогресс
+            let success = timerService.startTimer(for: habitId, baseProgress: cachedProgress)
 
             if !success {
                 alertState.errorFeedbackTrigger.toggle()
@@ -265,7 +287,7 @@ final class HabitDetailViewModel {
             // ✅ Запускаем локальные обновления
             startLocalUpdates()
             
-            print("✅ Timer started for: \(habit.title), initial progress: \(dbProgress)")
+            print("✅ Timer started for: \(habit.title), initial progress: \(cachedProgress)")
             
             // ✅ Запускаем Live Activity
             Task {

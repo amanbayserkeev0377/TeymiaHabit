@@ -103,12 +103,26 @@ final class Habit {
     // MARK: - Методы для работы с прогрессом
     
     func progressForDate(_ date: Date) -> Int {
-        guard let completions = completions else { return 0 }
+        guard let completions = completions else {
+            print("🔍 progressForDate for \(title): no completions, returning 0")
+            return 0
+        }
         
         let calendar = Calendar.current
         let filteredCompletions = completions.filter { calendar.isDate($0.date, inSameDayAs: date) }
         
+        print("🔍 progressForDate for \(title):")
+        print("   target date: \(date)")
+        print("   total completions: \(completions.count)")
+        print("   filtered completions: \(filteredCompletions.count)")
+        
+        for completion in filteredCompletions {
+            print("     matched completion: date=\(completion.date), value=\(completion.value)")
+        }
+        
         let total = filteredCompletions.reduce(0) { $0 + $1.value }
+        print("   calculated total: \(total)")
+        
         return total
     }
     

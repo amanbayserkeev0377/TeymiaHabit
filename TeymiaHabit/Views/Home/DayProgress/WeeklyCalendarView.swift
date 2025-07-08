@@ -7,6 +7,7 @@ struct WeeklyCalendarView: View {
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
     
     @Query private var habits: [Habit]
+    @Query private var allCompletions: [HabitCompletion]
     
     @State private var weeks: [[Date]] = []
     @State private var currentWeekIndex: Int = 0
@@ -22,6 +23,10 @@ struct WeeklyCalendarView: View {
         
         let sortDescriptor = SortDescriptor<Habit>(\.createdAt, order: .forward)
         _habits = Query(sort: [sortDescriptor])
+        
+        // Fixed: Added proper initialization for allCompletions Query
+        let completionSort = SortDescriptor<HabitCompletion>(\.date, order: .reverse)
+        _allCompletions = Query(sort: [completionSort])
     }
     
     var body: some View {
@@ -73,6 +78,11 @@ struct WeeklyCalendarView: View {
         .onChange(of: habitsData) { _, _ in
             handleHabitsDataChange()
         }
+        // Fixed: Now properly tracking completions changes
+        .onChange(of: completionsData) { _, _ in
+            print("🔄 WeeklyCalendarView: Completions changed, reloading progress")
+            loadProgressData()
+        }
     }
     
     // MARK: - Computed Properties
@@ -80,6 +90,11 @@ struct WeeklyCalendarView: View {
     // Упрощаем отслеживание изменений в привычках
     private var habitsData: [String] {
         habits.map { "\($0.startDate.timeIntervalSince1970)-\($0.isArchived)" }
+    }
+    
+    // Fixed: Now properly using initialized allCompletions
+    private var completionsData: [String] {
+        allCompletions.map { "\($0.date.timeIntervalSince1970)-\($0.value)-\($0.habit?.id ?? "")" }
     }
     
     // MARK: - Event Handlers
@@ -250,7 +265,7 @@ struct WeeklyCalendarView: View {
         // DEBUG для всех вызовов
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/dd"
-//        print("📅 calculateProgress: \(formatter.string(from: date)) = \(averageProgress)")
+        print("📅 calculateProgress: \(formatter.string(from: date)) = \(averageProgress) (\(activeHabits.count) habits)")
         
         return averageProgress
     }

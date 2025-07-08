@@ -7,21 +7,9 @@
 "alert_delete_multiple_habits" = "Удалить выбранные привычки";
 "alert_delete_multiple_habits_message" = "Вы уверены, что хотите удалить %d выбранных привычек?";
 
-
-// Progress Input Alerts
-"alert_add_count" = "Добавить количество";
-"alert_add_count_message" = "Введите количество выполнений для добавления";
-
-"alert_add_time" = "Добавить время";
-"alert_add_time_message" = "Введите время, потраченное на эту привычку";
-
 // History Reset Alert
 "alert_reset_history" = "Сбросить историю";
 "alert_reset_history_message" = "Это безвозвратно удалит все данные о выполнении привычки. Это действие нельзя отменить.";
-
-// Timer Close Alert
-"alert_close_timer" = "Остановить таймер";
-"alert_close_timer_message" = "Закрытие остановит запущенный таймер. Продолжить?";
 
 // Notifications Permission Alert
 "alert_notifications_permission" = "Требуется разрешение на уведомления";
@@ -53,10 +41,8 @@
 "goal" = "Цель: %@";
 "minutes_format" = "%d м";
 "hours_format" = "%d ч";
-"hours_less_than_24" = "часы (меньше 24)";
 "hours_minutes_format" = "%d ч %d м";
 "minutes" = "Минуты";
-"minutes_less_than_60" = "минуты (меньше 60)";
 "streak" = "Подряд";
 "best" = "Рекорд";
 "total" = "Всего";

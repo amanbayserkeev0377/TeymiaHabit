@@ -50,8 +50,8 @@ struct ProgressControlSection: View {
                 isExceeded: isExceeded,
                 habit: habit,
                 size: 200,
-                lineWidth: 16,
-                fontSize: 40
+                lineWidth: 18,
+                fontSize: 38
             )
             .aspectRatio(1, contentMode: .fit)
             

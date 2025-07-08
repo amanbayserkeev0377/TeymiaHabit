@@ -271,12 +271,24 @@ struct HabitCardView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     private let ringSize: CGFloat = 58
-    private let lineWidth: CGFloat = 6.5
+    private let lineWidth: CGFloat = 7
     private let iconSize: CGFloat = 26
     
+    @State private var timerPulseScale: CGFloat = 1.0
+    
+    private var isTimerActive: Bool {
+        guard habit.type == .time && Calendar.current.isDateInToday(date) else {
+            return false
+        }
+        
+        let habitId = habit.uuid.uuidString
+        return TimerService.shared.isTimerRunning(for: habitId)
+    }
+    
     private var cardProgress: Int {
-        // Для главного списка всегда берем только из базы данных
-        return habit.progressForDate(date)
+        let progress = habit.progressForDate(date)
+        print("🏠 HabitCardView progress for \(habit.title): \(progress)")
+        return progress
     }
     
     private var cardCompletionPercentage: Double {
@@ -303,7 +315,7 @@ struct HabitCardView: View {
     
     private var adaptedFontSize: CGFloat {
         let value = cardFormattedProgressValue
-        let baseSize = ringSize * 0.26
+        let baseSize = ringSize * 0.28
         
         let digitsCount = value.filter { $0.isNumber }.count
         let factor: CGFloat = digitsCount <= 3 ? 1.0 : (digitsCount == 4 ? 0.85 : 0.7)
@@ -342,18 +354,42 @@ struct HabitCardView: View {
                 
                 Spacer()
                 
-                // ✅ Right side - Progress ring БЕЗ TimerService
-                ProgressRing(
-                    progress: cardCompletionPercentage,  // ← Локальные данные!
-                    currentValue: cardFormattedProgressValue,  // ← Локальные данные!
-                    isCompleted: cardIsCompleted,  // ← Локальные данные!
-                    isExceeded: cardIsExceeded,  // ← Локальные данные!
-                    habit: habit,
-                    size: ringSize,
-                    lineWidth: lineWidth,
-                    fontSize: adaptedFontSize,
-                    iconSize: iconSize
-                )
+                ZStack {
+                    ProgressRing(
+                        progress: cardCompletionPercentage,
+                        currentValue: cardFormattedProgressValue,
+                        isCompleted: cardIsCompleted,
+                        isExceeded: cardIsExceeded,
+                        habit: habit,
+                        size: ringSize,
+                        lineWidth: lineWidth,
+                        fontSize: adaptedFontSize,
+                        iconSize: iconSize
+                    )
+                    
+                    .overlay(alignment: .bottomTrailing) {
+                        if isTimerActive {
+                            Image(systemName: "clock.fill")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+                                .scaleEffect(timerPulseScale)
+                                .animation(
+                                    .easeInOut(duration: 1.0)
+                                    .repeatForever(autoreverses: true),
+                                    value: timerPulseScale
+                                )
+                                .onAppear {
+                                    if isTimerActive {
+                                        timerPulseScale = 1.1
+                                    }
+                                }
+                                .onDisappear {
+                                    timerPulseScale = 1.0
+                                }
+                                .offset(x: 12, y: 12)
+                        }
+                    }
+                }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
