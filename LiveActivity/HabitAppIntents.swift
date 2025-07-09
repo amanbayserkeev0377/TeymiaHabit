@@ -19,8 +19,11 @@ struct StopTimerIntent: LiveActivityIntent {
             "timestamp": Date().timeIntervalSince1970
         ] as [String: Any]
         
-        userDefaults?.set(update, forKey: "live_activity_action")
+        // ✅ ИСПРАВЛЕНО: Уникальный ключ для каждой привычки (как в HabitLiveActivityManager)
+        let uniqueKey = "live_activity_action_\(habitId)"
+        userDefaults?.set(update, forKey: uniqueKey)
         
+        print("🔧 Widget action stored with key: \(uniqueKey)")
         return .result()
     }
 }
@@ -72,8 +75,11 @@ struct DismissActivityIntent: LiveActivityIntent {
             "timestamp": Date().timeIntervalSince1970
         ] as [String: Any]
         
-        userDefaults?.set(update, forKey: "live_activity_action")
+        // ✅ ИСПРАВЛЕНО: Уникальный ключ для каждой привычки (как в HabitLiveActivityManager)
+        let uniqueKey = "live_activity_action_\(habitId)"
+        userDefaults?.set(update, forKey: uniqueKey)
         
+        print("🔧 Widget action stored with key: \(uniqueKey)")
         return .result()
     }
 }

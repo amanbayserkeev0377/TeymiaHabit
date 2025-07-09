@@ -376,70 +376,43 @@ struct HabitStatisticsView: View {
         }
     }
     
-    // Остальные методы остаются без изменений...
     private func completeHabitDirectly(for date: Date) {
-        let tempViewModel = HabitDetailViewModel(
-            habit: habit,
-            date: date,
-            modelContext: modelContext,
-        )
-        
-        tempViewModel.completeHabit()
-        tempViewModel.saveIfNeeded()
-        viewModel.refresh()
+        habit.complete(for: date, modelContext: modelContext)
+        saveAndRefresh()
         HapticManager.shared.play(.success)
-        updateCounter += 1
     }
     
     private func handleCustomCountInput(count: Int) {
         guard let date = alertState.date else { return }
         
-        let tempViewModel = HabitDetailViewModel(
-            habit: habit,
-            date: date,
-            modelContext: modelContext
-        )
-        
-        tempViewModel.handleCustomCountInput(count: count)
-        tempViewModel.saveIfNeeded()
-        viewModel.refresh()
-        updateCounter += 1
+        habit.addToProgress(count, for: date, modelContext: modelContext)
+        saveAndRefresh()
         alertState.successFeedbackTrigger.toggle()
     }
-    
+
     private func handleCustomTimeInput(hours: Int, minutes: Int) {
         guard let date = alertState.date else { return }
         let totalSeconds = (hours * 3600) + (minutes * 60)
         
-        if totalSeconds == 0 {
+        guard totalSeconds > 0 else {
             alertState.errorFeedbackTrigger.toggle()
             return
         }
         
-        let tempViewModel = HabitDetailViewModel(
-            habit: habit,
-            date: date,
-            modelContext: modelContext
-        )
-        
-        tempViewModel.handleCustomTimeInput(hours: hours, minutes: minutes)
-        tempViewModel.saveIfNeeded()
-        viewModel.refresh()
-        updateCounter += 1
+        habit.addToProgress(totalSeconds, for: date, modelContext: modelContext)
+        saveAndRefresh()
         alertState.successFeedbackTrigger.toggle()
     }
-    
+
     private func resetProgressDirectly(for date: Date) {
-        let tempViewModel = HabitDetailViewModel(
-            habit: habit,
-            date: date,
-            modelContext: modelContext,
-        )
-        
-        tempViewModel.resetProgress()
-        tempViewModel.saveIfNeeded()
-        viewModel.refresh()
+        habit.resetProgress(for: date, modelContext: modelContext)
+        saveAndRefresh()
         HapticManager.shared.play(.error)
+    }
+    
+    private func saveAndRefresh() {
+        try? modelContext.save()
+        viewModel.refresh()
         updateCounter += 1
     }
     

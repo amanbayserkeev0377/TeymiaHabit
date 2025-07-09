@@ -18,16 +18,9 @@ struct HabitLiveActivityWidget: Widget {
                     ControlsView(context: context)
                 }
             } compactLeading: {
-                if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                    let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(context.state.currentProgress))
-                    Text(adjustedStartTime, style: .timer)
-                        .font(.title)
-                        .fontWeight(.bold)
-                } else {
-                    Text(context.state.currentProgress.formattedAsTime())
-                        .font(.title)
-                        .fontWeight(.bold)
-                }
+                TimerDisplayView(context: context)
+                    .font(.title)
+                    .fontWeight(.bold) // ✅ Жирный шрифт!
             } compactTrailing: {
                 Image(systemName: context.state.isTimerRunning ? "play.fill" : "pause.fill")
                     .foregroundStyle(context.attributes.habitIconColor.color)
@@ -60,16 +53,11 @@ struct CompactLiveActivityContent: View {
                 
                 // Center: Timer display
                 VStack(alignment: .leading, spacing: 2) {
-                    if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                        let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(context.state.currentProgress))
-                        Text(adjustedStartTime, style: .timer)
-                            .font(.system(.title, weight: .black))
-                            .foregroundColor(.primary)
-                    } else {
-                        Text(context.state.currentProgress.formattedAsTime())
-                            .font(.system(.title, weight: .black))
-                            .foregroundColor(.primary)
-                    }
+                    // ✅ КАСТОМНЫЙ ТАЙМЕР - идентичный логике приложения
+                    TimerDisplayView(context: context)
+                        .background(Color.red) // ← Временно, чтобы увидеть что используется новый код
+                        .font(.system(.title, weight: .bold)) // ✅ Жирный шрифт!
+                        .foregroundColor(.primary)
                     
                     Text("goal_format".localized(with: context.attributes.habitGoal.formattedAsDuration()))
                         .font(.footnote)
@@ -136,18 +124,10 @@ struct TimerView: View {
     
     var body: some View {
         VStack(alignment: .trailing) {
-            if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(context.state.currentProgress))
-                Text(adjustedStartTime, style: .timer)
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(context.attributes.habitIconColor.color)
-            } else {
-                Text(context.state.currentProgress.formattedAsTime())
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(context.attributes.habitIconColor.color)
-            }
+            TimerDisplayView(context: context)
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundColor(context.attributes.habitIconColor.color)
         }
     }
 }
@@ -181,5 +161,37 @@ struct LiveActivityButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.75 : 1.0)
             .opacity(configuration.isPressed ? 0.7 : 1.0)
             .animation(.easeOut(duration: 0.8), value: configuration.isPressed)
+    }
+}
+
+// ✅ КАСТОМНЫЙ ТАЙМЕР КОМПОНЕНТ - Точно такая же логика как в приложении!
+struct TimerDisplayView: View {
+    let context: ActivityViewContext<HabitActivityAttributes>
+    @State private var currentTime = Date()
+    
+    var body: some View {
+        Text(displayTime.formattedAsTime())
+            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                currentTime = Date()
+                print("🔄 Live Activity timer tick: \(displayTime)")
+            }
+            .onAppear {
+                print("🎬 TimerDisplayView appeared - Custom timer active!")
+                currentTime = Date()
+            }
+    }
+    
+    private var displayTime: Int {
+        if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
+            // ✅ ИДЕНТИЧНАЯ ЛОГИКА: baseProgress + elapsed (как в TimerService.getLiveProgress)
+            let elapsedSinceStart = Int(currentTime.timeIntervalSince(startTime))
+            let total = context.state.currentProgress + elapsedSinceStart
+            print("🔍 Live Activity calc: base=\(context.state.currentProgress), elapsed=\(elapsedSinceStart), total=\(total)")
+            return total
+        } else {
+            // Таймер остановлен - показываем сохраненный прогресс
+            print("🔍 Live Activity stopped: \(context.state.currentProgress)")
+            return context.state.currentProgress
+        }
     }
 }

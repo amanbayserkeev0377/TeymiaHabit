@@ -116,9 +116,10 @@ struct HabitDetailContentView: View {
     @State private var viewModel: HabitDetailViewModel?
     @State private var isEditPresented = false
     @State private var showStatistics = false
+    @State private var errorMessage: String?
     
-    private var uniqueViewID: String {
-        return "\(habit.uuid.uuidString)-\(date.timeIntervalSince1970)"
+    private var stableViewID: String {
+        return habit.uuid.uuidString
     }
     
     var body: some View {
@@ -137,23 +138,21 @@ struct HabitDetailContentView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             debugPrint("🎨 HabitDetailContentView onAppear for: \(habit.title)")
-            debugPrint("   habit.uuid: \(habit.uuid)")
-            debugPrint("   uniqueViewID: \(uniqueViewID)")
-            setupViewModel()
+            setupViewModelIfNeeded()
         }
         .onDisappear {
             debugPrint("🎨 HabitDetailContentView onDisappear for: \(habit.title)")
-            viewModel?.saveIfNeeded()
-            viewModel?.cleanup()
+            HabitManager.shared.cleanupInactiveViewModels()
         }
-        .id(uniqueViewID)
+        .id(stableViewID) // ✅ Стабильный ID
         .onChange(of: habit.uuid) { _, newUUID in
-            debugPrint("🔄 Habit changed from previous to: \(newUUID)")
-            forceRecreateViewModel()
+            debugPrint("🔄 Habit UUID changed to: \(newUUID)")
+            // ✅ При смене привычки - пересоздаем ViewModel
+            setupViewModelIfNeeded()
         }
         .onChange(of: date) { _, newDate in
             debugPrint("🔄 Date changed to: \(newDate)")
-            forceRecreateViewModel()
+            viewModel?.updateDisplayedDate(newDate)
         }
         .sheet(isPresented: $isEditPresented) {
             NewHabitView(habit: habit)
@@ -192,34 +191,28 @@ struct HabitDetailContentView: View {
     
     // MARK: - Setup & Components
     
-    private func setupViewModel() {
-            debugPrint("🔧 Setting up NEW ViewModel for: \(habit.title)")
-            debugPrint("   habit.uuid: \(habit.uuid)")
-            
-            // ✅ КРИТИЧНО: Полностью очищаем старый ViewModel
-            if let oldViewModel = viewModel {
-                debugPrint("🗑️ Cleaning up old ViewModel")
-                oldViewModel.cleanup()
-            }
-            
-            // ✅ Создаем новый ViewModel
-            let vm = HabitDetailViewModel(
-                habit: habit,
-                date: date,
-                modelContext: modelContext
-            )
+    private func setupViewModelIfNeeded() {
+        // ✅ Проверяем, есть ли уже правильный ViewModel для этой привычки
+        if let existingViewModel = viewModel,
+           existingViewModel.habitId == habit.uuid.uuidString {
+            debugPrint("✅ Correct ViewModel already exists for: \(habit.title)")
+            existingViewModel.updateDisplayedDate(date)
+            return
+        }
+        
+        debugPrint("🔧 Getting ViewModel from HabitManager for: \(habit.title)")
+        
+        do {
+            let vm = try HabitManager.shared.getViewModel(for: habit, date: date, modelContext: modelContext)
             vm.onHabitDeleted = onDelete
-            
-            debugPrint("✅ Created NEW ViewModel with progress: \(vm.currentProgress)")
-            debugPrint("   cached progress: \(vm.cachedProgress)")
-            
             viewModel = vm
+            errorMessage = nil
+            debugPrint("✅ ViewModel obtained from HabitManager")
+        } catch {
+            debugPrint("❌ Error getting ViewModel: \(error.localizedDescription)")
+            errorMessage = error.localizedDescription
         }
-    
-    private func forceRecreateViewModel() {
-            debugPrint("🔄 Force recreating ViewModel for: \(habit.title)")
-            setupViewModel()
-        }
+    }
     
     @ViewBuilder
     private func headerContent(viewModel: HabitDetailViewModel) -> some View {
@@ -320,10 +313,6 @@ struct HabitDetailContentView: View {
                         viewModel.decrementProgress()
                     }
                 )
-                .onAppear {
-                    // ✅ Отладка при появлении View
-                    debugProgressValues(viewModel: viewModel)
-                }
                 .onChange(of: viewModel.currentProgress) { _, newValue in
                     // ✅ Отладка при изменении прогресса
                     debugPrint("🔄 Progress changed for \(habit.title): \(newValue)")
@@ -373,27 +362,16 @@ struct HabitDetailContentView: View {
         return formattedValue
     }
     
-    // ✅ НОВАЯ функция для отладки значений
-    private func debugProgressValues(viewModel: HabitDetailViewModel) {
-        debugPrint("🎨 UI: progressAndActionsContent for \(habit.title)")
-        debugPrint("   habit.uuid: \(habit.uuid)")
-        debugPrint("   currentProgress: \(viewModel.currentProgress)")
-        debugPrint("   cachedProgress: \(viewModel.cachedProgress)")
-        debugPrint("   formattedProgress: \(getFormattedProgress(viewModel: viewModel))")
-        debugPrint("   completionPercentage: \(viewModel.completionPercentage)")
-    }
-    
     @ViewBuilder
     private func bottomButtonContent(viewModel: HabitDetailViewModel) -> some View {
         Button(action: {
             viewModel.completeHabit()
-            // ✅ УБИРАЕМ updateLocalProgress() - не нужен
         }) {
-            Text(viewModel.isAlreadyCompleted ? "completed".localized : "complete".localized) // ← Только ViewModel!
+            Text(viewModel.isAlreadyCompleted ? "completed".localized : "complete".localized)
         }
         .beautifulButton(
             habit: habit,
-            isEnabled: !viewModel.isAlreadyCompleted, // ← Только ViewModel!
+            isEnabled: !viewModel.isAlreadyCompleted,
             lightOpacity: 0.8,
             darkOpacity: 1.0
         )

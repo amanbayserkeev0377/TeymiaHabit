@@ -8,15 +8,9 @@ import SwiftUI
 final class HabitLiveActivityManager {
     static let shared = HabitLiveActivityManager()
     
-    // Changed: Support multiple activities instead of single
     private var activeActivities: [String: Activity<HabitActivityAttributes>] = [:]
-    private var widgetActionTimer: Timer? // ← Один таймер для всех
-    private var isListening = false
     
     private init() {}
-    
-    // App Groups identifier
-    private let appGroupsID = "group.com.amanbayserkeev.teymiahabit"
     
     // MARK: - Public Interface
     
@@ -154,6 +148,16 @@ final class HabitLiveActivityManager {
         return activeActivities.count
     }
     
+    // MARK: - New Methods for HabitWidgetService
+    
+    func getActiveHabitIds() -> [String] {
+        return Array(activeActivities.keys)
+    }
+    
+    func getActivityState(for habitId: String) -> HabitActivityAttributes.ContentState? {
+        return activeActivities[habitId]?.content.state
+    }
+    
     // MARK: - App Launch Restoration
     
     func restoreActiveActivitiesIfNeeded() async {
@@ -171,99 +175,6 @@ final class HabitLiveActivityManager {
         
         print("✅ Restored \(activeActivities.count) Live Activities")
     }
-    
-    // MARK: - Listen for Widget Actions
-    
-    func startListeningForWidgetActions() {
-        // Предотвращаем множественные listener'ы
-        guard !isListening else {
-            print("🔧 Widget action listener already running")
-            return
-        }
-        
-        // Останавливаем существующий таймер если есть
-        widgetActionTimer?.invalidate()
-        
-        // Создаем ОДИН таймер для всех Live Activities
-        widgetActionTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                await self?.checkForWidgetActions()
-            }
-        }
-        
-        isListening = true
-        print("🔧 Widget action listener started (singleton)")
-    }
-    
-    func stopListeningForWidgetActions() {
-        widgetActionTimer?.invalidate()
-        widgetActionTimer = nil
-        isListening = false
-        print("🔧 Widget action listener stopped")
-    }
-    
-    var isListeningForWidgetActions: Bool {
-        return isListening
-    }
-    
-    private func checkForWidgetActions() async {
-        guard let userDefaults = UserDefaults(suiteName: appGroupsID) else {
-            print("❌ Cannot access UserDefaults for app group: \(appGroupsID)")
-            return
-        }
-        
-        guard let actionData = userDefaults.dictionary(forKey: "live_activity_action") else {
-            return // Нет действий - это нормально
-        }
-        
-        print("🔍 Found widget action data: \(actionData)")
-        
-        guard let action = actionData["action"] as? String,
-              let habitId = actionData["habitId"] as? String,
-              let timestamp = actionData["timestamp"] as? TimeInterval else {
-            print("❌ Invalid action data format")
-            userDefaults.removeObject(forKey: "live_activity_action")
-            return
-        }
-        
-        // Check if this is a new action
-        let lastProcessedKey = "last_processed_timestamp"
-        let lastProcessed = UserDefaults.standard.double(forKey: lastProcessedKey)
-        
-        guard timestamp > lastProcessed else {
-            print("🔍 Action already processed")
-            return
-        }
-        
-        print("🔍 Processing widget action: \(action) for habit: \(habitId)")
-        
-        // ✅ КРИТИЧНО: Сразу очищаем действие и помечаем как обработанное
-        UserDefaults.standard.set(timestamp, forKey: lastProcessedKey)
-        userDefaults.removeObject(forKey: "live_activity_action")
-        
-        // ✅ УПРОЩЕНО: Прямое уведомление через NotificationCenter
-        let notification = WidgetActionNotification(
-            action: WidgetAction(rawValue: action) ?? .toggleTimer,
-            habitId: habitId,
-            timestamp: Date(timeIntervalSince1970: timestamp)
-        )
-        
-        NotificationCenter.default.post(
-            name: .widgetActionReceived,
-            object: notification
-        )
-        
-        print("📡 Posted notification for action: \(action)")
-        
-        // Для toggleTimer дополнительно принудительно обновляем Live Activity
-        if action == "toggleTimer" {
-            // Ждем немного чтобы приложение обработало действие
-            try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 секунды
-        } else if action == "dismissActivity" {
-            await endActivity(for: habitId)
-        }
-    }
-    
     
     // MARK: - Error Handling
     

@@ -47,9 +47,13 @@ struct TeymiaHabitApp: App {
             MainTabView()
                 .environment(weekdayPrefs)
                 .environment(ProManager.shared)
-                // ✅ КРИТИЧНО: Добавляем инициализацию Live Activity listener'а
                 .onAppear {
                     setupLiveActivities()
+                    AppModelContext.shared.setModelContext(container.mainContext)
+                }
+            // ✅ ДОБАВИТЬ: Обработчик принудительного завершения приложения (редко)
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
+                    handleAppTermination()
                 }
         }
         .modelContainer(container)
@@ -60,7 +64,7 @@ struct TeymiaHabitApp: App {
                 
             case .inactive:
                 print("📱 App becoming inactive")
-                // Save data when app becomes inactive
+                // ✅ НЕ ОЧИЩАЕМ HabitManager - только сохраняем данные
                 saveDataContext()
                 
             case .active:
@@ -79,8 +83,8 @@ struct TeymiaHabitApp: App {
     private func setupLiveActivities() {
         print("🎬 Setting up Live Activities...")
         
-        // ✅ КРИТИЧНО: Запускаем listener для Widget Actions
-        HabitLiveActivityManager.shared.startListeningForWidgetActions()
+        // ✅ НОВОЕ: Используем HabitWidgetService вместо прямого HabitLiveActivityManager
+        HabitWidgetService.shared.startListening()
         
         // ✅ Восстанавливаем существующие Live Activities при запуске
         Task {
@@ -90,8 +94,8 @@ struct TeymiaHabitApp: App {
         print("✅ Live Activities setup completed")
     }
     
-    // MARK: - App Lifecycle Methods
-
+    // MARK: - App Lifecycle Methods (ОБНОВИТЬ СУЩЕСТВУЮЩИЕ МЕТОДЫ)
+    
     private func handleAppBackground() {
         print("📱 App going to background")
         saveDataContext()
@@ -99,8 +103,10 @@ struct TeymiaHabitApp: App {
         // ✅ Сообщаем TimerService о переходе в фон
         TimerService.shared.handleAppDidEnterBackground()
         
-        // ✅ НЕ останавливаем Live Activity listener в фоне - он должен работать!
-        // HabitLiveActivityManager продолжает слушать Widget Actions в фоне
+        // ✅ НОВОЕ: Очищаем только действительно неактивные ViewModel
+        HabitManager.shared.cleanupInactiveViewModels()
+        
+        print("📱 Background transition completed")
     }
     
     private func handleAppForeground() {
@@ -109,16 +115,34 @@ struct TeymiaHabitApp: App {
         // ✅ Сообщаем TimerService о возврате на передний план
         TimerService.shared.handleAppWillEnterForeground()
         
-        // ✅ Убеждаемся что Live Activity listener работает
-        if !HabitLiveActivityManager.shared.isListeningForWidgetActions {
-            print("🔄 Restarting Live Activity listener")
-            HabitLiveActivityManager.shared.startListeningForWidgetActions()
+        // ✅ ИСПРАВЛЕНО: Используем правильное свойство
+        if !HabitWidgetService.shared.isCurrentlyListening {
+            print("🔄 Restarting HabitWidgetService")
+            HabitWidgetService.shared.startListening()
         }
         
         // ✅ Синхронизируем состояние Live Activities
         Task {
             await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
         }
+        
+        print("📱 Foreground transition completed")
+    }
+    
+    // ✅ НОВОЕ: Обработка принудительного завершения приложения
+    private func handleAppTermination() {
+        print("💀 App is being terminated - cleaning up")
+        
+        // ✅ Останавливаем все сервисы
+        HabitWidgetService.shared.stopListening()
+        
+        // ✅ Очищаем ViewModel'ы
+        HabitManager.shared.cleanupAllViewModels()
+        
+        // ✅ Сохраняем данные последний раз
+        saveDataContext()
+        
+        print("💀 App termination cleanup completed")
     }
     
     private func saveDataContext() {

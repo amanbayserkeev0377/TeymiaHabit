@@ -34,6 +34,7 @@ struct WidgetActionNotification {
     let action: WidgetAction
     let habitId: String
     let timestamp: Date
+    let actionId: String // ✅ НОВОЕ: Уникальный ID действия
 }
 
 // MARK: - Helper Extensions
@@ -55,4 +56,5 @@ extension HabitActivityAttributes.ContentState {
 // MARK: - Notification Names
 extension Notification.Name {
     static let widgetActionReceived = Notification.Name("WidgetActionReceived")
+    static let widgetActionProcessed = Notification.Name("WidgetActionProcessed") // ✅ НОВОЕ
 }

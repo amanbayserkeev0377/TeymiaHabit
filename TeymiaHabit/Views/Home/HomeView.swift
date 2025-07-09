@@ -28,6 +28,7 @@ struct HomeView: View {
     
     @State private var selectedDate: Date = .now
     @State private var showingNewHabit = false
+    // ✅ ИЗМЕНЕНИЕ: Используем объект Habit напрямую вместо String ID
     @State private var selectedHabit: Habit? = nil
     @State private var habitToEdit: Habit? = nil
     @State private var alertState = AlertState()
@@ -63,6 +64,7 @@ struct HomeView: View {
                 
                 contentView
                 
+                // ✅ УПРОЩЕНИЕ: Прямое использование HabitDetailView без контейнера
                 if let selectedHabit = selectedHabit {
                     HabitDetailView(
                         habit: selectedHabit,
@@ -119,7 +121,7 @@ struct HomeView: View {
                     .foregroundStyle(.primary)
             }
             
-            // Today button справа (остается как было)
+            // Today button справа
             ToolbarItem(placement: .topBarTrailing) {
                 if !Calendar.current.isDateInToday(selectedDate) {
                     Button(action: {
@@ -169,6 +171,7 @@ struct HomeView: View {
             },
             habit: habitForProgress
         )
+        // ✅ Убираем - обработка уже есть в App
     }
     
     private var contentView: some View {
@@ -176,7 +179,6 @@ struct HomeView: View {
             if allBaseHabits.isEmpty {
                 EmptyStateView()
             } else {
-                // ✅ Единый ScrollView для календаря И привычек
                 ScrollView {
                     VStack(spacing: 16) {
                         // WeeklyCalendarView
@@ -191,7 +193,11 @@ struct HomeView: View {
                                     HabitCardView(
                                         habit: habit,
                                         date: selectedDate,
-                                        onTap: { selectedHabit = habit },
+                                        onTap: {
+                                            // ✅ УПРОЩЕНИЕ: Прямая установка объекта Habit
+                                            print("🎯 Карточка нажата: \(habit.title)")
+                                            selectedHabit = habit
+                                        },
                                         onComplete: { completeHabit(habit, for: selectedDate) },
                                         onEdit: { habitToEdit = habit },
                                         onArchive: { archiveHabit(habit) },
@@ -247,8 +253,14 @@ struct HomeView: View {
     private func deleteHabit(_ habit: Habit) {
         NotificationManager.shared.cancelNotifications(for: habit)
         modelContext.delete(habit)
-        try? modelContext.save()
-        HapticManager.shared.play(.error)
+        do {
+            try modelContext.save()
+            // ✅ ДОБАВИТЬ: Интеграция с HabitManager
+            HabitManager.shared.removeViewModel(for: habit.uuid.uuidString)
+            HapticManager.shared.play(.error)
+        } catch {
+            print("❌ Ошибка при удалении привычки: \(error.localizedDescription)")
+        }
     }
     
     private func archiveHabit(_ habit: Habit) {
@@ -258,7 +270,7 @@ struct HomeView: View {
     }
 }
 
-// MARK: - ✅ Объединенный и улучшенный HabitCardView
+// MARK: - HabitCardView остается без изменений
 struct HabitCardView: View {
     let habit: Habit
     let date: Date
