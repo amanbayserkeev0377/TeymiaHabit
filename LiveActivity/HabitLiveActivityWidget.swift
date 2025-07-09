@@ -19,8 +19,6 @@ struct HabitLiveActivityWidget: Widget {
                 }
             } compactLeading: {
                 TimerDisplayView(context: context)
-                    .font(.title)
-                    .fontWeight(.bold) // ✅ Жирный шрифт!
             } compactTrailing: {
                 Image(systemName: context.state.isTimerRunning ? "play.fill" : "pause.fill")
                     .foregroundStyle(context.attributes.habitIconColor.color)
@@ -53,11 +51,7 @@ struct CompactLiveActivityContent: View {
                 
                 // Center: Timer display
                 VStack(alignment: .leading, spacing: 2) {
-                    // ✅ КАСТОМНЫЙ ТАЙМЕР - идентичный логике приложения
                     TimerDisplayView(context: context)
-                        .background(Color.red) // ← Временно, чтобы увидеть что используется новый код
-                        .font(.system(.title, weight: .bold)) // ✅ Жирный шрифт!
-                        .foregroundColor(.primary)
                     
                     Text("goal_format".localized(with: context.attributes.habitGoal.formattedAsDuration()))
                         .font(.footnote)
@@ -125,8 +119,6 @@ struct TimerView: View {
     var body: some View {
         VStack(alignment: .trailing) {
             TimerDisplayView(context: context)
-                .font(.caption)
-                .fontWeight(.bold)
                 .foregroundColor(context.attributes.habitIconColor.color)
         }
     }
@@ -167,31 +159,29 @@ struct LiveActivityButtonStyle: ButtonStyle {
 // ✅ КАСТОМНЫЙ ТАЙМЕР КОМПОНЕНТ - Точно такая же логика как в приложении!
 struct TimerDisplayView: View {
     let context: ActivityViewContext<HabitActivityAttributes>
-    @State private var currentTime = Date()
     
     var body: some View {
-        Text(displayTime.formattedAsTime())
-            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                currentTime = Date()
-                print("🔄 Live Activity timer tick: \(displayTime)")
+        VStack {
+            if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
+                // Корректируем начальное время с учетом currentProgress
+                let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(context.state.currentProgress))
+                Text(adjustedStartTime, style: .timer)
+                    .font(.system(.title2, design: .rounded))
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .background(Color.green.opacity(0.3)) // Для отладки
+            } else {
+                // Отображаем статический прогресс, когда таймер остановлен
+                Text(context.state.currentProgress.formattedAsTime())
+                    .font(.system(.title2, design: .rounded))
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .background(Color.green.opacity(0.3)) // Для отладки
             }
-            .onAppear {
-                print("🎬 TimerDisplayView appeared - Custom timer active!")
-                currentTime = Date()
-            }
-    }
-    
-    private var displayTime: Int {
-        if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-            // ✅ ИДЕНТИЧНАЯ ЛОГИКА: baseProgress + elapsed (как в TimerService.getLiveProgress)
-            let elapsedSinceStart = Int(currentTime.timeIntervalSince(startTime))
-            let total = context.state.currentProgress + elapsedSinceStart
-            print("🔍 Live Activity calc: base=\(context.state.currentProgress), elapsed=\(elapsedSinceStart), total=\(total)")
-            return total
-        } else {
-            // Таймер остановлен - показываем сохраненный прогресс
-            print("🔍 Live Activity stopped: \(context.state.currentProgress)")
-            return context.state.currentProgress
+        }
+        .onAppear {
+            print("🎬 Live Activity TimerDisplay appeared")
+            print("🔍 Context: running=\(context.state.isTimerRunning), progress=\(context.state.currentProgress), startTime=\(String(describing: context.state.timerStartTime))")
         }
     }
 }

@@ -27,7 +27,7 @@ struct NameFieldSection: View {
                             .foregroundStyle(.secondary)
                             .font(.system(size: 16))
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
         }

@@ -20,7 +20,7 @@ struct HabitDetailView: View {
                     .padding(.top, 12)
                     .padding(.bottom, 8)
                 
-                // HabitDetailView content (убираем navigation stuff)
+                // HabitDetailView content
                 HabitDetailContentView(
                     habit: habit,
                     date: date,
@@ -278,11 +278,12 @@ struct HabitDetailContentView: View {
             
             // Goal info
             HStack(spacing: 8) {
-                if let iconName = habit.iconName {
-                    Image(systemName: iconName)
-                        .font(.system(size: 22))
-                        .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
-                }
+                universalIcon(
+                        iconId: habit.iconName,
+                        baseSize: 22,
+                        color: habit.iconColor,
+                        colorScheme: colorScheme
+                    )
                 
                 Text("goal".localized(with: viewModel.formattedGoal))
                     .font(.subheadline)

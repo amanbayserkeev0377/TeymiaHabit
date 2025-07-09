@@ -243,7 +243,7 @@ struct StatCardInteractive: View {
             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isPressed)
             .hapticFeedback(.selection, trigger: isPressed)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in

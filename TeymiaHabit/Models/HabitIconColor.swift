@@ -110,7 +110,7 @@ extension HabitIconColor {
     var darkColor: Color {
         switch self {
         case .primary:
-            return Color(#colorLiteral(red: 0.25, green: 0.25, blue: 0.25, alpha: 1))   // Мягкий темно-серый
+            return Color(#colorLiteral(red: 0.1298420429, green: 0.1298461258, blue: 0.1298439503, alpha: 1))   // Мягкий темно-серый
         case .red:
             return Color(#colorLiteral(red: 0.65, green: 0.15, blue: 0.12, alpha: 1))   // Было 0.6 → 0.65
         case .orange:
@@ -134,7 +134,7 @@ extension HabitIconColor {
         case .brown:
             return Color(#colorLiteral(red: 0.45, green: 0.32, blue: 0.26, alpha: 1))   // Было 0.28 → 0.32
         case .gray:
-            return Color(#colorLiteral(red: 0.35, green: 0.35, blue: 0.35, alpha: 1))   // Было 0.3 → 0.35
+            return Color(#colorLiteral(red: 0.370555222, green: 0.3705646992, blue: 0.3705595732, alpha: 1))  // С легким синим оттенком
         case .colorPicker:
             return Self.customColor
         }
@@ -144,7 +144,7 @@ extension HabitIconColor {
     var lightColor: Color {
         switch self {
         case .primary:
-            return Color(#colorLiteral(red: 0.75, green: 0.75, blue: 0.77, alpha: 1))   // Мягкий светло-серый
+            return Color(#colorLiteral(red: 0.8374180198, green: 0.8374378085, blue: 0.8374271393, alpha: 1))   // Мягкий светло-серый
         case .red:
             return Color(#colorLiteral(red: 0.95, green: 0.5, blue: 0.45, alpha: 1))    // Было 1.0 → 0.95
         case .orange:
@@ -168,7 +168,7 @@ extension HabitIconColor {
         case .brown:
             return Color(#colorLiteral(red: 0.85, green: 0.7, blue: 0.6, alpha: 1))     // Было 0.75 → 0.7
         case .gray:
-            return Color(#colorLiteral(red: 0.8, green: 0.8, blue: 0.82, alpha: 1))     // Было 0.85 → 0.8
+            return Color(#colorLiteral(red: 0.7540688515, green: 0.7540867925, blue: 0.7540771365, alpha: 1))
         case .colorPicker:
             return Self.customColor
         }

@@ -25,12 +25,13 @@ struct HabitStatsListCard: View {
                 // Header with habit info
                 HStack {
                     // Habit icon
-                    if let iconName = habit.iconName {
-                        Image(systemName: iconName)
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
-                            .frame(width: 40, height: 40)
-                    }
+                       universalIcon(
+                           iconId: habit.iconName,
+                           baseSize: 28,
+                           color: habit.iconColor,
+                           colorScheme: colorScheme
+                       )
+                       .frame(width: 40, height: 40)
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(habit.title)

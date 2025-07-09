@@ -214,7 +214,6 @@ final class Habit {
         return uuid.uuidString
     }
     
-    // ✅ ПРОСТОЙ инициализатор - только то что нужно
     init(
         title: String = "",
         type: HabitType = .count,
@@ -253,7 +252,6 @@ final class Habit {
         self.startDate = Calendar.current.startOfDay(for: startDate)
     }
     
-    // ✅ ПРОСТОЙ метод обновления
     func update(
         title: String,
         type: HabitType,

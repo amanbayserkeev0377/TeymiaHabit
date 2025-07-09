@@ -36,7 +36,7 @@ struct CountInputView: View {
                             .foregroundStyle(habit.iconColor.color)
                             .font(.system(size: 18))
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                     .transition(.scale.combined(with: .opacity))
                 }
             }

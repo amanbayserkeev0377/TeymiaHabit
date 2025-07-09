@@ -1,5 +1,37 @@
 import SwiftUI
 
+// MARK: - Enum для типов иконок
+enum IconType: Hashable {
+    case sfSymbol(String)
+    case image(String)
+    
+    var id: String {
+        switch self {
+        case .sfSymbol(let name): return "sf_\(name)"
+        case .image(let name): return "img_\(name)"
+        }
+    }
+}
+
+// MARK: - Обновленная модель (убрал isCustom)
+struct IconCategory {
+    let name: String
+    let icons: [IconType]
+    
+    // Инициализатор для SF Symbols
+    init(name: String, sfSymbols: [String]) {
+        self.name = name
+        self.icons = sfSymbols.map { .sfSymbol($0) }
+    }
+    
+    // Инициализатор для изображений
+    init(name: String, images: [String]) {
+        self.name = name
+        self.icons = images.map { .image($0) }
+    }
+}
+
+
 struct IconPickerView: View {
     // MARK: - Bindings
     @Binding var selectedIcon: String?
@@ -19,14 +51,21 @@ struct IconPickerView: View {
     
     /// Icon size based on device and dynamic type
     private var iconSize: CGFloat {
-        let baseSize: CGFloat = horizontalSizeClass == .compact ? 36 : 42
+        let baseSize: CGFloat = horizontalSizeClass == .compact ? 40 : 46
         let typeMultiplier = dynamicTypeMultiplier
         return baseSize * typeMultiplier
     }
-    
+
     /// Button size based on device and dynamic type
     private var buttonSize: CGFloat {
-        let baseSize: CGFloat = horizontalSizeClass == .compact ? 60 : 70
+        let baseSize: CGFloat = horizontalSizeClass == .compact ? 66 : 76
+        let typeMultiplier = dynamicTypeMultiplier
+        return baseSize * typeMultiplier
+    }
+
+    /// 3D Image size - больше чем обычные иконки
+    private var imageSize: CGFloat {
+        let baseSize: CGFloat = horizontalSizeClass == .compact ? 50 : 58
         let typeMultiplier = dynamicTypeMultiplier
         return baseSize * typeMultiplier
     }
@@ -54,28 +93,28 @@ struct IconPickerView: View {
     // MARK: - Selection Logic
     
     /// Check if icon is selected
-    private func isSelected(_ iconName: String) -> Bool {
-        return selectedIcon == iconName
+    private func isSelected(_ iconType: IconType) -> Bool {
+        return selectedIcon == iconType.id
     }
     
     // MARK: - Data
     
     private let categories: [IconCategory] = [
-        IconCategory(name: "health".localized, icons: [
+        IconCategory(name: "health".localized, sfSymbols: [
             "figure.walk", "figure.run", "figure.stairs", "figure.strengthtraining.traditional", "figure.cooldown",
             "figure.mind.and.body", "figure.pool.swim", "shoeprints.fill", "bicycle", "bed.double.fill",
             "brain.fill", "eye.fill", "heart.fill", "lungs.fill", "waterbottle.fill",
             "pills.fill", "testtube.2", "stethoscope", "carrot.fill", "tree.fill"
         ]),
         
-        IconCategory(name: "productivity".localized, icons: [
+        IconCategory(name: "productivity".localized, sfSymbols: [
             "brain.head.profile.fill", "clock.fill", "hourglass", "pencil.and.list.clipboard", "pencil.and.scribble",
             "book.fill", "graduationcap.fill", "translate", "function", "chart.pie.fill",
             "checklist", "calendar.badge.clock", "person.2.wave.2.fill", "bubble.left.and.bubble.right.fill", "globe.americas.fill",
             "medal.fill", "macbook", "keyboard.fill", "lightbulb.max.fill", "atom"
         ]),
         
-        IconCategory(name: "hobbies".localized, icons: [
+        IconCategory(name: "hobbies".localized, sfSymbols: [
             "camera.fill", "play.rectangle.fill", "headphones", "music.note", "film.fill",
             "paintbrush.pointed.fill", "paintpalette.fill", "photo.fill", "theatermasks.fill", "puzzlepiece.extension.fill",
             "pianokeys", "guitars.fill", "rectangle.pattern.checkered", "mountain.2.fill", "drone.fill",
@@ -83,12 +122,16 @@ struct IconPickerView: View {
             "soccerball", "basketball.fill", "volleyball.fill", "tennisball.fill", "tennis.racket"
         ]),
         
-        IconCategory(name: "lifestyle".localized, icons: [
+        IconCategory(name: "lifestyle".localized, sfSymbols: [
             "shower.fill", "bathtub.fill", "sink.fill", "hands.and.sparkles.fill", "washer.fill",
             "fork.knife", "frying.pan.fill", "popcorn.fill", "cup.and.heat.waves.fill", "birthday.cake.fill",
             "cart.fill", "takeoutbag.and.cup.and.straw.fill", "gift.fill", "house.fill", "stroller.fill",
             "face.smiling.fill", "envelope.fill", "phone.fill", "beach.umbrella.fill", "pawprint.fill",
             "creditcard.fill", "banknote.fill", "location.fill", "hand.palm.facing.fill", "steeringwheel.and.hands"
+        ]),
+        
+        IconCategory(name: "3d_icons".localized, images: [
+            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitnessboy", "3d_fitnessboy1",
         ])
     ]
     
@@ -142,8 +185,8 @@ struct IconPickerView: View {
                         
                         // Icons grid
                         LazyVGrid(columns: adaptiveColumns, spacing: 12) {
-                            ForEach(category.icons, id: \.self) { iconName in
-                                iconButton(for: iconName, in: category)
+                            ForEach(category.icons, id: \.id) { iconType in
+                                iconButton(for: iconType, in: category)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -157,62 +200,91 @@ struct IconPickerView: View {
         }
     }
     
-    /// Individual icon button
-    private func iconButton(for iconName: String, in category: IconCategory) -> some View {
-        let isSelected = isSelected(iconName)
-        
-        return Button {
-            selectedIcon = iconName
-            HapticManager.shared.playSelection()
-        } label: {
-            VStack {
-                iconImage(for: iconName, isSelected: isSelected)
-            }
-            .frame(width: buttonSize, height: buttonSize)
-            .background(
-                Circle()
-                    .fill(
-                        // ✅ ИСПРАВЛЕНО: только выбранная иконка получает градиент
-                        isSelected
-                        ? selectedColor.adaptiveGradient(
-                            for: colorScheme)
-                        : LinearGradient(
-                            colors: colorScheme == .dark
-                            ? [Color(.systemGray4), Color(.systemGray6)]  // Серый градиент для темной темы
-                            : [Color(.systemGray6), Color(.systemGray4)], // Серый градиент для светлой темы
+    @ViewBuilder
+    private func iconImage(for iconType: IconType, isSelected: Bool) -> some View {
+        switch iconType {
+        case .sfSymbol(let name):
+            Image(systemName: name)
+                .font(.system(size: iconSize * 0.68, weight: .medium))
+                .foregroundStyle(
+                    isSelected
+                    ? AnyShapeStyle(selectedColor.adaptiveGradient(for: colorScheme))
+                    : AnyShapeStyle(
+                        LinearGradient(
+                            colors: [.gray.opacity(0.6), .gray],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-            )
-            .scaleEffect(isSelected ? 1.08 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isSelected)
-            .animation(.easeInOut(duration: 0.25), value: selectedColor)
+                )
+            
+        case .image(let name):
+            Image(name)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: imageSize, height: imageSize)
+        }
+    }
+
+    // MARK: - Обновленная кнопка с stroke для выбранной
+    private func iconButton(for iconType: IconType, in category: IconCategory) -> some View {
+        let isSelected = selectedIcon == iconType.id
+        
+        return Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                selectedIcon = iconType.id
+            }
+            HapticManager.shared.playSelection()
+        } label: {
+            iconImage(for: iconType, isSelected: isSelected)
+                .frame(width: buttonSize, height: buttonSize)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(
+                            isSelected
+                            ? AnyShapeStyle(selectedColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                            : AnyShapeStyle(
+                                LinearGradient(
+                                    colors: [.gray.opacity(0.1), .gray.opacity(0.3)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                        )
+                )
+                .scaleEffect(isSelected ? 1.1 : 1.0)
         }
         .buttonStyle(.plain)
-    }
-    
-    /// Icon image with proper color logic
-    private func iconImage(for iconName: String, isSelected: Bool) -> some View {
-        Image(systemName: iconName)
-            .font(.system(size: iconSize * 0.65, weight: .medium))
-            .frame(width: iconSize * 0.8, height: iconSize * 0.8)
-            .foregroundStyle(
-                isSelected ? .white : .secondary
-            )
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
-// MARK: - Icon Category Model
-
-struct IconCategory {
-    let name: String
-    let icons: [String]
-    let isCustom: Bool
-    
-    init(name: String, icons: [String], isCustom: Bool = false) {
-        self.name = name
-        self.icons = icons
-        self.isCustom = isCustom
+// MARK: - Simplified version
+extension View {
+    @ViewBuilder
+    func universalIcon(
+        iconId: String?,
+        baseSize: CGFloat,
+        color: HabitIconColor,
+        colorScheme: ColorScheme
+    ) -> some View {
+        let safeIconId = iconId ?? "checkmark"
+        
+        if safeIconId.hasPrefix("sf_") {
+            let symbolName = String(safeIconId.dropFirst(3))
+            Image(systemName: symbolName)
+                .font(.system(size: baseSize, weight: .medium))
+                .foregroundStyle(color.adaptiveGradient(for: colorScheme))
+        } else if safeIconId.hasPrefix("img_") {
+            let imageName = String(safeIconId.dropFirst(4))
+            Image(imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: baseSize * 1.6, height: baseSize * 1.6)
+        } else {
+            Image(systemName: safeIconId)
+                .font(.system(size: baseSize, weight: .medium))
+                .foregroundStyle(color.adaptiveGradient(for: colorScheme))
+        }
     }
 }

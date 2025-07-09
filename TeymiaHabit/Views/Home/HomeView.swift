@@ -341,15 +341,17 @@ struct HabitCardView: View {
         }) {
             HStack(spacing: 16) {
                 // Left side - Icon
-                let iconName = habit.iconName ?? "checkmark"
-                Image(systemName: iconName)
-                    .font(.system(size: 30, weight: .medium))
-                    .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
-                    .frame(width: 60, height: 60)
-                    .background(
-                        Circle()
-                            .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
-                    )
+                universalIcon(
+                    iconId: habit.iconName,
+                    baseSize: 30,
+                    color: habit.iconColor,
+                    colorScheme: colorScheme
+                )
+                .frame(width: 60, height: 60)
+                .background(
+                    Circle()
+                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                )
                 
                 // Middle - Title and goal
                 VStack(alignment: .leading, spacing: 5) {

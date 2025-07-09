@@ -24,19 +24,14 @@ struct IconSection: View {
                 
                 Spacer()
                 
-                // Показываем выбранную иконку с градиентным фоном и белой иконкой
                 if let selectedIcon = selectedIcon {
-                    Image(systemName: selectedIcon)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(.white)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(
-                                    selectedColor.adaptiveGradient(
-                                        for: colorScheme)
-                                )
-                        )
+                    universalIcon(
+                        iconId: selectedIcon,
+                        baseSize: 24,
+                        color: selectedColor,
+                        colorScheme: colorScheme
+                    )
+                    .frame(width: 36, height: 36)
                 }
             }
         }

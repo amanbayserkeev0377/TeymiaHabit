@@ -7,7 +7,7 @@ final class HabitDetailViewModel {
     private enum Constants {
         static let incrementTimeValue = 60 // seconds
         static let decrementTimeValue = -60 // seconds
-        static let liveActivitySyncInterval = 15 // seconds
+        static let liveActivitySyncInterval = 3 // seconds
     }
     
     // MARK: - Dependencies
@@ -266,15 +266,22 @@ final class HabitDetailViewModel {
     private func startLocalUpdates() {
         guard isTimeHabitToday else { return }
         
+        // ✅ Timer каждую секунду для точности UI
         updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 await self?.handleTimerTick()
             }
         }
+        
+        print("⏱️ Started precise 1-second timer updates for \(habit.title)")
     }
     
     private func handleTimerTick() async {
-        guard timerService.isTimerRunning(for: cachedHabitId) else { return }
+        guard timerService.isTimerRunning(for: cachedHabitId) else {
+            print("⚠️ Timer stopped, ending local updates")
+            stopLocalUpdates()
+            return
+        }
         
         // Check if goal reached
         if currentProgress >= habit.goal {
@@ -282,11 +289,23 @@ final class HabitDetailViewModel {
             return
         }
         
-        // Update UI every second
+        // ✅ ОБНОВЛЕНИЕ UI каждую секунду
         localUpdateTrigger += 1
         
-        // Sync Live Activity every 15 seconds
+        // ✅ Синхронизация Live Activity каждые 5 секунд (батарея + производительность)
         await syncLiveActivityIfNeeded()
+    }
+    
+    private func forceSyncLiveActivity() async {
+        guard hasActiveLiveActivity,
+              let startTime = timerStartTime else { return }
+        
+        await liveActivityManager.updateActivity(
+            for: cachedHabitId,
+            currentProgress: currentProgress,
+            isTimerRunning: true,
+            timerStartTime: startTime
+        )
     }
     
     private func handleGoalReached() async {
@@ -306,16 +325,22 @@ final class HabitDetailViewModel {
     
     private func syncLiveActivityIfNeeded() async {
         guard hasActiveLiveActivity,
-              let startTime = timerService.getTimerStartTime(for: cachedHabitId) else { return }
+              let startTime = timerStartTime else { return }
         
         let elapsed = Int(Date().timeIntervalSince(startTime))
         if elapsed % Constants.liveActivitySyncInterval == 0 {
+            
+            // ✅ ИСПРАВЛЕНИЕ: Передаем БАЗОВЫЙ прогресс, не live progress!
+            let baseProgress = habit.progressForDate(currentDisplayedDate)
+            
             await liveActivityManager.updateActivity(
                 for: cachedHabitId,
-                currentProgress: currentProgress,
+                currentProgress: baseProgress, // ✅ Базовый прогресс без elapsed!
                 isTimerRunning: true,
-                timerStartTime: timerStartTime
+                timerStartTime: startTime
             )
+            
+            print("🔄 Live Activity synced: base=\(baseProgress), elapsed=\(elapsed)")
         }
     }
     
@@ -378,11 +403,16 @@ final class HabitDetailViewModel {
     private func startLiveActivity() async {
         guard let startTime = timerStartTime else { return }
         
+        // ✅ ИСПРАВЛЕНИЕ: Используем базовый прогресс
+        let baseProgress = habit.progressForDate(currentDisplayedDate)
+        
         await liveActivityManager.startActivity(
             for: habit,
-            currentProgress: currentProgress,
+            currentProgress: baseProgress, // ✅ Базовый прогресс!
             timerStartTime: startTime
         )
+        
+        print("🚀 Live Activity started with base=\(baseProgress)")
     }
     
     private func stopTimerAndSaveLiveProgressIfNeeded() {

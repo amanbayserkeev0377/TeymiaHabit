@@ -155,7 +155,7 @@ struct DayProgressItem: View, Equatable {
                     .opacity(isSelected ? 1 : 0)
             }
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .disabled(isFutureDate || !isValidDate)
     }
     
