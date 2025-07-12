@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct YearlyHabitChart: View {
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
     // MARK: - Properties
     let habit: Habit
     let updateCounter: Int
@@ -365,33 +368,42 @@ struct YearlyHabitChart: View {
     
     // MARK: - Bar Color
     
-    private func barColor(for dataPoint: ChartDataPoint) -> Color {
+    private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
+        let date = dataPoint.date
         let value = dataPoint.value
         
         // No progress
         if value == 0 {
-            return Color.gray.opacity(0.3)
+            return AppColorManager.getNoProgressBarStyle()
         }
         
-        // For yearly view, we calculate monthly averages against daily goal
-        // So we use different logic than daily completion
-        let monthlyAverage = value > 0 ? value : 0
+        // For yearly view, we calculate monthly totals against estimated monthly goal
+        // We need to determine completion status based on monthly performance
+        let monthlyTotal = value
         let dailyGoal = habit.goal
         
-        // Rough calculation: if monthly total suggests good daily performance
-        let estimatedDailyAverage = Double(monthlyAverage) / 30.0 // rough daily average for month
-        let dailyGoalDouble = Double(dailyGoal)
+        // Estimate how many active days were in this month for this habit
+        let daysInMonth = calendar.range(of: .day, in: .month, for: date)?.count ?? 30
+        let activeDaysInMonth = (1...daysInMonth).compactMap { day in
+            calendar.date(byAdding: .day, value: day - 1, to: calendar.startOfDay(for: date))
+        }.filter { dayDate in
+            habit.isActiveOnDate(dayDate) && dayDate >= habit.startDate && dayDate <= Date()
+        }.count
         
-        if estimatedDailyAverage >= dailyGoalDouble {
-            // Good performance: Success green
-            return Color(red: 0.2, green: 0.8, blue: 0.4)
-        } else if estimatedDailyAverage >= dailyGoalDouble * 0.7 {
-            // Decent performance: User's color 
-            return habit.iconColor.color.opacity(0.9)
-        } else {
-            // Low performance: Muted user color
-            return habit.iconColor.color.opacity(0.6)
-        }
+        // Calculate what the monthly goal should be based on active days
+        let estimatedMonthlyGoal = dailyGoal * activeDaysInMonth
+        
+        // Determine completion status
+        let isCompleted = monthlyTotal >= estimatedMonthlyGoal
+        let isExceeded = monthlyTotal > estimatedMonthlyGoal * 11 / 10 // 110% of goal is exceeded
+        
+        // Use unified chart bar style from AppColorManager
+        return AppColorManager.getChartBarStyle(
+            isCompleted: isCompleted,
+            isExceeded: isExceeded,
+            habit: habit,
+            colorScheme: colorScheme
+        )
     }
     
     // MARK: - Helper Methods

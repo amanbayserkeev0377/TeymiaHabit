@@ -15,8 +15,8 @@ struct HabitStatisticsView: View {
     @State private var showingResetAlert = false
     @State private var alertState = AlertState()
     @State private var updateCounter = 0
-    @State private var isTimeInputPresented: Bool = false
-    @State private var isCountInputPresented: Bool = false
+    
+    @State private var inputManager = InputOverlayManager()
     
     // 🔥 NEW: Separate time range controls for each section
     @State private var barChartTimeRange: ChartTimeRange = .month
@@ -161,7 +161,7 @@ struct HabitStatisticsView: View {
             }
         }
         .navigationTitle(habit.title)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         // Change handlers
         .onChange(of: updateCounter) { _, _ in
             viewModel.refresh()
@@ -192,52 +192,19 @@ struct HabitStatisticsView: View {
             Text("alert_reset_history_message".localized)
         }
         .withHabitTint(habit)
-        .overlay {
-            if isCountInputPresented {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        isCountInputPresented = false
-                    }
-                    .transition(.opacity)
+        .inputOverlay(
+            habit: habit,
+            inputType: inputManager.activeInputType,
+            onCountInput: { count in
+                handleCustomCountInput(count: count)
+            },
+            onTimeInput: { hours, minutes in
+                handleCustomTimeInput(hours: hours, minutes: minutes)
+            },
+            onDismiss: {
+                inputManager.dismiss()
             }
-        }
-        .overlay {
-            if isCountInputPresented {
-                CountInputView(
-                    habit: habit,
-                    isPresented: $isCountInputPresented,
-                    onConfirm: { count in
-                        handleCustomCountInput(count: count)
-                    }
-                )
-                .transition(.scale(scale: 0.85).combined(with: .opacity))
-            }
-        }
-        .animation(.easeInOut(duration: 0.25), value: isCountInputPresented)
-        .overlay {
-            if isTimeInputPresented {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        isTimeInputPresented = false
-                    }
-                    .transition(.opacity)
-            }
-        }
-        .overlay {
-            if isTimeInputPresented {
-                TimeInputView(
-                    habit: habit,
-                    isPresented: $isTimeInputPresented,
-                    onConfirm: { hours, minutes in
-                        handleCustomTimeInput(hours: hours, minutes: minutes)
-                    }
-                )
-                .transition(.scale(scale: 0.85).combined(with: .opacity))
-            }
-        }
-        .animation(.easeInOut(duration: 0.25), value: isTimeInputPresented)
+        )
     }
     
     // MARK: - 🎨 Bar Charts Header with 3D Illustration
@@ -352,9 +319,9 @@ struct HabitStatisticsView: View {
             alertState.date = date
             
             if habit.type == .count {
-                isCountInputPresented = true
+                inputManager.showCountInput()
             } else {
-                isTimeInputPresented = true
+                inputManager.showTimeInput()
             }
         case .resetProgress:
             resetProgressDirectly(for: date)

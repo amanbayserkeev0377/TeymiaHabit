@@ -27,6 +27,7 @@ struct CountInputView: View {
                     .multilineTextAlignment(.center)
                     .keyboardType(.numberPad)
                     .focused($isTextFieldFocused)
+                    .tint(habit.iconColor.color)
                 
                 if !inputText.isEmpty {
                     Button(action: {
@@ -92,11 +93,11 @@ struct CountInputView: View {
         }
         .padding(24)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 20)
                 .fill(.regularMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(Color(.separator).opacity(0.6), lineWidth: 0.7)
+                        .strokeBorder(Color(.separator).opacity(0.3), lineWidth: 0.7)
                 )
         )
         .padding(.horizontal, 32)

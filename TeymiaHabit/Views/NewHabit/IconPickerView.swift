@@ -55,14 +55,14 @@ struct IconPickerView: View {
         let typeMultiplier = dynamicTypeMultiplier
         return baseSize * typeMultiplier
     }
-
+    
     /// Button size based on device and dynamic type
     private var buttonSize: CGFloat {
         let baseSize: CGFloat = horizontalSizeClass == .compact ? 66 : 76
         let typeMultiplier = dynamicTypeMultiplier
         return baseSize * typeMultiplier
     }
-
+    
     /// 3D Image size - больше чем обычные иконки
     private var imageSize: CGFloat {
         let baseSize: CGFloat = horizontalSizeClass == .compact ? 50 : 58
@@ -131,7 +131,7 @@ struct IconPickerView: View {
         ]),
         
         IconCategory(name: "3d_icons".localized, images: [
-            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitnessboy", "3d_fitnessboy1",
+            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitness_boy", "3d_fitness_boy1", "3d_meditate_man", "3d_shoe", "3d_water_lemon", "3d_tooth", "3d_cup", "3d_cooking", "3d_bulb", "3d_keyboard", "3d_hand_shaking", "3d_office", "3d_hand_smartphone", "3d_book_plant", "3d_forest", "3d_vegetable", "3d_sink"
         ])
     ]
     
@@ -225,8 +225,8 @@ struct IconPickerView: View {
                 .frame(width: imageSize, height: imageSize)
         }
     }
-
-    // MARK: - Обновленная кнопка с stroke для выбранной
+    
+    // MARK: - Icon Button
     private func iconButton(for iconType: IconType, in category: IconCategory) -> some View {
         let isSelected = selectedIcon == iconType.id
         
@@ -251,6 +251,11 @@ struct IconPickerView: View {
                                 )
                             )
                         )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(Color(.separator).opacity(0.6), lineWidth: 0.7)
+                        .opacity(isSelected ? 1 : 0)
                 )
                 .scaleEffect(isSelected ? 1.1 : 1.0)
         }

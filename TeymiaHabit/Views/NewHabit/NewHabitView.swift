@@ -5,6 +5,8 @@ struct NewHabitView: View {
     // MARK: - Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+
     
     // MARK: - Properties
     private let habit: Habit?
@@ -134,7 +136,6 @@ struct NewHabitView: View {
                 }
             }
             
-            // OVERLAY кнопка - с BeautifulButton и правильным порядком
             .overlay(alignment: .bottom) {
                 Button {
                     guard isFormValid else { return }
@@ -144,8 +145,22 @@ struct NewHabitView: View {
                         Text(habit == nil ? "button_save".localized : "button_save".localized)
                         Image(systemName: "checkmark.circle.fill")
                     }
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(isFormValid ? Color.white : Color.secondary)
+                    .frame(maxWidth: min(340, UIScreen.main.bounds.width * 0.85))
+                    .frame(height: 52)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(
+                                isFormValid
+                                ? AnyShapeStyle(AppColorManager.shared.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.9))
+                                : AnyShapeStyle(LinearGradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.5)], startPoint: .top, endPoint: .bottom))
+                            )
+                    )
                 }
-                .beautifulButton(isEnabled: isFormValid)
+                .buttonStyle(.plain)
+                .disabled(!isFormValid)
+                .animation(.easeInOut(duration: 0.25), value: isFormValid)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
             }

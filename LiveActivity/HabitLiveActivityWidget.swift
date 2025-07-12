@@ -156,32 +156,39 @@ struct LiveActivityButtonStyle: ButtonStyle {
     }
 }
 
-// ✅ КАСТОМНЫЙ ТАЙМЕР КОМПОНЕНТ - Точно такая же логика как в приложении!
 struct TimerDisplayView: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     
     var body: some View {
         VStack {
             if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                // Корректируем начальное время с учетом currentProgress
-                let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(context.state.currentProgress))
-                Text(adjustedStartTime, style: .timer)
+                let baseProgress = context.state.currentProgress
+                // ✅ СОЗДАЕМ "виртуальное" время начала для правильного отображения
+                let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
+                
+                // ✅ НАТИВНЫЙ ТАЙМЕР: обновляется автоматически каждую секунду
+                Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
                     .font(.system(.title2, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
-                    .background(Color.green.opacity(0.3)) // Для отладки
+                    .monospacedDigit()
+                    .onAppear {
+                        print("🎬 Native Timer Text appeared")
+                        print("🔍 startTime: \(startTime)")
+                        print("🔍 baseProgress: \(baseProgress)")
+                        print("🔍 adjustedStartTime: \(adjustedStartTime)")
+                    }
             } else {
-                // Отображаем статический прогресс, когда таймер остановлен
+                // Статический прогресс
                 Text(context.state.currentProgress.formattedAsTime())
                     .font(.system(.title2, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
-                    .background(Color.green.opacity(0.3)) // Для отладки
+                    .monospacedDigit()
+                    .onAppear {
+                        print("🎬 Static progress text appeared: \(context.state.currentProgress)")
+                    }
             }
-        }
-        .onAppear {
-            print("🎬 Live Activity TimerDisplay appeared")
-            print("🔍 Context: running=\(context.state.isTimerRunning), progress=\(context.state.currentProgress), startTime=\(String(describing: context.state.timerStartTime))")
         }
     }
 }

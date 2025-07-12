@@ -24,7 +24,6 @@ struct TimeInputView: View {
                 .font(.headline)
                 .foregroundStyle(.primary)
             
-            // ✅ НАТИВНЫЙ DatePicker с hourAndMinute
             DatePicker(
                 "Time",
                 selection: $selectedTime,
@@ -74,33 +73,13 @@ struct TimeInputView: View {
         }
         .padding(24)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 20)
                 .fill(.regularMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(Color(.separator).opacity(0.6), lineWidth: 0.7)
+                        .strokeBorder(Color(.separator).opacity(0.3), lineWidth: 0.7)
                 )
         )
         .padding(.horizontal, 32)
     }
 }
-
-/*
-✅ ИСПРАВЛЕНИЯ:
-
-1. УБРАН ФОН:
-   - Нет больше ZStack с Color.black
-   - Только карточка с содержимым
-
-2. ПОЛНЫЕ КНОПКИ:
-   - Button { } label: { } вместо Button("text") { }
-   - Весь Text + background в label
-   - Теперь вся область кликабельна
-
-3. СТРУКТУРА:
-   - Только VStack с карточкой
-   - Готов к внешним анимациям
-   - Чистый и простой код
-
-🎯 РЕЗУЛЬТАТ: Карточка без фона, полностью кликабельные кнопки!
-*/

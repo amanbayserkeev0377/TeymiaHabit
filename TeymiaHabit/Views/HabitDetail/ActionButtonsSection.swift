@@ -21,7 +21,7 @@ struct ActionButtonsSection: View {
         
     var body: some View {
         HStack(spacing: 18) {
-            // 1. Reset
+            // Reset
             Button {
                 resetPressed.toggle()
                 onReset()
@@ -35,7 +35,7 @@ struct ActionButtonsSection: View {
             .errorHaptic(trigger: resetPressed)
             
             if habit.type == .time && isToday {
-                // 2. Play/Pause - ✅ ИСПРАВЛЕННЫЙ градиент с единой логикой
+                // Play/Pause - ✅ ИСПРАВЛЕННЫЙ градиент с единой логикой
                 Button {
                     print("🎯 Timer button tapped")
                     togglePressed.toggle()
@@ -51,12 +51,12 @@ struct ActionButtonsSection: View {
                 .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
             }
             
-            // 3. Manual Entry
+            // Manual Entry
             Button {
                 manualEntryPressed.toggle()
                 onManualEntry()
             } label: {
-                Image(systemName: "plus")
+                Image(systemName: habit.type == .time ? "clock" : "keyboard")
                     .font(.system(size: 24))
                     .withHabitColor(habit)
                     .frame(minWidth: 44, minHeight: 44)

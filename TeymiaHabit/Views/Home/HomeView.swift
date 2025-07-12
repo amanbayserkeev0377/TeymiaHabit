@@ -64,19 +64,6 @@ struct HomeView: View {
                 
                 contentView
                 
-                // ✅ УПРОЩЕНИЕ: Прямое использование HabitDetailView без контейнера
-                if let selectedHabit = selectedHabit {
-                    HabitDetailView(
-                        habit: selectedHabit,
-                        date: selectedDate,
-                        isPresented: Binding(
-                            get: { self.selectedHabit != nil },
-                            set: { if !$0 { self.selectedHabit = nil } }
-                        )
-                    )
-                    .zIndex(1000)
-                }
-                
                 // FAB
                 VStack {
                     Spacer()
@@ -91,20 +78,26 @@ struct HomeView: View {
                                 showingNewHabit = true
                             }
                         }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundStyle(.white)
-                                .frame(width: 56, height: 56)
-                                .background(
-                                    Circle()
-                                        .fill(colorManager.selectedColor.adaptiveGradient(for: colorScheme))
-                                        .shadow(
-                                            color: colorManager.selectedColor.color.opacity(0.4),
-                                            radius: 12,
-                                            x: 0,
-                                            y: 6
-                                        )
-                                )
+                            ZStack {
+                                Circle()
+                                    .fill(colorManager.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                                    .frame(width: 64, height: 64)
+                                
+                                Image(systemName: "plus")
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 52, height: 52)
+                                    .background(
+                                        Circle()
+                                            .fill(colorManager.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.8))
+                                            .shadow(
+                                                color: colorManager.selectedColor.color.opacity(0.2),
+                                                radius: 8,
+                                                x: 0,
+                                                y: 6
+                                            )
+                                    )
+                            }
                         }
                         .buttonStyle(.plain)
                         .padding(.trailing, 20)
@@ -148,6 +141,14 @@ struct HomeView: View {
                 }
             }
         }
+        .sheet(item: $selectedHabit) { habit in
+            NavigationStack {
+                HabitDetailView(
+                    habit: habit,
+                    date: selectedDate
+                )
+            }
+        }
         .sheet(isPresented: $showingNewHabit) {
             NewHabitView()
         }
@@ -171,7 +172,6 @@ struct HomeView: View {
             },
             habit: habitForProgress
         )
-        // ✅ Убираем - обработка уже есть в App
     }
     
     private var contentView: some View {
@@ -194,7 +194,6 @@ struct HomeView: View {
                                         habit: habit,
                                         date: selectedDate,
                                         onTap: {
-                                            // ✅ УПРОЩЕНИЕ: Прямая установка объекта Habit
                                             print("🎯 Карточка нажата: \(habit.title)")
                                             selectedHabit = habit
                                         },

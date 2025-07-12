@@ -133,13 +133,15 @@ final class HabitWidgetService {
         print("🛑 Stopping timer for habitId: \(habitId)")
         
         if let finalProgress = timerService.stopTimer(for: habitId) {
+            print("🔍 Timer stopped - currentProgress: \(currentProgress), finalProgress: \(finalProgress)")
+            
             // Save to database
             await saveProgressToDatabase(habitId: habitId, progress: finalProgress)
             
-            // Update Live Activity
+            // ✅ НЕМЕДЛЕННО обновляем Live Activity с финальным прогрессом
             await liveActivityManager.updateActivity(
                 for: habitId,
-                currentProgress: finalProgress,
+                currentProgress: finalProgress, // ✅ Используем finalProgress!
                 isTimerRunning: false,
                 timerStartTime: nil
             )
@@ -156,7 +158,6 @@ final class HabitWidgetService {
         if success {
             let startTime = timerService.getTimerStartTime(for: habitId)
             
-            // Update Live Activity
             await liveActivityManager.updateActivity(
                 for: habitId,
                 currentProgress: baseProgress,

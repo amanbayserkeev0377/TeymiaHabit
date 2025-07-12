@@ -29,6 +29,39 @@ struct LicensesView: View {
                 LicenseRow(iconName: "3d_fitness_boy", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57444508-wonderful-abstract-man-doing-push-ups-side-view-transparent-background-high-resolution")
                 
                 LicenseRow(iconName: "3d_fitness_boy1", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57444477-extraordinary-artistic-man-doing-pull-ups-front-view-isolated-cutout-4k")
+                
+                LicenseRow(iconName: "3d_bulb", attribution: "Concept PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57443949-serene-minimalist-lightbulb-idea-concept-yellow-glow-cutout-professional")
+                
+                LicenseRow(iconName: "3d_water_lemon", attribution: "Glass PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57437522-elegant-traditional-glass-of-water-with-lemon-cutout-premium")
+                
+                LicenseRow(iconName: "3d_cooking", attribution: "Knife PNGs by Vecteezy", url: "https://www.vecteezy.com/png/55921635-chopping-vegetables-a-culinary-guide")
+                
+                LicenseRow(iconName: "3d_cup", attribution: "Golden PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57438127-wonderful-artistic-golden-trophy-cup-front-view-cutout-genuine")
+                
+                LicenseRow(iconName: "3d_keyboard", attribution: "Cutout PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57151167-vibrant-contemporary-a-3d-rendered-cutout-of-futuristic-levitating-spherical-desk-lamp-high-resolution")
+                
+                LicenseRow(iconName: "3d_meditate_man", attribution: "Meditating PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57444721-wonderful-minimalist-man-meditating-cross-legged-cutout-professional")
+                
+                LicenseRow(iconName: "3d_tooth", attribution: "Tooth PNGs by Vecteezy", url: "https://www.vecteezy.com/png/45980744-tooth-mascot-3d-graphic")
+                
+                LicenseRow(iconName: "3d_shoe", attribution: "Running PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57459980-magnificent-creative-running-shoes-side-view-cutout-original")
+                
+                LicenseRow(iconName: "3d_hand_shaking", attribution: "Png File PNGs by Vecteezy", url: "https://www.vecteezy.com/png/58063978-3d-render-of-two-cartoon-hands-shaking-in-agreement-partnership")
+                
+                LicenseRow(iconName: "3d_office", attribution: "Finance PNGs by Vecteezy", url: "https://www.vecteezy.com/png/48719471-accounting-concept-3d-design")
+                
+                LicenseRow(iconName: "3d_book_plant", attribution: "Plant PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57457202-dramatic-artistic-plant-growing-from-book-knowledge-concept-green-sprouts-cutout-professional")
+                
+                
+                LicenseRow(iconName: "3d_vegetable", attribution: "Healthy PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57441758-dramatic-traditional-healthy-vegetable-platter-colorful-arrangement-transparent-background-high-quality")
+                
+                
+                LicenseRow(iconName: "3d_sink", attribution: "Modern PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57453191-elegant-vintage-modern-bathroom-sink-with-chrome-faucet-transparent-element-genuine")
+                
+                LicenseRow(iconName: "3d_forest", attribution: "Peaceful PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57456513-dramatic-creative-peaceful-forest-scene-with-sunlight-cutout-original")
+                
+                LicenseRow(iconName: "3d_hand_smartphone", attribution: "Realistic PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57458120-beautiful-rustic-realistic-hand-holding-smartphone-with-social-media-feed-transparent-background-premium")
+                
             }
         }
         .navigationTitle("licenses".localized)
@@ -57,7 +90,6 @@ struct LicenseRow: View {
             }
         } label: {
             HStack(spacing: 12) {
-                // ✅ ГИБКИЙ РАЗМЕР ИКОНКИ
                 Image(iconName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)

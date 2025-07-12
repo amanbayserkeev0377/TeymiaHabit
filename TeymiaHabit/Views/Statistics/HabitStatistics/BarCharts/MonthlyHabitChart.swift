@@ -2,6 +2,9 @@ import SwiftUI
 import Charts
 
 struct MonthlyHabitChart: View {
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
     // MARK: - Properties
     let habit: Habit
     let updateCounter: Int
@@ -350,32 +353,28 @@ struct MonthlyHabitChart: View {
     }
     
     // MARK: - Bar Color
-    
-    private func barColor(for dataPoint: ChartDataPoint) -> Color {
+
+    private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
         let date = dataPoint.date
         let value = dataPoint.value
         
         // Future dates or inactive days
         if !habit.isActiveOnDate(date) || date > Date() {
-            return Color.gray.opacity(0.2)
+            return AppColorManager.getInactiveBarStyle()
         }
         
         // No progress
         if value == 0 {
-            return Color.gray.opacity(0.3)
+            return AppColorManager.getNoProgressBarStyle()
         }
         
-        // Check completion status using ChartDataPoint's computed properties
-        if dataPoint.isOverAchieved {
-            // Over-achieved: Beautiful gradient green (darker for over-achievement)
-            return Color(red: 0.0, green: 0.7, blue: 0.3) // Rich emerald green
-        } else if dataPoint.isCompleted {
-            // Completed: Success green with slight gradient feel
-            return Color(red: 0.2, green: 0.8, blue: 0.4) // Bright success green
-        } else {
-            // Partial progress: Use user's selected color with reduced opacity
-            return habit.iconColor.color.opacity(0.9)
-        }
+        // Use unified chart bar style from AppColorManager
+        return AppColorManager.getChartBarStyle(
+            isCompleted: dataPoint.isCompleted,
+            isExceeded: dataPoint.isOverAchieved,
+            habit: habit,
+            colorScheme: colorScheme
+        )
     }
     
     // MARK: - Helper Methods

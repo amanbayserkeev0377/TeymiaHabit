@@ -8,7 +8,7 @@ final class AppColorManager: ObservableObject {
     @AppStorage("selectedAppColor") private var selectedColorId: String?
     
     // MARK: - Constants
-    private struct ColorConstants {
+    public struct ColorConstants {
         static let completedLightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
         static let completedDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
         
@@ -114,6 +114,68 @@ final class AppColorManager: ObservableObject {
             colorScheme: colorScheme
         )
     }
+    
+    // MARK: - Chart Colors for Bars
+
+    /// Get appropriate ShapeStyle for chart bars based on completion status
+    static func getChartBarStyle(
+        isCompleted: Bool,
+        isExceeded: Bool,
+        habit: Habit,
+        colorScheme: ColorScheme
+    ) -> AnyShapeStyle {
+        if isExceeded {
+            return getExceededBarStyle(for: colorScheme)
+        } else if isCompleted {
+            return getCompletedBarStyle(for: colorScheme)
+        } else {
+            return getPartialProgressBarStyle(for: habit, colorScheme: colorScheme)
+        }
+    }
+
+    /// Completed bars gradient (green)
+    static func getCompletedBarStyle(for colorScheme: ColorScheme) -> AnyShapeStyle {
+        let topColor = colorScheme == .dark ? ColorConstants.completedDarkGreen : ColorConstants.completedLightGreen
+        let bottomColor = colorScheme == .dark ? ColorConstants.completedLightGreen : ColorConstants.completedDarkGreen
+        
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [topColor, bottomColor],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+    }
+
+    /// Exceeded bars gradient (mint/green)
+    static func getExceededBarStyle(for colorScheme: ColorScheme) -> AnyShapeStyle {
+        let topColor = colorScheme == .dark ? ColorConstants.exceededDarkGreen : ColorConstants.exceededLightMint
+        let bottomColor = colorScheme == .dark ? ColorConstants.exceededLightMint : ColorConstants.exceededDarkGreen
+        
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [topColor, bottomColor],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+    }
+
+    /// Partial progress bars gradient (habit color)
+    static func getPartialProgressBarStyle(for habit: Habit, colorScheme: ColorScheme) -> AnyShapeStyle {
+        return AnyShapeStyle(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.9))
+    }
+
+    /// Inactive/future bars style
+    static func getInactiveBarStyle() -> AnyShapeStyle {
+        return AnyShapeStyle(Color.gray.opacity(0.2))
+    }
+
+    /// No progress bars style
+    static func getNoProgressBarStyle() -> AnyShapeStyle {
+        return AnyShapeStyle(Color.gray.opacity(0.3))
+    }
+    
 }
 
 // MARK: - Private Helpers

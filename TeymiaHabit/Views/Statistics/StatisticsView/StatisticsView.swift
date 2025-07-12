@@ -56,9 +56,10 @@ struct StatisticsView: View {
         }
         .navigationTitle("statistics".localized)
         .navigationBarTitleDisplayMode(.large)
-        // 🔄 ИЗМЕНЕНО: NavigationLink вместо sheet
-        .navigationDestination(item: $selectedHabitForStats) { habit in
-            HabitStatisticsView(habit: habit)
+        .sheet(item: $selectedHabitForStats) { habit in
+            NavigationStack {
+                HabitStatisticsView(habit: habit)
+            }
         }
     }
 }
