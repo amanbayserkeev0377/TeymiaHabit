@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @Observable @MainActor
 final class HabitDetailViewModel {
@@ -143,6 +144,7 @@ final class HabitDetailViewModel {
     
     func updateDisplayedDate(_ newDate: Date) {
         currentDisplayedDate = newDate
+        hasShownGoalNotification = false
         
         // Load progress for new date
         let dateKey = dateToKey(newDate)
@@ -287,8 +289,14 @@ final class HabitDetailViewModel {
             return
         }
         
-        // Check if goal reached
-        if currentProgress >= habit.goal {
+        // ✅ Проверяем достижение цели только если прогресс УВЕЛИЧИЛСЯ во время таймера
+        if let baseProgress = baseProgressWhenTimerStarted,
+           baseProgress < habit.goal && // Цель НЕ была достигнута когда запускали
+            currentProgress >= habit.goal && // Цель достигнута СЕЙЧАС
+            !hasShownGoalNotification {
+            
+            await showGoalAchievedNotification()
+            hasShownGoalNotification = true
             await handleGoalReached()
             return
         }
@@ -296,8 +304,47 @@ final class HabitDetailViewModel {
         // ✅ ОБНОВЛЕНИЕ UI каждую секунду
         localUpdateTrigger += 1
         
-        // ✅ Синхронизация Live Activity каждые 5 секунд (батарея + производительность)
+        // ✅ Синхронизация Live Activity
         await syncLiveActivityIfNeeded()
+    }
+    
+    private var hasShownGoalNotification = false
+    
+    private func showGoalAchievedNotification() async {
+        // 🎉 Haptic feedback
+        alertState.successFeedbackTrigger.toggle()
+        
+        // 🔔 Push notification
+        await sendGoalAchievedNotification()
+        
+        print("🎉 Goal achieved for \(habit.title)! Timer will stop automatically.")
+    }
+    
+    private func sendGoalAchievedNotification() async {
+        guard NotificationManager.shared.notificationsEnabled,
+              await NotificationManager.shared.ensureAuthorization() else {
+            print("📱 Notifications disabled, skipping goal notification")
+            return
+        }
+        
+        let content = UNMutableNotificationContent()
+        content.title = "goal_achieved_title".localized
+        content.body = "goal_achieved_body".localized(with: habit.title)
+        content.sound = .default
+        content.badge = 1
+        
+        let request = UNNotificationRequest(
+            identifier: "goal-achieved-\(cachedHabitId)-\(Date().timeIntervalSince1970)",
+            content: content,
+            trigger: nil
+        )
+        
+        do {
+            try await UNUserNotificationCenter.current().add(request)
+            print("📱 Goal achieved notification sent for \(habit.title)")
+        } catch {
+            print("❌ Failed to send goal notification: \(error)")
+        }
     }
     
     private func forceSyncLiveActivity() async {
@@ -374,6 +421,7 @@ final class HabitDetailViewModel {
         
         let baseProgress = currentProgress
         baseProgressWhenTimerStarted = baseProgress
+        hasShownGoalNotification = false
         
         let success = timerService.startTimer(for: cachedHabitId, baseProgress: baseProgress)
         

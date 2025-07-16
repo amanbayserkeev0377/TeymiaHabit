@@ -5,35 +5,48 @@ struct ReminderSection: View {
     @Binding var isReminderEnabled: Bool
     @Binding var reminderTimes: [Date]
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(ProManager.self) private var proManager
     @ObservedObject private var colorManager = AppColorManager.shared
     
-    // Add alert state for permission request
     @State private var isNotificationPermissionAlertPresented = false
+    @State private var isProcessingToggle = false
+    
+    let onShowPaywall: () -> Void
     
     var body: some View {
         Section {
-            Toggle(isOn: $isReminderEnabled.animation(.easeInOut(duration: 0.3))) {
+            // РЕШЕНИЕ: Используем тот же подход что и в NotificationsSection
+            Toggle(isOn: Binding(
+                get: { isReminderEnabled },
+                set: { newValue in
+                    guard !isProcessingToggle else { return }
+                    
+                    if newValue {
+                        isProcessingToggle = true
+                        Task {
+                            await handleReminderToggle(newValue)
+                        }
+                    } else {
+                        // Если отключается - просто обновляем значение
+                        isReminderEnabled = newValue
+                    }
+                }
+            ).animation(.easeInOut(duration: 0.3))) {
                 Label(
                     title: { Text("reminders".localized) },
                     icon: {
                         Image(systemName: "bell.badge.fill")
                             .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)), // Красный
-                                Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))  // Темно-красный
+                                Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
+                                Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
                             ])
                             .symbolEffect(.bounce, options: .repeat(1), value: isReminderEnabled)
                     }
                 )
             }
             .withToggleColor()
-            .onChange(of: isReminderEnabled) { _, newValue in
-                if newValue {
-                    // Use unified permission handling through NotificationManager
-                    Task {
-                        await handleReminderToggle()
-                    }
-                }
-            }
+            .disabled(isProcessingToggle)
+            // УБИРАЕМ onChange - он больше не нужен
             
             if isReminderEnabled {
                 ForEach(Array(reminderTimes.indices), id: \.self) { index in
@@ -48,11 +61,13 @@ struct ReminderSection: View {
                         .labelsHidden()
                         .datePickerStyle(.compact)
                         
-                        // Remove reminder button (if more than one)
-                        if reminderTimes.count > 1 {
+                        // Remove reminder button (if more than one and Pro allows)
+                        if reminderTimes.count > 1 && (proManager.isPro || index > 0) {
                             Button {
-                                if reminderTimes.indices.contains(index) {
-                                    reminderTimes.remove(at: index)
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    if reminderTimes.indices.contains(index) {
+                                        reminderTimes.remove(at: index)
+                                    }
                                 }
                             } label: {
                                 Image(systemName: "trash")
@@ -62,10 +77,16 @@ struct ReminderSection: View {
                     }
                 }
                 
-                // Add new reminder button (limit to 5)
-                if reminderTimes.count < 5 {
+                if reminderTimes.count < proManager.maxRemindersCount {
                     Button {
-                        reminderTimes.append(Date())
+                        // Для не-Pro: показываем paywall при попытке добавить 2+ напоминание
+                        if reminderTimes.count >= 1 && !proManager.isPro {
+                            onShowPaywall()
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                reminderTimes.append(Date())
+                            }
+                        }
                     } label: {
                         Label("add_reminder".localized, systemImage: "plus")
                     }
@@ -82,23 +103,19 @@ struct ReminderSection: View {
         }
     }
     
-    // Handle reminder toggle using unified NotificationManager logic
-    private func handleReminderToggle() async {
-        // First enable notifications in app settings if not already enabled
-        if !NotificationManager.shared.notificationsEnabled {
-            NotificationManager.shared.notificationsEnabled = true
-        }
-        
-        // Use NotificationManager's unified authorization logic
+    private func handleReminderToggle(_ newValue: Bool) async {
         let isAuthorized = await NotificationManager.shared.ensureAuthorization()
         
         await MainActor.run {
+            isProcessingToggle = false
+            
             if !isAuthorized {
-                // Permission denied or unavailable - turn off toggle and show alert
                 isReminderEnabled = false
                 isNotificationPermissionAlertPresented = true
+            } else {
+                // Если разрешения есть - оставляем toggle включенным
+                isReminderEnabled = newValue
             }
-            // If authorized, keep toggle on
         }
     }
     

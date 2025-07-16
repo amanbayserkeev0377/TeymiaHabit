@@ -4,12 +4,14 @@ struct IconSection: View {
     @Binding var selectedIcon: String?
     @Binding var selectedColor: HabitIconColor
     @Environment(\.colorScheme) private var colorScheme
+    let onShowPaywall: () -> Void
     
     var body: some View {
         NavigationLink {
             IconPickerView(
                 selectedIcon: $selectedIcon,
-                selectedColor: $selectedColor
+                selectedColor: $selectedColor,
+                onShowPaywall: onShowPaywall
             )
         } label: {
             HStack(spacing: 12) {

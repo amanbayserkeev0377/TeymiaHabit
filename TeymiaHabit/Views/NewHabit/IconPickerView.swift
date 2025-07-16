@@ -47,8 +47,7 @@ struct IconPickerView: View {
     @Environment(ProManager.self) private var proManager
     @ObservedObject private var colorManager = AppColorManager.shared
     
-    // MARK: - State
-    @State private var showingPaywall = false
+    let onShowPaywall: () -> Void
     
     // MARK: - Constants
     private let defaultIcon = "checkmark"
@@ -108,7 +107,7 @@ struct IconPickerView: View {
     private let categories: [IconCategory] = [
         // 3D иконки ПЕРВЫМИ (Pro feature)
         IconCategory(name: "3D", images: [
-            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitness_boy", "3d_fitness_boy1", "3d_meditate_woman", "3d_meditate_woman2", "3d_meditate_man", "3d_shoe", "3d_swimming", "3d_basketball", "3d_football", "3d_water_lemon", "3d_tooth", "3d_cup", "3d_cooking", "3d_bulb", "3d_keyboard", "3d_hand_shaking", "3d_office", "3d_hand_smartphone", "3d_book", "3d_book_plant", "3d_forest", "3d_vegetable", "3d_sink", "3d_shower", "3d_bathroom", "3d_desk", "3d_graduate", "3d_graduationcap_books", "3d_graduationcap", "3d_coin_dollar", "3d_money", "3d_guitar", "3d_painting", "3d_wheel", "3d_youtube_button", "3d_insta"
+            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitness_boy", "3d_fitness_boy1", "3d_meditate_woman", "3d_meditate_woman2", "3d_meditate_man", "3d_shoe", "3d_swimming", "3d_basketball", "3d_football", "3d_water_lemon", "3d_tooth", "3d_cup", "3d_cooking", "3d_bulb", "3d_keyboard", "3d_hand_shaking", "3d_office", "3d_hand_smartphone", "3d_book", "3d_book_plant", "3d_forest", "3d_vegetable", "3d_sink", "3d_shower", "3d_bathroom", "3d_desk", "3d_graduate", "3d_graduationcap_books", "3d_graduationcap", "3d_coin_dollar", "3d_money", "3d_guitar", "3d_painting", "3d_wheel", "3d_youtube_button", "3d_insta", "3d_dental", "3d_lamp", "3d_medical_cart", "3d_like_button", "3d_ice_cream", "3d_cinema", "3d_checkmark_shield", "3d_thunderbolt", "3d_chess", "3d_globus"
         ], isPro: true),
         
         IconCategory(name: "health".localized, sfSymbols: [
@@ -171,9 +170,6 @@ struct IconPickerView: View {
         }
         .navigationTitle("icon_and_color".localized)
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingPaywall) {
-            PaywallView()
-        }
         .onAppear {
             if selectedIcon == nil {
                 selectedIcon = defaultIcon
@@ -254,7 +250,7 @@ struct IconPickerView: View {
         return Button {
             if isLocked {
                 // Show paywall for Pro features
-                showingPaywall = true
+                onShowPaywall()
                 return
             }
             

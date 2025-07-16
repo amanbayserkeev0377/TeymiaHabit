@@ -23,6 +23,7 @@ struct NewHabitView: View {
     @State private var startDate = Date()
     @State private var selectedIcon: String? = "checkmark"
     @State private var selectedIconColor: HabitIconColor = .primary
+    @State private var showPaywall = false
     
     @FocusState private var isTitleFocused: Bool
     @FocusState private var isCountFocused: Bool
@@ -84,7 +85,13 @@ struct NewHabitView: View {
                     )
                     
                     // Icon
-                    IconSection(selectedIcon: $selectedIcon, selectedColor: $selectedIconColor)
+                    IconSection(
+                        selectedIcon: $selectedIcon,
+                        selectedColor: $selectedIconColor,
+                        onShowPaywall: {
+                            showPaywall = true
+                        }
+                    )
                 }
                 
                 // Goal
@@ -108,7 +115,10 @@ struct NewHabitView: View {
                 Section {
                     ReminderSection(
                         isReminderEnabled: $isReminderEnabled,
-                        reminderTimes: $reminderTimes
+                        reminderTimes: $reminderTimes,
+                        onShowPaywall: {
+                            showPaywall = true
+                        }
                     )
                 }
             }
@@ -118,6 +128,9 @@ struct NewHabitView: View {
             }
             .navigationTitle(habit == nil ? "create_habit".localized : "edit_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     XmarkView(action: {
@@ -147,7 +160,7 @@ struct NewHabitView: View {
                     }
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(isFormValid ? Color.white : Color.secondary)
-                    .frame(maxWidth: min(340, UIScreen.main.bounds.width * 0.85))
+                    .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(
                         RoundedRectangle(cornerRadius: 16, style: .continuous)

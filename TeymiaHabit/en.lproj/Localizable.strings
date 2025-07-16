@@ -95,6 +95,9 @@
 
 "notifications_habit_time" = "Time for your habit!";
 "notifications_dont_forget" = "Don't forget to do: %@";
+"goal_achieved_title" = "🎉 Goal Achieved!";
+"goal_achieved_body" = "You've completed %@";
+
 
 /* ===================== Settings: Appearance ===================== */
 "appearance" = "Appearance";

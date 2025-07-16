@@ -95,6 +95,29 @@ struct LicensesView: View {
                 LicenseRow(iconName: "3d_youtube_button", attribution: "3d YouTube by Vecteezy", url: "https://www.vecteezy.com/png/47248458-youtube-3d-youtube-logo-3d-youtube-icon-3d-youtube-symbol")
                 
                 LicenseRow(iconName: "3d_guitar", attribution: "3d Guitar by Vecteezy", url: "https://www.vecteezy.com/png/57881982-serene-vintage-acoustic-guitar-bridge-and-saddle-detail-cutout-detailed")
+                
+                LicenseRow(iconName: "3d_dental", attribution: "3d Dental Care by Vecteezy", url: "https://www.vecteezy.com/png/47075484-dental-care-3d-illustration")
+                
+                LicenseRow(iconName: "3d_medical_cart", attribution: "3d Medical Cart by Vecteezy", url: "https://www.vecteezy.com/png/57656965-impressive-vintage-medical-chart-patient-information-cutout-high-resolution")
+                
+                LicenseRow(iconName: "3d_lamp", attribution: "3d Lamp by Vecteezy", url: "https://www.vecteezy.com/png/55392960-gray-desk-lamp-illuminated-3d-render-study-light-bright-bulb-office-supply-home-decor-adjusta")
+                
+                LicenseRow(iconName: "3d_chess", attribution: "3d Chess by Vecteezy", url: "https://www.vecteezy.com/png/45686319-white-rook-chess-piece-3d-graphic")
+                
+                LicenseRow(iconName: "3d_globus", attribution: "3d Globus by Vecteezy", url: "https://www.vecteezy.com/png/46352995-world-map-3d-illustration")
+                
+                LicenseRow(iconName: "3d_cinema", attribution: "3d Clapperboard by Vecteezy", url: "https://www.vecteezy.com/png/45686364-realistic-clapperboard-cinema-3d-object")
+                
+                LicenseRow(iconName: "3d_thunderbolt", attribution: "3d Thunder Bolt by Vecteezy", url: "https://www.vecteezy.com/png/45686399-thunder-bolt-3d-render")
+                
+                LicenseRow(iconName: "3d_checkmark_shield", attribution: "3d Checkmark Shield by Vecteezy", url: "https://www.vecteezy.com/png/45686684-shield-with-check-mark-3d-image")
+                
+                LicenseRow(iconName: "3d_like_button", attribution: "3d Like by Vecteezy", url: "https://www.vecteezy.com/png/47075660-like-button-3d-style")
+                
+                LicenseRow(iconName: "3d_ice_cream", attribution: "3d Ice Cream by Vecteezy", url: "https://www.vecteezy.com/png/55333362-melting-chocolate-ice-cream-dripping-with-cone-and-splashes")
+                
+                
+                
             }
         }
         .navigationTitle("licenses".localized)
@@ -106,9 +129,8 @@ struct LicenseRow: View {
     let iconName: String
     let attribution: String
     let url: String
-    let iconSize: CGFloat  // ✅ Гибкий размер иконки
+    let iconSize: CGFloat
     
-    // ✅ Инициализатор с размером по умолчанию
     init(iconName: String, attribution: String, url: String, iconSize: CGFloat = 36) {
         self.iconName = iconName
         self.attribution = attribution
@@ -141,7 +163,7 @@ struct LicenseRow: View {
         }
         .tint(.primary)
     }
-    // ✅ Вычисляемое скругление пропорционально размеру
+    
     private var cornerRadius: CGFloat {
         switch iconSize {
         case ...30: return 6

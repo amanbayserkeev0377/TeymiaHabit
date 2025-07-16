@@ -223,7 +223,7 @@ class ProManager {
     }
 }
 
-// MARK: - Pro Features (unchanged)
+// MARK: - Pro Features
 extension ProManager {
     var maxHabitsCount: Int {
         isPro ? Int.max : 3
@@ -235,6 +235,10 @@ extension ProManager {
     
     var canUseMultipleReminders: Bool {
         isPro
+    }
+    
+    var maxRemindersCount: Int {
+        isPro ? 10 : 2
     }
 }
 

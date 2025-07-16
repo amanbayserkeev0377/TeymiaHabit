@@ -9,17 +9,21 @@ class NotificationManager {
     
     var permissionStatus: Bool = false
     
-    var notificationsEnabled: Bool {
-            get {
-                return UserDefaults.standard.bool(forKey: "notificationsEnabled")
-            }
-            set {
-                UserDefaults.standard.set(newValue, forKey: "notificationsEnabled")
-            }
+    private var _notificationsEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(_notificationsEnabled, forKey: "notificationsEnabled")
         }
-
+    }
+    
+    var notificationsEnabled: Bool {
+        get { _notificationsEnabled }
+        set { _notificationsEnabled = newValue }
+    }
+    
     
     private init() {
+        self._notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
+        
         Task {
             permissionStatus = await checkNotificationStatus()
         }
@@ -27,35 +31,33 @@ class NotificationManager {
     
     // Единый метод для обеспечения разрешений
     func ensureAuthorization() async -> Bool {
-        // Если уведомления отключены в приложении, просто возвращаем false
-        guard notificationsEnabled else {
-            return false
-        }
         
-        // Проверяем текущий статус
         let settings = await UNUserNotificationCenter.current().notificationSettings()
+        print("🔔 Current authorization status: \(settings.authorizationStatus.rawValue)")
+        
         if settings.authorizationStatus == .authorized {
-                permissionStatus = true
+            permissionStatus = true
+            print("🔔 Already authorized")
             return true
         }
         
-        // Если разрешения еще не запрашивались, запрашиваем
         if settings.authorizationStatus == .notDetermined {
+            print("🔔 Requesting authorization...")
             do {
                 let options: UNAuthorizationOptions = [.alert, .sound, .badge]
                 let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: options)
                 
-                // Обновляем UI-статус на главном потоке
-                    permissionStatus = granted
+                permissionStatus = granted
+                print("🔔 Authorization granted: \(granted)")
                 return granted
             } catch {
-                print("Ошибка запроса разрешений: \(error)")
-                    permissionStatus = false
+                print("🔔 Authorization error: \(error)")
+                permissionStatus = false
                 return false
             }
         }
         
-        // Для других статусов (denied, provisional, ...) возвращаем текущий статус
+        print("🔔 Authorization denied or other status: \(settings.authorizationStatus)")
         return settings.authorizationStatus == .authorized
     }
     
@@ -113,7 +115,7 @@ class NotificationManager {
         
         return true
     }
-
+    
     func cancelNotifications(for habit: Habit) {
         // Получаем все возможные идентификаторы
         let identifiers: [String] = (0..<5).flatMap { timeIndex in
@@ -126,38 +128,38 @@ class NotificationManager {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
     }
     
-    func updateAllNotifications(modelContext: ModelContext) {
-        // Проверяем, включены ли уведомления в приложении
+    func updateAllNotifications(modelContext: ModelContext) async {
         guard notificationsEnabled else {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             return
         }
         
-        Task {
-            // Проверяем разрешения
-            let isAuthorized = await ensureAuthorization()
+        let isAuthorized = await ensureAuthorization()
+        
+        if !isAuthorized {
+            await MainActor.run {
+                notificationsEnabled = false
+            }
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            return
+        }
+        
+        let descriptor = FetchDescriptor<Habit>()
+        
+        do {
+            let allHabits = try modelContext.fetch(descriptor)
             
-            if !isAuthorized {
-                // Если разрешения отсутствуют, обновляем состояние приложения
-                    notificationsEnabled = false
-                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                return
+            let habitsWithReminders = allHabits.filter { habit in
+                habit.reminderTimes != nil && !(habit.reminderTimes?.isEmpty ?? true)
             }
             
-            // Получаем все привычки с напоминаниями
-            let descriptor = FetchDescriptor<Habit>(predicate: #Predicate<Habit> { habit in
-                habit.reminderTimes != nil
-            })
-            
-            do {
-                let habits = try modelContext.fetch(descriptor)
-                // Планируем уведомления для каждой привычки
-                for habit in habits {
-                    _ = await scheduleNotifications(for: habit)
-                }
-            } catch {
-                print("Ошибка при обновлении уведомлений: \(error)")
+            for habit in habitsWithReminders {
+                _ = await scheduleNotifications(for: habit)
             }
+            
+            print("✅ Updated notifications for \(habitsWithReminders.count) habits")
+        } catch {
+            print("❌ Error updating notifications: \(error)")
         }
     }
     

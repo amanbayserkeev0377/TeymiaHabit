@@ -2,13 +2,22 @@ import SwiftUI
 import SwiftData
 
 struct NotificationsSection: View {
-    @AppStorage("notificationsEnabled") private var notificationsEnabled: Bool = true
     @Environment(\.modelContext) private var modelContext
-    @State private var isNotificationPermissionAlertPresented = false
     @Environment(\.colorScheme) private var colorScheme
     
+    @State private var isNotificationPermissionAlertPresented = false
+    
     var body: some View {
-        Toggle(isOn: $notificationsEnabled.animation(.easeInOut(duration: 0.3))) {
+        let notificationManager = NotificationManager.shared
+        
+        Toggle(isOn: Binding(
+            get: { notificationManager.notificationsEnabled },
+            set: { newValue in
+                Task {
+                    await handleNotificationToggle(newValue)
+                }
+            }
+        ).animation(.easeInOut(duration: 0.3))) {
             Label(
                 title: { Text("notifications".localized) },
                 icon: {
@@ -17,16 +26,11 @@ struct NotificationsSection: View {
                             Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
                             Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
                         ])
-                        .symbolEffect(.bounce, options: .repeat(1), value: notificationsEnabled)
+                        .symbolEffect(.bounce, options: .repeat(1), value: notificationManager.notificationsEnabled)
                 }
             )
         }
         .withToggleColor()
-        .onChange(of: notificationsEnabled) { _, newValue in
-            Task {
-                await handleNotificationToggle(newValue)
-            }
-        }
         .alert("alert_notifications_permission".localized, isPresented: $isNotificationPermissionAlertPresented) {
             Button("button_cancel".localized, role: .cancel) { }
             Button("settings".localized) {
@@ -38,21 +42,28 @@ struct NotificationsSection: View {
     }
     
     private func handleNotificationToggle(_ isEnabled: Bool) async {
+        let notificationManager = NotificationManager.shared
+        
+        guard notificationManager.notificationsEnabled != isEnabled else { return }
+        
         if isEnabled {
-            // Пытаемся получить разрешения
-            let isAuthorized = await NotificationManager.shared.ensureAuthorization()
+            notificationManager.notificationsEnabled = true
             
-            // Если нет разрешений, показываем диалог
-            if !isAuthorized {
-                notificationsEnabled = false
-                isNotificationPermissionAlertPresented = true
-            } else {
-                // Обновляем уведомления
-                NotificationManager.shared.updateAllNotifications(modelContext: modelContext)
+            let isAuthorized = await notificationManager.ensureAuthorization()
+            
+            await MainActor.run {
+                if !isAuthorized {
+                    notificationManager.notificationsEnabled = false
+                    isNotificationPermissionAlertPresented = true
+                }
+            }
+            
+            if isAuthorized {
+                await notificationManager.updateAllNotifications(modelContext: modelContext)
             }
         } else {
-            // Просто обновляем настройки (что удалит все уведомления)
-            NotificationManager.shared.updateAllNotifications(modelContext: modelContext)
+            notificationManager.notificationsEnabled = false
+            await notificationManager.updateAllNotifications(modelContext: modelContext)
         }
     }
     
@@ -62,4 +73,3 @@ struct NotificationsSection: View {
         }
     }
 }
-
