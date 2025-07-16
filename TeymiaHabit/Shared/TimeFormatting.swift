@@ -13,32 +13,16 @@ extension Int {
             return String(format: "%d:%02d", minutes, seconds)
         }
     }
-    
-    /// Formats seconds to a string like "5" for minutes or "1:05" for hours
-    func formattedAsTimeForRing() -> String {
+        
+    /// Formats seconds to a string like "1:00" or "0:53"
+    func formattedAsDuration() -> String {
         let hours = self / 3600
         let minutes = (self % 3600) / 60
         
         if hours > 0 {
             return String(format: "%d:%02d", hours, minutes)
         } else {
-            return String(format: "%d", minutes)
-        }
-    }
-    
-    /// Formats seconds to a string like "1 hr 30 min" or "30 min"
-    func formattedAsDuration() -> String {
-        let hours = self / 3600
-        let minutes = (self % 3600) / 60
-        
-        if hours > 0 {
-            if minutes > 0 {
-                return "hours_minutes_format".localized(with: hours, minutes)
-            } else {
-                return "hours_format".localized(with: hours)
-            }
-        } else {
-            return "minutes_format".localized(with: minutes)
+            return String(format: "0:%02d", minutes)
         }
     }
     

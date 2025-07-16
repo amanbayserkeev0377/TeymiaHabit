@@ -119,10 +119,10 @@ struct NewHabitView: View {
             .navigationTitle(habit == nil ? "create_habit".localized : "edit_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("button_cancel".localized) {
+                ToolbarItem(placement: .topBarTrailing) {
+                    XmarkView(action: {
                         dismiss()
-                    }
+                    })
                 }
                 
                 ToolbarItemGroup(placement: .keyboard) {
@@ -166,6 +166,7 @@ struct NewHabitView: View {
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .presentationDragIndicator(.visible)
     }
     
     // MARK: - Methods

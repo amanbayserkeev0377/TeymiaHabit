@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - App Color Modifier (восстанавливаем реактивность)
+// MARK: - App Color Modifier
 struct AppColorModifier: ViewModifier {
     @ObservedObject private var colorManager = AppColorManager.shared
     
@@ -10,39 +10,50 @@ struct AppColorModifier: ViewModifier {
     }
 }
 
-// MARK: - Simplified Color Architecture  
+// MARK: - App Gradient Modifier
+struct AppGradientModifier: ViewModifier {
+    @ObservedObject private var colorManager = AppColorManager.shared
+    @Environment(\.colorScheme) private var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .foregroundStyle(colorManager.selectedColor.adaptiveGradient(for: colorScheme))
+    }
+}
+
+// MARK: - Simplified Color Architecture
 extension View {
     
-    // MARK: - App Colors (реактивные для общих элементов)
+    // MARK: - App Colors
     
-    /// Глобальная тонировка с реактивным обновлением
+    /// Глобальная тонировка (только tint, не foregroundStyle)
     func withAppColor() -> some View {
         modifier(AppColorModifier())
     }
     
-    /// Применяет цвет приложения для foregroundStyle
-    func withAppForeground() -> some View {
-        self.foregroundStyle(AppColorManager.shared.selectedColor.color)
+    /// Применяет градиент приложения для foregroundStyle
+    func withAppGradient() -> some View {
+        modifier(AppGradientModifier())
     }
     
-    // MARK: - Habit Colors (переопределяют глобальный тинт)
+    // MARK: - Habit Colors
     
-    /// Цвет привычки для текста и иконок
-    func withHabitColor(_ habit: Habit) -> some View {
-        self.foregroundStyle(habit.iconColor.color)
+    /// Градиент привычки для текста и иконок
+    func withHabitGradient(_ habit: Habit, colorScheme: ColorScheme) -> some View {
+        self.foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
     }
     
-    /// Тинт привычки для кнопок и интерактивных элементов  
+    /// Градиентный тинт для кнопок (через foregroundStyle)
+    func withHabitGradientTint(_ habit: Habit, colorScheme: ColorScheme) -> some View {
+        self.foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+    }
+    
+    /// Обычный тинт привычки (для случаев, когда градиент не поддерживается)
     func withHabitTint(_ habit: Habit) -> some View {
         self.tint(habit.iconColor.color)
     }
-    
-    /// Фон цвета привычки
-    func withHabitBackground(_ habit: Habit, opacity: Double = 0.1) -> some View {
-        self.background(habit.iconColor.color.opacity(opacity))
-    }
-    
-    // MARK: - Static Color Getters (для computed properties)
+        
+    // MARK: - Static Color Getters
     
     static func appColor() -> Color {
         return AppColorManager.shared.selectedColor.color

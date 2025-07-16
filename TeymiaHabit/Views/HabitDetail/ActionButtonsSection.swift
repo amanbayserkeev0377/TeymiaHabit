@@ -16,55 +16,71 @@ struct ActionButtonsSection: View {
     @Environment(\.colorScheme) private var colorScheme
     
     private var isToday: Bool {
-            Calendar.current.isDateInToday(date)
-        }
+        Calendar.current.isDateInToday(date)
+    }
         
     var body: some View {
-        HStack(spacing: 18) {
-            // Reset
-            Button {
-                resetPressed.toggle()
-                onReset()
-            } label: {
-                Image(systemName: "arrow.counterclockwise")
-                    .font(.system(size: 24))
-                    .withHabitColor(habit)
-                    .frame(minWidth: 44, minHeight: 44)
-                    .symbolEffect(.rotate, options: .speed(6.0), value: resetPressed)
-            }
-            .errorHaptic(trigger: resetPressed)
-            
-            if habit.type == .time && isToday {
-                // Play/Pause - ✅ ИСПРАВЛЕННЫЙ градиент с единой логикой
-                Button {
-                    print("🎯 Timer button tapped")
-                    togglePressed.toggle()
-                    onTimerToggle()
-                } label: {
-                    Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
-                        .font(.system(size: 46))
-                        .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
-                        .foregroundStyle(habit.iconColor.adaptiveGradient(
-                            for: colorScheme))
-                        .frame(minWidth: 52, minHeight: 52)
+            HStack(spacing: 18) {
+                if habit.type == .time && isToday {
+                    // 3 buttons for time habits on today
+                    resetButton
+                    playPauseButton
+                    manualEntryButton(icon: "clock")
+                } else {
+                    // 2 buttons for count habits or past dates - centered
+                    Spacer()
+                    resetButton
+                    manualEntryButton(icon: "keyboard")
+                    Spacer()
                 }
-                .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
             }
-            
-            // Manual Entry
-            Button {
-                manualEntryPressed.toggle()
-                onManualEntry()
-            } label: {
-                Image(systemName: habit.type == .time ? "clock" : "keyboard")
-                    .font(.system(size: 24))
-                    .withHabitColor(habit)
-                    .frame(minWidth: 44, minHeight: 44)
-            }
-            .hapticFeedback(.impact(weight: .medium), trigger: manualEntryPressed)
+            .frame(maxWidth: .infinity)
+    }
+    
+    // MARK: - Button Components
+    
+    @ViewBuilder
+    private var resetButton: some View {
+        Button {
+            resetPressed.toggle()
+            onReset()
+        } label: {
+            Image(systemName: "arrow.counterclockwise")
+                .font(.system(size: 24, weight: .semibold))
+                .withHabitGradient(habit, colorScheme: colorScheme)
+                .frame(minWidth: 52, minHeight: 52)
+                .symbolEffect(.rotate, options: .speed(6.0), value: resetPressed)
         }
-        .frame(maxWidth: 300)
-        .frame(maxWidth: .infinity)
-        .frame(height: 80)
+        .errorHaptic(trigger: resetPressed)
+    }
+    
+    @ViewBuilder
+    private var playPauseButton: some View {
+        Button {
+            print("🎯 Timer button tapped")
+            togglePressed.toggle()
+            onTimerToggle()
+        } label: {
+            Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
+                .font(.system(size: 46))
+                .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
+                .withHabitGradient(habit, colorScheme: colorScheme)
+                .frame(minWidth: 52, minHeight: 52)
+        }
+        .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
+    }
+    
+    @ViewBuilder
+    private func manualEntryButton(icon: String) -> some View {
+        Button {
+            manualEntryPressed.toggle()
+            onManualEntry()
+        } label: {
+            Image(systemName: icon)
+                .font(.system(size: 24, weight: .semibold))
+                .withHabitGradient(habit, colorScheme: colorScheme)
+                .frame(minWidth: 52, minHeight: 52)
+        }
+        .hapticFeedback(.impact(weight: .medium), trigger: manualEntryPressed)
     }
 }

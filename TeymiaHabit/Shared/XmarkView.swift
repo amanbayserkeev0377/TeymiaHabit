@@ -19,7 +19,7 @@ struct XmarkView: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "xmark")
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 12, weight: .heavy))
                 .foregroundStyle(iconColor)
                 .frame(width: size, height: size)
                 .background(

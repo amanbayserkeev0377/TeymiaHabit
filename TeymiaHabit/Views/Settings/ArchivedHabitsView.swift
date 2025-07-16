@@ -4,6 +4,7 @@ import SwiftData
 struct ArchivedHabitsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var colorManager = AppColorManager.shared
     
     // Query only archived habits
@@ -38,10 +39,7 @@ struct ArchivedHabitsView: View {
             habit: habitToDelete
         )
         .sheet(item: $selectedHabitForStats) { habit in
-            NavigationStack {
-                HabitStatisticsView(habit: habit)
-            }
-            .presentationDragIndicator(.visible)
+            HabitStatisticsView(habit: habit)
         }
     }
     
@@ -92,18 +90,26 @@ struct ArchivedHabitsView: View {
         Button {
             selectedHabitForStats = habit
         } label: {
-            HStack {
-                // Icon слева
-                let iconName = habit.iconName ?? "checkmark"
-                
-                Image(systemName: iconName)
-                    .font(.system(size: 24))
-                    .frame(width: 24, height: 24)
-                    .foregroundStyle(habit.iconName == nil ? colorManager.selectedColor.color : habit.iconColor.color)
+            HStack(spacing: 12) {
+                universalIcon(
+                    iconId: habit.iconName,
+                    baseSize: 24,
+                    color: habit.iconColor,
+                    colorScheme: colorScheme
+                )
+                .frame(width: 36, height: 36)
                 
                 // Название привычки (одна строка)
-                Text(habit.title)
-                    .tint(.primary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(habit.title)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    
+                    Text(habit.formattedGoal)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 
                 Spacer()
                 
@@ -113,6 +119,7 @@ struct ArchivedHabitsView: View {
                     .font(.footnote)
                     .fontWeight(.bold)
             }
+            .padding(.vertical, 2)
         }
     }
     

@@ -14,7 +14,6 @@ struct MonthlyHabitChart: View {
     @State private var currentMonthIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
-    @State private var isLoading: Bool = false
     
     // MARK: - Calendar
     private var calendar: Calendar {
@@ -97,9 +96,25 @@ struct MonthlyHabitChart: View {
             HStack {
                 // AVERAGE - align with left edge of first bar
                 VStack(alignment: .leading, spacing: 2) {
-                    if let selectedDate = selectedDate,
-                       let selectedDataPoint = chartData.first(where: { calendar.isDate($0.date, inSameDayAs: selectedDate) }) {
-                        Text("DAILY")
+                    Text("average".localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                    
+                    Text(averageValueFormatted)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .withHabitGradient(habit, colorScheme: colorScheme)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // SELECTED - центральная колонка (только при selection)
+                if let selectedDate = selectedDate,
+                   let selectedDataPoint = chartData.first(where: {
+                       calendar.isDate($0.date, inSameDayAs: selectedDate)
+                   }) {
+                    VStack(alignment: .center, spacing: 2) {
+                        Text(shortDateFormatter.string(from: selectedDate))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .textCase(.uppercase)
@@ -107,32 +122,14 @@ struct MonthlyHabitChart: View {
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .withHabitColor(habit)
-                        
-                        Text(shortDateFormatter.string(from: selectedDataPoint.date))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("AVERAGE")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                        
-                        Text(averageValueFormatted)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitColor(habit)
-                        
-                        Text("This Month")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .withHabitGradient(habit, colorScheme: colorScheme)
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // TOTAL - align with right edge of last bar
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("TOTAL")
+                    Text("total".localized)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .textCase(.uppercase)
@@ -140,11 +137,7 @@ struct MonthlyHabitChart: View {
                     Text(monthlyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .withHabitColor(habit)
-                    
-                    Text("This Month")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .withHabitGradient(habit, colorScheme: colorScheme)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
@@ -155,10 +148,6 @@ struct MonthlyHabitChart: View {
     // MARK: - Chart View
     @ViewBuilder
     private var chartView: some View {
-        if isLoading {
-            ProgressView()
-                .frame(height: 200)
-        } else {
             Chart(chartData) { dataPoint in
                 BarMark(
                     x: .value("Day", dataPoint.date),
@@ -212,7 +201,6 @@ struct MonthlyHabitChart: View {
                 }
             }
             .id("month-\(currentMonthIndex)-\(updateCounter)")
-        }
     }
     
     // MARK: - Computed Properties
@@ -289,7 +277,7 @@ struct MonthlyHabitChart: View {
         if hours > 0 {
             return String(format: "%d:%02d", hours, minutes)
         } else if minutes > 0 {
-            return String(format: "%d min", minutes)
+            return String(format: "0:%02d", minutes)
         } else {
             return "0"
         }
@@ -380,7 +368,6 @@ struct MonthlyHabitChart: View {
     // MARK: - Helper Methods
     
     private func setupMonths() {
-        isLoading = true
         
         let today = Date()
         let currentMonthComponents = calendar.dateComponents([.year, .month], from: today)
@@ -399,7 +386,6 @@ struct MonthlyHabitChart: View {
         }
         
         months = monthsList
-        isLoading = false
     }
     
     private func findCurrentMonthIndex() {

@@ -14,7 +14,6 @@ struct WeeklyHabitChart: View {
     @State private var currentWeekIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
-    @State private var isLoading: Bool = false
     
     // MARK: - Calendar
     private var calendar: Calendar {
@@ -97,24 +96,7 @@ struct WeeklyHabitChart: View {
             HStack {
                 // AVERAGE - align with left edge of first bar
                 VStack(alignment: .leading, spacing: 2) {
-                    if let selectedDate = selectedDate,
-                       let selectedDataPoint = chartData.first(where: { calendar.isDate($0.date, inSameDayAs: selectedDate) }) {
-                        Text("DAILY")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                        
-                        Text(selectedDataPoint.formattedValueWithoutSeconds)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitColor(habit)
-
-                        
-                        Text(shortDateFormatter.string(from: selectedDataPoint.date))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("AVERAGE")
+                    Text("average".localized)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .textCase(.uppercase)
@@ -122,18 +104,32 @@ struct WeeklyHabitChart: View {
                         Text(averageValueFormatted)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .withHabitColor(habit)
-                        
-                        Text("This Week")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                            .withHabitGradient(habit, colorScheme: colorScheme)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
+                // SELECTED - центральная колонка (только при selection)
+                if let selectedDate = selectedDate,
+                   let selectedDataPoint = chartData.first(where: {
+                       calendar.isDate($0.date, inSameDayAs: selectedDate)
+                   }) {
+                    VStack(alignment: .center, spacing: 2) {
+                        Text(shortDateFormatter.string(from: selectedDate))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textCase(.uppercase)
+                        
+                        Text(selectedDataPoint.formattedValueWithoutSeconds)
+                            .font(.title2)
+                            .fontWeight(.medium)
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                
                 // TOTAL - align with right edge of last bar
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("TOTAL")
+                    Text("total".localized)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .textCase(.uppercase)
@@ -141,26 +137,17 @@ struct WeeklyHabitChart: View {
                     Text(weeklyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .withHabitColor(habit)
-                    
-                    Text("This Week")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .withHabitGradient(habit, colorScheme: colorScheme)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal, 0) // No padding - align with chart edges
         }
-        // Remove extra padding from VStack - let individual rows control their own
     }
     
     // MARK: - Chart View
     @ViewBuilder
     private var chartView: some View {
-        if isLoading {
-            ProgressView()
-                .frame(height: 200)
-        } else {
             Chart(chartData) { dataPoint in
                 BarMark(
                     x: .value("Day", dataPoint.date, unit: .day),
@@ -217,7 +204,6 @@ struct WeeklyHabitChart: View {
             }
             .id("week-\(currentWeekIndex)-\(updateCounter)")
         }
-    }
     
     // MARK: - Computed Properties
     
@@ -312,7 +298,7 @@ struct WeeklyHabitChart: View {
         if hours > 0 {
             return String(format: "%d:%02d", hours, minutes)
         } else if minutes > 0 {
-            return String(format: "%d min", minutes)
+            return String(format: "%0:%02d", minutes)
         } else {
             return "0"
         }
@@ -393,7 +379,6 @@ struct WeeklyHabitChart: View {
     // MARK: - Helper Methods
     
     private func setupWeeks() {
-        isLoading = true
         
         let today = Date()
         let todayWeekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
@@ -410,7 +395,6 @@ struct WeeklyHabitChart: View {
         }
         
         weeks = weeksList
-        isLoading = false
     }
     
     private func findCurrentWeekIndex() {

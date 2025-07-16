@@ -128,19 +128,15 @@ final class Habit {
     var formattedGoal: String {
         switch type {
         case .count:
-            return "\(goal) \("times".localized)"
+            return "\(goal)"
         case .time:
             let hours = goal / 3600
             let minutes = (goal % 3600) / 60
             
             if hours > 0 {
-                if minutes > 0 {
-                    return "hours_minutes_format".localized(with: hours, minutes)
-                } else {
-                    return "hours_format".localized(with: hours)
-                }
+                return String(format: "%d:%02d", hours, minutes)
             } else {
-                return "minutes_format".localized(with: minutes)
+                return String(format: "0:%02d", minutes)
             }
         }
     }
@@ -180,7 +176,7 @@ final class Habit {
         case .count:
             return progress.formattedAsProgressForRing()
         case .time:
-            return progress.formattedAsTimeForRing()
+            return progress.formattedAsTime()
         }
     }
     

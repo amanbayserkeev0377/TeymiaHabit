@@ -14,7 +14,6 @@ struct YearlyHabitChart: View {
     @State private var currentYearIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
-    @State private var isLoading: Bool = false
     
     // MARK: - Calendar
     private var calendar: Calendar {
@@ -97,11 +96,25 @@ struct YearlyHabitChart: View {
             HStack {
                 // AVERAGE - align with left edge of first bar
                 VStack(alignment: .leading, spacing: 2) {
-                    if let selectedDate = selectedDate,
-                       let selectedDataPoint = chartData.first(where: { 
-                           calendar.isDate($0.date, equalTo: selectedDate, toGranularity: .month)
-                       }) {
-                        Text("MONTHLY")
+                    Text("average".localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                    
+                    Text(averageValueFormatted)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .withHabitGradient(habit, colorScheme: colorScheme)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // SELECTED - центральная колонка (только при selection)
+                if let selectedDate = selectedDate,
+                   let selectedDataPoint = chartData.first(where: {
+                       calendar.isDate($0.date, equalTo: selectedDate, toGranularity: .month)
+                   }) {
+                    VStack(alignment: .center, spacing: 2) {
+                        Text(monthYearFormatter.string(from: selectedDate).capitalized)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .textCase(.uppercase)
@@ -109,32 +122,14 @@ struct YearlyHabitChart: View {
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .withHabitColor(habit)
-                        
-                        Text(monthYearFormatter.string(from: selectedDataPoint.date).capitalized)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("AVERAGE")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                        
-                        Text(averageValueFormatted)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitColor(habit)
-                        
-                        Text("This Year")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .withHabitGradient(habit, colorScheme: colorScheme)
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // TOTAL - align with right edge of last bar
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("TOTAL")
+                    Text("total".localized)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .textCase(.uppercase)
@@ -142,11 +137,7 @@ struct YearlyHabitChart: View {
                     Text(yearlyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .withHabitColor(habit)
-                    
-                    Text("This Year")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .withHabitGradient(habit, colorScheme: colorScheme)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
@@ -157,10 +148,6 @@ struct YearlyHabitChart: View {
     // MARK: - Chart View
     @ViewBuilder
     private var chartView: some View {
-        if isLoading {
-            ProgressView()
-                .frame(height: 200)
-        } else {
             Chart(chartData) { dataPoint in
                 BarMark(
                     x: .value("Month", dataPoint.date, unit: .month),
@@ -215,7 +202,6 @@ struct YearlyHabitChart: View {
                 }
             }
             .id("year-\(currentYearIndex)-\(updateCounter)")
-        }
     }
     
     // MARK: - Computed Properties
@@ -307,7 +293,7 @@ struct YearlyHabitChart: View {
         if hours > 0 {
             return String(format: "%d:%02d", hours, minutes)
         } else if minutes > 0 {
-            return String(format: "%d min", minutes)
+            return String(format: "%0:%02d", minutes)
         } else {
             return "0"
         }
@@ -369,7 +355,6 @@ struct YearlyHabitChart: View {
     // MARK: - Bar Color
     
     private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
-        let date = dataPoint.date
         let value = dataPoint.value
         
         // No progress
@@ -377,39 +362,14 @@ struct YearlyHabitChart: View {
             return AppColorManager.getNoProgressBarStyle()
         }
         
-        // For yearly view, we calculate monthly totals against estimated monthly goal
-        // We need to determine completion status based on monthly performance
-        let monthlyTotal = value
-        let dailyGoal = habit.goal
-        
-        // Estimate how many active days were in this month for this habit
-        let daysInMonth = calendar.range(of: .day, in: .month, for: date)?.count ?? 30
-        let activeDaysInMonth = (1...daysInMonth).compactMap { day in
-            calendar.date(byAdding: .day, value: day - 1, to: calendar.startOfDay(for: date))
-        }.filter { dayDate in
-            habit.isActiveOnDate(dayDate) && dayDate >= habit.startDate && dayDate <= Date()
-        }.count
-        
-        // Calculate what the monthly goal should be based on active days
-        let estimatedMonthlyGoal = dailyGoal * activeDaysInMonth
-        
-        // Determine completion status
-        let isCompleted = monthlyTotal >= estimatedMonthlyGoal
-        let isExceeded = monthlyTotal > estimatedMonthlyGoal * 11 / 10 // 110% of goal is exceeded
-        
-        // Use unified chart bar style from AppColorManager
-        return AppColorManager.getChartBarStyle(
-            isCompleted: isCompleted,
-            isExceeded: isExceeded,
-            habit: habit,
-            colorScheme: colorScheme
-        )
+        // For yearly view, all bars use partial progress style (habit color gradient)
+        // No concept of "completed" or "exceeded" at yearly level
+        return AppColorManager.getPartialProgressBarStyle(for: habit, colorScheme: colorScheme)
     }
     
     // MARK: - Helper Methods
     
     private func setupYears() {
-        isLoading = true
         
         let today = Date()
         let currentYearComponents = calendar.dateComponents([.year], from: today)
@@ -428,7 +388,6 @@ struct YearlyHabitChart: View {
         }
         
         years = yearsList
-        isLoading = false
     }
     
     private func findCurrentYearIndex() {

@@ -15,22 +15,14 @@ struct PaywallView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
-                // Background
-                PaywallBackgroundGradient(colorScheme: colorScheme)
-                
                 // Main Content (ScrollView)
                 ScrollView {
                     VStack(spacing: 32) {
                         // Header with laurels
                         PaywallHeaderSection(colorScheme: colorScheme)
-                        
-                        // Features section (теперь может быть сколько угодно длинным)
+
                         PaywallExpandedFeaturesSection(colorScheme: colorScheme)
-                        
-                        // Additional content can go here
-                        // Testimonials, statistics, etc.
-                        
-                        // Bottom padding to account for overlay
+
                         Color.clear
                             .frame(height: 200) // Примерная высота overlay
                     }
@@ -54,23 +46,32 @@ struct PaywallView: View {
                     .ignoresSafeArea(.keyboard, edges: .bottom) // Поддержка клавиатуры
                     
                 } else {
-                    // Fallback for loading state
-                    PaywallFallbackOverlay(colorScheme: colorScheme)
+                    VStack {
+                        ProgressView()
+                            .scaleEffect(1.2)
+                        Text("paywall_processing_button".localized)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.top)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 32)
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItem(placement: .topBarTrailing) {
                     XmarkView(action: {
                         dismiss()
                     })
                 }
             }
         }
+        .presentationDragIndicator(.visible)
         .onAppear {
             selectDefaultPackage()
         }
         .alert("paywall_purchase_result_title".localized, isPresented: $showingAlert) {
-            Button("button_ok") {
+            Button("paywall_ok_button".localized) {
                 if alertMessage.contains("successful") {
                     dismiss()
                 }
@@ -169,10 +170,7 @@ struct PaywallExpandedFeaturesSection: View {
                 }
             }
             
-            // Footer с restore и legal (перенесли в scroll content)
             PaywallScrollableFooter(colorScheme: colorScheme) {
-                // Handle restore purchases
-                // Можно сделать через callback если нужно
             }
         }
     }
@@ -190,12 +188,34 @@ struct PaywallScrollableFooter: View {
                 onRestorePurchases()
             }
             .font(.subheadline)
-            .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+            .foregroundStyle(.secondary)
+            
+            Button {
+                if let url = URL(string: "https://www.apple.com/family-sharing/") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "person.3.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color.purple, Color.blue, Color.mint],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                    
+                    Text("paywall_family_sharing_button".localized)
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                }
+            }
             
             // Legal text (более компактно)
             Text("paywall_legal_text".localized)
                 .font(.caption)
-                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
             
@@ -207,7 +227,7 @@ struct PaywallScrollableFooter: View {
                     }
                 }
                 .font(.caption)
-                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                .foregroundStyle(.secondary)
                 
                 Button("privacy_policy".localized) {
                     if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
@@ -215,29 +235,9 @@ struct PaywallScrollableFooter: View {
                     }
                 }
                 .font(.caption)
-                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
+                .foregroundStyle(.secondary)
             }
         }
         .padding(.top, 32)
-    }
-}
-
-// MARK: - Fallback Overlay (для loading state)
-struct PaywallFallbackOverlay: View {
-    let colorScheme: ColorScheme
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            Text("Loading subscription options...")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            
-            ProgressView()
-                .scaleEffect(1.2)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 32)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-        .padding(.horizontal, 20)
     }
 }

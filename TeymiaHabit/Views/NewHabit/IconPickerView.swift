@@ -13,24 +13,26 @@ enum IconType: Hashable {
     }
 }
 
-// MARK: - Обновленная модель (убрал isCustom)
+// MARK: - Обновленная модель с Pro поддержкой
 struct IconCategory {
     let name: String
     let icons: [IconType]
+    let isPro: Bool
     
     // Инициализатор для SF Symbols
-    init(name: String, sfSymbols: [String]) {
+    init(name: String, sfSymbols: [String], isPro: Bool = false) {
         self.name = name
         self.icons = sfSymbols.map { .sfSymbol($0) }
+        self.isPro = isPro
     }
     
     // Инициализатор для изображений
-    init(name: String, images: [String]) {
+    init(name: String, images: [String], isPro: Bool = false) {
         self.name = name
         self.icons = images.map { .image($0) }
+        self.isPro = isPro
     }
 }
-
 
 struct IconPickerView: View {
     // MARK: - Bindings
@@ -42,7 +44,11 @@ struct IconPickerView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(ProManager.self) private var proManager
     @ObservedObject private var colorManager = AppColorManager.shared
+    
+    // MARK: - State
+    @State private var showingPaywall = false
     
     // MARK: - Constants
     private let defaultIcon = "checkmark"
@@ -100,6 +106,11 @@ struct IconPickerView: View {
     // MARK: - Data
     
     private let categories: [IconCategory] = [
+        // 3D иконки ПЕРВЫМИ (Pro feature)
+        IconCategory(name: "3D", images: [
+            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitness_boy", "3d_fitness_boy1", "3d_meditate_woman", "3d_meditate_woman2", "3d_meditate_man", "3d_shoe", "3d_swimming", "3d_basketball", "3d_football", "3d_water_lemon", "3d_tooth", "3d_cup", "3d_cooking", "3d_bulb", "3d_keyboard", "3d_hand_shaking", "3d_office", "3d_hand_smartphone", "3d_book", "3d_book_plant", "3d_forest", "3d_vegetable", "3d_sink", "3d_shower", "3d_bathroom", "3d_desk", "3d_graduate", "3d_graduationcap_books", "3d_graduationcap", "3d_coin_dollar", "3d_money", "3d_guitar", "3d_painting", "3d_wheel", "3d_youtube_button", "3d_insta"
+        ], isPro: true),
+        
         IconCategory(name: "health".localized, sfSymbols: [
             "figure.walk", "figure.run", "figure.stairs", "figure.strengthtraining.traditional", "figure.cooldown",
             "figure.mind.and.body", "figure.pool.swim", "shoeprints.fill", "bicycle", "bed.double.fill",
@@ -128,10 +139,6 @@ struct IconPickerView: View {
             "cart.fill", "takeoutbag.and.cup.and.straw.fill", "gift.fill", "house.fill", "stroller.fill",
             "face.smiling.fill", "envelope.fill", "phone.fill", "beach.umbrella.fill", "pawprint.fill",
             "creditcard.fill", "banknote.fill", "location.fill", "hand.palm.facing.fill", "steeringwheel.and.hands"
-        ]),
-        
-        IconCategory(name: "3d_icons".localized, images: [
-            "3d_fitness_girl", "3d_fitness_girl2", "3d_fitness_girl3", "3d_fitness_boy", "3d_fitness_boy1", "3d_meditate_man", "3d_shoe", "3d_water_lemon", "3d_tooth", "3d_cup", "3d_cooking", "3d_bulb", "3d_keyboard", "3d_hand_shaking", "3d_office", "3d_hand_smartphone", "3d_book_plant", "3d_forest", "3d_vegetable", "3d_sink"
         ])
     ]
     
@@ -139,6 +146,8 @@ struct IconPickerView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
+            Color(UIColor.systemGroupedBackground)
+                        .ignoresSafeArea()
             // Main content (Icon Grid)
             iconGridSection
                 .safeAreaInset(edge: .bottom) {
@@ -162,6 +171,9 @@ struct IconPickerView: View {
         }
         .navigationTitle("icon_and_color".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+        }
         .onAppear {
             if selectedIcon == nil {
                 selectedIcon = defaultIcon
@@ -177,11 +189,19 @@ struct IconPickerView: View {
             LazyVStack(alignment: .leading, spacing: 20) {
                 ForEach(categories, id: \.name) { category in
                     VStack(alignment: .leading, spacing: 12) {
-                        // Section header
-                        Text(category.name)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                            .padding(.horizontal, 20)
+                        // Section header with Pro badge
+                        HStack {
+                            Text(category.name)
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                            
+                            if category.isPro && !proManager.isPro {
+                                ProLockBadge()
+                            }
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
                         
                         // Icons grid
                         LazyVGrid(columns: adaptiveColumns, spacing: 12) {
@@ -229,8 +249,15 @@ struct IconPickerView: View {
     // MARK: - Icon Button
     private func iconButton(for iconType: IconType, in category: IconCategory) -> some View {
         let isSelected = selectedIcon == iconType.id
+        let isLocked = category.isPro && !proManager.isPro
         
         return Button {
+            if isLocked {
+                // Show paywall for Pro features
+                showingPaywall = true
+                return
+            }
+            
             withAnimation(.easeInOut(duration: 0.3)) {
                 selectedIcon = iconType.id
             }
@@ -242,20 +269,18 @@ struct IconPickerView: View {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(
                             isSelected
-                            ? AnyShapeStyle(selectedColor.adaptiveGradient(for: colorScheme).opacity(0.2))
-                            : AnyShapeStyle(
-                                LinearGradient(
-                                    colors: [.gray.opacity(0.1), .gray.opacity(0.3)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                            ? AnyShapeStyle(selectedColor.adaptiveGradient(for: colorScheme).opacity(0.1))
+                            : AnyShapeStyle(Color(UIColor.secondarySystemGroupedBackground))
                         )
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .strokeBorder(Color(.separator).opacity(0.6), lineWidth: 0.7)
-                        .opacity(isSelected ? 1 : 0)
+                        .strokeBorder(
+                            isSelected
+                            ? selectedColor.color
+                            : Color(.separator).opacity(0.5), // Тонкий серый для unselected
+                            lineWidth: isSelected ? 1.0 : 0.7 // Чуть толще для selected
+                        )
                 )
                 .scaleEffect(isSelected ? 1.1 : 1.0)
         }

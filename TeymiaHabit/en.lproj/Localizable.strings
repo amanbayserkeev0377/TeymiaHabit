@@ -36,12 +36,8 @@
 "items_selected" = "%d Selected";
 "count" = "Count";
 "time" = "Time";
-"times" = "times";
 "hours" = "Hours";
 "goal" = "Goal: %@";
-"minutes_format" = "%d m";
-"hours_format" = "%d hr";
-"hours_minutes_format" = "%d hr %d m";
 "minutes" = "Minutes";
 "streak" = "Streak";
 "best" = "Best";
@@ -93,7 +89,7 @@
 "reset_all_history" = "Reset history";
 "reset_button_label" = "Reset";
 "start_date" = "Start date";
-"habit_statistics_view" = "Tap dates to edit progress";
+
 
 /* ===================== Notifications ===================== */
 
@@ -185,7 +181,6 @@
 
 "paywall_purchase_result_title" = "Purchase Result";
 "paywall_ok_button" = "OK";
-"paywall_header_title" = "Build Better Habits";
 "paywall_processing_button" = "Processing...";
 "paywall_subscribe_button" = "Subscribe";
 "paywall_start_free_trial_button" = "Start 7 Days Free";
@@ -205,12 +200,10 @@
 "paywall_support_creator_description" = "One person, no team — your help makes a difference";
 "paywall_yearly_plan" = "Yearly";
 "paywall_monthly_plan" = "Monthly";
-"paywall_monthly_description" = "Less than a cup of coffee";
 "paywall_yearly_description" = "Try it free for 7 days";
 "paywall_free_trial_label" = "FREE TRIAL";
 "paywall_7_days_free_trial" = "7 days free trial";
 "paywall_lifetime_plan" = "Lifetime";
-"paywall_lifetime_description" = "Pay once, use forever";
 "paywall_one_time_payment" = "One-time payment";
 "paywall_get_lifetime_button" = "Get Lifetime Access";
 "paywall_save_badge" = "Save 60%";
@@ -232,60 +225,43 @@
 "empty_view_tap" = "Tap";
 "empty_view_to_create_habit" = "to create your first habit";
 
-/* ===================== Statistics Overview ===================== */
+/* ===================== Statistics  ===================== */
 
-// Overview Headers
-"overview" = "Overview";
-"your_total_progress" = "Your total progress";
+"average" = "Average";
+"tap_dates" = "Tap dates to edit progress";
+"press_hold_bars" = "Press and hold bars for details";
+"bar_chart_header" = "View your progress over different weeks, months, years";
+"line_chart_header" = "Your progress from the last week, month, year";
 
 // Overview Stats Cards
 "active_habits" = "Active Habits";
-"completed_total" = "Completed Total";
-"active_days_total" = "Active Days Total";
-"overall_completion" = "Overall Completion";
+"completed_total" = "Completed";
+"active_days_total" = "Active Days";
+"overall_completion" = "Completion";
 
 /* ===================== Card Info Modal ===================== */
 
-// Section Headers (оставить как есть)
 "what_it_shows" = "What it shows:";
 "how_its_calculated" = "How it's calculated:";
 "example" = "Example:";
 
 // Completed Total Card
-"completed_total_description" = "Total number of successfully completed habits across all time. This shows your overall achievements and progress since you started tracking.";
+"completed_total_description" = "Number of habit completions across all time. Each time you complete a daily goal for any habit, it counts toward this count.";
 "completed_total_calculation" = "We count every day when you met or exceeded your daily goal for any habit, from the beginning of your habit tracking journey.";
-"completed_total_example" = "If you completed 'Exercise' 30 times, 'Reading' 45 times, and 'Water' 60 times, your total would be 135 completions.";
+"completed_total_example" = "If you completed 'Exercise' 30 times, 'Reading' 45 times, and 'Meditation' 60 times, your count would be 135 completions.";
 
 // Active Days Total Card
-"active_days_total_description" = "Total number of days when you made progress on at least one habit throughout your entire tracking history.";
+"active_days_total_description" = "Number of days when you made progress on at least one habit throughout your entire tracking history.";
 "active_days_total_calculation" = "We count unique days where you made any progress on any habit, from your very first tracked day until today.";
-"active_days_total_example" = "If you've been tracking for 100 days and made progress on 85 of those days, your active days total is 85.";
+"active_days_total_example" = "If you've been tracking for 100 days and made progress on 85 of those days, your active days count is 85.";
 
 // Overall Completion Card
 "overall_completion_description" = "Your average completion rate across all habits and all time. This shows your overall consistency and performance.";
 "overall_completion_calculation" = "We calculate the completion percentage for each habit completion, then average all these percentages across your entire tracking history.";
 "overall_completion_example" = "If across all your habits and all time you average 78% completion, this shows you're consistently performing well.";
 
-// Active Habits Card (оставить как есть)
-"active_habits_description" = "The total number of habits you're currently tracking (not including archived habits). This gives you an overview of your current habit workload.";
+// Active Habits Card
+"active_habits_description" = "Number of habits you're currently tracking (not including archived habits). This gives you an overview of your current habit workload.";
 "active_habits_calculation" = "We count all habits that are not archived. This includes habits that might not be active every day of the week, but are still part of your routine.";
 "active_habits_example" = "If you're tracking 'Morning Exercise', 'Read Books', and 'Drink Water', but archived 'Learn Spanish', your active habits count is 3.";
 
-
-/* ===================== What's New ===================== */
-"whats_new_title" = "What's New";
-"whats_new_title_full" = "What's New";
-"whats_new_version" = "Version 1.1";
-"whats_new_subtitle" = "Version 1.1";
-"whats_new_description" = "Discover the latest improvements to help you build better habits";
-
-// Features
-"whats_new_statistics_title" = "Beautiful Statistics";
-"whats_new_statistics_description" = "Track progress with interactive line charts and bar charts";
-
-"whats_new_colorful_rings_title" = "Colorful Progress Rings";
-"whats_new_colorful_rings_description" = "Each habit displays in its own vibrant color";
-
-
-// Buttons
-"whats_new_continue_button" = "Continue";

@@ -7,56 +7,74 @@ struct HabitDetailView: View {
     
     @State private var viewModel: HabitDetailViewModel?
     @State private var isEditPresented = false
-    @State private var navigateToStatistics = false
-    
     @State private var inputManager = InputOverlayManager()
-    
+    @State private var showingStatistics = false
+    @State private var minusPressed = false
+    @State private var plusPressed = false
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
     
+    // Adaptive sizing based on device
+    private var isCompactDevice: Bool {
+        UIScreen.main.bounds.height <= 667 // iPhone SE, 8, etc.
+    }
+    
+    private var adaptiveSpacing: (small: CGFloat, medium: CGFloat, large: CGFloat) {
+        if isCompactDevice {
+            return (4, 8, 16)
+        } else {
+            return (8, 16, 40)
+        }
+    }
+    
+    private var adaptiveProgressRingSize: CGFloat {
+        isCompactDevice ? 180 : 220
+    }
+    
+    private var adaptiveButtonSize: CGFloat {
+        isCompactDevice ? 40 : 44
+    }
+    
     var body: some View {
+        NavigationStack {
+            // Use ScrollView to handle keyboard properly, even if content fits
             ScrollView {
                 VStack(spacing: 0) {
-                    // Main content
                     if let viewModel = viewModel {
-                        VStack(spacing: 0) {
-                            // Progress and actions
-                            progressAndActionsContent(viewModel: viewModel)
-                            
-                            // Bottom button
-                            completeButtonView(viewModel: viewModel)
-                        }
+                        habitDetailViewContent(viewModel: viewModel)
                     }
                 }
-                .padding(.top, 16)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: UIScreen.main.bounds.height - 200) // Ensure minimum height
             }
-            .navigationTitle(habit.title)
-            .navigationBarTitleDisplayMode(.inline)
+            .scrollDismissesKeyboard(.immediately)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        dismiss()
+                ToolbarItem(placement: .topBarLeading) {
+                        Text(formattedDateForToolbar())
+                            .foregroundStyle(.secondary)
                     }
-                }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        navigateToStatistics = true
+                        showingStatistics = true
                     } label: {
-                        Image(systemName: "chart.line.text.clipboard")
+                        Image(systemName: "chart.bar.xaxis")
                             .font(.system(size: 14))
-                            .foregroundStyle(habit.iconColor.color)
-                            .frame(width: 34, height: 34)
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .frame(width: 30, height: 30)
                             .background(
                                 Circle()
-                                    .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                                    .fill(
+                                        habit.iconColor.adaptiveGradient(for: colorScheme)
+                                            .opacity(0.15)
+                                    )
                             )
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button {
                             isEditPresented = true
@@ -80,128 +98,224 @@ struct HabitDetailView: View {
                         .tint(.red)
                     } label: {
                         Image(systemName: "ellipsis")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(habit.iconColor.color)
-                            .frame(width: 34, height: 34)
+                            .font(.system(size: 16))
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .frame(width: 30, height: 30)
                             .background(
                                 Circle()
-                                    .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                                    .fill(
+                                        habit.iconColor.adaptiveGradient(for: colorScheme)
+                                            .opacity(0.15)
+                                    )
                             )
                     }
                 }
             }
-        .id(habit.uuid.uuidString)
-        .onAppear {
-            setupViewModelIfNeeded()
-        }
-        .onDisappear {
-            HabitManager.shared.cleanupInactiveViewModels()
-        }
-        .onChange(of: habit.uuid) { _, _ in
-            setupViewModelIfNeeded()
-        }
-        .onChange(of: date) { _, newDate in
-            viewModel?.updateDisplayedDate(newDate)
-        }
-        .onChange(of: viewModel?.alertState.successFeedbackTrigger) { _, newValue in
-            if let newValue = newValue, newValue {
-                HapticManager.shared.play(.success)
+            .presentationDragIndicator(.visible)
+            .id(habit.uuid.uuidString)
+            .onAppear {
+                setupViewModelIfNeeded()
             }
-        }
-        .onChange(of: viewModel?.alertState.errorFeedbackTrigger) { _, newValue in
-            if let newValue = newValue, newValue {
-                HapticManager.shared.play(.error)
+            .onDisappear {
+                HabitManager.shared.cleanupInactiveViewModels()
             }
-        }
-        .sheet(isPresented: $isEditPresented) {
-            NewHabitView(habit: habit)
-        }
-        .navigationDestination(isPresented: $navigateToStatistics) {
-            HabitStatisticsView(habit: habit)
-        }
-        .deleteSingleHabitAlert(
-            isPresented: Binding(
-                get: { viewModel?.alertState.isDeleteAlertPresented ?? false },
-                set: { viewModel?.alertState.isDeleteAlertPresented = $0 }
-            ),
-            habitName: habit.title,
-            onDelete: {
-                viewModel?.deleteHabit()
-                dismiss()
-            },
-            habit: habit
-        )
-        .inputOverlay(
-            habit: habit,
-            inputType: inputManager.activeInputType,
-            onCountInput: { count in
-                viewModel?.handleCustomCountInput(count: count)
-            },
-            onTimeInput: { hours, minutes in
-                viewModel?.handleCustomTimeInput(hours: hours, minutes: minutes)
-            },
-            onDismiss: {
-                inputManager.dismiss()
+            .onChange(of: habit.uuid) { _, _ in
+                setupViewModelIfNeeded()
             }
-        )
+            .onChange(of: date) { _, newDate in
+                viewModel?.updateDisplayedDate(newDate)
+            }
+            .onChange(of: viewModel?.alertState.successFeedbackTrigger) { _, newValue in
+                if let newValue = newValue, newValue {
+                    HapticManager.shared.play(.success)
+                }
+            }
+            .onChange(of: viewModel?.alertState.errorFeedbackTrigger) { _, newValue in
+                if let newValue = newValue, newValue {
+                    HapticManager.shared.play(.error)
+                }
+            }
+            .sheet(isPresented: $isEditPresented) {
+                NewHabitView(habit: habit)
+            }
+            .sheet(isPresented: $showingStatistics) {
+                HabitStatisticsView(habit: habit)
+            }
+            .deleteSingleHabitAlert(
+                isPresented: Binding(
+                    get: { viewModel?.alertState.isDeleteAlertPresented ?? false },
+                    set: { viewModel?.alertState.isDeleteAlertPresented = $0 }
+                ),
+                habitName: habit.title,
+                onDelete: {
+                    viewModel?.deleteHabit()
+                    dismiss()
+                },
+                habit: habit
+            )
+            .inputOverlay(
+                habit: habit,
+                inputType: inputManager.activeInputType,
+                onCountInput: { count in
+                    viewModel?.handleCustomCountInput(count: count)
+                },
+                onTimeInput: { hours, minutes in
+                    viewModel?.handleCustomTimeInput(hours: hours, minutes: minutes)
+                },
+                onDismiss: {
+                    inputManager.dismiss()
+                }
+            )
+        }
     }
     
-    // MARK: - Progress and Actions
+    // MARK: - Content
     @ViewBuilder
-    private func progressAndActionsContent(viewModel: HabitDetailViewModel) -> some View {
-        VStack(spacing: 24) {
-            // Goal info
-            HStack(spacing: 8) {
-                universalIcon(
-                    iconId: habit.iconName,
-                    baseSize: 22,
-                    color: habit.iconColor,
-                    colorScheme: colorScheme
-                )
-                
-                Text("goal".localized(with: viewModel.formattedGoal))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.vertical, 8)
+    private func habitDetailViewContent(viewModel: HabitDetailViewModel) -> some View {
+        VStack(spacing: 0) {
+            // Top section with icon and title
+            topSectionView()
             
-            // Progress control
-            ProgressControlSection(
+            Spacer()
+                .frame(height: adaptiveSpacing.small)
+            
+            // Day streaks
+            DayStreaksView(habit: habit, date: date)
+                .padding(.horizontal, 24)
+            
+            // Fixed spacer before progress ring
+            Spacer()
+                .frame(height: adaptiveSpacing.large)
+            
+            // Progress Ring with Plus/Minus buttons
+            progressRingSection(viewModel: viewModel)
+            
+            // Fixed spacer after progress ring
+            Spacer()
+                .frame(height: adaptiveSpacing.large)
+            
+            // Action Buttons (Reset, Timer, Manual Entry)
+            ActionButtonsSection(
                 habit: habit,
-                currentProgress: .constant(viewModel.currentProgress),
-                completionPercentage: viewModel.completionPercentage,
-                formattedProgress: getFormattedProgress(viewModel: viewModel),
-                onIncrement: {
-                    viewModel.incrementProgress()
+                date: date,
+                isTimerRunning: viewModel.isTimerRunning,
+                onReset: {
+                    viewModel.resetProgress()
                 },
-                onDecrement: {
-                    viewModel.decrementProgress()
+                onTimerToggle: {
+                    viewModel.toggleTimer()
+                },
+                onManualEntry: {
+                    if habit.type == .time {
+                        inputManager.showTimeInput()
+                    } else {
+                        inputManager.showCountInput()
+                    }
                 }
             )
             
-            // Action buttons
-            HStack(spacing: 16) {
-                ActionButtonsSection(
-                    habit: habit,
-                    date: date,
-                    isTimerRunning: viewModel.isTimerRunning,
-                    onReset: {
-                        viewModel.resetProgress()
-                    },
-                    onTimerToggle: {
-                        viewModel.toggleTimer()
-                    },
-                    onManualEntry: {
-                        if habit.type == .time {
-                            inputManager.showTimeInput()
-                        } else {
-                            inputManager.showCountInput()
-                        }
-                    }
-                )
-            }
+            // Flexible spacer to push complete button to bottom
+            Spacer()
+                .frame(height: adaptiveSpacing.large) // Add minimum spacing
+            
+            // Complete Button
+            completeButtonView(viewModel: viewModel)
+            
+            Spacer()
+                .frame(height: adaptiveSpacing.medium)
         }
-        .padding(.horizontal, 16)
+    }
+    
+    // MARK: - Top Section
+    @ViewBuilder
+    private func topSectionView() -> some View {
+        VStack(spacing: adaptiveSpacing.small) {
+            // Icon
+            universalIcon(
+                iconId: habit.iconName,
+                baseSize: isCompactDevice ? 32 : 36,
+                color: habit.iconColor,
+                colorScheme: colorScheme
+            )
+            
+            // Title
+            Text(habit.title)
+                .font(isCompactDevice ? .title.bold() : .largeTitle.bold())
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .padding(.horizontal, 24)
+            
+            // Goal
+            Text("goal".localized(with: habit.formattedGoal))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+    
+    // MARK: - Progress Ring Section
+    @ViewBuilder
+    private func progressRingSection(viewModel: HabitDetailViewModel) -> some View {
+        HStack(spacing: 0) {
+            Spacer()
+            
+            // Minus Button
+            Button {
+                minusPressed.toggle()
+                viewModel.decrementProgress()
+            } label: {
+                Image(systemName: "minus")
+                    .font(.system(size: isCompactDevice ? 20 : 24, weight: .semibold))
+                    .withHabitGradient(habit, colorScheme: colorScheme)
+                    .frame(width: adaptiveButtonSize, height: adaptiveButtonSize)
+                    .background(
+                        Circle()
+                            .fill(
+                                habit.iconColor.adaptiveGradient(for: colorScheme)
+                                    .opacity(0.15)
+                            )
+                    )
+            }
+            .disabled(viewModel.currentProgress <= 0)
+            .hapticFeedback(.impact(weight: .light), trigger: minusPressed)
+            
+            Spacer()
+            
+            // Progress Ring
+            ProgressRing(
+                progress: viewModel.completionPercentage,
+                currentValue: getFormattedProgress(viewModel: viewModel),
+                isCompleted: viewModel.isAlreadyCompleted,
+                isExceeded: viewModel.currentProgress > habit.goal,
+                habit: habit,
+                size: adaptiveProgressRingSize,
+                lineWidth: isCompactDevice ? 14 : 18,
+                fontSize: isCompactDevice ? 28 : 36
+            )
+            
+            Spacer()
+            
+            // Plus Button
+            Button {
+                plusPressed.toggle()
+                viewModel.incrementProgress()
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: isCompactDevice ? 20 : 24, weight: .semibold))
+                    .withHabitGradient(habit, colorScheme: colorScheme)
+                    .frame(width: adaptiveButtonSize, height: adaptiveButtonSize)
+                    .background(
+                        Circle()
+                            .fill(
+                                habit.iconColor.adaptiveGradient(for: colorScheme)
+                                    .opacity(0.15)
+                            )
+                    )
+            }
+            .hapticFeedback(.impact(weight: .light), trigger: plusPressed)
+            
+            Spacer()
+        }
     }
     
     // MARK: - Complete Button
@@ -212,8 +326,8 @@ struct HabitDetailView: View {
             Text(viewModel.isAlreadyCompleted ? "completed".localized : "complete".localized)
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(viewModel.isAlreadyCompleted ? Color.secondary : Color.white)
-                .frame(maxWidth: min(340, UIScreen.main.bounds.width * 0.85))
-                .frame(height: 52)
+                .frame(maxWidth: .infinity)
+                .frame(height: isCompactDevice ? 48 : 52)
                 .background(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(
@@ -228,8 +342,7 @@ struct HabitDetailView: View {
         .animation(.easeInOut(duration: 0.3), value: viewModel.isAlreadyCompleted)
         .scaleEffect(viewModel.isAlreadyCompleted ? 0.98 : 1.0)
         .modifier(HapticManager.shared.sensoryFeedback(.impact(weight: .medium), trigger: !viewModel.isAlreadyCompleted))
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.horizontal, 24)
     }
     
     // MARK: - Helper Methods
@@ -264,4 +377,17 @@ struct HabitDetailView: View {
         HapticManager.shared.play(.success)
         dismiss()
     }
+    
+    private func formattedDateForToolbar() -> String {
+        if Calendar.current.isDateInToday(date) {
+            return "today".localized.capitalized
+        } else if Calendar.current.isDateInYesterday(date) {
+            return "yesterday".localized.capitalized
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "EEEE, d MMM"
+            return formatter.string(from: date).capitalized
+        }
+    }
 }
+

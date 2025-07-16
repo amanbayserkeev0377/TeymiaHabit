@@ -28,7 +28,6 @@ struct HomeView: View {
     
     @State private var selectedDate: Date = .now
     @State private var showingNewHabit = false
-    // ✅ ИЗМЕНЕНИЕ: Используем объект Habit напрямую вместо String ID
     @State private var selectedHabit: Habit? = nil
     @State private var habitToEdit: Habit? = nil
     @State private var alertState = AlertState()
@@ -254,7 +253,6 @@ struct HomeView: View {
         modelContext.delete(habit)
         do {
             try modelContext.save()
-            // ✅ ДОБАВИТЬ: Интеграция с HabitManager
             HabitManager.shared.removeViewModel(for: habit.uuid.uuidString)
             HapticManager.shared.play(.error)
         } catch {
@@ -281,11 +279,12 @@ struct HabitCardView: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
-    private let ringSize: CGFloat = 58
+    private let ringSize: CGFloat = 60
     private let lineWidth: CGFloat = 7
     private let iconSize: CGFloat = 26
     
-    @State private var timerPulseScale: CGFloat = 1.0
+    @State private var timerUpdateTrigger = 0
+        @State private var cardTimer: Timer?
     
     private var isTimerActive: Bool {
         guard habit.type == .time && Calendar.current.isDateInToday(date) else {
@@ -297,9 +296,18 @@ struct HabitCardView: View {
     }
     
     private var cardProgress: Int {
-        let progress = habit.progressForDate(date)
-        return progress
-    }
+            _ = timerUpdateTrigger // Подписка на обновления
+            
+            // Live прогресс для активных таймеров сегодня
+            if isTimerActive {
+                if let liveProgress = TimerService.shared.getLiveProgress(for: habit.uuid.uuidString) {
+                    return liveProgress
+                }
+            }
+            
+            // Обычный прогресс из базы
+            return habit.progressForDate(date)
+        }
     
     private var cardCompletionPercentage: Double {
         guard habit.goal > 0 else { return 0 }
@@ -311,7 +319,7 @@ struct HabitCardView: View {
         case .count:
             return cardProgress.formattedAsProgressForRing()
         case .time:
-            return cardProgress.formattedAsTimeForRing()
+            return cardProgress.formattedAsTime()
         }
     }
     
@@ -349,7 +357,7 @@ struct HabitCardView: View {
                 .frame(width: 60, height: 60)
                 .background(
                     Circle()
-                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.2))
+                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
                 )
                 
                 // Middle - Title and goal
@@ -366,42 +374,17 @@ struct HabitCardView: View {
                 
                 Spacer()
                 
-                ZStack {
-                    ProgressRing(
-                        progress: cardCompletionPercentage,
-                        currentValue: cardFormattedProgressValue,
-                        isCompleted: cardIsCompleted,
-                        isExceeded: cardIsExceeded,
-                        habit: habit,
-                        size: ringSize,
-                        lineWidth: lineWidth,
-                        fontSize: adaptedFontSize,
-                        iconSize: iconSize
-                    )
-                    
-                    .overlay(alignment: .bottomTrailing) {
-                        if isTimerActive {
-                            Image(systemName: "clock.fill")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
-                                .scaleEffect(timerPulseScale)
-                                .animation(
-                                    .easeInOut(duration: 1.0)
-                                    .repeatForever(autoreverses: true),
-                                    value: timerPulseScale
-                                )
-                                .onAppear {
-                                    if isTimerActive {
-                                        timerPulseScale = 1.1
-                                    }
-                                }
-                                .onDisappear {
-                                    timerPulseScale = 1.0
-                                }
-                                .offset(x: 12, y: 12)
-                        }
-                    }
-                }
+                ProgressRing(
+                    progress: cardCompletionPercentage,
+                    currentValue: cardFormattedProgressValue,
+                    isCompleted: cardIsCompleted,
+                    isExceeded: cardIsExceeded,
+                    habit: habit,
+                    size: ringSize,
+                    lineWidth: lineWidth,
+                    fontSize: adaptedFontSize,
+                    iconSize: iconSize
+                )
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
@@ -424,6 +407,21 @@ struct HabitCardView: View {
             )
         }
         .buttonStyle(.plain)
+        .onAppear {
+                    if isTimerActive {
+                        startCardTimer()
+                    }
+                }
+                .onDisappear {
+                    stopCardTimer()
+                }
+                .onChange(of: isTimerActive) { _, newValue in
+                    if newValue {
+                        startCardTimer()
+                    } else {
+                        stopCardTimer()
+                    }
+                }
         .contextMenu {
             // Complete
             Button {
@@ -432,8 +430,7 @@ struct HabitCardView: View {
                 Label("complete".localized, systemImage: "checkmark")
             }
             .disabled(cardIsCompleted)
-            .withHabitColor(habit)
-            
+            .withHabitGradient(habit, colorScheme: colorScheme)
             Divider()
             
             // Edit
@@ -442,7 +439,7 @@ struct HabitCardView: View {
             } label: {
                 Label("button_edit".localized, systemImage: "pencil")
             }
-            .withHabitColor(habit)
+            .withHabitGradient(habit, colorScheme: colorScheme)
             
             // Archive
             Button {
@@ -450,7 +447,7 @@ struct HabitCardView: View {
             } label: {
                 Label("archive".localized, systemImage: "archivebox")
             }
-            .withHabitColor(habit)
+            .withHabitGradient(habit, colorScheme: colorScheme)
             
             Divider()
             
@@ -463,4 +460,21 @@ struct HabitCardView: View {
             .tint(.red)
         }
     }
+    
+    private func startCardTimer() {
+            // Останавливаем предыдущий таймер если есть
+            stopCardTimer()
+            
+            // Запускаем новый таймер с интервалом 1 секунда
+            cardTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                timerUpdateTrigger += 1
+            }
+            
+            print("🔄 Started card timer for \(habit.title)")
+        }
+        
+        private func stopCardTimer() {
+            cardTimer?.invalidate()
+            cardTimer = nil
+        }
 }

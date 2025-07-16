@@ -95,8 +95,8 @@ enum HabitIconColor: String, CaseIterable, Codable {
         case .gray:
             return Color(uiColor: UIColor { traitCollection in
                 traitCollection.userInterfaceStyle == .dark
-                    ? #colorLiteral(red: 0.7803921569, green: 0.7803921569, blue: 0.8039215686, alpha: 1)
-                    : #colorLiteral(red: 0.4509803922, green: 0.4509803922, blue: 0.4509803922, alpha: 1)
+                    ? #colorLiteral(red: 0.4196078431, green: 0.4666666667, blue: 0.8392156863, alpha: 1)
+                    : #colorLiteral(red: 0.2352941176, green: 0.2784313725, blue: 0.5607843137, alpha: 1)
             })
         case .colorPicker:
             return Self.customColor
@@ -110,7 +110,7 @@ extension HabitIconColor {
     var darkColor: Color {
         switch self {
         case .primary:
-            return Color(#colorLiteral(red: 0.1298420429, green: 0.1298461258, blue: 0.1298439503, alpha: 1))   // Мягкий темно-серый
+            return Color(#colorLiteral(red: 0.1803921569, green: 0.1803921569, blue: 0.1803921569, alpha: 1))
         case .red:
             return Color(#colorLiteral(red: 0.65, green: 0.15, blue: 0.12, alpha: 1))   // Было 0.6 → 0.65
         case .orange:
@@ -134,7 +134,7 @@ extension HabitIconColor {
         case .brown:
             return Color(#colorLiteral(red: 0.45, green: 0.32, blue: 0.26, alpha: 1))   // Было 0.28 → 0.32
         case .gray:
-            return Color(#colorLiteral(red: 0.370555222, green: 0.3705646992, blue: 0.3705595732, alpha: 1))  // С легким синим оттенком
+            return Color(#colorLiteral(red: 0.15, green: 0.2, blue: 0.45, alpha: 1)) // darkColor
         case .colorPicker:
             return Self.customColor
         }
@@ -168,7 +168,7 @@ extension HabitIconColor {
         case .brown:
             return Color(#colorLiteral(red: 0.85, green: 0.7, blue: 0.6, alpha: 1))     // Было 0.75 → 0.7
         case .gray:
-            return Color(#colorLiteral(red: 0.7540688515, green: 0.7540867925, blue: 0.7540771365, alpha: 1))
+            return Color(#colorLiteral(red: 0.55, green: 0.6, blue: 0.9, alpha: 1)) // lightColor
         case .colorPicker:
             return Self.customColor
         }

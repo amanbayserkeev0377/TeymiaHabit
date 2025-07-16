@@ -242,24 +242,11 @@ struct MonthlyCalendarView: View {
         let goal = habit.goal
         
         if habit.type == .time {
-            let progressFormatted = formatTime(progress)
-            let goalFormatted = formatTime(goal)
+            let progressFormatted = progress.formattedAsDuration()
+            let goalFormatted = goal.formattedAsDuration()
             return "\(dateString)\n\(progressFormatted) / \(goalFormatted)"
         } else {
             return "\(dateString)\n\(progress) / \(goal)"
-        }
-    }
-    
-    private func formatTime(_ seconds: Int) -> String {
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        
-        if hours > 0 && minutes > 0 {
-            return String(format: "hours_minutes_format".localized, hours, minutes)
-        } else if hours > 0 {
-            return String(format: "hours_format".localized, hours)
-        } else {
-            return String(format: "minutes_format".localized, minutes)
         }
     }
     

@@ -1,11 +1,48 @@
 import SwiftUI
 
 struct CardColors {
-    // ✅ Простые цвета для каждой карточки
-    static let completionRate = Color(#colorLiteral(red: 0.2627380788, green: 0.2627506256, blue: 0.4563500881, alpha: 1))
-    static let activeDays = Color(#colorLiteral(red: 0.9803726077, green: 0.4384494722, blue: 0.4061130285, alpha: 1))
-    static let habitsDone = Color(#colorLiteral(red: 0.4411377907, green: 0.7888615131, blue: 0.2720118761, alpha: 1))
-    static let activeHabits = Color(#colorLiteral(red: 0.433128655, green: 0.6248013973, blue: 0.8752619624, alpha: 1))
+    
+    // MARK: - Completion Rate Colors
+    static func completionRate(for colorScheme: ColorScheme) -> Color {
+        return colorScheme == .dark
+            ? Color(#colorLiteral(red: 0.6627380788, green: 0.6627506256, blue: 0.8563500881, alpha: 1))
+            : Color(#colorLiteral(red: 0.2627380788, green: 0.2627506256, blue: 0.4563500881, alpha: 1))
+    }
+
+    // MARK: - Active Days Colors
+    static func activeDays(for colorScheme: ColorScheme) -> Color {
+        return colorScheme == .dark
+            ? Color(#colorLiteral(red: 0.9803726077, green: 0.4384494722, blue: 0.4061130285, alpha: 1))
+            : Color(#colorLiteral(red: 0.8303726077, green: 0.2884494722, blue: 0.2561130285, alpha: 1))
+    }
+
+    // MARK: - Habits Done Colors
+    static func habitsDone(for colorScheme: ColorScheme) -> Color {
+        return colorScheme == .dark
+            ? Color(#colorLiteral(red: 0.4411377907, green: 0.7888615131, blue: 0.2720118761, alpha: 1))
+            : Color(#colorLiteral(red: 0.3411377907, green: 0.6388615131, blue: 0.1220118761, alpha: 1))
+    }
+
+    // MARK: - Active Habits Colors
+    static func activeHabits(for colorScheme: ColorScheme) -> Color {
+        return colorScheme == .dark
+            ? Color(#colorLiteral(red: 0.433128655, green: 0.6248013973, blue: 0.8752619624, alpha: 1))
+            : Color(#colorLiteral(red: 0.333128655, green: 0.5248013973, blue: 0.7252619624, alpha: 1))
+    }
+    
+    // MARK: - Convenience Methods
+    static func color(for card: InfoCard, colorScheme: ColorScheme) -> Color {
+        switch card {
+        case .completionRate:
+            return completionRate(for: colorScheme)
+        case .activeDays:
+            return activeDays(for: colorScheme)
+        case .habitsDone:
+            return habitsDone(for: colorScheme)
+        case .activeHabits:
+            return activeHabits(for: colorScheme)
+        }
+    }
 }
 
 struct OverviewStatsView: View {
@@ -14,6 +51,7 @@ struct OverviewStatsView: View {
     @State private var statsData: MotivatingOverviewStats = MotivatingOverviewStats()
     @State private var selectedInfoCard: InfoCard? = nil
     @ObservedObject private var colorManager = AppColorManager.shared
+    @Environment(\.colorScheme) private var colorScheme
     
     private var calendar: Calendar {
         Calendar.userPreferred
@@ -28,7 +66,7 @@ struct OverviewStatsView: View {
                     title: "overall_completion".localized,
                     value: "\(Int(overallCompletionRate * 100))%",
                     onTap: { selectedInfoCard = .completionRate },
-                    cardColor: CardColors.completionRate,
+                    cardColor: CardColors.completionRate(for: colorScheme),
                     icon3DAsset: "CardInfo_completion_rate",
                     iconSize: 46
                 )
@@ -37,7 +75,7 @@ struct OverviewStatsView: View {
                     title: "active_days_total".localized,
                     value: "\(totalActiveDays)",
                     onTap: { selectedInfoCard = .activeDays },
-                    cardColor: CardColors.activeDays,
+                    cardColor: CardColors.activeDays(for: colorScheme),
                     icon3DAsset: "CardInfo_active_days"
                 )
                 
@@ -46,7 +84,7 @@ struct OverviewStatsView: View {
                     title: "completed_total".localized,
                     value: "\(totalCompletedHabits)",
                     onTap: { selectedInfoCard = .habitsDone },
-                    cardColor: CardColors.habitsDone,
+                    cardColor: CardColors.habitsDone(for: colorScheme),
                     icon3DAsset: "CardInfo_habits_done"
                 )
                 // 4. Active Habits
@@ -54,7 +92,7 @@ struct OverviewStatsView: View {
                     title: "active_habits".localized,
                     value: "\(activeHabitsCount)",
                     onTap: { selectedInfoCard = .activeHabits },
-                    cardColor: CardColors.activeHabits,
+                    cardColor: CardColors.activeHabits(for: colorScheme),
                     icon3DAsset: "CardInfo_active_habits"
                 )
             }
@@ -230,7 +268,7 @@ struct StatCardInteractive: View {
             .frame(height: 120)
             .background {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(cardColor.opacity(0.1))
+                    .fill(cardColor.opacity(0.15))
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
@@ -350,12 +388,7 @@ struct CardInfoView: View {
     }
     
     private var cardColor: Color {
-        switch card {
-        case .completionRate: return CardColors.completionRate
-        case .activeDays: return CardColors.activeDays
-        case .habitsDone: return CardColors.habitsDone
-        case .activeHabits: return CardColors.activeHabits
-        }
+        CardColors.color(for: card, colorScheme: colorScheme)
     }
     
     private var cardTitle: String {

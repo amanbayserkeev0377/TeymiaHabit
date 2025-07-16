@@ -55,7 +55,7 @@ struct ChartDataPoint: Identifiable, Equatable {
             if hours > 0 {
                 return String(format: "%d:%02d", hours, minutes)
             } else if minutes > 0 {
-                return String(format: "%d min", minutes)
+                return String(format: "0:%02d", minutes)
             } else {
                 return "0"
             }

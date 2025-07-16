@@ -2,11 +2,15 @@ import SwiftUI
 import SwiftData
 
 struct HabitStatisticsView: View {
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
     // MARK: - Properties
     let habit: Habit
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-
+    @Environment(ProManager.self) private var proManager
+    
     
     // MARK: - State
     @State private var selectedDate: Date = Date()
@@ -15,12 +19,10 @@ struct HabitStatisticsView: View {
     @State private var showingResetAlert = false
     @State private var alertState = AlertState()
     @State private var updateCounter = 0
+    @State private var showingPaywall = false
     
     @State private var inputManager = InputOverlayManager()
-    
-    // 🔥 NEW: Separate time range controls for each section
-    @State private var barChartTimeRange: ChartTimeRange = .month
-    @State private var lineChartTimeRange: ChartTimeRange = .week
+    @State private var barChartTimeRange: ChartTimeRange = .week
     
     // MARK: - Initialization
     init(habit: Habit) {
@@ -30,239 +32,199 @@ struct HabitStatisticsView: View {
     
     // MARK: - Body
     var body: some View {
-        List {
-            // Streaks
-            StreaksView(viewModel: viewModel)
-            
-            // Monthly Calendar
-            Section {
-                MonthlyCalendarView(
-                    habit: habit,
-                    selectedDate: $selectedDate,
-                    updateCounter: updateCounter,
-                    onActionRequested: handleCalendarAction
-                )
-                .listRowInsets(EdgeInsets())
-                .frame(maxWidth: .infinity)
-            } footer: {
-                HStack(spacing: 8) {
-                    Image(systemName: "hand.tap")
-                        .font(.footnote)
-                        .withHabitColor(habit)
-                    Text("habit_statistics_view".localized)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                    
-                    Spacer()
+        NavigationStack {
+            List {
+                // Monthly Calendar
+                Section {
+                    ZStack {
+                        MonthlyCalendarView(
+                            habit: habit,
+                            selectedDate: $selectedDate,
+                            updateCounter: updateCounter,
+                            onActionRequested: handleCalendarAction
+                        )
+                        .blur(radius: proManager.isPro ? 0 : 4)
+                        .disabled(!proManager.isPro)
+                        
+                        if !proManager.isPro {
+                            ProStatisticsOverlay {
+                                showingPaywall = true
+                            }
+                        }
+                    }
+                    .listRowInsets(EdgeInsets())
+                    .frame(maxWidth: .infinity)
+                } footer: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "hand.tap")
+                            .font(.footnote)
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                        Text("tap_dates".localized)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                    }
+                    .padding(.top, 8)
                 }
-                .padding(.top, 8)
-            }
-            .listSectionSeparator(.hidden)
-            
-            // 🔥 NEW: Bar Charts Section
-            Section {
-                VStack(spacing: 16) {
-                    // 3D Illustration + Description
-                    barChartsHeader
-                    
-                    // Time Range Picker for Bar Charts
-                    TimeRangePicker(selection: $barChartTimeRange)
-                    
-                    // Bar Chart Display
-                    barChartContent
-                        .animation(.easeInOut(duration: 0.4), value: barChartTimeRange)
-                }
-            } header: {
-                Text("Interactive Analysis")
-                    .font(.headline)
-            }
-            .listSectionSeparator(.hidden)
-            
-            // 🔥 NEW: Line Charts Section
-            Section {
-                VStack(spacing: 16) {
-                    // 3D Illustration + Description
-                    lineChartsHeader
-                    
-                    // Time Range Picker for Line Charts
-                    TimeRangePicker(selection: $lineChartTimeRange)
-                    
-                    // Line Chart Display
-                    lineChartContent
-                        .animation(.easeInOut(duration: 0.4), value: lineChartTimeRange)
-                }
-            } header: {
-                Text("Trend Analysis")
-                    .font(.headline)
-            }
-            .listSectionSeparator(.hidden)
-            
-            // Habit Details Section
-            Section("Details") {
-                // Start date
-                HStack {
-                    Image(systemName: "calendar.badge.clock")
-                        .withHabitColor(habit)
-                    Text("start_date".localized)
-                    
-                    Spacer()
-                    
-                    Text(dateFormatter.string(from: habit.startDate))
-                        .foregroundStyle(.secondary)
-                }
+                .listSectionSeparator(.hidden)
                 
-                // Goal
-                HStack {
-                    Image(systemName: "trophy")
-                        .withHabitColor(habit)
-                    Text("daily_goal".localized)
-                    
-                    Spacer()
-                    
-                    Text(habit.formattedGoal)
-                        .foregroundStyle(.secondary)
+                // Bar Charts Section
+                Section {
+                    ZStack {
+                        VStack(spacing: 16) {
+                            // Time Range Picker for Bar Charts
+                            TimeRangePicker(selection: $barChartTimeRange)
+                            
+                            // Bar Chart Display
+                            barChartContent
+                                .animation(.easeInOut(duration: 0.4), value: barChartTimeRange)
+                        }
+                        .blur(radius: proManager.isPro ? 0 : 4)
+                        .disabled(!proManager.isPro)
+                        
+                        if !proManager.isPro {
+                            ProStatisticsOverlay {
+                                showingPaywall = true
+                            }
+                        }
+                    }
+                } footer: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "hand.rays")
+                            .font(.footnote)
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                        Text("press_hold_bars".localized)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                    }
+                    .padding(.top, 8)
                 }
+                .listSectionSeparator(.hidden)
                 
-                // Active days
-                HStack {
-                    Image(systemName: "cloud.sun")
-                        .withHabitColor(habit)
-                    Text("active_days".localized)
-                    
-                    Spacer()
-                    
-                    Text(formattedActiveDays)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            
-            // Actions Section
-            Section {
-                Button {
-                    showingResetAlert = true
-                } label: {
+                
+                // Habit Details Section
+                Section {
+                    // Start date
                     HStack {
-                        Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                            .withHabitColor(habit)
-                        Text("reset_all_history".localized)
+                        Image(systemName: "calendar.badge.clock")
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                        Text("start_date".localized)
+                        
+                        Spacer()
+                        
+                        Text(dateFormatter.string(from: habit.startDate))
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    // Goal
+                    HStack {
+                        Image(systemName: "trophy")
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                        Text("daily_goal".localized)
+                        
+                        Spacer()
+                        
+                        Text(habit.formattedGoal)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    // Active days
+                    HStack {
+                        Image(systemName: "cloud.sun")
+                            .withHabitGradient(habit, colorScheme: colorScheme)
+                        Text("active_days".localized)
+                        
+                        Spacer()
+                        
+                        Text(formattedActiveDays)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .tint(.primary)
                 
-                Button(role: .destructive) {
-                    alertState.isDeleteAlertPresented = true
-                } label: {
-                    HStack {
-                        Image(systemName: "trash")
-                            .foregroundStyle(.red)
-                        Text("delete_habit".localized)
+                // Actions Section
+                Section {
+                    Button {
+                        showingResetAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                                .withHabitGradient(habit, colorScheme: colorScheme)
+                            Text("reset_all_history".localized)
+                        }
+                    }
+                    .tint(.primary)
+                    
+                    Button(role: .destructive) {
+                        alertState.isDeleteAlertPresented = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
+                            Text("delete_habit".localized)
+                        }
                     }
                 }
             }
-        }
-        .navigationTitle(habit.title)
-        .navigationBarTitleDisplayMode(.inline)
-        // Change handlers
-        .onChange(of: updateCounter) { _, _ in
-            viewModel.refresh()
-        }
-        .onChange(of: alertState.successFeedbackTrigger) { _, newValue in
-            if newValue {
-                HapticManager.shared.play(.success)
+            .navigationTitle(habit.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    XmarkView(action: {
+                        dismiss()
+                    })
+                }
             }
-        }
-        .onChange(of: alertState.errorFeedbackTrigger) { _, newValue in
-            if newValue {
-                HapticManager.shared.play(.error)
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
             }
-        }
-        // Alerts
-        .deleteSingleHabitAlert(
-            isPresented: $alertState.isDeleteAlertPresented,
-            habitName: habit.title,
-            onDelete: deleteHabit,
-            habit: habit
-        )
-        .alert("alert_reset_history", isPresented: $showingResetAlert) {
-            Button("button_cancel".localized, role: .cancel) { }
-            Button("button_reset".localized, role: .destructive) {
-                resetHabitHistory()
+            // Change handlers
+            .onChange(of: updateCounter) { _, _ in
+                viewModel.refresh()
             }
-        } message: {
-            Text("alert_reset_history_message".localized)
-        }
-        .withHabitTint(habit)
-        .inputOverlay(
-            habit: habit,
-            inputType: inputManager.activeInputType,
-            onCountInput: { count in
-                handleCustomCountInput(count: count)
-            },
-            onTimeInput: { hours, minutes in
-                handleCustomTimeInput(hours: hours, minutes: minutes)
-            },
-            onDismiss: {
-                inputManager.dismiss()
+            .onChange(of: alertState.successFeedbackTrigger) { _, newValue in
+                if newValue {
+                    HapticManager.shared.play(.success)
+                }
             }
-        )
-    }
-    
-    // MARK: - 🎨 Bar Charts Header with 3D Illustration
-    
-    @ViewBuilder
-    private var barChartsHeader: some View {
-        HStack(spacing: 16) {
-                // 3D Bar Chart Icon
-                Image("3d_bar_chart")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 90, height: 90)
-            
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Interactive Period Analysis")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                
-                Text("Navigate through current weeks, months, and years with detailed breakdowns")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+            .onChange(of: alertState.errorFeedbackTrigger) { _, newValue in
+                if newValue {
+                    HapticManager.shared.play(.error)
+                }
             }
-            
-            Spacer()
-        }
-        .padding(.vertical, 8)
-    }
-    
-    // MARK: - 🎨 Line Charts Header with 3D Illustration
-    
-    @ViewBuilder
-    private var lineChartsHeader: some View {
-        HStack(spacing: 16) {
-            // 3D Line Chart Illustration
-            Image("3d_line_chart")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 90, height: 90)
-            
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Progress Trends")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                
-                Text("Track your consistency patterns over recent periods")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+            // Alerts
+            .deleteSingleHabitAlert(
+                isPresented: $alertState.isDeleteAlertPresented,
+                habitName: habit.title,
+                onDelete: deleteHabit,
+                habit: habit
+            )
+            .alert("alert_reset_history", isPresented: $showingResetAlert) {
+                Button("button_cancel".localized, role: .cancel) { }
+                Button("button_reset".localized, role: .destructive) {
+                    resetHabitHistory()
+                }
+            } message: {
+                Text("alert_reset_history_message".localized)
             }
-            
-            Spacer()
+            .withHabitTint(habit)
+            .inputOverlay(
+                habit: habit,
+                inputType: inputManager.activeInputType,
+                onCountInput: { count in
+                    handleCustomCountInput(count: count)
+                },
+                onTimeInput: { hours, minutes in
+                    handleCustomTimeInput(hours: hours, minutes: minutes)
+                },
+                onDismiss: {
+                    inputManager.dismiss()
+                }
+            )
         }
-        .padding(.vertical, 8)
+        .presentationDragIndicator(.visible)
     }
     
     // MARK: - 📊 Bar Chart Content
@@ -274,36 +236,14 @@ struct HabitStatisticsView: View {
             WeeklyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
                 .transition(.opacity)
-                
+            
         case .month:
             MonthlyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
                 .transition(.opacity)
-                
+            
         case .year:
             YearlyHabitChart(habit: habit, updateCounter: updateCounter)
-                .padding(.vertical, 8)
-                .transition(.opacity)
-        }
-    }
-    
-    // MARK: - 📈 Line Chart Content
-    
-    @ViewBuilder
-    private var lineChartContent: some View {
-        switch lineChartTimeRange {
-        case .week:
-            WeeklyHabitLineChart(habit: habit)
-                .padding(.vertical, 8)
-                .transition(.opacity)
-                
-        case .month:
-            MonthlyHabitLineChart(habit: habit)
-                .padding(.vertical, 8)
-                .transition(.opacity)
-                
-        case .year:
-            YearlyHabitLineChart(habit: habit)
                 .padding(.vertical, 8)
                 .transition(.opacity)
         }
@@ -356,7 +296,7 @@ struct HabitStatisticsView: View {
         saveAndRefresh()
         alertState.successFeedbackTrigger.toggle()
     }
-
+    
     private func handleCustomTimeInput(hours: Int, minutes: Int) {
         guard let date = alertState.date else { return }
         let totalSeconds = (hours * 3600) + (minutes * 60)
@@ -370,7 +310,7 @@ struct HabitStatisticsView: View {
         saveAndRefresh()
         alertState.successFeedbackTrigger.toggle()
     }
-
+    
     private func resetProgressDirectly(for date: Date) {
         habit.resetProgress(for: date, modelContext: modelContext)
         saveAndRefresh()

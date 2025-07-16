@@ -59,11 +59,11 @@ struct FeatureRow: View {
                 Text(feature.title)
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    .foregroundStyle(.primary)
                 
                 Text(feature.description)
                     .font(.subheadline)
-                    .foregroundStyle(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.7))
+                    .foregroundStyle(.primary)
                     .lineLimit(2)
             }
             

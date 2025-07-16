@@ -140,7 +140,7 @@ struct PricingCard: View {
     
     private var badgeText: String? {
         if cardType == .yearly {
-            return "Save 60%"
+            return "paywall_save_badge".localized
         }
         return nil
     }
@@ -258,22 +258,22 @@ struct PurchaseButton: View {
         }
         
         guard let selectedPackage = selectedPackage else {
-            return "Continue"
+            return "paywall_continue".localized
         }
         
         if selectedPackage.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase {
-            return "Get Lifetime"
+            return "paywall_get_lifetime".localized
         } else if selectedPackage.packageType == .annual {
             return getYearlyButtonText()
         } else {
-            return "Subscribe"
+            return "paywall_subscribe".localized
         }
     }
     
     private func getYearlyButtonText() -> String {
         guard let selectedPackage = selectedPackage,
               let monthlyPackage = offerings.current?.availablePackages.first(where: { $0.packageType == .monthly }) else {
-            return "Start Free Trial"
+            return "paywall_start_free_trial_button".localized
         }
         
         let yearlyPrice = selectedPackage.storeProduct.price

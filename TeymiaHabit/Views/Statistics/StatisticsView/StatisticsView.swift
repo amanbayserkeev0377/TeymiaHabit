@@ -31,7 +31,6 @@ struct StatisticsView: View {
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
-                            // Overview Section
                             VStack(spacing: 16) {
                                 OverviewStatsView(habits: habits)
                             }
@@ -57,9 +56,7 @@ struct StatisticsView: View {
         .navigationTitle("statistics".localized)
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selectedHabitForStats) { habit in
-            NavigationStack {
                 HabitStatisticsView(habit: habit)
-            }
         }
     }
 }

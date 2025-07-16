@@ -4,64 +4,97 @@ struct LicensesView: View {
     var body: some View {
         List {
             Section("licenses_section_attributions".localized) {
-                LicenseRow(iconName: "3d_star_progradient", attribution: "Decoration PNGs by Vecteezy", url: "https://www.vecteezy.com/png/48386636-a-five-pointed-star-3d-icon-pink-purple-blue-isolated-on-a-transparent-background")
+                LicenseRow(iconName: "3d_star_progradient", attribution: "3d Star by Vecteezy", url: "https://www.vecteezy.com/png/48386636-a-five-pointed-star-3d-icon-pink-purple-blue-isolated-on-a-transparent-background")
                 
-                 LicenseRow(iconName: "3d_cloud_progradient", attribution: "Cloud Icon PNGs by Vecteezy", url: "https://www.vecteezy.com/png/55445028-elegant-minimalistic-cloud-icon-for-nature-inspired-designs")
+                 LicenseRow(iconName: "3d_cloud_progradient", attribution: "3d Cloud by Vecteezy", url: "https://www.vecteezy.com/png/55445028-elegant-minimalistic-cloud-icon-for-nature-inspired-designs")
                 
-                LicenseRow(iconName: "CardInfo_completion_rate", attribution: "3d List PNGs by Vecteezy", url: "https://www.vecteezy.com/png/54716302-data-visualization-3d-growth-chart-business-analytics-progress-report-statistical-graph-financial-metrics-market-trends-data-analysis-performance-indicators-upward-trend-investment-growth")
+                LicenseRow(iconName: "CardInfo_completion_rate", attribution: "3d Data by Vecteezy", url: "https://www.vecteezy.com/png/54716302-data-visualization-3d-growth-chart-business-analytics-progress-report-statistical-graph-financial-metrics-market-trends-data-analysis-performance-indicators-upward-trend-investment-growth")
                 
-                LicenseRow(iconName: "CardInfo_active_days", attribution: "3d Calendar PNGs by Vecteezy", url: "https://www.vecteezy.com/png/56565480-3d-green-checkmark-on-transparent-background")
+                LicenseRow(iconName: "CardInfo_active_days", attribution: "3d Calendar by Vecteezy", url: "https://www.vecteezy.com/png/56565480-3d-green-checkmark-on-transparent-background")
                 
-                LicenseRow(iconName: "CardInfo_habits_done", attribution: "Icon PNGs by Vecteezy", url: "https://www.vecteezy.com/png/56565480-3d-green-checkmark-on-transparent-background")
+                LicenseRow(iconName: "CardInfo_habits_done", attribution: "3d Checkmark by Vecteezy", url: "https://www.vecteezy.com/png/56565480-3d-green-checkmark-on-transparent-background")
                 
-                LicenseRow(iconName: "CardInfo_active_habits", attribution: "3d Chart PNGs by Vecteezy", url: "https://www.vecteezy.com/png/46893434-menu-icon-blue-and-yellow-cartoon-design-cut-out-stock-3d")
+                LicenseRow(iconName: "CardInfo_active_habits", attribution: "3d List by Vecteezy", url: "https://www.vecteezy.com/png/46893434-menu-icon-blue-and-yellow-cartoon-design-cut-out-stock-3d")
                 
-                LicenseRow(iconName: "3d_bar_chart", attribution: "3d Bar Graph PNGs by Vecteezy", url: "https://www.vecteezy.com/png/54585147-3d-bar-graph-data-visualization-growth-chart-progress-report-statistical-analysis-business-analytics-market-trends-financial-performance-data-analysis-information-graphics-data-representation")
+                LicenseRow(iconName: "3d_fitness_girl", attribution: "3d Fitness by Vecteezy", url: "https://www.vecteezy.com/png/57571132-beautiful-artistic-woman-doing-pilates-on-mat-isolated-genuine")
                 
-                LicenseRow(iconName: "3d_line_chart", attribution: "Data Visualization PNGs by Vecteezy", url: "https://www.vecteezy.com/png/54716611-growth-chart-data-cube-visualization-of-progress")
+                LicenseRow(iconName: "3d_fitness_girl2", attribution: "3d Fitness by Vecteezy", url: "https://www.vecteezy.com/png/57571111-elegant-traditional-woman-doing-pilates-mat-exercise-cutout-genuine")
                 
-                LicenseRow(iconName: "3d_fitness_girl", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57571132-beautiful-artistic-woman-doing-pilates-on-mat-isolated-genuine")
+                LicenseRow(iconName: "3d_fitness_girl3", attribution: "3d Fitness by Vecteezy", url: "https://www.vecteezy.com/png/57571098-impressive-artistic-woman-doing-pilates-mat-exercise-cutout-exclusive")
                 
-                LicenseRow(iconName: "3d_fitness_girl2", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57571111-elegant-traditional-woman-doing-pilates-mat-exercise-cutout-genuine")
+                LicenseRow(iconName: "3d_fitness_boy", attribution: "3d Fitness by Vecteezy", url: "https://www.vecteezy.com/png/57444508-wonderful-abstract-man-doing-push-ups-side-view-transparent-background-high-resolution")
                 
-                LicenseRow(iconName: "3d_fitness_girl3", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57571098-impressive-artistic-woman-doing-pilates-mat-exercise-cutout-exclusive")
+                LicenseRow(iconName: "3d_fitness_boy1", attribution: "3d Fitness by Vecteezy", url: "https://www.vecteezy.com/png/57444477-extraordinary-artistic-man-doing-pull-ups-front-view-isolated-cutout-4k")
                 
-                LicenseRow(iconName: "3d_fitness_boy", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57444508-wonderful-abstract-man-doing-push-ups-side-view-transparent-background-high-resolution")
+                LicenseRow(iconName: "3d_bulb", attribution: "3d Bulb by Vecteezy", url: "https://www.vecteezy.com/png/57443949-serene-minimalist-lightbulb-idea-concept-yellow-glow-cutout-professional")
                 
-                LicenseRow(iconName: "3d_fitness_boy1", attribution: "3d Fitness PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57444477-extraordinary-artistic-man-doing-pull-ups-front-view-isolated-cutout-4k")
+                LicenseRow(iconName: "3d_water_lemon", attribution: "3d Water Lemon by Vecteezy", url: "https://www.vecteezy.com/png/57437522-elegant-traditional-glass-of-water-with-lemon-cutout-premium")
                 
-                LicenseRow(iconName: "3d_bulb", attribution: "Concept PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57443949-serene-minimalist-lightbulb-idea-concept-yellow-glow-cutout-professional")
+                LicenseRow(iconName: "3d_cooking", attribution: "3d Cooking by Vecteezy", url: "https://www.vecteezy.com/png/55921635-chopping-vegetables-a-culinary-guide")
                 
-                LicenseRow(iconName: "3d_water_lemon", attribution: "Glass PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57437522-elegant-traditional-glass-of-water-with-lemon-cutout-premium")
+                LicenseRow(iconName: "3d_cup", attribution: "3d Cup by Vecteezy", url: "https://www.vecteezy.com/png/57438127-wonderful-artistic-golden-trophy-cup-front-view-cutout-genuine")
                 
-                LicenseRow(iconName: "3d_cooking", attribution: "Knife PNGs by Vecteezy", url: "https://www.vecteezy.com/png/55921635-chopping-vegetables-a-culinary-guide")
+                LicenseRow(iconName: "3d_keyboard", attribution: "3d Keyboard by Vecteezy", url: "https://www.vecteezy.com/png/57151167-vibrant-contemporary-a-3d-rendered-cutout-of-futuristic-levitating-spherical-desk-lamp-high-resolution")
                 
-                LicenseRow(iconName: "3d_cup", attribution: "Golden PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57438127-wonderful-artistic-golden-trophy-cup-front-view-cutout-genuine")
+                LicenseRow(iconName: "3d_meditate_man", attribution: "3d Meditate Man by Vecteezy", url: "https://www.vecteezy.com/png/57444721-wonderful-minimalist-man-meditating-cross-legged-cutout-professional")
                 
-                LicenseRow(iconName: "3d_keyboard", attribution: "Cutout PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57151167-vibrant-contemporary-a-3d-rendered-cutout-of-futuristic-levitating-spherical-desk-lamp-high-resolution")
+                LicenseRow(iconName: "3d_tooth", attribution: "3d Tooth by Vecteezy", url: "https://www.vecteezy.com/png/45980744-tooth-mascot-3d-graphic")
                 
-                LicenseRow(iconName: "3d_meditate_man", attribution: "Meditating PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57444721-wonderful-minimalist-man-meditating-cross-legged-cutout-professional")
+                LicenseRow(iconName: "3d_shoe", attribution: "3d Shoe by Vecteezy", url: "https://www.vecteezy.com/png/57459980-magnificent-creative-running-shoes-side-view-cutout-original")
                 
-                LicenseRow(iconName: "3d_tooth", attribution: "Tooth PNGs by Vecteezy", url: "https://www.vecteezy.com/png/45980744-tooth-mascot-3d-graphic")
+                LicenseRow(iconName: "3d_hand_shaking", attribution: "3d Hand Shaking by Vecteezy", url: "https://www.vecteezy.com/png/58063978-3d-render-of-two-cartoon-hands-shaking-in-agreement-partnership")
                 
-                LicenseRow(iconName: "3d_shoe", attribution: "Running PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57459980-magnificent-creative-running-shoes-side-view-cutout-original")
+                LicenseRow(iconName: "3d_office", attribution: "3d Office by Vecteezy", url: "https://www.vecteezy.com/png/48719471-accounting-concept-3d-design")
                 
-                LicenseRow(iconName: "3d_hand_shaking", attribution: "Png File PNGs by Vecteezy", url: "https://www.vecteezy.com/png/58063978-3d-render-of-two-cartoon-hands-shaking-in-agreement-partnership")
-                
-                LicenseRow(iconName: "3d_office", attribution: "Finance PNGs by Vecteezy", url: "https://www.vecteezy.com/png/48719471-accounting-concept-3d-design")
-                
-                LicenseRow(iconName: "3d_book_plant", attribution: "Plant PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57457202-dramatic-artistic-plant-growing-from-book-knowledge-concept-green-sprouts-cutout-professional")
+                LicenseRow(iconName: "3d_book_plant", attribution: "3d Book Plant by Vecteezy", url: "https://www.vecteezy.com/png/57457202-dramatic-artistic-plant-growing-from-book-knowledge-concept-green-sprouts-cutout-professional")
                 
                 
-                LicenseRow(iconName: "3d_vegetable", attribution: "Healthy PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57441758-dramatic-traditional-healthy-vegetable-platter-colorful-arrangement-transparent-background-high-quality")
+                LicenseRow(iconName: "3d_vegetable", attribution: "3d Vegetable by Vecteezy", url: "https://www.vecteezy.com/png/57441758-dramatic-traditional-healthy-vegetable-platter-colorful-arrangement-transparent-background-high-quality")
                 
                 
-                LicenseRow(iconName: "3d_sink", attribution: "Modern PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57453191-elegant-vintage-modern-bathroom-sink-with-chrome-faucet-transparent-element-genuine")
+                LicenseRow(iconName: "3d_sink", attribution: "3d Sink by Vecteezy", url: "https://www.vecteezy.com/png/57453191-elegant-vintage-modern-bathroom-sink-with-chrome-faucet-transparent-element-genuine")
                 
-                LicenseRow(iconName: "3d_forest", attribution: "Peaceful PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57456513-dramatic-creative-peaceful-forest-scene-with-sunlight-cutout-original")
+                LicenseRow(iconName: "3d_forest", attribution: "3d Forest by Vecteezy", url: "https://www.vecteezy.com/png/57456513-dramatic-creative-peaceful-forest-scene-with-sunlight-cutout-original")
                 
-                LicenseRow(iconName: "3d_hand_smartphone", attribution: "Realistic PNGs by Vecteezy", url: "https://www.vecteezy.com/png/57458120-beautiful-rustic-realistic-hand-holding-smartphone-with-social-media-feed-transparent-background-premium")
+                LicenseRow(iconName: "3d_hand_smartphone", attribution: "3d Hand Smartphone by Vecteezy", url: "https://www.vecteezy.com/png/57458120-beautiful-rustic-realistic-hand-holding-smartphone-with-social-media-feed-transparent-background-premium")
                 
+                LicenseRow(iconName: "3d_basketball", attribution: "3d Basketball by Vecteezy", url: "https://www.vecteezy.com/png/59917120-beautiful-rustic-a-basketball-textured-and-realistic-premium")
+                
+                LicenseRow(iconName: "3d_football", attribution: "3d Football by Vecteezy", url: "https://www.vecteezy.com/png/60046415-mysterious-vibrant-a-soccer-ball-classic-black-and-white-no-background-with-transparent-background-4k")
+                
+                LicenseRow(iconName: "3d_meditate_woman", attribution: "3d Meditate Woman by Vecteezy", url: "https://www.vecteezy.com/png/57725891-wonderful-vintage-woman-in-lotus-pose-front-view-cutout-with-shadow-detail-high-quality")
+                
+                LicenseRow(iconName: "3d_meditate_woman2", attribution: "3d Meditate Woman by Vecteezy", url: "https://www.vecteezy.com/png/57725915-dramatic-traditional-woman-meditating-in-nature-silhouette-isolated-on-transparent-background-high-resolution")
+                
+                LicenseRow(iconName: "3d_swimming", attribution: "3d Swimmer by Vecteezy", url: "https://www.vecteezy.com/png/57157484-elegant-contemporary-swimmer-backstroke-action-shot-transparent-background-detailed")
+                
+                LicenseRow(iconName: "3d_shower", attribution: "3d Shower by Vecteezy", url: "https://www.vecteezy.com/png/59977667-dramatic-mysterious-artistic-shower-head-rainfall-style-no-background-with-transparent-background-luxury")
+                
+                LicenseRow(iconName: "3d_bathroom", attribution: "3d Bathroom by Vecteezy", url: "https://www.vecteezy.com/png/60161504-unparalleled-bohemian-bathtub-clawfoot-no-background-with-transparent-background-expertly-shot")
+                
+                LicenseRow(iconName: "3d_painting", attribution: "3d Hand Paintbrush by Vecteezy", url: "https://www.vecteezy.com/png/60790967-stunning-contemporary-hand-holding-paintbrush-isolated-element-high-quality")
+                
+                LicenseRow(iconName: "3d_graduationcap", attribution: "3d Graduation Cap Cloud", url: "https://www.vecteezy.com/png/54717224-cloud-based-graduation-cap-online-learning-success")
+                
+                LicenseRow(iconName: "3d_insta", attribution: "3d Instagram by Vecteezy", url: "https://www.vecteezy.com/png/47248576-instagram-3d-instagram-logo-3d-instagram-icon-3d-instagram-symbol")
+                
+                LicenseRow(iconName: "3d_coin_dollar", attribution: "3d Coin Dollar by Vecteezy", url: "https://www.vecteezy.com/png/57642958-a-3d-rendered-dollar-sign-icon-in-vibrant-colors")
+                
+                LicenseRow(iconName: "3d_money", attribution: "3d Paper Dollar by Vecteezy", url: "https://www.vecteezy.com/png/67802199-3-d-render-of-a-light-green-paper-dollar-bill-icon-with-folded-edges-and-a-central-dollar-sign-coin-isolated-on-a-transparent-background")
+                
+                LicenseRow(iconName: "3d_wheel", attribution: "3d Wheel by Vecteezy", url: "https://www.vecteezy.com/png/60155913-immaculate-notable-a-sleek-futuristic-sports-car-steering-wheel-no-background-with-transparent-background")
+                
+                LicenseRow(iconName: "3d_desk", attribution: "3d School Desk by Vecteezy", url: "https://www.vecteezy.com/png/51454603-a-school-desk-and-chairs-in-front-of-a-blackboard")
+                
+                LicenseRow(iconName: "3d_graduationcap_books", attribution: "3d Graduation Hat Books by Vecteezy", url: "https://www.vecteezy.com/png/46789029-globe-world-map-with-graduation-hat-and-books-3d-illustration")
+                
+                LicenseRow(iconName: "3d_graduate", attribution: "3d Graduate by Vecteezy", url: "https://www.vecteezy.com/png/54717183-graduate-success-achieving-educational-goals-through-online-learning")
+                
+                LicenseRow(iconName: "3d_book", attribution: "3d Book by Vecteezy", url: "https://www.vecteezy.com/png/62676722-3d-open-book-icon-blank-cream-pages-reading-illustration")
+                
+                LicenseRow(iconName: "3d_youtube_button", attribution: "3d YouTube by Vecteezy", url: "https://www.vecteezy.com/png/47248458-youtube-3d-youtube-logo-3d-youtube-icon-3d-youtube-symbol")
+                
+                LicenseRow(iconName: "3d_guitar", attribution: "3d Guitar by Vecteezy", url: "https://www.vecteezy.com/png/57881982-serene-vintage-acoustic-guitar-bridge-and-saddle-detail-cutout-detailed")
             }
         }
         .navigationTitle("licenses".localized)
