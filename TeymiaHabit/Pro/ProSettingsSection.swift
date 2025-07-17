@@ -3,6 +3,7 @@ import SwiftUI
 struct ProSettingsSection: View {
     @Environment(ProManager.self) private var proManager
     @State private var showingPaywall = false
+    @State private var isStartingTrial = false // ⭐ Добавляем состояние загрузки
     
     var body: some View {
         Section {
@@ -17,7 +18,7 @@ struct ProSettingsSection: View {
         }
     }
     
-    // MARK: - Pro Promo View (ПРОСТАЯ ВЕРСИЯ с высококонверсионными текстами)
+    // MARK: - Pro Promo View
     private var proPromoView: some View {
         Button {
             showingPaywall = true
@@ -25,21 +26,19 @@ struct ProSettingsSection: View {
             VStack(spacing: 16) {
                 // Верхняя часть - иконка и заголовки
                 HStack(spacing: 12) {
-                    // Левая иконка - прям слева
                     Image("3d_star_progradient")
                         .resizable()
                         .frame(width: 60, height: 60)
                     
-                    // Текстовая информация
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Get Teymia Habit Pro")
+                        Text("Teymia Habit Pro")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                         
-                        Text("Unlock unlimited habits & premium features")
+                        Text("paywall_unlock_premium".localized)
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.85))
                             .lineLimit(2)
@@ -51,62 +50,28 @@ struct ProSettingsSection: View {
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 
-                // Нижняя часть - FREE TRIAL кнопка на всю ширину
-                Button {
-                    startFreeTrial()
-                } label: {
-                    HStack(spacing: 10) {
-                        Spacer()
-                        
-                        Image(systemName: "gift.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                        
-                        Text("Start Free Trial")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.white)
-                        
-                        Spacer()
+                // ⭐ УЛУЧШЕННАЯ кнопка FREE TRIAL
+                FreeTrialButton(
+                    isLoading: $isStartingTrial,
+                    onTap: {
+                        startFreeTrial()
                     }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(.white.opacity(0.25))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(.white.opacity(0.4), lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonStyle(.plain)
+                )
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 24)
             .background(
-                // Многослойный background для объема
                 ZStack {
-                    // Основной градиент
                     RoundedRectangle(cornerRadius: 16)
                         .fill(ProGradientColors.proGradient)
                     
-                    // Тонкая граница для объема
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.3), .clear, .black.opacity(0.1)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ),
-                            lineWidth: 1
-                        )
+                        .stroke(Color.secondary.opacity(0.3), lineWidth: 0.7)
                     
-                    // Внутренний световой эффект вверху
                     RoundedRectangle(cornerRadius: 16)
                         .fill(
                             LinearGradient(
-                                colors: [.white.opacity(0.2), .clear],
+                                colors: [.white.opacity(0.4), .clear],
                                 startPoint: .top,
                                 endPoint: .center
                             )
@@ -118,39 +83,116 @@ struct ProSettingsSection: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Start Free Trial (прямо запускает покупку yearly)
+    // MARK: - Start Free Trial
     private func startFreeTrial() {
+        guard !isStartingTrial else { return }
+        
+        isStartingTrial = true
+        HapticManager.shared.playImpact(.medium)
+        
         Task {
-            // Search for yearly package in offerings
             guard let offerings = proManager.offerings,
                   let currentOffering = offerings.current else {
                 print("❌ No offerings available for free trial")
+                await MainActor.run {
+                    isStartingTrial = false
+                    HapticManager.shared.play(.error)
+                }
                 return
             }
             
-            // Find yearly package (which contains free trial)
             let yearlyPackage = currentOffering.annual ??
                                currentOffering.availablePackages.first { $0.packageType == .annual }
             
             guard let package = yearlyPackage else {
                 print("❌ Yearly package not found for free trial")
+                await MainActor.run {
+                    isStartingTrial = false
+                    HapticManager.shared.play(.error)
+                }
                 return
             }
             
             print("🎯 Starting free trial with yearly package: \(package.storeProduct.localizedTitle)")
             
-            // Launch yearly subscription purchase (with free trial)
             let success = await proManager.purchase(package: package)
             
-            if success {
-                print("✅ Free trial started successfully!")
-                // Show success haptic
-                HapticManager.shared.play(.success)
-            } else {
-                print("❌ Free trial purchase failed")
-                // Show error haptic
-                HapticManager.shared.play(.error)
+            await MainActor.run {
+                isStartingTrial = false
+                
+                if success {
+                    print("✅ Free trial started successfully!")
+                    HapticManager.shared.play(.success)
+                } else {
+                    print("❌ Free trial purchase failed")
+                    HapticManager.shared.play(.error)
+                }
             }
         }
+    }
+}
+
+// MARK: - Отдельный компонент кнопки
+struct FreeTrialButton: View {
+    @Binding var isLoading: Bool
+    let onTap: () -> Void
+    
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button {
+            onTap()
+        } label: {
+            HStack(spacing: 10) {
+                Spacer()
+                
+                Group {
+                    if isLoading {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "gift.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                    }
+                }
+                .frame(width: 20, height: 20)
+                
+                Text(isLoading ? "paywall_processing_button".localized : "paywall_7_days_free_trial".localized)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .animation(.easeInOut(duration: 0.2), value: isLoading)
+                
+                Spacer()
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.white.opacity(isPressed ? 0.15 : 0.25))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.white.opacity(0.4), lineWidth: 0.7)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isLoading)
+        .scaleEffect(isPressed ? 0.95 : 1.0)
+        .opacity(isLoading ? 0.8 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isPressed)
+        .animation(.easeInOut(duration: 0.2), value: isLoading)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    if !isPressed && !isLoading {
+                        isPressed = true
+                    }
+                }
+                .onEnded { _ in
+                    isPressed = false
+                }
+        )
     }
 }

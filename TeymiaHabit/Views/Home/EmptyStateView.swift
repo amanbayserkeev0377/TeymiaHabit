@@ -46,20 +46,13 @@ struct EmptyStateView: View {
             // Подсказка о FAB
             HStack(spacing: 8) {
                 Text("empty_view_tap".localized)
-                    .font(.body)
                     .foregroundStyle(.secondary)
                 
                 Image(systemName: "plus")
-                    .font(.footnote)
                     .foregroundStyle(colorManager.selectedColor.color)
                     .frame(width: 26, height: 26)
-                    .background(
-                        Circle()
-                            .fill(colorManager.selectedColor.color.opacity(0.1))
-                    )
                 
                 Text("empty_view_to_create_habit".localized)
-                    .font(.body)
                     .foregroundStyle(.secondary)
             }
             .padding(.top, 20)

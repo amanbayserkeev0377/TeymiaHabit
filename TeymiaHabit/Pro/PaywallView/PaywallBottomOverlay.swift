@@ -140,7 +140,7 @@ struct PricingCard: View {
     
     private var badgeText: String? {
         if cardType == .yearly {
-            return "paywall_save_badge".localized
+            return "-60%"
         }
         return nil
     }
@@ -196,7 +196,7 @@ struct PricingCard: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(
                         isSelected ? Color.clear :
-                            (colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.1)),
+                            Color.primary.opacity(0.1),
                         lineWidth: 1
                     )
             )
@@ -208,10 +208,10 @@ struct PricingCard: View {
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
                                     .fill(
                                         LinearGradient(
                                             colors: [HabitIconColor.green.lightColor, HabitIconColor.green.darkColor],
@@ -220,15 +220,14 @@ struct PricingCard: View {
                                         )
                                     )
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
                                             .stroke(Color.secondary.opacity(0.3), lineWidth: 0.5)
                                     )
                             )
-                            .padding(.horizontal, 8)
                             .padding(.top, -14)
                     }
                 },
-                alignment: .top
+                alignment: .topTrailing
             )
         }
         .buttonStyle(.plain)
@@ -271,17 +270,15 @@ struct PurchaseButton: View {
     }
     
     private func getYearlyButtonText() -> String {
-        guard let selectedPackage = selectedPackage,
-              let monthlyPackage = offerings.current?.availablePackages.first(where: { $0.packageType == .monthly }) else {
-            return "paywall_start_free_trial_button".localized
+        guard let selectedPackage = selectedPackage else {
+            return "paywall_7_days_free_trial".localized
         }
         
         let yearlyPrice = selectedPackage.storeProduct.price
-        let monthlyPrice = monthlyPackage.storeProduct.price
-        
         let yearlyPricePerMonth = yearlyPrice / 12
         
-        let currencySymbol = extractCurrencySymbol(from: monthlyPackage.storeProduct.localizedPriceString)
+        // Берем валюту из самого годового пакета
+        let currencySymbol = extractCurrencySymbol(from: selectedPackage.storeProduct.localizedPriceString)
         let monthlyPriceDouble = NSDecimalNumber(decimal: yearlyPricePerMonth).doubleValue
         
         let displayPrice: String

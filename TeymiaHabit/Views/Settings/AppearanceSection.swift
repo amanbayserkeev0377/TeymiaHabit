@@ -173,6 +173,8 @@ struct AppIconGridView: View {
 
 // MARK: - Individual App Icon Button
 struct AppIconButton: View {
+    @ObservedObject private var colorManager = AppColorManager.shared
+    
     let icon: AppIcon
     let isSelected: Bool
     let isLocked: Bool
@@ -193,7 +195,7 @@ struct AppIconButton: View {
                     // Selection indicator
                     if isSelected && !isLocked {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.gray, lineWidth: 2)
+                            .stroke(colorManager.selectedColor.color, lineWidth: 2)
                             .frame(width: 60, height: 60)
                     }
                     

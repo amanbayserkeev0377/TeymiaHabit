@@ -229,14 +229,6 @@ extension ProManager {
         isPro ? Int.max : 3
     }
     
-    var canUseAdvancedFeatures: Bool {
-        isPro
-    }
-    
-    var canUseMultipleReminders: Bool {
-        isPro
-    }
-    
     var maxRemindersCount: Int {
         isPro ? 10 : 2
     }

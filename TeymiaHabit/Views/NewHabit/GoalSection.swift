@@ -116,6 +116,7 @@ struct GoalSection: View {
                 hours = 1
                 minutes = 0
             }
+            updateTimeDateFromHoursAndMinutes()
         }
     }
     
@@ -131,6 +132,7 @@ struct GoalSection: View {
                 hours = 1
                 minutes = 0
             }
+            updateTimeDateFromHoursAndMinutes()
         }
     }
 }

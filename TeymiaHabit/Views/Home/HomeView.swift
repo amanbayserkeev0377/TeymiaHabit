@@ -28,6 +28,7 @@ struct HomeView: View {
     
     @State private var selectedDate: Date = .now
     @State private var showingNewHabit = false
+    @State private var showingReorderHabits = false
     @State private var selectedHabit: Habit? = nil
     @State private var habitToEdit: Habit? = nil
     @State private var alertState = AlertState()
@@ -148,6 +149,9 @@ struct HomeView: View {
                 )
             }
         }
+        .sheet(isPresented: $showingReorderHabits) {
+            ReorderHabitsView()
+        }
         .sheet(isPresented: $showingNewHabit) {
             NewHabitView()
         }
@@ -202,6 +206,9 @@ struct HomeView: View {
                                         onDelete: {
                                             habitForProgress = habit
                                             alertState.isDeleteAlertPresented = true
+                                        },
+                                        onReorder: {
+                                            showingReorderHabits = true
                                         }
                                     )
                                 }
@@ -276,6 +283,7 @@ struct HabitCardView: View {
     let onEdit: () -> Void
     let onArchive: () -> Void
     let onDelete: () -> Void
+    let onReorder: () -> Void
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -430,7 +438,7 @@ struct HabitCardView: View {
                 Label("complete".localized, systemImage: "checkmark")
             }
             .disabled(cardIsCompleted)
-            .withHabitGradient(habit, colorScheme: colorScheme)
+            .withAppGradient()
             Divider()
             
             // Edit
@@ -439,16 +447,23 @@ struct HabitCardView: View {
             } label: {
                 Label("button_edit".localized, systemImage: "pencil")
             }
-            .withHabitGradient(habit, colorScheme: colorScheme)
-            
+            .withAppGradient()
+
+            Button {
+                onReorder()
+            } label : {
+                Label("reorder".localized, systemImage: "arrow.up.arrow.down")
+            }
+            .withAppGradient()
+
             // Archive
             Button {
                 onArchive()
             } label: {
                 Label("archive".localized, systemImage: "archivebox")
             }
-            .withHabitGradient(habit, colorScheme: colorScheme)
-            
+            .withAppGradient()
+
             Divider()
             
             // Delete

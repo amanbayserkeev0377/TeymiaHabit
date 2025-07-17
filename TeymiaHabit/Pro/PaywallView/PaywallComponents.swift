@@ -3,8 +3,6 @@ import RevenueCat
 
 // MARK: - Paywall Header Section
 struct PaywallHeaderSection: View {
-    let colorScheme: ColorScheme
-    
     var body: some View {
         VStack(spacing: 20) {
             // Laurels with centered text
@@ -32,12 +30,10 @@ struct PaywallHeaderSection: View {
 
 // MARK: - Paywall Features Section
 struct PaywallFeaturesSection: View {
-    let colorScheme: ColorScheme
-    
     var body: some View {
         VStack(spacing: 20) {
             ForEach(ProFeature.allFeatures, id: \.id) { feature in
-                FeatureRow(feature: feature, colorScheme: colorScheme)
+                FeatureRow(feature: feature) // ⭐ Убираем colorScheme
             }
         }
     }

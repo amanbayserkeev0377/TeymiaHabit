@@ -19,12 +19,12 @@ struct PaywallView: View {
                 ScrollView {
                     VStack(spacing: 32) {
                         // Header with laurels
-                        PaywallHeaderSection(colorScheme: colorScheme)
-
-                        PaywallExpandedFeaturesSection(colorScheme: colorScheme)
-
+                        PaywallHeaderSection()
+                        
+                        PaywallExpandedFeaturesSection()
+                        
                         Color.clear
-                            .frame(height: 200) // Примерная высота overlay
+                            .frame(height: 200)
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 20)
@@ -43,7 +43,7 @@ struct PaywallView: View {
                     ) {
                         purchaseSelected()
                     }
-                    .ignoresSafeArea(.keyboard, edges: .bottom) // Поддержка клавиатуры
+                    .ignoresSafeArea(.keyboard, edges: .bottom)
                     
                 } else {
                     VStack {
@@ -159,18 +159,17 @@ struct PaywallView: View {
 
 // MARK: - Expanded Features Section (больше фичей)
 struct PaywallExpandedFeaturesSection: View {
-    let colorScheme: ColorScheme
-    
     var body: some View {
         VStack(spacing: 24) {
             // Основные фичи
             VStack(spacing: 20) {
                 ForEach(ProFeature.allFeatures, id: \.id) { feature in
-                    FeatureRow(feature: feature, colorScheme: colorScheme)
+                    FeatureRow(feature: feature)
                 }
             }
             
-            PaywallScrollableFooter(colorScheme: colorScheme) {
+            PaywallScrollableFooter() {
+                // Можно добавить действие restore purchases здесь
             }
         }
     }
@@ -178,7 +177,6 @@ struct PaywallExpandedFeaturesSection: View {
 
 // MARK: - Scrollable Footer (restore + legal в content)
 struct PaywallScrollableFooter: View {
-    let colorScheme: ColorScheme
     let onRestorePurchases: () -> Void
     
     var body: some View {

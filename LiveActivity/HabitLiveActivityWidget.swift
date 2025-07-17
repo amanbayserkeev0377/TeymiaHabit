@@ -20,11 +20,11 @@ struct HabitLiveActivityWidget: Widget {
             } compactLeading: {
                 TimerDisplayView(context: context)
             } compactTrailing: {
-                Image(systemName: context.state.isTimerRunning ? "play.fill" : "pause.fill")
-                    .foregroundStyle(context.attributes.habitIconColor.color)
+                // ✅ ИСПОЛЬЗУЕМ habitIcon extension
+                context.habitIcon(size: 16)
             } minimal: {
-                Image(systemName: context.state.isTimerRunning ? "play.fill" : "pause.fill")
-                    .foregroundStyle(context.attributes.habitIconColor.color)
+                // ✅ ИСПОЛЬЗУЕМ habitIcon extension
+                context.habitIcon(size: 16)
             }
         }
     }
@@ -39,10 +39,8 @@ struct CompactLiveActivityContent: View {
     var body: some View {
         HStack(spacing: 12) {
             HStack(spacing: 12) {
-                // Left: Habit icon
-                Image(systemName: context.attributes.habitIcon)
-                    .font(.system(size: 26))
-                    .foregroundStyle(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme))
+                // ✅ Left: Habit icon используя habitIcon extension
+                context.habitIcon(size: 22)
                     .frame(width: 52, height: 52)
                     .background(
                         Circle()
@@ -179,7 +177,7 @@ struct TimerDisplayView: View {
                         print("🔍 adjustedStartTime: \(adjustedStartTime)")
                     }
             } else {
-                // Статический прогресс
+                // ✅ Статический прогресс используя существующий extension
                 Text(context.state.currentProgress.formattedAsTime())
                     .font(.system(.title2, design: .rounded))
                     .fontWeight(.bold)

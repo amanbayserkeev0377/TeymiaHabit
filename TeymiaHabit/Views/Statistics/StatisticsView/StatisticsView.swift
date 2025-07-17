@@ -8,12 +8,15 @@ struct StatisticsView: View {
         filter: #Predicate<Habit> { habit in
             !habit.isArchived
         },
-        sort: [SortDescriptor(\Habit.createdAt)]
+        sort: [SortDescriptor(\Habit.displayOrder), SortDescriptor(\Habit.createdAt)]
     )
     private var allHabits: [Habit]
     
     private var habits: [Habit] {
         allHabits.sorted { first, second in
+            if first.displayOrder != second.displayOrder {
+                return first.displayOrder < second.displayOrder
+            }
             return first.createdAt < second.createdAt
         }
     }
@@ -64,35 +67,15 @@ struct StatisticsView: View {
 // MARK: - Statistics Empty State
 
 struct StatisticsEmptyStateView: View {
-    @State private var isAnimating = false
-    @ObservedObject private var colorManager = AppColorManager.shared
-    
     var body: some View {
         VStack {
             Spacer()
             
-            Image(systemName: "chart.line.text.clipboard")
-                .font(.system(size: 120, weight: .thin))
-                .foregroundStyle(colorManager.selectedColor.color.opacity(0.3))
-                .scaleEffect(isAnimating ? 1.05 : 1.0)
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
-                        isAnimating = true
-                    }
-                }
-            
-            Text("no_statistics_title".localized)
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary)
-                .padding(.top, 24)
-            
-            Text("no_statistics_description".localized)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-                .padding(.top, 8)
+            Image("3d_bar_chart")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: UIScreen.main.bounds.width * 0.45,
+                       height: UIScreen.main.bounds.width * 0.45)
             
             Spacer()
         }

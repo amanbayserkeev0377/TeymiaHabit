@@ -26,7 +26,7 @@ struct ArchivedHabitsView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("archived_habits".localized)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .deleteSingleHabitAlert(
             isPresented: $isDeleteSingleAlertPresented,
             habitName: habitToDelete?.title ?? "",
@@ -47,11 +47,20 @@ struct ArchivedHabitsView: View {
     @ViewBuilder
     private var listContent: some View {
         if archivedHabits.isEmpty {
-            ContentUnavailableView(
-                "no_archived_habits".localized,
-                systemImage: "archivebox"
-            )
+            VStack {
+                Spacer()
+                
+                Image("3d_archive")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UIScreen.main.bounds.width * 0.45,
+                           height: UIScreen.main.bounds.width * 0.45)
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
         } else {
             // Footer с подсказкой о swipe actions
             Section(
@@ -106,14 +115,14 @@ struct ArchivedHabitsView: View {
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                     
-                    Text(habit.formattedGoal)
+                    Text("goal_format".localized(with: habit.formattedGoal))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 
                 Spacer()
                 
-                // Chevron для показа что можно нажать (как в StatisticsView)
+                // Chevron для показа что можно нажать
                 Image(systemName: "chevron.right")
                     .foregroundStyle(Color(uiColor: .systemGray3))
                     .font(.footnote)

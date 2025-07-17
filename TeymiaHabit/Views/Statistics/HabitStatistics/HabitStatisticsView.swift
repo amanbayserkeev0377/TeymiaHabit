@@ -43,8 +43,6 @@ struct HabitStatisticsView: View {
                             updateCounter: updateCounter,
                             onActionRequested: handleCalendarAction
                         )
-                        .blur(radius: proManager.isPro ? 0 : 4)
-                        .disabled(!proManager.isPro)
                         
                         if !proManager.isPro {
                             ProStatisticsOverlay {
@@ -73,15 +71,11 @@ struct HabitStatisticsView: View {
                 Section {
                     ZStack {
                         VStack(spacing: 16) {
-                            // Time Range Picker for Bar Charts
                             TimeRangePicker(selection: $barChartTimeRange)
                             
-                            // Bar Chart Display
                             barChartContent
                                 .animation(.easeInOut(duration: 0.4), value: barChartTimeRange)
                         }
-                        .blur(radius: proManager.isPro ? 0 : 4)
-                        .disabled(!proManager.isPro)
                         
                         if !proManager.isPro {
                             ProStatisticsOverlay {

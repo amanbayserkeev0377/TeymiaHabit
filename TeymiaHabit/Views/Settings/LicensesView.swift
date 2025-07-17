@@ -116,8 +116,47 @@ struct LicensesView: View {
                 
                 LicenseRow(iconName: "3d_ice_cream", attribution: "3d Ice Cream by Vecteezy", url: "https://www.vecteezy.com/png/55333362-melting-chocolate-ice-cream-dripping-with-cone-and-splashes")
                 
+                LicenseRow(iconName: "3d_archive", attribution: "3d Archive by Vecteezy", url: "https://www.vecteezy.com/png/57435405-stunning-contemporary-filing-cabinet-with-drawers-open-transparent-background-high-resolution")
                 
+                LicenseRow(iconName: "3d_bar_chart", attribution: "3d Bar Charts by Vecteezy", url: "https://www.vecteezy.com/png/54585147-3d-bar-graph-data-visualization-growth-chart-progress-report-statistical-analysis-business-analytics-market-trends-financial-performance-data-analysis-information-graphics-data-representation")
                 
+                LicenseRow(iconName: "3d_list_purple", attribution: "3d Checklist Clipboard by Vecteezy", url: "https://www.vecteezy.com/png/46438576-checklist-clipboard-3d-concept")
+                
+                LicenseRow(iconName: "3d_shield_plus", attribution: "3d Health Care Shield by Vecteezy", url: "https://www.vecteezy.com/png/45686472-health-care-shield-3d-object")
+                
+                LicenseRow(iconName: "3d_identity_card", attribution: "3d Identity Card by Vecteezy", url: "https://www.vecteezy.com/png/46788869-identity-card-3d-concept")
+                
+                LicenseRow(iconName: "3d_money_wallet", attribution: "3d Money Wallet by Vecteezy", url: "https://www.vecteezy.com/png/45800664-money-wallet-3d")
+                
+                LicenseRow(iconName: "3d_soc_telegram", attribution: "3d Telegram by Vecteezy", url: "https://www.vecteezy.com/png/9428317-3d-social-media-icons-telegram")
+                
+                LicenseRow(iconName: "3d_soc_instagram", attribution: "3d Instagram by Vecteezy", url: "https://www.vecteezy.com/png/9428327-3d-social-media-icons-instagram")
+                
+                LicenseRow(iconName: "3d_soc_whatsapp", attribution: "3d WhatsApp by Vecteezy", url: "https://www.vecteezy.com/png/9428326-3d-social-media-icons-whatsapp")
+                
+                LicenseRow(iconName: "3d_soc_tiktok", attribution: "3d TikTok by Vecteezy", url: "https://www.vecteezy.com/png/9428330-3d-social-media-icons-tiktok")
+                
+                LicenseRow(iconName: "3d_soc_facebook", attribution: "3d Facebook by Vecteezy", url: "https://www.vecteezy.com/png/9428311-3d-social-media-icons-facebook")
+                
+                LicenseRow(iconName: "3d_soc_wechat", attribution: "3d WeChat by Vecteezy", url: "https://www.vecteezy.com/png/9428315-3d-social-media-icons-wechat")
+                
+                LicenseRow(iconName: "3d_soc_linkedin", attribution: "3d LinkedIn by Vecteezy", url: "https://www.vecteezy.com/png/9428307-3d-social-media-icons-linkedin")
+                
+                LicenseRow(iconName: "3d_soc_youtube", attribution: "3d YouTube by Vecteezy", url: "https://www.vecteezy.com/png/9428320-3d-social-media-icons-youtube")
+                
+                LicenseRow(iconName: "3d_soc_spotify", attribution: "3d Spotify by Vecteezy", url: "https://www.vecteezy.com/png/9428341-3d-social-media-icons-spotify")
+                
+                LicenseRow(iconName: "3d_soc_music", attribution: "3d Music by Vecteezy", url: "https://www.vecteezy.com/png/9428325-3d-social-media-icons-music")
+                
+                LicenseRow(iconName: "3d_soc_pinterest", attribution: "3d Pinterest by Vecteezy", url: "https://www.vecteezy.com/png/9428309-3d-social-media-icons-pinterest")
+                
+                LicenseRow(iconName: "3d_soc_discord", attribution: "3d Discord by Vecteezy", url: "https://www.vecteezy.com/png/9428318-3d-social-media-icons-discord")
+                
+                LicenseRow(iconName: "3d_soc_google", attribution: "3d Google by Vecteezy", url: "https://www.vecteezy.com/png/9428333-3d-social-media-icons-google")
+                
+                LicenseRow(iconName: "app_icon_clock_dark", attribution: "3d Dark Clock by Vecteezy", url: "https://www.vecteezy.com/png/55079132-modern-dark-blue-clock-with-gold-accents")
+                
+                LicenseRow(iconName: "app_icon_clock_light", attribution: "3d Light Clock by Vecteezy", url: "https://www.vecteezy.com/png/57178682-stylish-desk-clock-with-vibrant-neon-lighting-in-an-elegant-design-perfect-for-modern-office-fashionable-desk-clock-with-neon-lighting-file-of-isolated-object-with-shadow-on-transparent-background")
             }
         }
         .navigationTitle("licenses".localized)

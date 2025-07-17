@@ -2,22 +2,18 @@ import SwiftUI
 import UIKit
 
 // MARK: - AppIcon Enum
-// Defines app icons with their properties and localized names
+// Defines app icons with their properties
 enum AppIcon: Hashable, Identifiable {
     // MARK: - Cases
     case main           // Default app icon
     case light(name: String)
     case dark(name: String)
-    case dream(name: String)
-    case bliss(name: String)
-    case blaze(name: String)
-    case aura(name: String)
-    case chill(name: String)
     case minimalLight(name: String)
     case minimalDark(name: String)
-    case sunrise(name: String)
     case paper(name: String)
     case silverBlue(name: String)
+    case clockDark(name: String)
+    case clockLight(name: String)
     
     // MARK: - All Icons
     // List of all available icons
@@ -25,16 +21,12 @@ enum AppIcon: Hashable, Identifiable {
         .main,
         .light(name: "AppIconLight"),
         .dark(name: "AppIconDark"),
-        .dream(name: "AppIconDream"),
-        .bliss(name: "AppIconBliss"),
-        .blaze(name: "AppIconBlaze"),
-        .aura(name: "AppIconAura"),
-        .chill(name: "AppIconChill"),
         .minimalLight(name: "AppIconMinimalLight"),
         .minimalDark(name: "AppIconMinimalDark"),
-        .sunrise(name: "AppIconSunrise"),
         .paper(name: "AppIconPaper"),
-        .silverBlue(name: "AppIconSilverBlue")
+        .silverBlue(name: "AppIconSilverBlue"),
+        .clockDark(name: "AppIconClockDark"),
+        .clockLight(name: "AppIconClockLight")
     ]
     
     // MARK: - ID
@@ -44,16 +36,12 @@ enum AppIcon: Hashable, Identifiable {
         case .main: return "main"
         case .light(let name): return name
         case .dark(let name): return name
-        case .dream(let name): return name
-        case .bliss(let name): return name
-        case .blaze(let name): return name
-        case .aura(let name): return name
-        case .chill(let name): return name
         case .minimalLight(let name): return name
         case .minimalDark(let name): return name
-        case .sunrise(let name): return name
         case .paper(let name): return name
         case .silverBlue(let name): return name
+        case .clockDark(let name): return name
+        case .clockLight(let name): return name
         }
     }
     
@@ -64,16 +52,12 @@ enum AppIcon: Hashable, Identifiable {
         case .main: return nil
         case .light(let name): return name
         case .dark(let name): return name
-        case .dream(let name): return name
-        case .bliss(let name): return name
-        case .blaze(let name): return name
-        case .aura(let name): return name
-        case .chill(let name): return name
         case .minimalLight(let name): return name
         case .minimalDark(let name): return name
-        case .sunrise(let name): return name
         case .paper(let name): return name
         case .silverBlue(let name): return name
+        case .clockDark(let name): return name
+        case .clockLight(let name): return name
         }
     }
     
@@ -84,36 +68,12 @@ enum AppIcon: Hashable, Identifiable {
         case .main: return "app_icon_main"
         case .light(_): return "app_icon_light"
         case .dark(_): return "app_icon_dark"
-        case .dream(_): return "app_icon_dream"
-        case .bliss(_): return "app_icon_bliss"
-        case .blaze(_): return "app_icon_blaze"
-        case .aura(_): return "app_icon_aura"
-        case .chill(_): return "app_icon_chill"
         case .minimalLight(_): return "app_icon_minimal_light"
         case .minimalDark(_): return "app_icon_minimal_dark"
-        case .sunrise(_): return "app_icon_sunrise"
         case .paper(_): return "app_icon_paper"
         case .silverBlue(_): return "app_icon_silver_blue"
-        }
-    }
-    
-    // MARK: - Localized Display Name
-    // Localized name for UI display
-    var displayName: String {
-        switch self {
-        case .main: return "app_icon_main_name".localized
-        case .light(_): return "app_icon_light_name".localized
-        case .dark(_): return "app_icon_dark_name".localized
-        case .dream(_): return "app_icon_dream_name".localized
-        case .bliss(_): return "app_icon_bliss_name".localized
-        case .blaze(_): return "app_icon_blaze_name".localized
-        case .aura(_): return "app_icon_aura_name".localized
-        case .chill(_): return "app_icon_chill_name".localized
-        case .minimalLight(_): return "app_icon_minimal_light_name".localized
-        case .minimalDark(_): return "app_icon_minimal_dark_name".localized
-        case .sunrise(_): return "app_icon_sunrise_name".localized
-        case .paper(_): return "app_icon_paper_name".localized
-        case .silverBlue(_): return "app_icon_silver_blue_name".localized
+        case .clockDark(_): return "app_icon_clock_dark"
+        case .clockLight(_): return "app_icon_clock_light"
         }
     }
     

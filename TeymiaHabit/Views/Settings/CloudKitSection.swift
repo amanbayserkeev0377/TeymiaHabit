@@ -180,7 +180,7 @@ struct CloudKitSyncView: View {
             }
         }
         .navigationTitle("icloud_sync".localized)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             loadLastSyncTime()
             checkCloudKitStatus()

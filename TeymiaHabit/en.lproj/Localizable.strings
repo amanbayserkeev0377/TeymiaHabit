@@ -75,21 +75,16 @@
 "daily_goal" = "Goal";
 "delete_habit" = "Delete habit";
 "edit_habit" = "Edit Habit";
-"future_self_thank_you" = "Tap '+' to add your first habit.";
 "goal_format" = "Goal: %@";
 "habits" = "Habits";
 "health" = "Health";
 "hobbies" = "Hobbies";
 "lifestyle" = "Lifestyle";
 "loading_calendar" = "Loading calendar…";
-"no_habits" = "You don't have any habits yet.";
-"no_habits_for_date" = "No habits for this date";
-"no_icon" = "No icon";
 "productivity" = "Productivity";
 "reset_all_history" = "Reset history";
-"reset_button_label" = "Reset";
 "start_date" = "Start date";
-
+"reorder" = "Reorder";
 
 /* ===================== Notifications ===================== */
 
@@ -119,7 +114,6 @@
 /* ===================== Settings: Archived Habits ===================== */
 "archive" = "Archive";
 "archived_habits" = "Archived Habits";
-"no_archived_habits" = "No Archived Habits";
 "unarchive" = "Unarchive";
 "archived_habits_footer" = "Swipe left to unarchive or delete";
 "archived_date_format" = "Archived %@";
@@ -182,34 +176,36 @@
 
 /* ===================== PayWall ===================== */
 
+"paywall_unlock_premium" = "Unlock premium features";
 "paywall_purchase_result_title" = "Purchase Result";
 "paywall_ok_button" = "OK";
 "paywall_processing_button" = "Processing...";
-"paywall_subscribe_button" = "Subscribe";
-"paywall_start_free_trial_button" = "Start 7 Days Free";
 "paywall_restore_purchases_button" = "Restore Purchases";
-"paywall_regional_pricing_notice" = "Prices may vary by region and are determined based on local economic conditions and purchasing power.";
 "paywall_family_sharing_button" = "Supports Family Sharing";
 "paywall_legal_text" = "Payment will be charged to your Apple ID account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24 hours before the end of the current period.";
-"paywall_purchase_success_message" = "Welcome to Teymia Habit Pro! 🎉";
 "paywall_purchase_failed_message" = "Purchase failed. Please try again.";
 "paywall_restore_success_message" = "Purchases restored successfully!";
 "paywall_no_purchases_to_restore_message" = "No purchases to restore.";
+// Pro Features
 "paywall_unlimited_habits_title" = "Unlimited Habits";
 "paywall_unlimited_habits_description" = "Create as many habits as you need";
+"paywall_detailed_statistics_title" = "Detailed Statistics";
+"paywall_detailed_statistics_description" = "Advanced calendar view and progress charts";
+"paywall_multiple_reminders_title" = "Multiple Reminders";
+"paywall_multiple_reminders_description" = "Set unlimited habit reminders throughout the day";
+"paywall_premium_icons_title" = "Premium 3D Icons";
+"paywall_premium_icons_description" = "Beautiful 3D icons to make your habits stand out";
+"paywall_upcoming_features_title" = "Early Access";
+"paywall_upcoming_features_description" = "Get access to new features before everyone else";
 "paywall_custom_colors_icons_title" = "Custom Colors & Icons";
 "paywall_custom_colors_icons_description" = "Personalize with themes and app icons";
 "paywall_support_creator_title" = "Support the Creator";
 "paywall_support_creator_description" = "One person, no team — your help makes a difference";
+
 "paywall_yearly_plan" = "Yearly";
 "paywall_monthly_plan" = "Monthly";
-"paywall_yearly_description" = "Try it free for 7 days";
-"paywall_free_trial_label" = "FREE TRIAL";
-"paywall_7_days_free_trial" = "7 days free trial";
+"paywall_7_days_free_trial" = "7 days free";
 "paywall_lifetime_plan" = "Lifetime";
-"paywall_one_time_payment" = "One-time payment";
-"paywall_get_lifetime_button" = "Get Lifetime Access";
-"paywall_save_badge" = "Save 60%";
 "paywall_get_lifetime" = "Get Lifetime";
 "paywall_subscribe" = "Subscribe";
 "paywall_start_trial_monthly" = "Start 7 days free %@/month";

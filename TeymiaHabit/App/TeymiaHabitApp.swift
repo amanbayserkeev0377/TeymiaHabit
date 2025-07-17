@@ -64,7 +64,6 @@ struct TeymiaHabitApp: App {
                 
             case .inactive:
                 print("📱 App becoming inactive")
-                // ✅ НЕ ОЧИЩАЕМ HabitManager - только сохраняем данные
                 saveDataContext()
                 
             case .active:

@@ -174,17 +174,19 @@ final class HabitWidgetService {
     // MARK: - Database Operations
     
     private func saveProgressToDatabase(habitId: String, progress: Int) async {
-        // ✅ ИСПРАВЛЕНО: Используем общий ModelContext из приложения
-        guard let appDelegate = await getAppMainContext() else {
-            print("❌ Cannot access main app ModelContext")
-            return
-        }
-        
         do {
             guard let habitUUID = UUID(uuidString: habitId) else {
                 print("❌ Invalid habitId format: \(habitId)")
                 return
             }
+            
+            guard let mainContext = AppModelContext.shared.modelContext else {
+                        print("❌ AppModelContext.shared.modelContext is nil!")
+                        return
+                    }
+            
+            print("🔍 Saving progress for \(habitId): \(progress)")
+
             
             let descriptor = FetchDescriptor<Habit>(
                 predicate: #Predicate<Habit> { habit in
@@ -192,16 +194,23 @@ final class HabitWidgetService {
                 }
             )
             
-            let habits = try appDelegate.fetch(descriptor)
+            let habits = try mainContext.fetch(descriptor)
             guard let habit = habits.first else {
                 print("❌ Habit not found for habitId: \(habitId)")
                 return
             }
             
             let today = Date()
-            habit.updateProgress(to: progress, for: today, modelContext: appDelegate)
+            habit.updateProgress(to: progress, for: today, modelContext: mainContext)
             
-            try appDelegate.save()
+            try mainContext.save()
+            
+            // ✅ КРИТИЧНО: Уведомляем все другие контексты об изменениях
+            NotificationCenter.default.post(
+                name: .NSManagedObjectContextDidSave,
+                object: mainContext
+            )
+            
             print("✅ Progress saved to database: \(habitId) -> \(progress)")
             
         } catch {
