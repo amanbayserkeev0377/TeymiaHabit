@@ -24,7 +24,6 @@ struct StatisticsView: View {
     @State private var selectedHabitForStats: Habit? = nil
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 Color(.systemGroupedBackground)
                     .ignoresSafeArea(.all)
@@ -55,7 +54,6 @@ struct StatisticsView: View {
                     }
                 }
             }
-        }
         .navigationTitle("statistics".localized)
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selectedHabitForStats) { habit in

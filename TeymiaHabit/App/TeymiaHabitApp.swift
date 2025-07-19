@@ -51,7 +51,10 @@ struct TeymiaHabitApp: App {
                     setupLiveActivities()
                     AppModelContext.shared.setModelContext(container.mainContext)
                 }
-            // ✅ ДОБАВИТЬ: Обработчик принудительного завершения приложения (редко)
+                // ✅ НОВОЕ: Обработчик deeplink
+                .onOpenURL { url in
+                    handleDeepLink(url)
+                }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
                     handleAppTermination()
                 }
@@ -77,13 +80,70 @@ struct TeymiaHabitApp: App {
         }
     }
     
+    // MARK: - DeepLink Handler
+    
+    private func handleDeepLink(_ url: URL) {
+        print("🔗 Received deeplink: \(url)")
+        
+        guard url.scheme == "teymiahabit" else {
+            print("⚠️ Unknown URL scheme: \(url.scheme ?? "nil")")
+            return
+        }
+        
+        guard url.host == "habit" else {
+            print("⚠️ Unknown URL host: \(url.host ?? "nil")")
+            return
+        }
+        
+        let pathComponents = url.pathComponents
+        guard pathComponents.count >= 2,
+              let habitId = pathComponents.last else {
+            print("⚠️ Invalid URL path: \(url.path)")
+            return
+        }
+        
+        print("✅ Deeplink to habit: \(habitId)")
+        
+        // ✅ ИЗМЕНЕНО: Ищем привычку и отправляем через NotificationCenter
+        Task { @MainActor in
+            do {
+                guard let habitUUID = UUID(uuidString: habitId) else {
+                    print("❌ Invalid habit UUID: \(habitId)")
+                    return
+                }
+                
+                let descriptor = FetchDescriptor<Habit>(
+                    predicate: #Predicate<Habit> { habit in
+                        habit.uuid == habitUUID && !habit.isArchived
+                    }
+                )
+                
+                let habits = try container.mainContext.fetch(descriptor)
+                
+                if let foundHabit = habits.first {
+                    print("✅ Found habit for deeplink: \(foundHabit.title)")
+                    
+                    // ✅ Отправляем через NotificationCenter
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        NotificationCenter.default.post(
+                            name: .openHabitFromDeeplink,
+                            object: foundHabit
+                        )
+                    }
+                } else {
+                    print("❌ Habit not found for ID: \(habitId)")
+                }
+                
+            } catch {
+                print("❌ Error fetching habit for deeplink: \(error)")
+            }
+        }
+    }
+    
     // MARK: - Live Activities Setup
     
     private func setupLiveActivities() {
         print("🎬 Setting up Live Activities...")
-        
-        // ✅ НОВОЕ: Используем HabitWidgetService вместо прямого HabitLiveActivityManager
-        HabitWidgetService.shared.startListening()
         
         // ✅ Восстанавливаем существующие Live Activities при запуске
         Task {
@@ -93,7 +153,7 @@ struct TeymiaHabitApp: App {
         print("✅ Live Activities setup completed")
     }
     
-    // MARK: - App Lifecycle Methods (ОБНОВИТЬ СУЩЕСТВУЮЩИЕ МЕТОДЫ)
+    // MARK: - App Lifecycle Methods
     
     private func handleAppBackground() {
         print("📱 App going to background")
@@ -102,7 +162,7 @@ struct TeymiaHabitApp: App {
         // ✅ Сообщаем TimerService о переходе в фон
         TimerService.shared.handleAppDidEnterBackground()
         
-        // ✅ НОВОЕ: Очищаем только действительно неактивные ViewModel
+        // ✅ Очищаем только действительно неактивные ViewModel
         HabitManager.shared.cleanupInactiveViewModels()
         
         print("📱 Background transition completed")
@@ -114,12 +174,6 @@ struct TeymiaHabitApp: App {
         // ✅ Сообщаем TimerService о возврате на передний план
         TimerService.shared.handleAppWillEnterForeground()
         
-        // ✅ ИСПРАВЛЕНО: Используем правильное свойство
-        if !HabitWidgetService.shared.isCurrentlyListening {
-            print("🔄 Restarting HabitWidgetService")
-            HabitWidgetService.shared.startListening()
-        }
-        
         // ✅ Синхронизируем состояние Live Activities
         Task {
             await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
@@ -128,12 +182,8 @@ struct TeymiaHabitApp: App {
         print("📱 Foreground transition completed")
     }
     
-    // ✅ НОВОЕ: Обработка принудительного завершения приложения
     private func handleAppTermination() {
         print("💀 App is being terminated - cleaning up")
-        
-        // ✅ Останавливаем все сервисы
-        HabitWidgetService.shared.stopListening()
         
         // ✅ Очищаем ViewModel'ы
         HabitManager.shared.cleanupAllViewModels()

@@ -13,23 +13,6 @@ extension Int {
             return String(format: "%d:%02d", minutes, seconds)
         }
     }
-        
-    /// Formats seconds to a string like "1:00" or "0:53"
-    func formattedAsDuration() -> String {
-        let hours = self / 3600
-        let minutes = (self % 3600) / 60
-        
-        if hours > 0 {
-            return String(format: "%d:%02d", hours, minutes)
-        } else {
-            return String(format: "0:%02d", minutes)
-        }
-    }
-    
-    /// Formats current value and total value to display progress, e.g. "10/20"
-    func formattedAsProgress(total: Int) -> String {
-        return formattedAsProgressForRing()
-    }
     
     /// Formats current value for progress ring
     func formattedAsProgressForRing() -> String {
@@ -45,17 +28,18 @@ extension Int {
             return "\(self)"
         }
     }
+    
+    func formattedAsLocalizedDuration() -> String {
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute]
+            formatter.unitsStyle = .abbreviated
+            return formatter.string(from: TimeInterval(self)) ?? "\(self)s"
+        }
 }
 
 // Extension for Date with useful formatting methods
 extension Date {
-    /// Gets the weekday name (Monday, Tuesday, etc.)
-    var weekdayName: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: self)
-    }
-    
+ 
     /// Formats date to a string like "January 1"
     var formattedDayMonth: String {
         let dateFormatter = DateFormatter()
@@ -131,4 +115,10 @@ extension DateFormatter {
         
         return String(firstChar).uppercased() + dateString.dropFirst()
     }
+}
+
+enum ProgressState {
+    case inProgress  // < 100%
+    case completed   // = 100%
+    case exceeded    // > 100%
 }

@@ -113,31 +113,13 @@ final class Habit {
         let total = filteredCompletions.reduce(0) { $0 + $1.value }
         return total
     }
-    
-    func formattedProgress(for date: Date) -> String {
-        let progress = progressForDate(date)
         
-        switch type {
-        case .count:
-            return progress.formattedAsProgress(total: goal)
-        case .time:
-            return progress.formattedAsTime()
-        }
-    }
-    
     var formattedGoal: String {
         switch type {
         case .count:
             return "\(goal)"
         case .time:
-            let hours = goal / 3600
-            let minutes = (goal % 3600) / 60
-            
-            if hours > 0 {
-                return String(format: "%d:%02d", hours, minutes)
-            } else {
-                return String(format: "0:%02d", minutes)
-            }
+            return goal.formattedAsTime()
         }
     }
     

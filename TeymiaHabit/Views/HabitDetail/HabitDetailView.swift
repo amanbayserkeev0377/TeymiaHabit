@@ -282,9 +282,11 @@ struct HabitDetailView: View {
             Spacer()
             
             // Progress Ring
-            ProgressRing(
+            ProgressRing.detail(
                 progress: viewModel.completionPercentage,
-                currentValue: getFormattedProgress(viewModel: viewModel),
+                currentProgress: viewModel.currentProgress,
+                goal: habit.goal,
+                habitType: habit.type,
                 isCompleted: viewModel.isAlreadyCompleted,
                 isExceeded: viewModel.currentProgress > habit.goal,
                 habit: habit,

@@ -242,8 +242,8 @@ struct MonthlyCalendarView: View {
         let goal = habit.goal
         
         if habit.type == .time {
-            let progressFormatted = progress.formattedAsDuration()
-            let goalFormatted = goal.formattedAsDuration()
+            let progressFormatted = progress.formattedAsTime()
+            let goalFormatted = goal.formattedAsTime()
             return "\(dateString)\n\(progressFormatted) / \(goalFormatted)"
         } else {
             return "\(dateString)\n\(progress) / \(goal)"

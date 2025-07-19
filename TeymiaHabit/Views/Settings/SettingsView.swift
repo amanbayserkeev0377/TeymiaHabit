@@ -11,7 +11,6 @@ struct SettingsView: View {
     @State private var isRestoring = false
     
     var body: some View {
-        NavigationStack {
             List {
                 
                 ProSettingsSection()
@@ -110,7 +109,6 @@ struct SettingsView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("settings".localized)
-        }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
