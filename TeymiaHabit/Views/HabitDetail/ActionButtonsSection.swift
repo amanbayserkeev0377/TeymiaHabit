@@ -63,7 +63,7 @@ struct ActionButtonsSection: View {
         } label: {
             Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
                 .font(.system(size: 46))
-                .contentTransition(.symbolEffect(.replace, options: .speed(2.5)))
+                .contentTransition(.symbolEffect(.replace, options: .speed(1.0)))
                 .withHabitGradient(habit, colorScheme: colorScheme)
                 .frame(minWidth: 52, minHeight: 52)
         }

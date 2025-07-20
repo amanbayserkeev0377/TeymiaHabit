@@ -345,8 +345,8 @@ struct HabitDetailView: View {
         }
         .buttonStyle(.plain)
         .disabled(viewModel.isAlreadyCompleted)
-        .animation(.easeInOut(duration: 0.3), value: viewModel.isAlreadyCompleted)
-        .scaleEffect(viewModel.isAlreadyCompleted ? 0.98 : 1.0)
+        .scaleEffect(viewModel.isAlreadyCompleted ? 0.97 : 1.0)
+        .animation(.smooth(duration: 1.0), value: viewModel.isAlreadyCompleted)
         .modifier(HapticManager.shared.sensoryFeedback(.impact(weight: .medium), trigger: !viewModel.isAlreadyCompleted))
         .padding(.horizontal, 24)
     }

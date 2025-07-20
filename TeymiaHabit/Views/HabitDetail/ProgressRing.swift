@@ -74,7 +74,7 @@ struct ProgressRing: View {
                     )
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.3), value: progress)
+                .animation(.easeInOut(duration: 0.5), value: progress)
             
             // Показываем checkmark для обоих стилей
             if style == .detail {

@@ -88,7 +88,7 @@ struct CountInputView: View {
                         )
                 }
                 .disabled(!isValidInput)
-                .animation(.easeInOut(duration: 0.15), value: isValidInput)
+                .animation(.smooth(duration: 0.5), value: isValidInput)
             }
         }
         .padding(24)

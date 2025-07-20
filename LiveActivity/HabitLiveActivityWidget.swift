@@ -181,7 +181,7 @@ struct CompactLiveActivityContent: View {
         HStack(spacing: 12) {
             // ✅ Left: Habit icon (как в HabitCardView)
             LiveActivityHabitIcon(context: context, size: 36)
-                .frame(width: 50, height: 50)
+                .frame(width: 45, height: 45)
             
             // ✅ Middle: Title and progress/goal (как в HabitCardView)
             VStack(alignment: .leading, spacing: 3) {

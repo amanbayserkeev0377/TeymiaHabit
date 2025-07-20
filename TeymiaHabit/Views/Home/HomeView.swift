@@ -213,7 +213,6 @@ struct HomeView: View {
                                             print("🎯 Карточка нажата: \(habit.title)")
                                             selectedHabit = habit
                                         },
-                                        onComplete: { completeHabit(habit, for: selectedDate) },
                                         onEdit: { habitToEdit = habit },
                                         onArchive: { archiveHabit(habit) },
                                         onDelete: {
@@ -258,15 +257,6 @@ struct HomeView: View {
     }
     
     // MARK: - Actions
-    private func completeHabit(_ habit: Habit, for date: Date) {
-        let currentProgress = habit.progressForDate(date)
-        
-        if currentProgress < habit.goal {
-            habit.complete(for: date, modelContext: modelContext)
-            try? modelContext.save()
-            HapticManager.shared.play(.success)
-        }
-    }
     
     private func deleteHabit(_ habit: Habit) {
         NotificationManager.shared.cancelNotifications(for: habit)
@@ -292,19 +282,21 @@ struct HabitCardView: View {
     let habit: Habit
     let date: Date
     let onTap: () -> Void
-    let onComplete: () -> Void
     let onEdit: () -> Void
     let onArchive: () -> Void
     let onDelete: () -> Void
     let onReorder: () -> Void
     
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.modelContext) private var modelContext
     
     private let ringSize: CGFloat = 60
     private let lineWidth: CGFloat = 7
     
     @State private var timerUpdateTrigger = 0
     @State private var cardTimer: Timer?
+    @State private var isProgressRingPressed = false
+    @State private var progressAnimationTrigger = 0
     
     private var isTimerActive: Bool {
         guard habit.type == .time && Calendar.current.isDateInToday(date) else {
@@ -368,7 +360,7 @@ struct HabitCardView: View {
                     color: habit.iconColor,
                     colorScheme: colorScheme
                 )
-                .frame(width: 50, height: 50)
+                .frame(width: 45, height: 45)
                 
                 // Middle - Title and progress/goal
                 VStack(alignment: .leading, spacing: 3) {
@@ -388,6 +380,8 @@ struct HabitCardView: View {
                         .fontWeight(.bold)
                         .foregroundStyle(progressTextColor)
                         .monospacedDigit()
+                        .animation(.easeOut(duration: 0.4), value: formattedProgress)
+
                 }
                 
                 Spacer()
@@ -401,6 +395,20 @@ struct HabitCardView: View {
                     size: ringSize,
                     lineWidth: lineWidth
                 )
+                .scaleEffect(isProgressRingPressed ? 1.2 : 1.0)
+                .animation(.smooth(duration: 0.8), value: isProgressRingPressed)
+                .onTapGesture {
+                    HapticManager.shared.playImpact(.medium)
+                    withAnimation(.smooth(duration: 0.8)) {
+                        isProgressRingPressed = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        withAnimation(.smooth(duration: 0.8)) {
+                            isProgressRingPressed = false
+                        }
+                    }
+                    toggleHabitCompletion()
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
@@ -423,17 +431,6 @@ struct HabitCardView: View {
             }
         }
         .contextMenu {
-            // Complete
-            Button {
-                onComplete()
-            } label: {
-                Label("complete".localized, systemImage: "checkmark")
-            }
-            .disabled(cardIsCompleted)
-            .withAppGradient()
-            
-            Divider()
-            
             // Edit
             Button {
                 onEdit()
@@ -468,6 +465,37 @@ struct HabitCardView: View {
             .tint(.red)
         }
     }
+    
+    // MARK: - Toggle Completion
+    
+    private func toggleHabitCompletion() {
+        do {
+            // ✅ Получаем ViewModel через HabitManager (как в HabitDetailView)
+            let viewModel = try HabitManager.shared.getViewModel(for: habit, date: date, modelContext: modelContext)
+            
+            if cardIsCompleted {
+                // Если завершена - сбрасываем на 0
+                viewModel.resetProgress()
+                print("🔄 Habit reset via ProgressRing tap: \(habit.title)")
+            } else {
+                // Если не завершена - завершаем
+                viewModel.completeHabit()
+                print("✅ Habit completed via ProgressRing tap: \(habit.title)")
+            }
+        } catch {
+            print("❌ Failed to get ViewModel: \(error)")
+            // Fallback - direct habit methods
+            if cardIsCompleted {
+                habit.resetProgress(for: date, modelContext: modelContext)
+                print("🔄 Habit reset via fallback: \(habit.title)")
+            } else {
+                habit.complete(for: date, modelContext: modelContext)
+                print("✅ Habit completed via fallback: \(habit.title)")
+            }
+            HapticManager.shared.play(.success)
+        }
+    }
+
     
     // MARK: - Computed Properties
     private var progressTextColor: AnyShapeStyle {
