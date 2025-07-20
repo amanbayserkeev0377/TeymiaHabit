@@ -16,8 +16,8 @@ struct HabitActivityAttributes: ActivityAttributes {
     let habitName: String
     let habitGoal: Int
     let habitType: HabitActivityType
-    let habitIcon: String // ✅ Уже есть
-    let habitIconColor: HabitIconColor // ✅ Уже есть
+    let habitIcon: String
+    let habitIconColor: HabitIconColor
 }
 
 // MARK: - Shared Habit Type for Live Activities
@@ -101,7 +101,7 @@ struct LiveActivityHabitIcon: View {
                 iconId: context.attributes.habitIcon,
                 baseSize: size,
                 color: context.attributes.habitIconColor,
-                colorScheme: colorScheme // ✅ Автоматически получаем из Environment
+                colorScheme: colorScheme
             )
     }
 }

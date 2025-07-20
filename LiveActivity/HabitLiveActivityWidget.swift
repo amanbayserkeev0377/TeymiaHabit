@@ -6,7 +6,6 @@ struct HabitLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: HabitActivityAttributes.self) { context in
             CompactLiveActivityContent(context: context)
-            // ✅ DEEPLINK: По тапу на всю Live Activity открывается конкретная привычка
                 .widgetURL(URL(string: "teymiahabit://habit/\(context.attributes.habitId)"))
         } dynamicIsland: { context in
             DynamicIsland {
@@ -33,11 +32,6 @@ struct HabitLiveActivityWidget: Widget {
                                     .lineLimit(1)
                                     .foregroundStyle(.primary)
                                     .frame(maxWidth: .infinity)
-                                
-                                // Goal
-                                Text("goal".localized(with: context.attributes.habitGoal.formattedAsLocalizedDuration()))
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
                                     
                                 // Timer with stable overlay
                                 if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
@@ -103,7 +97,6 @@ struct HabitLiveActivityWidget: Widget {
             } minimal: {
                 LiveActivityHabitIcon(context: context, size: 14)
             }
-            // ✅ DEEPLINK и для Dynamic Island
             .widgetURL(URL(string: "teymiahabit://habit/\(context.attributes.habitId)"))
         }
     }
@@ -173,47 +166,41 @@ struct CompactLiveActivityContent: View {
         return currentProgress.formattedAsTime()
     }
     
-    private var formattedGoal: String {
-        return context.attributes.habitGoal.formattedAsLocalizedDuration()
-    }
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             // ✅ Left: Habit icon (как в HabitCardView)
-            LiveActivityHabitIcon(context: context, size: 36)
-                .frame(width: 45, height: 45)
+            LiveActivityHabitIcon(context: context, size: 26)
+                .frame(width: 54, height: 54)
+                .background(
+                    Circle()
+                        .fill(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
+                )
             
             // ✅ Middle: Title and progress/goal (как в HabitCardView)
             VStack(alignment: .leading, spacing: 3) {
                 Text(context.attributes.habitName)
-                    .font(.headline.weight(.semibold))
+                    .font(.body.weight(.medium))
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.primary)
-                
-                // Goal
-                Text("goal".localized(with: formattedGoal))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
                 
                 if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
                     let baseProgress = context.state.currentProgress
                     let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
                     
                     Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
-                        .font(.system(.title2, design: .rounded))
-                        .fontWeight(.bold)
+                        .font(.system(.title3, design: .rounded))
+                        .fontWeight(.semibold)
                         .foregroundStyle(.primary)
                         .monospacedDigit()
                 } else {
                     Text(formattedProgress)
-                        .font(.system(.title2, design: .rounded))
-                        .fontWeight(.bold)
+                        .font(.system(.title3, design: .rounded))
+                        .fontWeight(.semibold)
                         .foregroundStyle(.primary)
                         .monospacedDigit()
                 }
-                
-                
             }
             
             Spacer()
@@ -222,7 +209,7 @@ struct CompactLiveActivityContent: View {
             LiveActivityProgressRing(context: context)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
     }
 }
 
@@ -232,8 +219,8 @@ struct LiveActivityProgressRing: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
-    private let ringSize: CGFloat = 58
-    private let lineWidth: CGFloat = 7
+    private let ringSize: CGFloat = 52
+    private let lineWidth: CGFloat = 6
     
     // ✅ Вычисляем текущий прогресс
     private var currentProgress: Int {
@@ -349,9 +336,9 @@ struct LiveActivityProgressRing: View {
                     )
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.3), value: completionPercentage)
+                .animation(.easeInOut(duration: 0.5), value: completionPercentage)
             
-            // ✅ Checkmark как в compact ProgressRing
+            // ✅ Checkmark
             Image(systemName: "checkmark")
                 .font(.system(size: adaptedIconSize, weight: .bold))
                 .foregroundStyle(
@@ -361,73 +348,6 @@ struct LiveActivityProgressRing: View {
                 )
         }
         .frame(width: ringSize, height: ringSize)
-    }
-}
-
-// MARK: - Dynamic Island Components
-struct HabitInfoView: View {
-    let context: ActivityViewContext<HabitActivityAttributes>
-    
-    @Environment(\.colorScheme) private var colorScheme
-    
-    // ✅ Вычисляем текущий прогресс (как в CompactLiveActivityContent)
-    private var currentProgress: Int {
-        if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-            let elapsed = Int(Date().timeIntervalSince(startTime))
-            return context.state.currentProgress + elapsed
-        } else {
-            return context.state.currentProgress
-        }
-    }
-    
-    private var formattedProgress: String {
-        return currentProgress.formattedAsTime()
-    }
-    
-    private var formattedGoal: String {
-        return context.attributes.habitGoal.formattedAsLocalizedDuration()
-    }
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            LiveActivityHabitIcon(context: context, size: 32)
-                .frame(width: 44, height: 44)  // Компактнее для Expanded
-            
-            // ✅ Middle: Title and progress/goal (ИДЕНТИЧНО!)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(context.attributes.habitName)
-                    .font(.subheadline.weight(.semibold))  // Чуть меньше чем в Compact
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .foregroundStyle(.primary)
-                
-                // Goal
-                Text("goal".localized(with: formattedGoal))
-                    .font(.caption)  // Меньше чем в Compact
-                    .foregroundStyle(.secondary)
-                
-                if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                    let baseProgress = context.state.currentProgress
-                    let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
-                    
-                    Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
-                        .font(.system(.headline, design: .rounded))  // Меньше чем title2
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
-                        .monospacedDigit()
-                } else {
-                    Text(formattedProgress)
-                        .font(.system(.headline, design: .rounded))  // Меньше чем title2
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
-                        .monospacedDigit()
-                }
-            }
-            
-            Spacer()
-        }
-        .padding(.horizontal, 8)  // Меньше padding чем в Compact
-        .padding(.vertical, 6)
     }
 }
 

@@ -113,12 +113,12 @@ struct ArchivedHabitsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(habit.title)
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color(UIColor.label))
                         .lineLimit(1)
                     
                     Text("goal".localized(with: habit.formattedGoal))
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color(UIColor.secondaryLabel))
                 }
                 
                 Spacer()

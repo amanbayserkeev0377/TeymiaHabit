@@ -24,7 +24,7 @@ extension View {
             Image(imageName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: baseSize * 1.6, height: baseSize * 1.6)
+                .frame(width: baseSize * 1.5, height: baseSize * 1.5)
         } else {
             // Fallback: treat as SF Symbol
             Image(systemName: safeIconId)

@@ -182,7 +182,7 @@ extension ProgressRing {
         isCompleted: Bool,
         isExceeded: Bool,
         habit: Habit?,
-        size: CGFloat = 60,
+        size: CGFloat = 52,
         lineWidth: CGFloat? = nil
     ) -> ProgressRing {
         return ProgressRing(

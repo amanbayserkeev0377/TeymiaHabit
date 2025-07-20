@@ -290,8 +290,8 @@ struct HabitCardView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     
-    private let ringSize: CGFloat = 60
-    private let lineWidth: CGFloat = 7
+    private let ringSize: CGFloat = 52
+    private let lineWidth: CGFloat = 6
     
     @State private var timerUpdateTrigger = 0
     @State private var cardTimer: Timer?
@@ -352,35 +352,34 @@ struct HabitCardView: View {
             HapticManager.shared.playSelection()
             onTap()
         }) {
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 // Left side - Icon
                 universalIcon(
                     iconId: habit.iconName,
-                    baseSize: 36,
+                    baseSize: 26,
                     color: habit.iconColor,
                     colorScheme: colorScheme
                 )
-                .frame(width: 45, height: 45)
+                .frame(width: 54, height: 54)
+                .background(
+                    Circle()
+                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
+                )
                 
                 // Middle - Title and progress/goal
                 VStack(alignment: .leading, spacing: 3) {
                     Text(habit.title)
-                        .font(.headline.weight(.semibold))
+                        .font(.body.weight(.medium))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(.primary)
                     
-                    // Goal
-                    Text("goal".localized(with: habit.formattedGoal))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                    
                     Text(formattedProgress)
-                        .font(.system(.title2, design: .rounded))
-                        .fontWeight(.bold)
+                        .font(.system(.title3, design: .rounded))
+                        .fontWeight(.semibold)
                         .foregroundStyle(progressTextColor)
                         .monospacedDigit()
-                        .animation(.easeOut(duration: 0.4), value: formattedProgress)
+                        .animation(isTimerActive ? .none : .easeOut(duration: 0.4), value: formattedProgress)
 
                 }
                 
@@ -411,7 +410,8 @@ struct HabitCardView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
+            .frame(minHeight: 64)
             .background(cardBackground)
         }
         .buttonStyle(.plain)

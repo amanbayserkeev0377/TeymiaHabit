@@ -37,7 +37,7 @@ struct HabitDetailView: View {
     }
     
     private var adaptiveProgressRingSize: CGFloat {
-        isCompactDevice ? 180 : 220
+        isCompactDevice ? 170 : 200
     }
     
     private var adaptiveButtonSize: CGFloat {
@@ -295,8 +295,8 @@ struct HabitDetailView: View {
                 isExceeded: viewModel.currentProgress > habit.goal,
                 habit: habit,
                 size: adaptiveProgressRingSize,
-                lineWidth: isCompactDevice ? 14 : 18,
-                fontSize: isCompactDevice ? 28 : 36
+                lineWidth: isCompactDevice ? 13 : 16,
+                fontSize: isCompactDevice ? 24 : 32
             )
             
             Spacer()
