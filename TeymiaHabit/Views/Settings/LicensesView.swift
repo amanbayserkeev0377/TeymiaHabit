@@ -157,6 +157,24 @@ struct LicensesView: View {
                 LicenseRow(iconName: "app_icon_clock_dark", attribution: "3d Dark Clock by Vecteezy", url: "https://www.vecteezy.com/png/55079132-modern-dark-blue-clock-with-gold-accents")
                 
                 LicenseRow(iconName: "app_icon_clock_light", attribution: "3d Light Clock by Vecteezy", url: "https://www.vecteezy.com/png/57178682-stylish-desk-clock-with-vibrant-neon-lighting-in-an-elegant-design-perfect-for-modern-office-fashionable-desk-clock-with-neon-lighting-file-of-isolated-object-with-shadow-on-transparent-background")
+                
+                LicenseRow(iconName: "3d_hand_fist", attribution: "3d Hand Fist by Vecteezy", url: "https://www.vecteezy.com/png/46595041-hand-fist-symbol-3d-illustration")
+                
+                LicenseRow(iconName: "3d_cup1", attribution: "3d Trophy Cup by Vecteezy", url: "https://www.vecteezy.com/png/45686373-trophy-cup-3d-realistic")
+                
+                LicenseRow(iconName: "3d_note", attribution: "3d Note by Vecteezy", url: "https://www.vecteezy.com/png/46352928-music-note-3d-sign")
+                
+                LicenseRow(iconName: "3d_atom", attribution: "3d Atom Molecule by Vecteezy", url: "https://www.vecteezy.com/png/46902603-atom-molecule-3d-icon")
+                
+                LicenseRow(iconName: "3d_puzzle", attribution: "3d Puzzle by Vecteezy", url: "https://www.vecteezy.com/png/48719756-heap-of-puzzle-pieces-3d-render")
+                
+                LicenseRow(iconName: "3d_scissors", attribution: "3d Scissors by Vecteezy", url: "https://www.vecteezy.com/png/45800439-scissors-tool-3d-element")
+
+                LicenseRow(iconName: "3d_dog", attribution: "3d Dog by Vecteezy", url: "https://www.vecteezy.com/png/49377070-cheerful-cartoon-dog-with-big-eyes-and-a-smile")
+                
+                LicenseRow(iconName: "3d_cat", attribution: "3d Cat by Vecteezy", url: "https://www.vecteezy.com/png/56252376-3d-cat-setting-is-isolated-on-transparent-background")
+                
+                LicenseRow(iconName: "3d_cookie", attribution: "3d Cookies by Vecteezy", url: "https://www.vecteezy.com/png/48719944-heap-of-cookies-and-chocolate-3d-clip")
             }
         }
         .navigationTitle("licenses".localized)

@@ -157,18 +157,22 @@ struct HomeView: View {
                     date: selectedDate
                 )
             }
+            .presentationSizing(.page)
+            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showingReorderHabits) {
             ReorderHabitsView()
         }
         .sheet(isPresented: $showingNewHabit) {
             NewHabitView()
+                .presentationSizing(.page)
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
         .sheet(item: $habitToEdit) { habit in
             NewHabitView(habit: habit)
+                .presentationSizing(.page)
         }
         .deleteSingleHabitAlert(
             isPresented: Binding(
@@ -258,7 +262,7 @@ struct HomeView: View {
         let currentProgress = habit.progressForDate(date)
         
         if currentProgress < habit.goal {
-            habit.completeForDate(date)
+            habit.complete(for: date, modelContext: modelContext)
             try? modelContext.save()
             HapticManager.shared.play(.success)
         }
@@ -296,7 +300,7 @@ struct HabitCardView: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
-    private let ringSize: CGFloat = 62
+    private let ringSize: CGFloat = 60
     private let lineWidth: CGFloat = 7
     
     @State private var timerUpdateTrigger = 0
@@ -325,6 +329,10 @@ struct HabitCardView: View {
         return habit.progressForDate(date)
     }
     
+    private var formattedProgress: String {
+        return habit.formatProgress(cardProgress)
+    }
+    
     private var cardCompletionPercentage: Double {
         guard habit.goal > 0 else { return 0 }
         return Double(cardProgress) / Double(habit.goal)
@@ -346,55 +354,40 @@ struct HabitCardView: View {
         return AppColorManager.getExceededBarStyle(for: colorScheme)
     }
     
-    // MARK: - Formatted Progress and Goal
-    
-    private var formattedProgress: String {
-        switch habit.type {
-        case .count:
-            return "\(cardProgress)"
-        case .time:
-            return cardProgress.formattedAsTime()
-        }
-    }
     
     var body: some View {
         Button(action: {
             HapticManager.shared.playSelection()
             onTap()
         }) {
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 // Left side - Icon
                 universalIcon(
                     iconId: habit.iconName,
-                    baseSize: 30,
+                    baseSize: 36,
                     color: habit.iconColor,
                     colorScheme: colorScheme
                 )
-                .frame(width: 60, height: 60)
-                .background(
-                    Circle()
-                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
-                )
+                .frame(width: 50, height: 50)
                 
                 // Middle - Title and progress/goal
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(habit.title)
                         .font(.headline.weight(.semibold))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
+                        .foregroundStyle(.primary)
                     
                     // Goal
-                    Text(habit.formattedGoal)
-                        .font(.subheadline)
+                    Text("goal".localized(with: habit.formattedGoal))
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                     
                     Text(formattedProgress)
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(
-                            cardIsExceeded ? exceededTextGradient :
-                                cardIsCompleted ? completedTextGradient :
-                                AnyShapeStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
-                        )
+                        .font(.system(.title2, design: .rounded))
+                        .fontWeight(.bold)
+                        .foregroundStyle(progressTextColor)
+                        .monospacedDigit()
                 }
                 
                 Spacer()
@@ -409,25 +402,9 @@ struct HabitCardView: View {
                     lineWidth: lineWidth
                 )
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .strokeBorder(
-                                Color(.separator).opacity(0.5),
-                                lineWidth: 0.5
-                            )
-                    )
-                    .shadow(
-                        color: Color(.systemGray4).opacity(0.6),
-                        radius: 4,
-                        x: 0,
-                        y: 2
-                    )
-            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(cardBackground)
         }
         .buttonStyle(.plain)
         .onAppear {
@@ -490,6 +467,35 @@ struct HabitCardView: View {
             }
             .tint(.red)
         }
+    }
+    
+    // MARK: - Computed Properties
+    private var progressTextColor: AnyShapeStyle {
+        if cardIsExceeded {
+            return exceededTextGradient
+        } else if cardIsCompleted {
+            return completedTextGradient
+        } else {
+            return AnyShapeStyle(Color.primary)
+        }
+    }
+    
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(Color(.secondarySystemGroupedBackground))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(
+                        Color(.separator).opacity(0.5),
+                        lineWidth: 0.5
+                    )
+            )
+            .shadow(
+                color: Color(.systemGray4).opacity(0.6),
+                radius: 4,
+                x: 0,
+                y: 2
+            )
     }
     
     // MARK: - Timer Management

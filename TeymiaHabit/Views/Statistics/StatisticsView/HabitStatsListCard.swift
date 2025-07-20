@@ -39,7 +39,7 @@ struct HabitStatsListCard: View {
                             .foregroundStyle(.primary)
                             .multilineTextAlignment(.leading)
                         
-                        Text(habit.formattedGoal)
+                        Text("goal".localized(with: habit.formattedGoal))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

@@ -1,7 +1,8 @@
 import Foundation
 
 extension Int {
-    /// Formats seconds to a string like "1:30:45" (hours:minutes:seconds)
+    /// Formats seconds to a string like "1:30:45" (hours:minutes:seconds) or "23:45" (minutes:seconds)
+    /// Used for displaying progress of time habits
     func formattedAsTime() -> String {
         let hours = self / 3600
         let minutes = (self % 3600) / 60
@@ -13,33 +14,19 @@ extension Int {
             return String(format: "%d:%02d", minutes, seconds)
         }
     }
-    
-    /// Formats current value for progress ring
-    func formattedAsProgressForRing() -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = " " // Пробел в качестве разделителя тысяч
         
-        if self >= 1000 {
-            // Форматируем числа >= 1000 с разделителем
-            return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
-        } else {
-            // Числа меньше 1000 показываем без разделителя
-            return "\(self)"
-        }
-    }
-    
+    /// Formats seconds as localized duration (e.g., "1h 30m", "45m", "1h")
+    /// Used for displaying goals with proper localization
     func formattedAsLocalizedDuration() -> String {
-            let formatter = DateComponentsFormatter()
-            formatter.allowedUnits = [.hour, .minute]
-            formatter.unitsStyle = .abbreviated
-            return formatter.string(from: TimeInterval(self)) ?? "\(self)s"
-        }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter.string(from: TimeInterval(self)) ?? "\(self)s"
+    }
 }
 
 // Extension for Date with useful formatting methods
 extension Date {
- 
     /// Formats date to a string like "January 1"
     var formattedDayMonth: String {
         let dateFormatter = DateFormatter()

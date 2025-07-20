@@ -238,16 +238,11 @@ struct MonthlyCalendarView: View {
         guard let selectedActionDate = selectedActionDate else { return "" }
         
         let dateString = dateFormatter.string(from: selectedActionDate)
-        let progress = habit.progressForDate(selectedActionDate)
-        let goal = habit.goal
         
-        if habit.type == .time {
-            let progressFormatted = progress.formattedAsTime()
-            let goalFormatted = goal.formattedAsTime()
-            return "\(dateString)\n\(progressFormatted) / \(goalFormatted)"
-        } else {
-            return "\(dateString)\n\(progress) / \(goal)"
-        }
+        let progressFormatted = habit.formattedProgress(for: selectedActionDate)
+        let goalFormatted = habit.formattedGoal
+        
+        return "\(dateString)\n\(progressFormatted) / \(goalFormatted)"
     }
     
     // MARK: - Helper Properties

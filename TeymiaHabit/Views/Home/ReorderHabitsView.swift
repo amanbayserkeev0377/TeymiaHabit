@@ -94,7 +94,7 @@ struct ReorderHabitRow: View {
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
-                Text("goal_format".localized(with: habit.formattedGoal))
+                Text("goal".localized(with: habit.formattedGoal))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -89,16 +89,19 @@ extension Notification.Name {
 }
 
 // MARK: - ✅ Extension для Live Activity Widget (используя существующий universalIcon)
-extension ActivityViewContext where Attributes == HabitActivityAttributes {
-    @ViewBuilder
-    func habitIcon(size: CGFloat) -> some View {
-        // ✅ Используем universalIcon из UniversalIconExtension.swift
+struct LiveActivityHabitIcon: View {
+    let context: ActivityViewContext<HabitActivityAttributes>
+    let size: CGFloat
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
+    var body: some View {
         EmptyView()
             .universalIcon(
-                iconId: attributes.habitIcon,
+                iconId: context.attributes.habitIcon,
                 baseSize: size,
-                color: attributes.habitIconColor,
-                colorScheme: .light // Live Activities всегда светлые
+                color: context.attributes.habitIconColor,
+                colorScheme: colorScheme // ✅ Автоматически получаем из Environment
             )
     }
 }

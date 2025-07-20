@@ -103,7 +103,7 @@ struct ProgressRing: View {
                     if let habit = habit {
                         Text(getProgressText(for: habit))
                             .font(.system(size: adaptedFontSize, weight: .bold))
-                            .foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+                            .foregroundStyle(.primary)
                             .minimumScaleFactor(0.7)
                             .lineLimit(1)
                     } else {

@@ -15,8 +15,15 @@ struct HabitDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     
     // Adaptive sizing based on device
+    
+    private var isIPad: Bool {
+        horizontalSizeClass == .regular && verticalSizeClass == .regular
+    }
+    
     private var isCompactDevice: Bool {
         UIScreen.main.bounds.height <= 667 // iPhone SE, 8, etc.
     }
@@ -38,8 +45,6 @@ struct HabitDetailView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            // Use ScrollView to handle keyboard properly, even if content fits
             ScrollView {
                 VStack(spacing: 0) {
                     if let viewModel = viewModel {
@@ -47,7 +52,7 @@ struct HabitDetailView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(minHeight: UIScreen.main.bounds.height - 200) // Ensure minimum height
+                .frame(minHeight: UIScreen.main.bounds.height - 200)
             }
             .scrollDismissesKeyboard(.immediately)
             .toolbar {
@@ -111,7 +116,6 @@ struct HabitDetailView: View {
                     }
                 }
             }
-            .presentationDragIndicator(.visible)
             .id(habit.uuid.uuidString)
             .onAppear {
                 setupViewModelIfNeeded()
@@ -140,6 +144,7 @@ struct HabitDetailView: View {
             }
             .sheet(isPresented: $showingStatistics) {
                 HabitStatisticsView(habit: habit)
+                    .presentationSizing(.page)
             }
             .deleteSingleHabitAlert(
                 isPresented: Binding(
@@ -166,7 +171,6 @@ struct HabitDetailView: View {
                     inputManager.dismiss()
                 }
             )
-        }
     }
     
     // MARK: - Content
@@ -348,16 +352,6 @@ struct HabitDetailView: View {
     }
     
     // MARK: - Helper Methods
-    private func getFormattedProgress(viewModel: HabitDetailViewModel) -> String {
-        let currentProgressValue = viewModel.currentProgress
-        
-        switch habit.type {
-        case .count:
-            return currentProgressValue.formattedAsProgress(total: habit.goal)
-        case .time:
-            return currentProgressValue.formattedAsTime()
-        }
-    }
     
     private func setupViewModelIfNeeded() {
         if let existingViewModel = viewModel,

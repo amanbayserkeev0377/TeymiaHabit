@@ -40,6 +40,7 @@ struct ArchivedHabitsView: View {
         )
         .sheet(item: $selectedHabitForStats) { habit in
             HabitStatisticsView(habit: habit)
+                .presentationSizing(.page)
         }
     }
     
@@ -115,7 +116,7 @@ struct ArchivedHabitsView: View {
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                     
-                    Text("goal_format".localized(with: habit.formattedGoal))
+                    Text("goal".localized(with: habit.formattedGoal))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
