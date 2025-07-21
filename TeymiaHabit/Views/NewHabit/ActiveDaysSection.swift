@@ -57,21 +57,16 @@ struct ActiveDaysSelectionView: View {
         calendar.orderedFormattedFullWeekdaySymbols
     }
     
-    private var selectedDaysDescription: String {
-        let selectedDays = activeDays.enumerated()
-            .filter { $0.element }
-            .map { weekdaySymbols[$0.offset] }
-            .joined(separator: ", ")
-        
-        return "will_repeat_weekly".localized + ": " + selectedDays
-    }
-    
     var body: some View {
         List {
             Section {
                 Button {
                     withAnimation(.easeInOut) {
-                        activeDays = Array(repeating: true, count: 7)
+                        if activeDays.allSatisfy({ $0 }) {
+                            activeDays = [true] + Array(repeating: false, count: 6)
+                        } else {
+                            activeDays = Array(repeating: true, count: 7)
+                        }
                     }
                 } label: {
                     HStack {
@@ -79,13 +74,15 @@ struct ActiveDaysSelectionView: View {
                             .tint(.primary)
                         Spacer()
                         Image(systemName: "checkmark")
+                            .fontWeight(.semibold)
+                            .withAppGradient()
                             .opacity(activeDays.allSatisfy({ $0 }) ? 1 : 0)
                             .animation(.easeInOut, value: activeDays.allSatisfy({ $0 }))
                     }
                 }
             }
             
-            Section(header: Text("select_days".localized), footer: Text(selectedDaysDescription).font(.footnote)) {
+            Section(header: Text("select_days".localized)) {
                 ForEach(0..<7) { index in
                     Button {
                         withAnimation(.easeInOut) {
@@ -97,6 +94,8 @@ struct ActiveDaysSelectionView: View {
                                 .tint(.primary)
                             Spacer()
                             Image(systemName: "checkmark")
+                                .fontWeight(.semibold)
+                                .withAppGradient()
                                 .opacity(activeDays[index] ? 1 : 0)
                                 .animation(.easeInOut, value: activeDays[index])
                         }

@@ -15,7 +15,6 @@ struct ReminderSection: View {
     
     var body: some View {
         Section {
-            // РЕШЕНИЕ: Используем тот же подход что и в NotificationsSection
             Toggle(isOn: Binding(
                 get: { isReminderEnabled },
                 set: { newValue in
@@ -27,11 +26,12 @@ struct ReminderSection: View {
                             await handleReminderToggle(newValue)
                         }
                     } else {
-                        // Если отключается - просто обновляем значение
-                        isReminderEnabled = newValue
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isReminderEnabled = newValue
+                        }
                     }
                 }
-            ).animation(.easeInOut(duration: 0.3))) {
+            )) {
                 Label(
                     title: { Text("reminders".localized) },
                     icon: {
@@ -46,51 +46,63 @@ struct ReminderSection: View {
             }
             .withToggleColor()
             .disabled(isProcessingToggle)
-            // УБИРАЕМ onChange - он больше не нужен
             
+            // ✅ АНИМИРОВАННЫЙ БЛОК напоминаний
             if isReminderEnabled {
-                ForEach(Array(reminderTimes.indices), id: \.self) { index in
-                    HStack {
-                        Text("reminder".localized + " \(index + 1)")
-                        Spacer()
-                        DatePicker(
-                            "",
-                            selection: $reminderTimes[index],
-                            displayedComponents: .hourAndMinute
-                        )
-                        .labelsHidden()
-                        .datePickerStyle(.compact)
-                        
-                        // Remove reminder button (if more than one and Pro allows)
-                        if reminderTimes.count > 1 && (proManager.isPro || index > 0) {
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    if reminderTimes.indices.contains(index) {
-                                        reminderTimes.remove(at: index)
+                Group {
+                    ForEach(Array(reminderTimes.indices), id: \.self) { index in
+                        HStack {
+                            Text("reminder".localized + " \(index + 1)")
+                            Spacer()
+                            DatePicker(
+                                "",
+                                selection: $reminderTimes[index],
+                                displayedComponents: .hourAndMinute
+                            )
+                            .labelsHidden()
+                            .datePickerStyle(.compact)
+                            
+                            // Remove reminder button
+                            if reminderTimes.count > 1 && (proManager.isPro || index > 0) {
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        if reminderTimes.indices.contains(index) {
+                                            reminderTimes.remove(at: index)
+                                        }
                                     }
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
                                 }
-                            } label: {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
+                            }
+                        }
+                    }
+                    
+                    if reminderTimes.count < proManager.maxRemindersCount {
+                        Button {
+                            if reminderTimes.count >= 1 && !proManager.isPro {
+                                onShowPaywall()
+                            } else {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    reminderTimes.append(Date())
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "plus")
+                                    .fontWeight(.semibold)
+                                    .withAppGradient()
+                                
+                                Text("add_reminder".localized)
+                                    .withAppGradient()
                             }
                         }
                     }
                 }
-                
-                if reminderTimes.count < proManager.maxRemindersCount {
-                    Button {
-                        // Для не-Pro: показываем paywall при попытке добавить 2+ напоминание
-                        if reminderTimes.count >= 1 && !proManager.isPro {
-                            onShowPaywall()
-                        } else {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                reminderTimes.append(Date())
-                            }
-                        }
-                    } label: {
-                        Label("add_reminder".localized, systemImage: "plus")
-                    }
-                }
+                .transition(.asymmetric(
+                    insertion: .move(edge: .top).combined(with: .opacity),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                ))
             }
         }
         .alert("alert_notifications_permission".localized, isPresented: $isNotificationPermissionAlertPresented) {
@@ -110,11 +122,16 @@ struct ReminderSection: View {
             isProcessingToggle = false
             
             if !isAuthorized {
-                isReminderEnabled = false
+                // ✅ Анимация при отклонении разрешения
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isReminderEnabled = false
+                }
                 isNotificationPermissionAlertPresented = true
             } else {
-                // Если разрешения есть - оставляем toggle включенным
-                isReminderEnabled = newValue
+                // ✅ Анимация при успешном включении
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isReminderEnabled = newValue
+                }
             }
         }
     }

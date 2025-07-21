@@ -126,7 +126,6 @@ struct CompactLiveActivityContent: View {
         return currentProgress > context.attributes.habitGoal
     }
     
-    // ✅ Градиенты как в HabitCardView
     private var completedTextGradient: AnyShapeStyle {
         let topColor = colorScheme == .dark ?
         Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1)) : // completedDarkGreen
@@ -169,7 +168,6 @@ struct CompactLiveActivityContent: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            // ✅ Left: Habit icon (как в HabitCardView)
             LiveActivityHabitIcon(context: context, size: 26)
                 .frame(width: 54, height: 54)
                 .background(
@@ -177,7 +175,7 @@ struct CompactLiveActivityContent: View {
                         .fill(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
                 )
             
-            // ✅ Middle: Title and progress/goal (как в HabitCardView)
+            // ✅ Middle: Title and progress/goal
             VStack(alignment: .leading, spacing: 3) {
                 Text(context.attributes.habitName)
                     .font(.body.weight(.medium))

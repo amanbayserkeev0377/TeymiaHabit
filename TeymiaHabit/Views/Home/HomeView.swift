@@ -297,6 +297,7 @@ struct HabitCardView: View {
     @State private var cardTimer: Timer?
     @State private var isProgressRingPressed = false
     @State private var progressAnimationTrigger = 0
+    @State private var hasPlayedCompletionSound = false
     
     private var isTimerActive: Bool {
         guard habit.type == .time && Calendar.current.isDateInToday(date) else {
@@ -323,6 +324,19 @@ struct HabitCardView: View {
     
     private var formattedProgress: String {
         return habit.formatProgress(cardProgress)
+    }
+    
+    private func checkTimerCompletion() {
+        guard isTimerActive,
+              let liveProgress = TimerService.shared.getLiveProgress(for: habit.uuid.uuidString),
+              !hasPlayedCompletionSound,
+              habit.progressForDate(date) < habit.goal, // База была < цели
+              liveProgress >= habit.goal else { return } // Live достиг цели
+        
+        hasPlayedCompletionSound = true
+        SoundManager.shared.playCompletionSound()
+        HapticManager.shared.play(.success)
+        print("🎉 Timer completion in HomeView for \(habit.title)!")
     }
     
     private var cardCompletionPercentage: Double {
@@ -423,9 +437,15 @@ struct HabitCardView: View {
         .onDisappear {
             stopCardTimer()
         }
+        .onChange(of: timerUpdateTrigger) { _, _ in
+            if isTimerActive {
+                checkTimerCompletion()
+            }
+        }
         .onChange(of: isTimerActive) { _, newValue in
             if newValue {
                 startCardTimer()
+                hasPlayedCompletionSound = false
             } else {
                 stopCardTimer()
             }
@@ -480,8 +500,10 @@ struct HabitCardView: View {
             } else {
                 // Если не завершена - завершаем
                 viewModel.completeHabit()
+                SoundManager.shared.playCompletionSound()
                 print("✅ Habit completed via ProgressRing tap: \(habit.title)")
             }
+            HapticManager.shared.play(.success)
         } catch {
             print("❌ Failed to get ViewModel: \(error)")
             // Fallback - direct habit methods
@@ -490,6 +512,7 @@ struct HabitCardView: View {
                 print("🔄 Habit reset via fallback: \(habit.title)")
             } else {
                 habit.complete(for: date, modelContext: modelContext)
+                SoundManager.shared.playCompletionSound()
                 print("✅ Habit completed via fallback: \(habit.title)")
             }
             HapticManager.shared.play(.success)

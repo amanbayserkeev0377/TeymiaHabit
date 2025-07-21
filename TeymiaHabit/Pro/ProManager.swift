@@ -29,21 +29,47 @@ class ProManager {
     // MARK: - Debug Methods (только для тестирования)
     @MainActor
     func resetProStatusForTesting() {
+        let previousProStatus = isPro
+        
         isPro = false
         hasLifetimePurchase = false
         hasActiveSubscription = false
+        
+        // ✅ Отправляем уведомление о смене статуса для тестирования
+        if previousProStatus != isPro {
+            print("🧪 Pro status changed from \(previousProStatus) to \(isPro) - sending notification")
+            NotificationCenter.default.post(name: .proStatusChanged, object: nil)
+        }
+        
         print("🧪 Pro status reset for testing")
     }
     
     @MainActor
     func setProStatusForTesting(_ status: Bool) {
+        let previousProStatus = isPro
+        
         isPro = status
+        
+        // ✅ Отправляем уведомление о смене статуса для тестирования
+        if previousProStatus != isPro {
+            print("🧪 Pro status changed from \(previousProStatus) to \(isPro) - sending notification")
+            NotificationCenter.default.post(name: .proStatusChanged, object: nil)
+        }
+        
         print("🧪 Pro status set to: \(status)")
     }
     
     func toggleProStatusForTesting() {
         Task { @MainActor in
+            let previousProStatus = isPro
             isPro.toggle()
+            
+            // ✅ Отправляем уведомление о смене статуса для тестирования
+            if previousProStatus != isPro {
+                print("🧪 Pro status changed from \(previousProStatus) to \(isPro) - sending notification")
+                NotificationCenter.default.post(name: .proStatusChanged, object: nil)
+            }
+            
             print("🧪 Pro status toggled to: \(isPro)")
         }
     }
@@ -52,9 +78,9 @@ class ProManager {
     // MARK: - Pro Status
     
     func checkProStatus() {
-    #if DEBUG
+#if DEBUG
         print("🧪 DEBUG: Skipping RevenueCat check for Debug build")
-    #else
+#else
         Task {
             await MainActor.run {
                 isLoading = true
@@ -80,7 +106,7 @@ class ProManager {
                 }
             }
         }
-    #endif
+#endif
     }
     
     // MARK: - Offerings
@@ -179,9 +205,9 @@ class ProManager {
     }
     
     private func updateProStatusFromCustomerInfo(_ customerInfo: CustomerInfo) async {
-    #if DEBUG
+#if DEBUG
         print("🧪 DEBUG: Keeping Pro status for Debug build")
-    #else
+#else
         // Check subscription entitlement
         let hasActiveEntitlement = customerInfo.entitlements[RevenueCatConfig.Entitlements.pro]?.isActive == true
         
@@ -194,11 +220,19 @@ class ProManager {
         let hasPro = hasActiveEntitlement || hasLifetime
         
         await MainActor.run {
+            let previousProStatus = self.isPro
+            
             self.isPro = hasPro
             self.hasActiveSubscription = hasActiveEntitlement
             self.hasLifetimePurchase = hasLifetime
+            
+            // ✅ Notify about Pro status change ONLY if it actually changed
+            if previousProStatus != hasPro {
+                print("🔄 Pro status changed from \(previousProStatus) to \(hasPro)")
+                NotificationCenter.default.post(name: .proStatusChanged, object: nil)
+            }
         }
-    #endif
+#endif
     }
     
     // MARK: - Public method to find lifetime package
@@ -230,8 +264,17 @@ extension ProManager {
     }
     
     var maxRemindersCount: Int {
+        // ✅ Logic: Pro users can have up to 10 reminders. Free users have a technical limit of 2 reminders,
+        // but the "+" (Add Reminder) button is hidden, so they can only add 1 by default.
+        // Without Pro, the user doesn't see the "Add Reminder" button and can add only a single reminder.
+        // However, the limit is set to 2 for system stability and internal logic.
         isPro ? 10 : 2
     }
+}
+
+// MARK: - Notification Names
+extension Notification.Name {
+    static let proStatusChanged = Notification.Name("proStatusChanged")
 }
 
 struct TimeoutError: Error {}

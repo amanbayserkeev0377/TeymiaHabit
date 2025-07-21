@@ -211,6 +211,14 @@ extension AppColorManager {
     }
 }
 
+extension AppColorManager {
+    /// Reset app color to default when losing Pro access
+    func resetToDefault() {
+        print("🎨 Resetting app color to default")
+        setAppColor(.primary)
+    }
+}
+
 // MARK: - 📝 DEVELOPER DOCUMENTATION
 
 /*

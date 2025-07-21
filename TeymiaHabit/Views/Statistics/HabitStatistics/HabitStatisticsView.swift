@@ -281,6 +281,7 @@ struct HabitStatisticsView: View {
         habit.complete(for: date, modelContext: modelContext)
         saveAndRefresh()
         HapticManager.shared.play(.success)
+        SoundManager.shared.playCompletionSound()
     }
     
     private func handleCustomCountInput(count: Int) {

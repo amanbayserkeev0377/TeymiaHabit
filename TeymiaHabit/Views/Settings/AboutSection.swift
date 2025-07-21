@@ -90,9 +90,7 @@ struct AboutSection: View {
             
             // Share App
             ShareLink(
-                item: URL(string: "https://apps.apple.com/app/id6746747903")!,
-                subject: Text("share_app_subject".localized),
-                message: Text("share_app_message".localized)
+                item: URL(string: "https://apps.apple.com/app/id6746747903")!
             ) {
                 Label(
                     title: { Text("share_app".localized) },

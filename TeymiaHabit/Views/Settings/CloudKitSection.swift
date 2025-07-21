@@ -371,11 +371,6 @@ struct CloudKitSyncView: View {
                     print("✅ CloudKit fully available")
                     print("🔍 Found \(zones.count) record zones")
                     
-                    // Проверяем есть ли записи
-                    let query = CKQuery(recordType: "CD_Habit", predicate: NSPredicate(value: true))
-                    let result = try await database.records(matching: query)
-                    print("🔍 Found \(result.matchResults.count) Habit records in CloudKit")
-                    
                 } catch {
                     cloudKitStatus = .error("icloud_database_error".localized)
                     print("❌ CloudKit database error: \(error)")

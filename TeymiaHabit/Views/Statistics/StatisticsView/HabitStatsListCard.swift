@@ -21,36 +21,42 @@ struct HabitStatsListCard: View {
             HapticManager.shared.playSelection()
             onTap()
         }) {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) { // Основной контейнер
                 // Header with habit info
-                HStack {
-                    // Habit icon
-                       universalIcon(
-                           iconId: habit.iconName,
-                           baseSize: 28,
-                           color: habit.iconColor,
-                           colorScheme: colorScheme
-                       )
-                       .frame(width: 40, height: 40)
+                HStack(spacing: 16) {
+                    // Habit icon с background
+                    universalIcon(
+                        iconId: habit.iconName,
+                        baseSize: 26, // Консистентно с HabitCard
+                        color: habit.iconColor,
+                        colorScheme: colorScheme
+                    )
+                    .frame(width: 54, height: 54) // Консистентно с HabitCard
+                    .background(
+                        Circle()
+                            .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
+                    )
                     
-                    VStack(alignment: .leading, spacing: 2) {
+                    // Текст слева выровнен
+                    VStack(alignment: .leading, spacing: 3) {
                         Text(habit.title)
-                            .font(.headline)
+                            .font(.body.weight(.medium))
+                            .lineLimit(2)
                             .foregroundStyle(.primary)
-                            .multilineTextAlignment(.leading)
                         
                         Text("goal".localized(with: habit.formattedGoal))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
+                    
+                    Spacer() // Толкает контент влево
                 }
                 
-                // Individual StreaksView for this habit
+                // StreaksView отдельно
                 StreaksView(viewModel: viewModel)
-                    .padding(.horizontal, 8)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 16)
+            .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .fill(Color(UIColor.secondarySystemGroupedBackground))
@@ -58,7 +64,7 @@ struct HabitStatsListCard: View {
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .strokeBorder(
                                 Color(.separator).opacity(0.5),
-                                          lineWidth: 0.5
+                                lineWidth: 0.5
                             )
                     )
                     .shadow(
@@ -71,7 +77,6 @@ struct HabitStatsListCard: View {
         }
         .buttonStyle(.plain)
         .onAppear {
-            // Refresh stats when card appears
             viewModel.refresh()
         }
     }

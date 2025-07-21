@@ -152,3 +152,11 @@ class AppIconManager: ObservableObject {
         }
     }
 }
+
+extension AppIconManager {
+    /// Reset app icon to default when losing Pro access
+    func resetToDefault() {
+        print("🖼️ Resetting app icon to default")
+        setAppIcon(.main)
+    }
+}

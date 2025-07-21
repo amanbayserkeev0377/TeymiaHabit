@@ -71,8 +71,22 @@ struct SettingsView: View {
                 }
                 
                 Section {
-                    NotificationsSection()
                     HapticsSection()
+                    NotificationsSection()
+                    NavigationLink {
+                        SoundSettingsView()
+                    } label: {
+                        Label(
+                            title: { Text("sounds".localized) },
+                            icon: {
+                                Image(systemName: "speaker.wave.2.fill")
+                                    .withIOSSettingsIcon(lightColors: [
+                                        Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
+                                        Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
+                                        ])
+                            }
+                        )
+                    }
                 }
                 
                 // Legal

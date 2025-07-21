@@ -168,3 +168,39 @@ class NotificationManager {
         return settings.authorizationStatus == .authorized
     }
 }
+
+extension NotificationManager {
+    /// Limit reminders to free tier (effectively 1 per habit) when losing Pro access
+    func limitRemindersForFreeTier(modelContext: ModelContext) async {
+        print("🔔 Limiting reminders to free tier (max 2, but effectively 1 per habit)")
+        
+        do {
+            let descriptor = FetchDescriptor<Habit>()
+            let allHabits = try modelContext.fetch(descriptor)
+            
+            var changedHabitsCount = 0
+            
+            for habit in allHabits {
+                if let reminderTimes = habit.reminderTimes, reminderTimes.count > 2 {
+                    // Keep only first 2 reminders (but user can effectively use only 1 due to UI restrictions)
+                    let limitedReminders = Array(reminderTimes.prefix(2))
+                    habit.reminderTimes = limitedReminders
+                    changedHabitsCount += 1
+                    
+                    print("🔔 Limited reminders for '\(habit.title)' from \(reminderTimes.count) to \(limitedReminders.count)")
+                }
+            }
+            
+            if changedHabitsCount > 0 {
+                try modelContext.save()
+                print("✅ Limited reminders for \(changedHabitsCount) habits")
+                
+                // Reschedule notifications for affected habits
+                await updateAllNotifications(modelContext: modelContext)
+            }
+            
+        } catch {
+            print("❌ Failed to limit reminders: \(error)")
+        }
+    }
+}

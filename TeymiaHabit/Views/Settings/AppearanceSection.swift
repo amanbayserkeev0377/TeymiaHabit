@@ -71,7 +71,7 @@ struct AppColorPickerView: View {
                         } label: {
                             HStack {
                                 Image(systemName: ThemeOption.allOptions[mode.rawValue].iconName)
-                                    .foregroundStyle(colorManager.selectedColor.color)
+                                    .withAppGradient()
                                     .frame(width: 24)
                                 
                                 Text(ThemeOption.allOptions[mode.rawValue].name)
@@ -79,18 +79,11 @@ struct AppColorPickerView: View {
                                 
                                 Spacer()
                                 
-                                if themeMode == mode {
-                                    Circle()
-                                        .fill(
-                                            colorManager.selectedColor.adaptiveGradient(for: colorScheme)
-                                        )
-                                        .frame(width: 24, height: 24)
-                                        .overlay(
-                                            Image(systemName: "checkmark")
-                                                .font(.system(size: 12, weight: .bold))
-                                                .foregroundStyle(.white)
-                                        )
-                                }
+                                Image(systemName: "checkmark")
+                                    .fontWeight(.semibold)
+                                    .withAppGradient()
+                                    .opacity(themeMode == mode ? 1 : 0)
+                                    .animation(.easeInOut, value: themeMode == mode)
                             }
                             .contentShape(Rectangle())
                         }

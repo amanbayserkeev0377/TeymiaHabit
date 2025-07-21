@@ -50,6 +50,7 @@ struct TeymiaHabitApp: App {
                 .onAppear {
                     setupLiveActivities()
                     AppModelContext.shared.setModelContext(container.mainContext)
+                    ProDowngradeCoordinator.shared.setModelContext(container.mainContext)
                 }
                 // ✅ НОВОЕ: Обработчик deeplink
                 .onOpenURL { url in

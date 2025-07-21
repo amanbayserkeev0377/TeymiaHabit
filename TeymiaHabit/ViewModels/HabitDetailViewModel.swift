@@ -23,6 +23,7 @@ final class HabitDetailViewModel {
     private(set) var localUpdateTrigger: Int = 0
     private var progressCache: [String: Int] = [:]
     private var baseProgressWhenTimerStarted: Int?
+    private var hasPlayedTimerCompletionSound = false
     
     
     // ✅ КРИТИЧНО: Кэшируем habitId один раз при инициализации
@@ -53,6 +54,26 @@ final class HabitDetailViewModel {
             _ = localUpdateTrigger // Subscribe to updates
             
             if let liveProgress = timerService.getLiveProgress(for: cachedHabitId) {
+                
+                // ✅ ИСПРАВЛЕННАЯ ПРОВЕРКА
+                let baseProgress = habit.progressForDate(currentDisplayedDate)
+                if !hasPlayedTimerCompletionSound &&
+                   baseProgress < habit.goal &&
+                   liveProgress >= habit.goal {
+                    
+                    hasPlayedTimerCompletionSound = true
+                    
+                    // ✅ Сохрани title ДО closure
+                    let habitTitle = habit.title
+                    
+                    // ✅ АСИНХРОННЫЙ ВЫЗОВ без self
+                    DispatchQueue.main.async {
+                        SoundManager.shared.playCompletionSound()
+                        HapticManager.shared.play(.success)
+                        print("🎉 Timer completion in HabitDetailView for \(habitTitle)!")
+                    }
+                }
+                
                 return liveProgress
             }
         }
@@ -243,12 +264,18 @@ final class HabitDetailViewModel {
     // MARK: - Progress Methods
     
     func incrementProgress() {
+        let wasCompleted = isAlreadyCompleted
+
         let incrementValue = habit.type == .count ? 1 : Constants.incrementTimeValue
         stopTimerAndSaveLiveProgressIfNeeded()
         
         let newProgress = currentProgress + incrementValue
         updateProgressInCacheAndDB(newProgress)
         updateLiveActivityAfterManualChange()
+        
+        if !wasCompleted && isAlreadyCompleted {
+                SoundManager.shared.playCompletionSound()
+            }
     }
     
     func decrementProgress() {
@@ -295,6 +322,7 @@ final class HabitDetailViewModel {
         
         updateProgressInCacheAndDB(habit.goal)
         alertState.successFeedbackTrigger.toggle()
+        SoundManager.shared.playCompletionSound()
         endLiveActivityIfNeeded()
     }
     
@@ -358,7 +386,8 @@ final class HabitDetailViewModel {
         // 🔔 Push notification
         await sendGoalAchievedNotification()
         
-        print("🎉 Goal achieved for \(habit.title)! Timer will stop automatically.")
+        print("🎉 Goal achieved for \(habit.title)! Timer continues running.")
+
     }
     
     private func sendGoalAchievedNotification() async {
@@ -447,6 +476,7 @@ final class HabitDetailViewModel {
         let baseProgress = currentProgress
         baseProgressWhenTimerStarted = baseProgress
         hasShownGoalNotification = false
+        hasPlayedTimerCompletionSound = false
         
         let success = timerService.startTimer(for: cachedHabitId, baseProgress: baseProgress)
         
