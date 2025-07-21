@@ -15,9 +15,9 @@ struct ColorPickerSection: View {
     var onProRequired: (() -> Void)? = nil // Callback для показа paywall
     var enableProLocks: Bool = true // Включить Pro замки (false для IconPickerView)
     
-    // ✅ Бесплатные цвета (первые 5)
+    // ✅ Бесплатные цвета (3)
     private let freeColors: Set<HabitIconColor> = [
-        .primary, .red, .orange, .yellow, .mint
+        .primary, .celestial, .brown, .red, .orange
     ]
     
     // Computed properties
@@ -59,7 +59,7 @@ struct ColorPickerSection: View {
                 Circle()
                     .fill(color.adaptiveGradient(for: colorScheme))
                     .frame(width: buttonSize, height: buttonSize)
-                    .opacity(isLocked ? 0.7 : 1.0) // Слегка приглушаем заблокированные цвета
+                    .opacity(isLocked ? 0.8 : 1.0) // Слегка приглушаем заблокированные цвета
                     .overlay(
                         // Circular stroke for selected state (bigger, closer to edges)
                         Circle()
@@ -135,7 +135,7 @@ extension ColorPickerSection {
     static func forIconPicker(selectedColor: Binding<HabitIconColor>) -> ColorPickerSection {
         ColorPickerSection(
             selectedColor: selectedColor,
-            columnsCount: 7, // Consistent with iPhone layout
+            columnsCount: 8, // Consistent with iPhone layout
             buttonSize: 32,
             spacing: 12,
             showCustomPicker: true,
@@ -148,25 +148,12 @@ extension ColorPickerSection {
     static func forAppColorPicker(selectedColor: Binding<HabitIconColor>, onProRequired: (() -> Void)? = nil) -> ColorPickerSection {
         ColorPickerSection(
             selectedColor: selectedColor,
-            columnsCount: 7,
+            columnsCount: 8,
             buttonSize: 32,
             spacing: 12,
             showCustomPicker: true,
             onProRequired: onProRequired,
             enableProLocks: true // ✅ Включаем замки для выбора цвета приложения
-        )
-    }
-    
-    /// For compact usage (5 columns)
-    static func compact(selectedColor: Binding<HabitIconColor>, enableProLocks: Bool = false, onProRequired: (() -> Void)? = nil) -> ColorPickerSection {
-        ColorPickerSection(
-            selectedColor: selectedColor,
-            columnsCount: 5,
-            buttonSize: 28,
-            spacing: 10,
-            showCustomPicker: true,
-            onProRequired: onProRequired,
-            enableProLocks: enableProLocks
         )
     }
 }

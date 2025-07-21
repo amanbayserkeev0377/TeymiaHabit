@@ -58,9 +58,7 @@ struct HomeView: View {
     // MARK: - Body
     var body: some View {
             ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea(.all)
-                
+
                 contentView
                 
                 // FAB

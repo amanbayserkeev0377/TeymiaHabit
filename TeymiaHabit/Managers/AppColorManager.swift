@@ -17,8 +17,9 @@ final class AppColorManager: ObservableObject {
     }
     
     private let availableColors: [HabitIconColor] = [
-        .primary, .red, .orange, .yellow, .mint, .green, .blue, .purple,
-        .softLavender, .pink, .sky, .brown, .gray, .colorPicker
+        .primary, .celestial, .brown, .red, .orange, .yellow, .mint, .green,
+        .blue, .sky, .gray, .softLavender, .purple, .pink, .cloudBurst, .lusciousLime,
+        .antarctica, .oceanBlue, .bluePink, .sweetMorning, .yellowOrange, .coral, .candy, .colorPicker,
     ]
     
     // MARK: - Initialization

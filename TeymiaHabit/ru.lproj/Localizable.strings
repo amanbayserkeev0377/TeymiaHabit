@@ -147,6 +147,8 @@
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Уведомления";
 "haptics" = "Виброотклик";
+"sounds" = "Звуки";
+"completion_sounds" = "Звуки выполнения";
 
 /* ===================== Settings: Support & Feedback ===================== */
 "rate_app" = "Оценить";

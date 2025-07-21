@@ -95,7 +95,7 @@ struct SettingsView: View {
                 // Teymia Habit - version ...
                 Section {
                     VStack(spacing: 4) {
-                        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+                        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.2"
                         
                         Image("TeymiaHabitBlank")
                             .resizable()

@@ -24,40 +24,37 @@ struct StatisticsView: View {
     @State private var selectedHabitForStats: Habit? = nil
     
     var body: some View {
-            ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea(.all)
-                
-                if habits.isEmpty {
-                    StatisticsEmptyStateView()
-                } else {
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            VStack(spacing: 16) {
-                                OverviewStatsView(habits: habits)
-                            }
-                            .padding(.horizontal, 8)
-                            .padding(.top, 16)
-                            
-                            // Habits List with individual StreaksView
-                            LazyVStack(spacing: 12) {
-                                ForEach(habits) { habit in
-                                    HabitStatsListCard(habit: habit) {
-                                        selectedHabitForStats = habit
-                                    }
+        Group {
+            if habits.isEmpty {
+                StatisticsEmptyStateView()
+            } else {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        VStack(spacing: 16) {
+                            OverviewStatsView(habits: habits)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.top, 16)
+                        
+                        // Habits List with individual StreaksView
+                        LazyVStack(spacing: 12) {
+                            ForEach(habits) { habit in
+                                HabitStatsListCard(habit: habit) {
+                                    selectedHabitForStats = habit
                                 }
                             }
-                            .padding(.horizontal, 16)
-                            
-                            Spacer(minLength: 20)
                         }
+                        .padding(.horizontal, 16)
+                        
+                        Spacer(minLength: 20)
                     }
                 }
             }
+        }
         .navigationTitle("statistics".localized)
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selectedHabitForStats) { habit in
-                HabitStatisticsView(habit: habit)
+            HabitStatisticsView(habit: habit)
                 .presentationSizing(.page)
         }
     }

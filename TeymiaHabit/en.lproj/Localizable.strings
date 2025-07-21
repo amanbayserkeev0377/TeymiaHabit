@@ -151,6 +151,8 @@
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Notifications";
 "haptics" = "Haptics";
+"sounds" = "Sounds";
+"completion_sounds" = "Completion Sounds";
 
 /* ===================== Settings: Support & Feedback ===================== */
 "rate_app" = "Rate App";

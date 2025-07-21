@@ -10,17 +10,14 @@ struct SoundSettingsView: View {
             List {
                 // Sound Toggle Section
                 Section {
-                    Toggle("Enable Completion Sounds", isOn: Binding(
+                    Toggle("completion_sounds".localized, isOn: Binding(
                         get: { soundManager.isSoundEnabled },
-                        set: { soundManager.setSoundEnabled($0) } // ✅ Используем новый метод
+                        set: { soundManager.setSoundEnabled($0) }
                     ))
-                } header: {
-                    Text("Sound Settings")
-                } footer: {
-                    Text("Play a sound when you complete a habit")
+                    .withToggleColor()
                 }
                 
-                // Sound Selection Section - ✅ Показываем только если звуки включены
+                // Sound Selection Section
                 if soundManager.isSoundEnabled {
                     Section {
                         ForEach(CompletionSound.allCases) { sound in
@@ -32,12 +29,10 @@ struct SoundSettingsView: View {
                                 selectSound(sound)
                             }
                         }
-                    } header: {
-                        Text("Completion Sounds")
                     }
                 }
             }
-            .navigationTitle("Sounds")
+            .navigationTitle("sounds".localized)
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showProPaywall) {
                 PaywallView()
@@ -79,12 +74,9 @@ struct SoundRowView: View {
     var body: some View {
         Button(action: onTap) {
             HStack {
-                // Sound name
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(sound.displayName)
-                        .font(.body)
-                        .foregroundStyle(Color(UIColor.label))
-                }
+                Text(sound.displayName)
+                    .font(.body)
+                    .foregroundStyle(Color(UIColor.label))
                 
                 Spacer()
                 

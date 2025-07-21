@@ -148,6 +148,8 @@
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Эскертмелер";
 "haptics" = "Вибрациялуу жооп";
+"sounds" = "Үндөр";
+"completion_sounds" = "Жыйынтык үндөрү";
 
 /* ===================== Settings: Support & Feedback ===================== */
 "rate_app" = "Баалоо";
