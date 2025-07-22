@@ -202,7 +202,7 @@ struct HabitDetailView: View {
             topSectionView()
             
             Spacer()
-                .frame(height: adaptiveSpacing.small)
+                .frame(height: adaptiveSpacing.medium)
             
             // Day streaks
             DayStreaksView(habit: habit, date: date)
@@ -210,14 +210,12 @@ struct HabitDetailView: View {
             
             // Fixed spacer before progress ring
             Spacer()
-                .frame(height: adaptiveSpacing.large)
             
             // Progress Ring with Plus/Minus buttons
             progressRingSection(viewModel: viewModel)
             
             // Fixed spacer after progress ring
             Spacer()
-                .frame(height: adaptiveSpacing.large)
             
             // Action Buttons (Reset, Timer, Manual Entry)
             ActionButtonsSection(
@@ -241,20 +239,18 @@ struct HabitDetailView: View {
             
             // Flexible spacer to push complete button to bottom
             Spacer()
-                .frame(height: adaptiveSpacing.large) // Add minimum spacing
             
             // Complete Button
             completeButtonView(viewModel: viewModel)
             
             Spacer()
-                .frame(height: adaptiveSpacing.medium)
         }
     }
     
     // MARK: - Top Section
     @ViewBuilder
     private func topSectionView() -> some View {
-        VStack(spacing: adaptiveSpacing.small) {
+        VStack(spacing: adaptiveSpacing.medium) {
             // Icon
             universalIcon(
                 iconId: habit.iconName,
@@ -276,6 +272,7 @@ struct HabitDetailView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
+        .padding(.top, 8)
     }
     
     // MARK: - Progress Ring Section

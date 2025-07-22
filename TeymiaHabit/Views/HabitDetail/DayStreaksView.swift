@@ -82,10 +82,47 @@ struct DayStreaksView: View {
     
     private func calculateStreakUpToDate(completedDates: [Date], targetDate: Date) -> Int {
         let calendar = Calendar.current
-        let completedDaysSet = Set(completedDates)
+        let today = calendar.startOfDay(for: Date())
         
-        // Если целевая дата не завершена, streak = 0
-        if !completedDaysSet.contains(targetDate) {
+        // Преобразуем даты в начало дня и сортируем по убыванию
+        let sortedDates = completedDates
+            .map { calendar.startOfDay(for: $0) }
+            .sorted(by: >)
+        
+        // Если нет выполненных дат, возвращаем 0
+        guard !sortedDates.isEmpty else { return 0 }
+        
+        // Проверяем, является ли targetDate сегодняшним днем
+        let isTargetToday = calendar.isDate(targetDate, inSameDayAs: today)
+        
+        // Проверяем, выполнена ли привычка на целевой дате
+        let isCompletedOnTargetDate = sortedDates.contains(where: { calendar.isDate($0, inSameDayAs: targetDate) })
+        
+        // Если targetDate - это сегодня, и день активен, и привычка не выполнена,
+        // но еще не 23:00, не обнуляем стрик
+        if isTargetToday && habit.isActiveOnDate(targetDate) && !isCompletedOnTargetDate && calendar.component(.hour, from: Date()) < 23 {
+            // Начинаем считать стрик с предыдущего дня
+            let previousDate = calendar.date(byAdding: .day, value: -1, to: targetDate)!
+            var streak = 0
+            var currentDate = previousDate
+            
+            while currentDate >= habit.startDate {
+                if habit.isActiveOnDate(currentDate) {
+                    if sortedDates.contains(where: { calendar.isDate($0, inSameDayAs: currentDate) }) {
+                        streak += 1
+                        currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate)!
+                    } else {
+                        break
+                    }
+                } else {
+                    currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate)!
+                }
+            }
+            return streak
+        }
+        
+        // Если целевая дата не завершена и это не сегодня, стрик = 0
+        if !isCompletedOnTargetDate {
             return 0
         }
         
@@ -96,7 +133,7 @@ struct DayStreaksView: View {
         while currentDate >= habit.startDate {
             // Если день активен для привычки
             if habit.isActiveOnDate(currentDate) {
-                if completedDaysSet.contains(currentDate) {
+                if sortedDates.contains(where: { calendar.isDate($0, inSameDayAs: currentDate) }) {
                     streak += 1
                 } else {
                     break // Streak прерван
