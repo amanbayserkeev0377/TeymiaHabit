@@ -127,7 +127,7 @@ public struct ConfettiCannon<T: Equatable>: View {
         .onAppear(){
             firstAppear = true
         }
-        .onChange(of: trigger){value in
+        .onChange(of: trigger) { oldValue, newValue in
             if firstAppear{
                 for i in 0..<confettiConfig.repetitions{
                     DispatchQueue.main.asyncAfter(deadline: .now() + confettiConfig.repetitionInterval * Double(i)) {

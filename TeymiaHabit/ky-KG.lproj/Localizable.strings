@@ -189,12 +189,14 @@
 "paywall_detailed_statistics_description" = "Кеңейтилген календарь жана прогресс диаграммалары";
 "paywall_multiple_reminders_title" = "Көп эскертүүлөр";
 "paywall_multiple_reminders_description" = "Чексиз эскертүүлөрдү орнотуңуз";
+"paywall_completion_sounds_title" = "Аяктоо үндөрү";
+"paywall_completion_sounds_description" = "Жетишкендиктер үчүн премиум үндөр";
 "paywall_premium_icons_title" = "Премиум 3D белгилери";
 "paywall_premium_icons_description" = "Адаттарыңыз үчүн көркөм 3D белгилер";
-"paywall_upcoming_features_title" = "Эрте кируу";
-"paywall_upcoming_features_description" = "Жаңы функцияларды башкалардан мурун алыңыз";
 "paywall_custom_colors_icons_title" = "Түстөр жана иконкалар";
 "paywall_custom_colors_icons_description" = "Темалар жана иконкалар менен жекелештириңиз";
+"paywall_upcoming_features_title" = "Эрте кируу";
+"paywall_upcoming_features_description" = "Жаңы функцияларды башкалардан мурун алыңыз";
 "paywall_support_creator_title" = "Жаратуучуну колдоо";
 "paywall_support_creator_description" = "Бир гана жаратуучу, команда жок — сиздин колдооңуз маанилүү";
 

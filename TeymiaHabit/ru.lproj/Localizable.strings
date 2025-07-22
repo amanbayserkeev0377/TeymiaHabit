@@ -188,12 +188,14 @@
 "paywall_detailed_statistics_description" = "Расширенный календарь и графики прогресса";
 "paywall_multiple_reminders_title" = "Множественные напоминания";
 "paywall_multiple_reminders_description" = "Настройте неограниченное количество напоминаний";
+"paywall_completion_sounds_title" = "Звуки выполнения";
+"paywall_completion_sounds_description" = "Премиум звуки для ваших достижений";
 "paywall_premium_icons_title" = "Премиум 3D иконки";
 "paywall_premium_icons_description" = "Красивые объемные иконки для ваших привычек";
+"paywall_custom_colors_icons_title" = "Цвета и иконки";
+"paywall_custom_colors_icons_description" = "Настраивайте темы и иконки приложения";
 "paywall_upcoming_features_title" = "Ранний доступ";
 "paywall_upcoming_features_description" = "Получайте новые функции раньше всех";
-"paywall_custom_colors_icons_title" = "Цвета и иконки";
-"paywall_custom_colors_icons_description" = "Настраивайте темы и иконки";
 "paywall_support_creator_title" = "Поддержите автора";
 "paywall_support_creator_description" = "Один разработчик, без команды — ваша поддержка важна";
 

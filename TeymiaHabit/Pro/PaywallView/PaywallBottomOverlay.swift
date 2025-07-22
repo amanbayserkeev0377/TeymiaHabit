@@ -173,7 +173,7 @@ struct PricingCard: View {
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
                             .fill(
                                 cardType == .lifetime ?
-                                LinearGradient(colors: [Color.orange, Color.red], startPoint: .top, endPoint: .bottom) :
+                                LinearGradient(colors: [Color(#colorLiteral(red: 1, green: 0.7647058824, blue: 0.4431372549, alpha: 1)), Color(#colorLiteral(red: 1, green: 0.3725490196, blue: 0.4274509804, alpha: 1))], startPoint: .topLeading, endPoint: .bottomTrailing) :
                                     ProGradientColors.gradient(startPoint: .topLeading, endPoint: .bottomTrailing)
                             )
                     } else {
@@ -331,9 +331,9 @@ struct PurchaseButton: View {
                         .fill(
                             selectedPackage?.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase ?
                             LinearGradient(
-                                colors: [Color.orange, Color.red],
-                                startPoint: .top,
-                                endPoint: .bottom
+                                colors: [Color(#colorLiteral(red: 1, green: 0.7647058824, blue: 0.4431372549, alpha: 1)), Color(#colorLiteral(red: 1, green: 0.3725490196, blue: 0.4274509804, alpha: 1))],
+                                startPoint: .leading,
+                                endPoint: .trailing
                             ) :
                                 LinearGradient(
                                     colors: ProGradientColors.gradientColors,
@@ -345,7 +345,7 @@ struct PurchaseButton: View {
             )
             .shadow(
                 color: selectedPackage?.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase ?
-                Color.orange.opacity(0.4) :
+                Color.red.opacity(0.2) :
                     ProGradientColors.gradientColors[0].opacity(0.4),
                 radius: 12,
                 x: 0,

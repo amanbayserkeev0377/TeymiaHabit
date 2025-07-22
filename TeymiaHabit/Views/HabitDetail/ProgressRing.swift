@@ -18,6 +18,9 @@ struct ProgressRing: View {
     var fontSize: CGFloat? = nil
     var iconSize: CGFloat? = nil
     
+    // ✅ Простое локальное состояние только для анимации
+    @State private var animateCheckmark = false
+    
     @Environment(\.colorScheme) private var colorScheme
     
     private var ringColors: [Color] {
@@ -59,7 +62,7 @@ struct ProgressRing: View {
             Circle()
                 .stroke(Color.secondary.opacity(0.1), lineWidth: adaptiveLineWidth)
             
-            // Прогресс круг
+            // Прогресс круг - ТОЛЬКО анимация заполнения кольца
             Circle()
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(
@@ -76,53 +79,83 @@ struct ProgressRing: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.5), value: progress)
             
-            // Показываем checkmark для обоих стилей
+            // Контент внутри кольца
             if style == .detail {
-                if isCompleted && !isExceeded {
-                    // Completed checkmark - градиент как кольцо
-                    Image(systemName: "checkmark")
-                        .font(.system(size: adaptedIconSize, weight: .bold))
-                        .foregroundStyle(completedTextGradient)
-                } else if isExceeded {
-                    // Exceeded text - градиент как кольцо
-                    if let habit = habit {
-                        Text(getProgressText(for: habit))
-                            .font(.system(size: adaptedFontSize, weight: .bold))
-                            .foregroundStyle(exceededTextGradient)
-                            .minimumScaleFactor(0.7)
-                            .lineLimit(1)
-                    } else {
-                        Text(currentValue)
-                            .font(.system(size: adaptedFontSize, weight: .bold))
-                            .foregroundStyle(exceededTextGradient)
-                            .minimumScaleFactor(0.7)
-                            .lineLimit(1)
+                ZStack {
+                    // ✅ Галочка для completed (но не exceeded)
+                    if isCompleted && !isExceeded {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: adaptedIconSize, weight: .bold))
+                            .foregroundStyle(completedTextGradient)
+                            .transition(.scale.combined(with: .opacity))
                     }
-                } else {
-                    // In progress - градиент привычки
-                    if let habit = habit {
-                        Text(getProgressText(for: habit))
-                            .font(.system(size: adaptedFontSize, weight: .bold))
-                            .foregroundStyle(.primary)
-                            .minimumScaleFactor(0.7)
-                            .lineLimit(1)
-                    } else {
-                        Text(currentValue)
-                            .font(.system(size: adaptedFontSize, weight: .bold))
-                            .foregroundStyle(.primary)
-                            .minimumScaleFactor(0.7)
-                            .lineLimit(1)
+                    
+                    // ✅ Exceeded text
+                    if isExceeded {
+                        Group {
+                            if let habit = habit {
+                                Text(getProgressText(for: habit))
+                                    .font(.system(size: adaptedFontSize, weight: .bold))
+                                    .foregroundStyle(exceededTextGradient)
+                                    .minimumScaleFactor(0.7)
+                                    .lineLimit(1)
+                            } else {
+                                Text(currentValue)
+                                    .font(.system(size: adaptedFontSize, weight: .bold))
+                                    .foregroundStyle(exceededTextGradient)
+                                    .minimumScaleFactor(0.7)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                    
+                    // ✅ In progress text
+                    if !isCompleted {
+                        Group {
+                            if let habit = habit {
+                                Text(getProgressText(for: habit))
+                                    .font(.system(size: adaptedFontSize, weight: .bold))
+                                    .foregroundStyle(.primary)
+                                    .minimumScaleFactor(0.7)
+                                    .lineLimit(1)
+                            } else {
+                                Text(currentValue)
+                                    .font(.system(size: adaptedFontSize, weight: .bold))
+                                    .foregroundStyle(.primary)
+                                    .minimumScaleFactor(0.7)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .transition(.scale.combined(with: .opacity))
                     }
                 }
+                // ✅ Плавные переходы между состояниями с scale эффектом
+                .animation(.easeInOut(duration: 0.4), value: isCompleted)
+                .animation(.easeInOut(duration: 0.4), value: isExceeded)
             } else if style == .compact {
-                // Compact style - только checkmark
-                Image(systemName: "checkmark")
-                    .font(.system(size: adaptedIconSize, weight: .bold))
-                    .foregroundStyle(
-                        isExceeded ? exceededTextGradient :
-                        isCompleted ? completedTextGradient :
-                        AnyShapeStyle(Color.secondary.opacity(0.3))
-                    )
+                // ✅ Всегда показываем серую галочку как основу
+                ZStack {
+                    // Серая галочка (всегда видна при < 100%)
+                    Image(systemName: "checkmark")
+                        .font(.system(size: adaptedIconSize, weight: .bold))
+                        .foregroundStyle(AnyShapeStyle(Color.secondary.opacity(0.3)))
+                        .scaleEffect(!isCompleted && !isExceeded ? 1.0 : 0.0)
+                        .opacity(!isCompleted && !isExceeded ? 1.0 : 0.0)
+                        .animation(.easeInOut(duration: 0.4).delay(0.2), value: isCompleted)
+                        .animation(.easeInOut(duration: 0.4).delay(0.2), value: isExceeded)
+                    
+                    // Цветная галочка (появляется при completed/exceeded)
+                    Image(systemName: "checkmark")
+                        .font(.system(size: adaptedIconSize, weight: .bold))
+                        .foregroundStyle(
+                            isExceeded ? exceededTextGradient : completedTextGradient
+                        )
+                        .scaleEffect(isCompleted || isExceeded ? 1.0 : 0.0)
+                        .opacity(isCompleted || isExceeded ? 1.0 : 0.0)
+                        .animation(.easeInOut(duration: 0.4).delay(0.2), value: isCompleted)
+                        .animation(.easeInOut(duration: 0.4).delay(0.2), value: isExceeded)
+                }
             }
         }
         .frame(width: size, height: size)
@@ -164,7 +197,7 @@ extension ProgressRing {
         
         return ProgressRing(
             progress: progress,
-            currentValue: "\(currentProgress)", // Передаем только прогресс
+            currentValue: "\(currentProgress)",
             isCompleted: isCompleted,
             isExceeded: isExceeded,
             habit: habit,
@@ -187,7 +220,7 @@ extension ProgressRing {
     ) -> ProgressRing {
         return ProgressRing(
             progress: progress,
-            currentValue: "", // Не используется
+            currentValue: "",
             isCompleted: isCompleted,
             isExceeded: isExceeded,
             habit: habit,

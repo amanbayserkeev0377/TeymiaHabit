@@ -392,8 +392,7 @@ struct HabitCardView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(progressTextColor)
                         .monospacedDigit()
-                        .animation(isTimerActive ? .none : .easeOut(duration: 0.4), value: formattedProgress)
-
+                        .animation(isTimerActive ? .none : .easeInOut(duration: 0.4), value: formattedProgress)
                 }
                 
                 Spacer()

@@ -146,6 +146,10 @@ struct HabitDetailView: View {
                     confettiTrigger += 1
                 }
             }
+            .onChange(of: viewModel?.currentProgress) { oldValue, newValue in
+                // ✅ Обновляем только для логики, БЕЗ анимации в ProgressRing
+                // Это нужно чтобы ProgressRing получал актуальные isCompleted/isExceeded
+            }
             .sheet(isPresented: $isEditPresented) {
                 NewHabitView(habit: habit)
             }

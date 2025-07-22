@@ -191,12 +191,14 @@
 "paywall_detailed_statistics_description" = "Advanced calendar view and progress charts";
 "paywall_multiple_reminders_title" = "Multiple Reminders";
 "paywall_multiple_reminders_description" = "Set unlimited habit reminders throughout the day";
+"paywall_completion_sounds_title" = "Completion sounds";
+"paywall_completion_sounds_description" = "Premium sound effects when you complete habits";
 "paywall_premium_icons_title" = "Premium 3D Icons";
 "paywall_premium_icons_description" = "Beautiful 3D icons to make your habits stand out";
-"paywall_upcoming_features_title" = "Early Access";
-"paywall_upcoming_features_description" = "Get access to new features before everyone else";
 "paywall_custom_colors_icons_title" = "Custom Colors & Icons";
 "paywall_custom_colors_icons_description" = "Personalize with themes and app icons";
+"paywall_upcoming_features_title" = "Early Access";
+"paywall_upcoming_features_description" = "Get access to new features before everyone else";
 "paywall_support_creator_title" = "Support the Creator";
 "paywall_support_creator_description" = "One person, no team — your help makes a difference";
 
