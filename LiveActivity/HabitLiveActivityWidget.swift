@@ -10,40 +10,39 @@ struct HabitLiveActivityWidget: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                        // ✅ Центрируем иконку по вертикали
                         VStack {
                             Spacer()
-                            LiveActivityHabitIcon(context: context, size: 32)
-                                .frame(width: 36, height: 36)
+                            LiveActivityHabitIcon(context: context, size: 28)
+                                .frame(width: 54, height: 54)
                             Spacer()
                         }
                         .padding(.leading, 8)
                     }
                 
                 DynamicIslandExpandedRegion(.center) {
-                        // ✅ Центрируем весь контент по вертикали
                         VStack {
                             Spacer()
-                            
-                            VStack(spacing: 3) {
-                                // Habit Name
+                            VStack(alignment: .leading, spacing: 3) {
+                                // Habit Name - выровнено влево
                                 Text(context.attributes.habitName)
-                                    .font(.subheadline.weight(.semibold))
-                                    .lineLimit(1)
+                                    .font(.body.weight(.medium))
+                                    .lineLimit(2)
                                     .foregroundStyle(.primary)
-                                    .frame(maxWidth: .infinity)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     
-                                // Timer with stable overlay
-                                if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                                    let baseProgress = context.state.currentProgress
-                                    let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
-                                    
-                                    Text("99:99:99")
-                                        .font(.system(.largeTitle, design: .rounded))
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.clear)  // Прозрачный шаблон
-                                        .monospacedDigit()
-                                        .overlay(alignment: .center) {
+                                // ✅ Стабильный таймер с overlay для фиксированной позиции - влево
+                                let baseProgress = context.state.currentProgress
+                                let templateText = baseProgress >= 3600 ? "9:99:99" : "99:99"
+                                
+                                Text(templateText)
+                                    .font(.system(.title3, design: .rounded))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.clear)  // Прозрачный шаблон
+                                    .monospacedDigit()
+                                    .overlay(alignment: .leading) {
+                                        if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
+                                            let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
+                                            
                                             Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
                                                 .font(.system(.title3, design: .rounded))
                                                 .fontWeight(.bold)
@@ -51,18 +50,8 @@ struct HabitLiveActivityWidget: Widget {
                                                 .monospacedDigit()
                                                 .lineLimit(1)
                                                 .minimumScaleFactor(0.8)
-                                        }
-                                } else {
-                                    let currentProgress = context.state.currentProgress
-                                    
-                                    // ✅ Статический с таким же overlay для консистентности
-                                    Text("99:99:99")
-                                        .font(.system(.largeTitle, design: .rounded))
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.clear)
-                                        .monospacedDigit()
-                                        .overlay(alignment: .center) {
-                                            Text(currentProgress.formattedAsTime())
+                                        } else {
+                                            Text(baseProgress.formattedAsTime())
                                                 .font(.system(.title3, design: .rounded))
                                                 .fontWeight(.bold)
                                                 .foregroundStyle(.primary)
@@ -70,25 +59,22 @@ struct HabitLiveActivityWidget: Widget {
                                                 .lineLimit(1)
                                                 .minimumScaleFactor(0.8)
                                         }
-                                }
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             Spacer()
                         }
+                        .padding(.bottom, 18)
                     }
-                    
-                    DynamicIslandExpandedRegion(.trailing) {
-                        // ✅ Центрируем Progress Ring по вертикали
+                
+                DynamicIslandExpandedRegion(.trailing) {
                         VStack {
                             Spacer()
                             LiveActivityProgressRing(context: context)
                             Spacer()
                         }
                         .padding(.trailing, 8)
-                    }
-                    
-                    DynamicIslandExpandedRegion(.bottom) {
-                        Color.clear.frame(height: 0)
                     }
             } compactLeading: {
                 LiveActivityHabitIcon(context: context, size: 16)
