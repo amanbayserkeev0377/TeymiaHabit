@@ -12,6 +12,7 @@ struct HabitDetailView: View {
     @State private var showingStatistics = false
     @State private var minusPressed = false
     @State private var plusPressed = false
+    @State private var confettiTrigger = 0
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
@@ -140,6 +141,11 @@ struct HabitDetailView: View {
                     HapticManager.shared.play(.error)
                 }
             }
+            .onChange(of: viewModel?.isAlreadyCompleted) { oldValue, newValue in
+                if oldValue == false && newValue == true {
+                    confettiTrigger += 1
+                }
+            }
             .sheet(isPresented: $isEditPresented) {
                 NewHabitView(habit: habit)
             }
@@ -171,6 +177,16 @@ struct HabitDetailView: View {
                 onDismiss: {
                     inputManager.dismiss()
                 }
+            )
+            .confettiCannon(
+                trigger: $confettiTrigger,
+                num: 50,
+                confettis: [.shape(.circle), .shape(.triangle), .shape(.square)],
+                colors: [.orange, .green, .blue, .red, .yellow, .purple, .pink, .cyan],
+                confettiSize: 12.0,
+                rainHeight: 800.0,
+                radius: 400,
+                hapticFeedback: false
             )
     }
     

@@ -296,6 +296,7 @@ struct HabitCardView: View {
     @State private var isProgressRingPressed = false
     @State private var progressAnimationTrigger = 0
     @State private var hasPlayedCompletionSound = false
+    @State private var confettiTrigger = 0
     
     private var isTimerActive: Bool {
         guard habit.type == .time && Calendar.current.isDateInToday(date) else {
@@ -398,13 +399,25 @@ struct HabitCardView: View {
                 Spacer()
                 
                 // Right side - Progress Ring
-                ProgressRing.compact(
-                    progress: cardCompletionPercentage,
-                    isCompleted: cardIsCompleted,
-                    isExceeded: cardIsExceeded,
-                    habit: habit,
-                    size: ringSize,
-                    lineWidth: lineWidth
+                ZStack {
+                    ProgressRing.compact(
+                        progress: cardCompletionPercentage,
+                        isCompleted: cardIsCompleted,
+                        isExceeded: cardIsExceeded,
+                        habit: habit,
+                        size: ringSize,
+                        lineWidth: lineWidth
+                    )
+                }
+                .confettiCannon(
+                    trigger: $confettiTrigger,
+                    num: 15,
+                    confettis: [.shape(.circle), .shape(.triangle)],
+                    colors: [.orange, .green, .blue, .red, .yellow, .purple, .pink, .cyan],
+                    confettiSize: 6.0,
+                    rainHeight: 500.0,
+                    radius: 120,
+                    hapticFeedback: false
                 )
                 .scaleEffect(isProgressRingPressed ? 1.2 : 1.0)
                 .animation(.smooth(duration: 0.8), value: isProgressRingPressed)
@@ -488,7 +501,6 @@ struct HabitCardView: View {
     
     private func toggleHabitCompletion() {
         do {
-            // ✅ Получаем ViewModel через HabitManager (как в HabitDetailView)
             let viewModel = try HabitManager.shared.getViewModel(for: habit, date: date, modelContext: modelContext)
             
             if cardIsCompleted {
@@ -497,21 +509,35 @@ struct HabitCardView: View {
                 print("🔄 Habit reset via ProgressRing tap: \(habit.title)")
             } else {
                 // Если не завершена - завершаем
+                let wasCompleted = cardIsCompleted // ✅ Сохраняем состояние ДО изменения
                 viewModel.completeHabit()
                 SoundManager.shared.playCompletionSound()
                 print("✅ Habit completed via ProgressRing tap: \(habit.title)")
+                
+                // ✅ Показываем конфетти если привычка стала завершенной
+                if !wasCompleted {
+                    confettiTrigger += 1 // ✅ Добавил += 1
+                }
             }
             HapticManager.shared.play(.success)
         } catch {
             print("❌ Failed to get ViewModel: \(error)")
             // Fallback - direct habit methods
             if cardIsCompleted {
+                // ✅ Исправил логику: если завершена - сбрасываем
                 habit.resetProgress(for: date, modelContext: modelContext)
                 print("🔄 Habit reset via fallback: \(habit.title)")
             } else {
+                // ✅ Если НЕ завершена - завершаем
+                let wasCompleted = cardIsCompleted // ✅ Сохраняем состояние ДО изменения
                 habit.complete(for: date, modelContext: modelContext)
                 SoundManager.shared.playCompletionSound()
                 print("✅ Habit completed via fallback: \(habit.title)")
+                
+                // ✅ Конфетти и в fallback случае
+                if !wasCompleted {
+                    confettiTrigger += 1
+                }
             }
             HapticManager.shared.play(.success)
         }
