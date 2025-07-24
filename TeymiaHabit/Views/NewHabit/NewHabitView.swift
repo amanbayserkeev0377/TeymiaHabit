@@ -229,7 +229,7 @@ struct NewHabitView: View {
             
             handleNotifications(for: newHabit)
         }
-        
+        WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
         dismiss()
     }
     

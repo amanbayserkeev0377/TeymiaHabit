@@ -117,7 +117,7 @@ final class AppColorManager: ObservableObject {
     }
     
     // MARK: - Chart Colors for Bars
-
+    
     /// Get appropriate ShapeStyle for chart bars based on completion status
     static func getChartBarStyle(
         isCompleted: Bool,
@@ -133,7 +133,7 @@ final class AppColorManager: ObservableObject {
             return getPartialProgressBarStyle(for: habit, colorScheme: colorScheme)
         }
     }
-
+    
     /// Completed bars gradient (green)
     static func getCompletedBarStyle(for colorScheme: ColorScheme) -> AnyShapeStyle {
         let topColor = colorScheme == .dark ? ColorConstants.completedDarkGreen : ColorConstants.completedLightGreen
@@ -147,7 +147,7 @@ final class AppColorManager: ObservableObject {
             )
         )
     }
-
+    
     /// Exceeded bars gradient (mint/green)
     static func getExceededBarStyle(for colorScheme: ColorScheme) -> AnyShapeStyle {
         let topColor = colorScheme == .dark ? ColorConstants.exceededDarkGreen : ColorConstants.exceededLightMint
@@ -161,17 +161,17 @@ final class AppColorManager: ObservableObject {
             )
         )
     }
-
+    
     /// Partial progress bars gradient (habit color)
     static func getPartialProgressBarStyle(for habit: Habit, colorScheme: ColorScheme) -> AnyShapeStyle {
         return AnyShapeStyle(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.9))
     }
-
+    
     /// Inactive/future bars style
     static func getInactiveBarStyle() -> AnyShapeStyle {
         return AnyShapeStyle(Color.gray.opacity(0.2))
     }
-
+    
     /// No progress bars style
     static func getNoProgressBarStyle() -> AnyShapeStyle {
         return AnyShapeStyle(Color.gray.opacity(0.3))
@@ -217,6 +217,120 @@ extension AppColorManager {
     func resetToDefault() {
         print("🎨 Resetting app color to default")
         setAppColor(.primary)
+    }
+}
+
+// MARK: - Static Ring Colors (Independent of Habit model)
+extension AppColorManager {
+    
+    /// Static method for getting ring colors - NO dependency on Habit model
+    static func getRingColors(
+        habitColor: HabitIconColor,
+        isCompleted: Bool,
+        isExceeded: Bool,
+        colorScheme: ColorScheme
+    ) -> [Color] {
+        let visualColors = getVisualRingColors(
+            habitColor: habitColor,
+            isCompleted: isCompleted,
+            isExceeded: isExceeded,
+            colorScheme: colorScheme
+        )
+        
+        // Convert visual order to gradient array order for rotated ring
+        // Due to -90° rotation: gradient[0] = visual bottom, gradient[1] = visual top
+        return [visualColors.bottom, visualColors.top]
+    }
+    
+    /// Static version of getVisualRingColors
+    private static func getVisualRingColors(
+        habitColor: HabitIconColor,
+        isCompleted: Bool,
+        isExceeded: Bool,
+        colorScheme: ColorScheme
+    ) -> (top: Color, bottom: Color) {
+        
+        // Создаем локальную копию enum вместо использования AppColorManager.HabitState
+        enum LocalHabitState {
+            case inProgress, completed, exceeded
+            
+            init(isCompleted: Bool, isExceeded: Bool) {
+                if isExceeded {
+                    self = .exceeded
+                } else if isCompleted {
+                    self = .completed
+                } else {
+                    self = .inProgress
+                }
+            }
+        }
+        
+        let habitState = LocalHabitState(isCompleted: isCompleted, isExceeded: isExceeded)
+        
+        switch habitState {
+        case .completed:
+            let lightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
+            let darkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
+            
+            let visualTop = colorScheme == .dark ? darkGreen : lightGreen
+            let visualBottom = colorScheme == .dark ? lightGreen : darkGreen
+            
+            return (top: visualTop, bottom: visualBottom)
+            
+        case .exceeded:
+            let lightMint = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))
+            let darkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
+            
+            let visualTop = colorScheme == .dark ? darkGreen : lightMint
+            let visualBottom = colorScheme == .dark ? lightMint : darkGreen
+            
+            return (top: visualTop, bottom: visualBottom)
+            
+        case .inProgress:
+            let lightColor = habitColor.lightColor
+            let darkColor = habitColor.darkColor
+            
+            let visualTop = colorScheme == .dark ? darkColor : lightColor
+            let visualBottom = colorScheme == .dark ? lightColor : darkColor
+            
+            return (top: visualTop, bottom: visualBottom)
+        }
+    }
+    
+    // MARK: - Static Bar Styles (same extension)
+    
+    /// Static completed bars gradient (green) - NO dependency on Habit model
+    static func getCompletedBarStyleStatic(for colorScheme: ColorScheme) -> AnyShapeStyle {
+        let completedLightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
+        let completedDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
+        
+        let topColor = colorScheme == .dark ? completedDarkGreen : completedLightGreen
+        let bottomColor = colorScheme == .dark ? completedLightGreen : completedDarkGreen
+        
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [topColor, bottomColor],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+    }
+    
+    /// Static exceeded bars gradient (mint/green) - NO dependency on Habit model
+    static func getExceededBarStyleStatic(for colorScheme: ColorScheme) -> AnyShapeStyle {
+        let exceededLightMint = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))
+        let exceededDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
+        
+        let topColor = colorScheme == .dark ? exceededDarkGreen : exceededLightMint
+        let bottomColor = colorScheme == .dark ? exceededLightMint : exceededDarkGreen
+        
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [topColor, bottomColor],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
     }
 }
 

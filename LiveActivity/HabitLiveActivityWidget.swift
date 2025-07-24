@@ -112,40 +112,6 @@ struct CompactLiveActivityContent: View {
         return currentProgress > context.attributes.habitGoal
     }
     
-    private var completedTextGradient: AnyShapeStyle {
-        let topColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1)) : // completedDarkGreen
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))    // completedLightGreen
-        let bottomColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1)) :  // completedLightGreen
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))   // completedDarkGreen
-        
-        return AnyShapeStyle(
-            LinearGradient(
-                colors: [topColor, bottomColor],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-    }
-    
-    private var exceededTextGradient: AnyShapeStyle {
-        let topColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1)) : // exceededDarkGreen
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))     // exceededLightMint
-        let bottomColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1)) :  // exceededLightMint
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))   // exceededDarkGreen
-        
-        return AnyShapeStyle(
-            LinearGradient(
-                colors: [topColor, bottomColor],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-    }
-    
     // ✅ Форматированный прогресс и цель
     private var formattedProgress: String {
         return currentProgress.formattedAsTime()
@@ -229,70 +195,14 @@ struct LiveActivityProgressRing: View {
         return currentProgress > context.attributes.habitGoal
     }
     
-    // ✅ Градиенты как в основном приложении
-    private var completedTextGradient: AnyShapeStyle {
-        let topColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1)) : // completedDarkGreen
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))    // completedLightGreen
-        let bottomColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1)) :  // completedLightGreen
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))   // completedDarkGreen
-        
-        return AnyShapeStyle(
-            LinearGradient(
-                colors: [topColor, bottomColor],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-    }
-    
-    private var exceededTextGradient: AnyShapeStyle {
-        let topColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1)) : // exceededDarkGreen
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))     // exceededLightMint
-        let bottomColor = colorScheme == .dark ?
-        Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1)) :  // exceededLightMint
-        Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))   // exceededDarkGreen
-        
-        return AnyShapeStyle(
-            LinearGradient(
-                colors: [topColor, bottomColor],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-    }
-    
     // ✅ Ring colors
     private var ringColors: [Color] {
-        if isExceeded {
-            let lightMint = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))
-            let darkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
-            
-            let visualTop = colorScheme == .dark ? darkGreen : lightMint
-            let visualBottom = colorScheme == .dark ? lightMint : darkGreen
-            
-            return [visualBottom, visualTop] // Converted for -90° rotation
-        } else if isCompleted {
-            let lightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
-            let darkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
-            
-            let visualTop = colorScheme == .dark ? darkGreen : lightGreen
-            let visualBottom = colorScheme == .dark ? lightGreen : darkGreen
-            
-            return [visualBottom, visualTop] // Converted for -90° rotation
-        } else {
-            // Use habit color gradient
-            let habitColor = context.attributes.habitIconColor
-            let lightColor = habitColor.lightColor
-            let darkColor = habitColor.darkColor
-            
-            let visualTop = colorScheme == .dark ? darkColor : lightColor
-            let visualBottom = colorScheme == .dark ? lightColor : darkColor
-            
-            return [visualBottom, visualTop] // Converted for -90° rotation
-        }
+        return LiveActivityColorManager.getRingColors(  // <- Статический метод
+            habitColor: context.attributes.habitIconColor,
+            isCompleted: isCompleted,
+            isExceeded: isExceeded,
+            colorScheme: colorScheme
+        )
     }
     
     private var adaptedIconSize: CGFloat {
@@ -326,9 +236,9 @@ struct LiveActivityProgressRing: View {
             Image(systemName: "checkmark")
                 .font(.system(size: adaptedIconSize, weight: .bold))
                 .foregroundStyle(
-                    isExceeded ? exceededTextGradient :
-                        isCompleted ? completedTextGradient :
-                        AnyShapeStyle(Color.secondary.opacity(0.3))
+                    isExceeded ? LiveActivityColorManager.getExceededBarStyle(for: colorScheme) :
+                    isCompleted ? LiveActivityColorManager.getCompletedBarStyle(for: colorScheme) :
+                    AnyShapeStyle(Color.secondary.opacity(0.3))
                 )
         }
         .frame(width: ringSize, height: ringSize)

@@ -44,7 +44,7 @@ class NotificationManager {
         if settings.authorizationStatus == .notDetermined {
             print("🔔 Requesting authorization...")
             do {
-                let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+                let options: UNAuthorizationOptions = [.alert, .sound,]
                 let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: options)
                 
                 permissionStatus = granted

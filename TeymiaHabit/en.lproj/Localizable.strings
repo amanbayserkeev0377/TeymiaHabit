@@ -46,6 +46,9 @@
 "week" = "Week";
 "month" = "Month";
 "year" = "Year";
+"widget_no_active_habits_today" = "No active habits for today";
+"widget_title" = "Habits";
+"widget_description" = "Track your habits progress";
 
 /* ===================== Main Tab View ===================== */
 "home" = "Home";

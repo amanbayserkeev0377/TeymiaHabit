@@ -253,6 +253,7 @@ final class HabitDetailViewModel {
         do {
             try modelContext.save()
             print("🔄 Progress updated and saved for \(habit.title): \(newProgress)")
+            WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
         } catch {
             print("❌ Error saving progress: \(error.localizedDescription)")
             alertState.errorFeedbackTrigger.toggle()

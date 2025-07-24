@@ -172,7 +172,7 @@ struct TeymiaHabitApp: App {
     private func handleAppForeground() {
         print("📱 App will enter foreground")
         
-        // ✅ Сообщаем TimerService о возврате на передний план
+        WidgetUpdateService.shared.reloadWidgets()
         TimerService.shared.handleAppWillEnterForeground()
         
         // ✅ Синхронизируем состояние Live Activities

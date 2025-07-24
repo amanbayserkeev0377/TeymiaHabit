@@ -212,19 +212,10 @@ extension Habit {
     /// Live-прогресс с учетом активных таймеров
     @MainActor
     func liveProgress(for date: Date) -> Int {
-        // Live прогресс для активных таймеров сегодня
-        if type == .time && Calendar.current.isDateInToday(date) {
-            let habitId = uuid.uuidString
-            if TimerService.shared.isTimerRunning(for: habitId),
-               let liveProgress = TimerService.shared.getLiveProgress(for: habitId) {
-                return liveProgress
-            }
-        }
-        
-        // Обычный прогресс из базы
+        // В виджетах используем только обычный прогресс из базы
         return progressForDate(date)
     }
-    
+
     /// Отформатированный live-прогресс
     @MainActor
     func formattedLiveProgress(for date: Date) -> String {

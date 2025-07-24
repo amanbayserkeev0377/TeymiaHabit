@@ -114,9 +114,7 @@ struct HomeView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if !Calendar.current.isDateInToday(selectedDate) {
                     Button(action: {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                             selectedDate = Date()
-                        }
                     }) {
                         HStack(spacing: 4) {
                             Text("today".localized)
@@ -139,7 +137,13 @@ struct HomeView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .openHabitFromDeeplink)) { notification in
             if let habit = notification.object as? Habit {
-                // ✅ Закрываем текущий sheet
+                // ✅ Проверяем, не та ли же привычка уже открыта
+                if selectedHabit?.uuid == habit.uuid {
+                    print("✅ Same habit already open, no action needed")
+                    return
+                }
+                
+                // ✅ Закрываем текущий sheet только если это другая привычка
                 selectedHabit = nil
                 
                 // ✅ Через задержку открываем новый
@@ -260,6 +264,7 @@ struct HomeView: View {
             try modelContext.save()
             HabitManager.shared.removeViewModel(for: habit.uuid.uuidString)
             HapticManager.shared.play(.error)
+            WidgetUpdateService.shared.reloadWidgets()
         } catch {
             print("❌ Ошибка при удалении привычки: \(error.localizedDescription)")
         }
@@ -269,6 +274,7 @@ struct HomeView: View {
         habit.isArchived = true
         try? modelContext.save()
         HapticManager.shared.play(.success)
+        WidgetUpdateService.shared.reloadWidgets()
     }
 }
 
@@ -389,7 +395,7 @@ struct HabitCardView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(progressTextColor)
                         .monospacedDigit()
-                        .animation(isTimerActive ? .none : .easeInOut(duration: 0.4), value: formattedProgress)
+                        .animation(isTimerActive ? .none : .easeInOut(duration: 0.3), value: formattedProgress)
                 }
                 
                 Spacer()
@@ -416,18 +422,17 @@ struct HabitCardView: View {
                     hapticFeedback: false
                 )
                 .scaleEffect(isProgressRingPressed ? 1.2 : 1.0)
-                .animation(.smooth(duration: 0.8), value: isProgressRingPressed)
+                .animation(.easeInOut(duration: 0.3), value: isProgressRingPressed)
                 .onTapGesture {
                     HapticManager.shared.playImpact(.medium)
-                    withAnimation(.smooth(duration: 0.8)) {
+                    toggleHabitCompletion()
+                    
+                    withAnimation(.easeInOut(duration: 0.3)) {
                         isProgressRingPressed = true
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation(.smooth(duration: 0.8)) {
-                            isProgressRingPressed = false
-                        }
+                    withAnimation(.easeInOut(duration: 0.3).delay(0.15)) {
+                        isProgressRingPressed = false
                     }
-                    toggleHabitCompletion()
                 }
             }
             .padding(.horizontal, 16)
@@ -516,6 +521,7 @@ struct HabitCardView: View {
                 }
             }
             HapticManager.shared.play(.success)
+            WidgetUpdateService.shared.reloadWidgets()
         } catch {
             print("❌ Failed to get ViewModel: \(error)")
             // Fallback - direct habit methods
@@ -536,6 +542,8 @@ struct HabitCardView: View {
                 }
             }
             HapticManager.shared.play(.success)
+            WidgetUpdateService.shared.reloadWidgets()
+
         }
     }
 
