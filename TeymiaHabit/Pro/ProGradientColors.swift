@@ -5,7 +5,7 @@ struct ProGradientColors {
     
     // Основная цветовая пара для всех градиентов
     static let colors = [
-        Color(#colorLiteral(red: 0.4225856662, green: 0.5768597722, blue: 0.9980003238, alpha: 1)), // Синий
+        Color(#colorLiteral(red: 0.4235294118, green: 0.5764705882, blue: 0.9960784314, alpha: 1)), // Синий
         Color(#colorLiteral(red: 0.7803921569, green: 0.3803921569, blue: 0.7568627451, alpha: 1))  // Розоватый
     ]
     

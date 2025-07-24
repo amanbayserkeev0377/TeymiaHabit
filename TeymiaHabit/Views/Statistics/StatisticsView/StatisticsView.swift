@@ -55,7 +55,6 @@ struct StatisticsView: View {
         .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selectedHabitForStats) { habit in
             HabitStatisticsView(habit: habit)
-                .presentationSizing(.page)
         }
     }
 }

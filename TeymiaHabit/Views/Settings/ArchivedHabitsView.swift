@@ -40,7 +40,6 @@ struct ArchivedHabitsView: View {
         )
         .sheet(item: $selectedHabitForStats) { habit in
             HabitStatisticsView(habit: habit)
-                .presentationSizing(.page)
         }
     }
     

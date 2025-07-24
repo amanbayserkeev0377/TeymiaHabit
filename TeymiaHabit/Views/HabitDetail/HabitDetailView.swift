@@ -22,28 +22,22 @@ struct HabitDetailView: View {
     
     // Adaptive sizing based on device
     
-    private var isIPad: Bool {
-        horizontalSizeClass == .regular && verticalSizeClass == .regular
-    }
-    
     private var isCompactDevice: Bool {
-        UIScreen.main.bounds.height <= 667 // iPhone SE, 8, etc.
+        UIDevice.current.userInterfaceIdiom == .pad ||
+        UIScreen.main.bounds.height <= 667
     }
     
     private var adaptiveSpacing: (small: CGFloat, medium: CGFloat, large: CGFloat) {
         if isCompactDevice {
-            return (4, 8, 16)
+            return (10, 18, 24)
         } else {
-            return (8, 16, 40)
+            return (14, 24, 36)
         }
     }
     
     private var adaptiveProgressRingSize: CGFloat {
-        isCompactDevice ? 170 : 200
-    }
-    
-    private var adaptiveButtonSize: CGFloat {
-        isCompactDevice ? 40 : 44
+        if isCompactDevice { return 170 }
+        else { return 200 }
     }
     
     var body: some View {
@@ -54,8 +48,8 @@ struct HabitDetailView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(minHeight: UIScreen.main.bounds.height - 200)
             }
+            .scrollIndicators(.hidden)
             .scrollDismissesKeyboard(.immediately)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -201,22 +195,20 @@ struct HabitDetailView: View {
             // Top section with icon and title
             topSectionView()
             
-            Spacer()
-                .frame(height: adaptiveSpacing.medium)
+            Spacer().frame(height: adaptiveSpacing.medium)
             
             // Day streaks
             DayStreaksView(habit: habit, date: date)
                 .padding(.horizontal, 24)
             
-            // Fixed spacer before progress ring
-            Spacer()
-            
+            Spacer().frame(height: adaptiveSpacing.large)
+
             // Progress Ring with Plus/Minus buttons
             progressRingSection(viewModel: viewModel)
             
             // Fixed spacer after progress ring
-            Spacer()
-            
+            Spacer().frame(height: adaptiveSpacing.large)
+
             // Action Buttons (Reset, Timer, Manual Entry)
             ActionButtonsSection(
                 habit: habit,
@@ -238,12 +230,12 @@ struct HabitDetailView: View {
             )
             
             // Flexible spacer to push complete button to bottom
-            Spacer()
-            
+            Spacer().frame(height: adaptiveSpacing.large)
+
             // Complete Button
             completeButtonView(viewModel: viewModel)
             
-            Spacer()
+            Spacer().frame(height: adaptiveSpacing.medium)
         }
     }
     
@@ -261,7 +253,7 @@ struct HabitDetailView: View {
             
             // Title
             Text(habit.title)
-                .font(isCompactDevice ? .title.bold() : .largeTitle.bold())
+                .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
@@ -287,9 +279,9 @@ struct HabitDetailView: View {
                 viewModel.decrementProgress()
             } label: {
                 Image(systemName: "minus")
-                    .font(.system(size: isCompactDevice ? 20 : 24, weight: .semibold))
+                    .font(.system(size: 24, weight: .semibold))
                     .withHabitGradient(habit, colorScheme: colorScheme)
-                    .frame(width: adaptiveButtonSize, height: adaptiveButtonSize)
+                    .frame(width: 44, height: 44)
                     .background(
                         Circle()
                             .fill(
@@ -313,8 +305,8 @@ struct HabitDetailView: View {
                 isExceeded: viewModel.currentProgress > habit.goal,
                 habit: habit,
                 size: adaptiveProgressRingSize,
-                lineWidth: isCompactDevice ? 13 : 16,
-                fontSize: isCompactDevice ? 24 : 32
+                lineWidth: 16,
+                fontSize: isCompactDevice ? 28 : 32
             )
             
             Spacer()
@@ -325,9 +317,9 @@ struct HabitDetailView: View {
                 viewModel.incrementProgress()
             } label: {
                 Image(systemName: "plus")
-                    .font(.system(size: isCompactDevice ? 20 : 24, weight: .semibold))
+                    .font(.system(size: 24, weight: .semibold))
                     .withHabitGradient(habit, colorScheme: colorScheme)
-                    .frame(width: adaptiveButtonSize, height: adaptiveButtonSize)
+                    .frame(width: 44, height: 44)
                     .background(
                         Circle()
                             .fill(

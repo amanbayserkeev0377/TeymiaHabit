@@ -155,7 +155,6 @@ struct HomeView: View {
                     date: selectedDate
                 )
             }
-            .presentationSizing(.page)
             .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showingReorderHabits) {
@@ -163,14 +162,12 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingNewHabit) {
             NewHabitView()
-                .presentationSizing(.page)
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
         .sheet(item: $habitToEdit) { habit in
             NewHabitView(habit: habit)
-                .presentationSizing(.page)
         }
         .deleteSingleHabitAlert(
             isPresented: Binding(
