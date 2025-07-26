@@ -165,7 +165,9 @@ struct HomeView: View {
             ReorderHabitsView()
         }
         .sheet(isPresented: $showingNewHabit) {
-            NewHabitView()
+            NavigationStack {
+                CreateHabitView()
+            }
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()

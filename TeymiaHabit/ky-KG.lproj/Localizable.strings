@@ -55,7 +55,7 @@
 "statistics" = "Статистика";
 "settings" = "Жөндөөлөр";
 
-/* ===================== New Habit View ===================== */
+/* ===================== Create/New Habit View ===================== */
 "habit_name" = "Адаттын аты";
 "icon_and_color" = "Белги жана түс";
 "goalsection_choose_time" = "Убакытты тандаңыз (с:м)";
@@ -66,6 +66,28 @@
 "select_days" = "Күндөрдү танда";
 "reminders" = "Эскертүүлөр";
 "reminder" = "Эскертүү";
+"create_custom_habit" = "Өзгөчө адат жаратуу";
+// Habit Templates
+"reading" = "Китеп окуу";
+"meditation" = "Медитация";
+"drink_water" = "Суу ичүү";
+"practice_yoga" = "Йога менен машыгуу";
+"running" = "Жүгүрүү";
+"learn_language" = "Тил үйрөнүү";
+"focus" = "Көңүл буруу";
+"cold_shower" = "Суук душ";
+"workout" = "Спорт менен машыгуу";
+"swimming" = "Сузүү";
+"cycling" = "Велосипед тебүү";
+"take_vitamins" = "Витамин ичүү";
+"eat_vegetables" = "Жашылча жеш";
+"practice_coding" = "Программалоо";
+"plan_my_day" = "Күндү пландоо";
+"journaling" = "Күндөлүк жаздыруу";
+"call_parents" = "Ата-энеге чалуу";
+"play_piano" = "Пианино ойноо";
+"wakeup_early" = "Эртөө тургула";
+"take_a_walk" = "Сейилдөө";
 
 /* ===================== Other ===================== */
 "add_count" = "Санын кошуу";

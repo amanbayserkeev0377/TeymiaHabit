@@ -10,6 +10,8 @@ struct NewHabitView: View {
     
     // MARK: - Properties
     private let habit: Habit?
+    private let template: HabitTemplate?
+    private let onSaveCompletion: (() -> Void)?
     
     // MARK: - State
     @State private var title = ""
@@ -29,10 +31,13 @@ struct NewHabitView: View {
     @FocusState private var isCountFocused: Bool
     
     // MARK: - Initialization
-    init(habit: Habit? = nil) {
+    init(habit: Habit? = nil, template: HabitTemplate? = nil, onSaveCompletion: (() -> Void)? = nil) {
         self.habit = habit
+        self.template = template
+        self.onSaveCompletion = onSaveCompletion
         
         if let habit = habit {
+            // Existing habit editing
             _title = State(initialValue: habit.title)
             _selectedType = State(initialValue: habit.type)
             _countGoal = State(initialValue: habit.type == .count ? habit.goal : 1)
@@ -44,6 +49,23 @@ struct NewHabitView: View {
             _startDate = State(initialValue: habit.startDate)
             _selectedIcon = State(initialValue: habit.iconName ?? "checkmark")
             _selectedIconColor = State(initialValue: habit.iconColor)
+        } else if let template = template {
+            // Apply template
+            _title = State(initialValue: template.name.localized)
+            _selectedType = State(initialValue: template.habitType)
+            _selectedIcon = State(initialValue: template.icon)
+            _selectedIconColor = State(initialValue: template.iconColor)
+            
+            // Set goal based on type
+            if template.habitType == .count {
+                _countGoal = State(initialValue: template.defaultGoal)
+                _hours = State(initialValue: 1)
+                _minutes = State(initialValue: 0)
+            } else {
+                _countGoal = State(initialValue: 1)
+                _hours = State(initialValue: template.defaultGoal / 60)
+                _minutes = State(initialValue: template.defaultGoal % 60)
+            }
         }
     }
     
@@ -123,7 +145,7 @@ struct NewHabitView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                // Место для кнопки
+                // Space for button
                 Color.clear.frame(height: 80)
             }
             .navigationTitle(habit == nil ? "create_habit".localized : "edit_habit".localized)
@@ -226,11 +248,16 @@ struct NewHabitView: View {
             )
             
             modelContext.insert(newHabit)
-            
             handleNotifications(for: newHabit)
         }
         WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
-        dismiss()
+        
+        // Call completion callback if provided, otherwise just dismiss
+        if let onSaveCompletion = onSaveCompletion {
+            onSaveCompletion()
+        } else {
+            dismiss()
+        }
     }
     
     // Handle notifications when saving
