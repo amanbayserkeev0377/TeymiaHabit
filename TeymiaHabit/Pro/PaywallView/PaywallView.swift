@@ -21,7 +21,9 @@ struct PaywallView: View {
                         // Header with laurels
                         PaywallHeaderSection()
                         
-                        PaywallExpandedFeaturesSection()
+                        PaywallExpandedFeaturesSection {
+                            restorePurchases()
+                        }
                         
                         Color.clear
                             .frame(height: 200)
@@ -148,8 +150,10 @@ struct PaywallView: View {
                 if success {
                     alertMessage = "paywall_restore_success_message".localized
                     HapticManager.shared.play(.success)
+                    dismiss()
                 } else {
                     alertMessage = "paywall_no_purchases_to_restore_message".localized
+                    HapticManager.shared.play(.error)
                 }
                 showingAlert = true
             }
@@ -159,6 +163,7 @@ struct PaywallView: View {
 
 // MARK: - Expanded Features Section (больше фичей)
 struct PaywallExpandedFeaturesSection: View {
+    let onRestorePurchases: () -> Void
     var body: some View {
         VStack(spacing: 24) {
             // Основные фичи
@@ -169,7 +174,7 @@ struct PaywallExpandedFeaturesSection: View {
             }
             
             PaywallScrollableFooter() {
-                // Можно добавить действие restore purchases здесь
+                onRestorePurchases()
             }
         }
     }

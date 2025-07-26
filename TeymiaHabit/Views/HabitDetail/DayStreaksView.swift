@@ -20,7 +20,7 @@ struct DayStreaksView: View {
                 
                 // Best Streak (остается глобальным)
                 StatColumn(
-                    value: "\(bestStreak)",
+                    value: "\(bestStreakUpToDate)",
                     label: "best".localized
                 )
                 
@@ -55,10 +55,17 @@ struct DayStreaksView: View {
         return calculateStreakUpToDate(completedDates: completedDates, targetDate: targetDate)
     }
     
-    // Best streak (глобальный, как в оригинале)
-    private var bestStreak: Int {
-        let statsViewModel = HabitStatsViewModel(habit: habit)
-        return statsViewModel.bestStreak
+    private var bestStreakUpToDate: Int {
+        let calendar = Calendar.current
+        
+        guard let completions = habit.completions else { return 0 }
+        
+        // Получаем все завершенные даты ДО выбранной даты
+        let completedDates = completions
+            .filter { $0.value >= habit.goal && $0.date <= date }
+            .map { calendar.startOfDay(for: $0.date) }
+        
+        return calculateBestStreakUpToDate(completedDates: completedDates)
     }
     
     // Total завершений до выбранной даты (включительно)
@@ -146,4 +153,46 @@ struct DayStreaksView: View {
         
         return streak
     }
+    
+    private func calculateBestStreakUpToDate(completedDates: [Date]) -> Int {
+            let calendar = Calendar.current
+            let targetDate = calendar.startOfDay(for: date)
+            
+            // Преобразуем даты в начало дня
+            let completedDays = completedDates
+                .map { calendar.startOfDay(for: $0) }
+                .reduce(into: Set<Date>()) { result, date in
+                    result.insert(date)
+                }
+            
+            var bestStreak = 0
+            var currentStreak = 0
+            var checkDate = calendar.startOfDay(for: habit.startDate)
+            
+            // ✅ Проходим дни от начала привычки ДО целевой даты (включительно)
+            while checkDate <= targetDate {
+                // Если день активен для привычки
+                if habit.isActiveOnDate(checkDate) {
+                    // Проверяем, выполнена ли привычка в этот день
+                    if completedDays.contains(checkDate) {
+                        currentStreak += 1
+                        // Обновляем лучший стрик, если текущий больше
+                        bestStreak = max(bestStreak, currentStreak)
+                    } else {
+                        // Стрик прерван
+                        currentStreak = 0
+                    }
+                }
+                
+                // Переходим к следующему дню
+                guard let nextDate = calendar.date(byAdding: .day, value: 1, to: checkDate) else { break }
+                checkDate = nextDate
+            }
+            
+            return bestStreak
+        }
 }
+
+
+
+

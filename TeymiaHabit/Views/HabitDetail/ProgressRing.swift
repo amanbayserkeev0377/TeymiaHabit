@@ -77,7 +77,7 @@ struct ProgressRing: View {
                     )
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.3), value: progress)
+                .animation(.easeInOut(duration: 0.5), value: progress)
             
             // Контент внутри кольца
             if style == .detail {

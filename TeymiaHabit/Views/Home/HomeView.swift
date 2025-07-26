@@ -395,7 +395,7 @@ struct HabitCardView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(progressTextColor)
                         .monospacedDigit()
-                        .animation(isTimerActive ? .none : .easeInOut(duration: 0.3), value: formattedProgress)
+                        .animation(isTimerActive ? .none : .easeInOut(duration: 0.4), value: formattedProgress)
                 }
                 
                 Spacer()
@@ -422,17 +422,17 @@ struct HabitCardView: View {
                     hapticFeedback: false
                 )
                 .scaleEffect(isProgressRingPressed ? 1.2 : 1.0)
-                .animation(.easeInOut(duration: 0.3), value: isProgressRingPressed)
+                .animation(.smooth(duration: 0.6), value: isProgressRingPressed)
                 .onTapGesture {
                     HapticManager.shared.playImpact(.medium)
-                    toggleHabitCompletion()
                     
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isProgressRingPressed = true
-                    }
-                    withAnimation(.easeInOut(duration: 0.3).delay(0.15)) {
+                    isProgressRingPressed = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         isProgressRingPressed = false
                     }
+                    
+                    toggleHabitCompletion()
                 }
             }
             .padding(.horizontal, 16)
