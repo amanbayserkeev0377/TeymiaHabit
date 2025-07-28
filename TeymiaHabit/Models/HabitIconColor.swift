@@ -212,7 +212,7 @@ extension HabitIconColor {
         case .bluePink:
             return Color(#colorLiteral(red: 0.2705882353, green: 0.4078431373, blue: 0.862745098, alpha: 1))
         case .oceanBlue:
-            return Color(#colorLiteral(red: 0.3058823529, green: 0.3960784314, blue: 1, alpha: 1))
+            return Color(#colorLiteral(red: 0.1137254902, green: 0.768627451, blue: 0.9843137255, alpha: 1))
         case .antarctica:
             return Color(#colorLiteral(red: 0.1176470588, green: 0.6823529412, blue: 0.5960784314, alpha: 1))
         case .sweetMorning:

@@ -75,21 +75,23 @@ struct CloudKitSyncView: View {
                     } label: {
                         HStack {
                             Image(systemName: "arrow.triangle.2.circlepath.icloud.fill")
-                                .withGradientIcon(
-                                    colors: [
-                                        Color(#colorLiteral(red: 0.3411764706, green: 0.6235294118, blue: 1, alpha: 1)),
-                                        Color(#colorLiteral(red: 0.0, green: 0.3803921569, blue: 0.7647058824, alpha: 1))
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing,
-                                    fontSize: 20
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [
+                                            Color(#colorLiteral(red: 0.3411764706, green: 0.6235294118, blue: 1, alpha: 1)),
+                                            Color(#colorLiteral(red: 0.0, green: 0.3803921569, blue: 0.7647058824, alpha: 1))
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
                                 )
-                                .frame(width: 30)
+                                .frame(width: 30, height: 30)
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("icloud_force_sync".localized)
                                     .font(.subheadline)
                                     .fontWeight(.medium)
+                                    .foregroundStyle(.blue)
                                 
                                 Text("icloud_force_sync_desc".localized)
                                     .font(.footnote)
@@ -105,7 +107,6 @@ struct CloudKitSyncView: View {
                         }
                     }
                     .disabled(isSyncing)
-                    .tint(.primary)
                     
                     // Last sync time - показываем только если есть время
                     if let lastSyncTime = lastSyncTime {
@@ -258,63 +259,73 @@ struct CloudKitSyncView: View {
         switch iconName {
         case "icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)),
-                        Color(#colorLiteral(red: 0.4, green: 0.4, blue: 0.4, alpha: 1))
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom,
-                    fontSize: 20
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)),
+                            Color(#colorLiteral(red: 0.4, green: 0.4, blue: 0.4, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         case "checkmark.icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 0.1960784314, green: 0.8431372549, blue: 0.2941176471, alpha: 1)),
-                        Color(#colorLiteral(red: 0.1333333333, green: 0.5882352941, blue: 0.1333333333, alpha: 1))
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing,
-                    fontSize: 20
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 0.1960784314, green: 0.8431372549, blue: 0.2941176471, alpha: 1)),
+                            Color(#colorLiteral(red: 0.1333333333, green: 0.5882352941, blue: 0.1333333333, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         case "person.icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 1, green: 0.8, blue: 0.0, alpha: 1)),
-                        Color(#colorLiteral(red: 0.8, green: 0.5, blue: 0.0, alpha: 1))
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing,
-                    fontSize: 20
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 1, green: 0.8, blue: 0.0, alpha: 1)),
+                            Color(#colorLiteral(red: 0.8, green: 0.5, blue: 0.0, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         case "exclamationmark.icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 1, green: 0.4, blue: 0.4, alpha: 1)),
-                        Color(#colorLiteral(red: 0.8, green: 0.2, blue: 0.2, alpha: 1))
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom,
-                    fontSize: 20
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 1, green: 0.4, blue: 0.4, alpha: 1)),
+                            Color(#colorLiteral(red: 0.8, green: 0.2, blue: 0.2, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         case "xmark.icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
-                        Color(#colorLiteral(red: 0.7, green: 0.1, blue: 0.1, alpha: 1))
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing,
-                    fontSize: 20
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
+                            Color(#colorLiteral(red: 0.7, green: 0.1, blue: 0.1, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         default:
             Image(systemName: iconName)
@@ -326,15 +337,17 @@ struct CloudKitSyncView: View {
     @ViewBuilder
     private func troubleshootingIcon() -> some View {
         Image(systemName: "wrench.adjustable.fill")
-            .withGradientIcon(
-                colors: [
-                    Color(#colorLiteral(red: 0.5019607843, green: 0.5019607843, blue: 0.5019607843, alpha: 1)),
-                    Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3019607843, alpha: 1))
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing,
-                fontSize: 20
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [
+                        Color(#colorLiteral(red: 0.5019607843, green: 0.5019607843, blue: 0.5019607843, alpha: 1)),
+                        Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3019607843, alpha: 1))
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             )
+            .frame(width: 30, height: 30)
     }
     
     // MARK: - Helper Methods
@@ -442,39 +455,45 @@ struct SyncInfoRow: View {
         switch iconName {
         case "icloud.and.arrow.up.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 0.1960784314, green: 0.8431372549, blue: 0.2941176471, alpha: 1)),
-                        Color(#colorLiteral(red: 0.1333333333, green: 0.5882352941, blue: 0.1333333333, alpha: 1))
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing,
-                    fontSize: 18
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 0.1960784314, green: 0.8431372549, blue: 0.2941176471, alpha: 1)),
+                            Color(#colorLiteral(red: 0.1333333333, green: 0.5882352941, blue: 0.1333333333, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         case "arrow.trianglehead.2.clockwise.rotate.90.icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 0.3411764706, green: 0.6235294118, blue: 1, alpha: 1)),
-                        Color(#colorLiteral(red: 0.0, green: 0.3803921569, blue: 0.7647058824, alpha: 1))
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom,
-                    fontSize: 18
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 0.3411764706, green: 0.6235294118, blue: 1, alpha: 1)),
+                            Color(#colorLiteral(red: 0.0, green: 0.3803921569, blue: 0.7647058824, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         case "lock.icloud.fill":
             Image(systemName: iconName)
-                .withGradientIcon(
-                    colors: [
-                        Color(#colorLiteral(red: 1, green: 0.5843137255, blue: 0.0, alpha: 1)),
-                        Color(#colorLiteral(red: 0.8549019608, green: 0.2470588235, blue: 0.1176470588, alpha: 1))
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing,
-                    fontSize: 18
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [
+                            Color(#colorLiteral(red: 1, green: 0.5843137255, blue: 0.0, alpha: 1)),
+                            Color(#colorLiteral(red: 0.8549019608, green: 0.2470588235, blue: 0.1176470588, alpha: 1))
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
+                .frame(width: 30, height: 30)
             
         default:
             Image(systemName: iconName)

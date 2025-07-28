@@ -22,13 +22,11 @@ struct LanguageSection: View {
                 Label(
                     title: { Text("language".localized) },
                     icon: {
-                        Image(systemName: "translate")
+                        Image(systemName: "globe.americas.fill")
                             .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.2666666667, green: 0.6274509804, blue: 1, alpha: 1)),
-                                Color(#colorLiteral(red: 0.0, green: 0.2784313725, blue: 0.6745098039, alpha: 1))
-                            ],
-                            fontSize: 11
-                            )
+                                Color(#colorLiteral(red: 0.4, green: 0.7, blue: 0.95, alpha: 1)),
+                                Color(#colorLiteral(red: 0.12, green: 0.35, blue: 0.6, alpha: 1))
+                            ])
                     }
                 )
                 

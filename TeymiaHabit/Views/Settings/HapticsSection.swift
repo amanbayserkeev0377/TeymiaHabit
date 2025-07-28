@@ -11,8 +11,8 @@ struct HapticsSection: View {
                 icon: {
                     Image(systemName: "waveform")
                         .withIOSSettingsIcon(lightColors: [
-                            Color(#colorLiteral(red: 1, green: 0.7019607843, blue: 0.2666666667, alpha: 1)),
-                            Color(#colorLiteral(red: 0.7333333333, green: 0.3568627451, blue: 0.0, alpha: 1))
+                            Color(#colorLiteral(red: 1, green: 0.706, blue: 0, alpha: 1)),
+                            Color(#colorLiteral(red: 0.7843, green: 0.3922, blue: 0, alpha: 1))
                         ])
                         .symbolEffect(.bounce, options: .repeat(1), value: hapticsEnabled)
                 }

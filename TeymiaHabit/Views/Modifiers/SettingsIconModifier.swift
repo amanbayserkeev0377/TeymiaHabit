@@ -23,7 +23,7 @@ struct SettingsIconModifier: ViewModifier {
                 LinearGradient(colors: [.white, .white], startPoint: .top, endPoint: .bottom)
             )
             .font(.system(size: fontSize, weight: .medium))
-            .frame(width: 29, height: 29)
+            .frame(width: 30, height: 30)
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(
@@ -110,8 +110,8 @@ struct GradientIconModifier: ViewModifier {
 extension View {
     func withGradientIcon(
         colors: [Color],
-        startPoint: UnitPoint = .leading,
-        endPoint: UnitPoint = .trailing,
+        startPoint: UnitPoint = .top,
+        endPoint: UnitPoint = .bottom,
         fontSize: CGFloat = 15
     ) -> some View {
         modifier(GradientIconModifier(

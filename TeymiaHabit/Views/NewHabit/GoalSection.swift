@@ -38,15 +38,17 @@ struct GoalSection: View {
             if selectedType == .count {
                 HStack(spacing: 12) {
                     Image(systemName: "number")
-                        .withGradientIcon(
-                            colors: [
-                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),  // светлый зеленый
-                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))   // темный зеленый
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom,
-                            fontSize: 16
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [
+                                    Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
+                                    Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
+                        .frame(width: 30, height: 30)
                     
                     TextField("goalsection_enter_count".localized, text: $countText)
                         .keyboardType(.numberPad)
@@ -61,15 +63,17 @@ struct GoalSection: View {
             } else {
                 HStack(spacing: 12) {
                     Image(systemName: "clock.fill")
-                        .withGradientIcon(
-                            colors: [
-                                Color(#colorLiteral(red: 0.3, green: 0.6, blue: 0.8, alpha: 1)),  // светлый синий
-                                Color(#colorLiteral(red: 0.1, green: 0.3, blue: 0.6, alpha: 1))   // темный синий
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom,
-                            fontSize: 16
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [
+                                    Color(#colorLiteral(red: 0.4, green: 0.7, blue: 0.95, alpha: 1)),
+                                    Color(#colorLiteral(red: 0.12, green: 0.35, blue: 0.6, alpha: 1))
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
+                        .frame(width: 30, height: 30)
                     
                     Text("goalsection_choose_time".localized)
                         .foregroundStyle(.secondary)

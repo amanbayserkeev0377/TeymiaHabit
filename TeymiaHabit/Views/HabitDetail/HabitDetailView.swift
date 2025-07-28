@@ -68,8 +68,7 @@ struct HabitDetailView: View {
                             .background(
                                 Circle()
                                     .fill(
-                                        habit.iconColor.adaptiveGradient(for: colorScheme)
-                                            .opacity(0.15)
+                                        habit.iconColor.color.opacity(0.15)
                                     )
                             )
                     }
@@ -105,8 +104,7 @@ struct HabitDetailView: View {
                             .background(
                                 Circle()
                                     .fill(
-                                        habit.iconColor.adaptiveGradient(for: colorScheme)
-                                            .opacity(0.15)
+                                        habit.iconColor.color.opacity(0.15)
                                     )
                             )
                     }
@@ -285,8 +283,7 @@ struct HabitDetailView: View {
                     .background(
                         Circle()
                             .fill(
-                                habit.iconColor.adaptiveGradient(for: colorScheme)
-                                    .opacity(0.15)
+                                habit.iconColor.color.opacity(0.15)
                             )
                     )
             }
@@ -323,8 +320,7 @@ struct HabitDetailView: View {
                     .background(
                         Circle()
                             .fill(
-                                habit.iconColor.adaptiveGradient(for: colorScheme)
-                                    .opacity(0.15)
+                                habit.iconColor.color.opacity(0.15)
                             )
                     )
             }

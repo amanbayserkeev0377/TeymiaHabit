@@ -3,6 +3,7 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.privacyManager) private var privacyManager
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     
     @State private var showingPaywall = false
@@ -49,6 +50,23 @@ struct SettingsView: View {
                             }
                         )
                     }
+                    //Passcode & Face ID
+                    NavigationLink {
+                        PrivacySettingsView()
+                    } label: {
+                        HStack {
+                            Label(
+                                title: { Text("passcode_faceid".localized) },
+                                icon: {
+                                    Image(systemName: "faceid")
+                                        .withIOSSettingsIcon(lightColors: [
+                                            Color(#colorLiteral(red: 0.4666666667, green: 0.8666666667, blue: 0.4, alpha: 1)),
+                                            Color(#colorLiteral(red: 0.1176470588, green: 0.5647058824, blue: 0.1176470588, alpha: 1))
+                                        ])
+                                }
+                            )
+                        }
+                    }
                     // Archived habits
                     NavigationLink {
                         ArchivedHabitsView()
@@ -69,10 +87,7 @@ struct SettingsView: View {
                         }
                     }
                 }
-                
                 Section {
-                    HapticsSection()
-                    NotificationsSection()
                     NavigationLink {
                         SoundSettingsView()
                     } label: {
@@ -87,6 +102,8 @@ struct SettingsView: View {
                             }
                         )
                     }
+                    NotificationsSection()
+                    HapticsSection()
                 }
                 
                 // Legal

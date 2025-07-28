@@ -97,6 +97,7 @@
 		07EA6CE42E31E31A00171765 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabitWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"/Localized: InfoPlist.strings",
 				"/Localized: Localizable.strings",
 				Assets.xcassets,
 				Managers/AppColorManager.swift,

@@ -11,6 +11,12 @@ struct TeymiaHabitApp: App {
     let container: ModelContainer
     
     @State private var weekdayPrefs = WeekdayPreferences.shared
+    @State private var privacyManager = PrivacyManager.shared
+    @State private var showingGlobalPinView = false
+    @State private var globalPinTitle = ""
+    @State private var globalPinCode = ""
+    @State private var globalPinAction: ((String) -> Void)?
+    @State private var globalPinDismiss: (() -> Void)?
     
     init() {
         // Configure RevenueCat FIRST
@@ -20,6 +26,8 @@ struct TeymiaHabitApp: App {
         print("🚀 Starting Teymia Habit")
         print("📦 Bundle ID: \(Bundle.main.bundleIdentifier ?? "unknown")")
         print("☁️ CloudKit Container: iCloud.com.amanbayserkeev.teymiahabit")
+        PrivacyManager.shared.checkAndLockOnAppStart()
+
         
         do {
             let schema = Schema([Habit.self, HabitCompletion.self])
@@ -44,27 +52,62 @@ struct TeymiaHabitApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environment(weekdayPrefs)
-                .environment(ProManager.shared)
-                .onAppear {
-                    setupLiveActivities()
-                    AppModelContext.shared.setModelContext(container.mainContext)
-                    ProDowngradeCoordinator.shared.setModelContext(container.mainContext)
+            ZStack {
+                MainTabView()
+                    .environment(weekdayPrefs)
+                    .environment(ProManager.shared)
+                    .environment(\.globalPin, globalPinEnvironment)
+                    .onAppear {
+                        setupLiveActivities()
+                        AppModelContext.shared.setModelContext(container.mainContext)
+                        ProDowngradeCoordinator.shared.setModelContext(container.mainContext)
+                    }
+                    .onOpenURL { url in
+                        handleDeepLink(url)
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
+                        handleAppTermination()
+                    }
+                let _ = print("🔐 TeymiaHabitApp: Checking isAppLocked = \(privacyManager.isAppLocked)")
+                
+                if privacyManager.isAppLocked {
+                    PrivacyLockView()
+                        .transition(.opacity)
+                        .zIndex(1000)
+                        .onAppear {
+                            print("🔐 TeymiaHabitApp: PrivacyLockView appeared")
+                        }
+                        .onDisappear {
+                            print("🔐 TeymiaHabitApp: PrivacyLockView disappeared")
+                        }
                 }
-                // ✅ НОВОЕ: Обработчик deeplink
-                .onOpenURL { url in
-                    handleDeepLink(url)
+                
+                // ✅ Глобальный PIN overlay
+                if showingGlobalPinView {
+                    GlobalPinView(
+                        title: globalPinTitle,
+                        pin: $globalPinCode,
+                        onPinComplete: { pin in
+                            globalPinAction?(pin)
+                        },
+                        onDismiss: {
+                            globalPinDismiss?()
+                        }
+                    )
+                    .transition(.opacity)
+                    .zIndex(2000)
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
-                    handleAppTermination()
-                }
+            }
+            .environment(privacyManager)
+            .animation(.easeInOut(duration: 0.3), value: privacyManager.isAppLocked)
+            .animation(.easeInOut(duration: 0.3), value: showingGlobalPinView) // ✅ Анимация для глобального PIN
         }
         .modelContainer(container)
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {
             case .background:
                 handleAppBackground()
+                privacyManager.handleAppWillResignActive()
                 
             case .inactive:
                 print("📱 App becoming inactive")
@@ -73,6 +116,7 @@ struct TeymiaHabitApp: App {
             case .active:
                 print("📱 App became active")
                 handleAppForeground()
+                privacyManager.handleAppDidBecomeActive()
                 
             @unknown default:
                 print("📱 Unknown scene phase")
@@ -203,4 +247,41 @@ struct TeymiaHabitApp: App {
             print("❌ Failed to save on background: \(error)")
         }
     }
+    
+    private var globalPinEnvironment: GlobalPinEnvironment {
+       GlobalPinEnvironment(
+           showPin: { title, onComplete, onDismiss in
+               globalPinTitle = title
+               globalPinCode = ""
+               globalPinAction = onComplete
+               globalPinDismiss = onDismiss
+               showingGlobalPinView = true
+           },
+           hidePin: {
+               showingGlobalPinView = false
+               globalPinCode = ""
+               globalPinAction = nil
+               globalPinDismiss = nil
+           }
+       )
+    }
+}
+
+struct GlobalPinEnvironment {
+   let showPin: (String, @escaping (String) -> Void, @escaping () -> Void) -> Void
+   let hidePin: () -> Void
+}
+
+struct GlobalPinEnvironmentKey: EnvironmentKey {
+   static let defaultValue = GlobalPinEnvironment(
+       showPin: { _, _, _ in },
+       hidePin: { }
+   )
+}
+
+extension EnvironmentValues {
+   var globalPin: GlobalPinEnvironment {
+       get { self[GlobalPinEnvironmentKey.self] }
+       set { self[GlobalPinEnvironmentKey.self] = newValue }
+   }
 }
