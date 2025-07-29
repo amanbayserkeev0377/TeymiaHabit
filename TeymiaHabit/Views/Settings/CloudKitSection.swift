@@ -218,15 +218,11 @@ struct CloudKitSyncView: View {
                     isSyncing = false
                     HapticManager.shared.play(.success)
                 }
-                
-                print("✅ Manual iCloud sync completed")
-                
             } catch {
                 await MainActor.run {
                     isSyncing = false
                     HapticManager.shared.play(.error)
                 }
-                print("❌ Manual iCloud sync failed: \(error)")
             }
         }
     }
@@ -364,15 +360,10 @@ struct CloudKitSyncView: View {
             let bundleId = Bundle.main.bundleIdentifier ?? "unknown"
             let expectedContainerID = "iCloud.com.amanbayserkeev.teymiahabit"
             
-            print("🔍 [CloudKit Debug]")
-            print("🔍 Bundle ID: \(bundleId)")
-            print("🔍 Using Container: \(expectedContainerID)")
-            
             // ИСПОЛЬЗУЕМ ПРАВИЛЬНЫЙ CONTAINER ID (без дублирования)
             let container = CKContainer(identifier: expectedContainerID)
             
             let accountStatus = try await container.accountStatus()
-            print("🔍 Account Status: \(accountStatus)")
             
             switch accountStatus {
             case .available:
@@ -381,39 +372,27 @@ struct CloudKitSyncView: View {
                     let database = container.privateCloudDatabase
                     let zones = try await database.allRecordZones()
                     cloudKitStatus = .available
-                    print("✅ CloudKit fully available")
-                    print("🔍 Found \(zones.count) record zones")
-                    
                 } catch {
                     cloudKitStatus = .error("icloud_database_error".localized)
-                    print("❌ CloudKit database error: \(error)")
-                    print("❌ Error details: \(error.localizedDescription)")
                 }
                 
             case .noAccount:
                 cloudKitStatus = .unavailable
-                print("❌ No iCloud account")
                 
             case .restricted:
                 cloudKitStatus = .restricted
-                print("❌ iCloud account restricted")
                 
             case .couldNotDetermine:
                 cloudKitStatus = .error("icloud_status_unknown".localized)
-                print("❌ Could not determine iCloud status")
                 
             case .temporarilyUnavailable:
                 cloudKitStatus = .error("icloud_temporarily_unavailable".localized)
-                print("❌ iCloud temporarily unavailable")
                 
             @unknown default:
                 cloudKitStatus = .error("icloud_unknown_error".localized)
-                print("❌ Unknown iCloud error")
             }
         } catch {
             cloudKitStatus = .error("icloud_check_failed".localized)
-            print("❌ Failed to check CloudKit status: \(error)")
-            print("❌ Error details: \(error.localizedDescription)")
         }
     }
 }

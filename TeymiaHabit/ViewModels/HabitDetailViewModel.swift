@@ -70,7 +70,6 @@ final class HabitDetailViewModel {
                     DispatchQueue.main.async {
                         SoundManager.shared.playCompletionSound()
                         HapticManager.shared.play(.success)
-                        print("🎉 Timer completion in HabitDetailView for \(habitTitle)!")
                     }
                 }
                 
@@ -140,23 +139,15 @@ final class HabitDetailViewModel {
         self.modelContext = modelContext
         self.cachedHabitId = habit.uuid.uuidString
         
-        print("🚀 HabitDetailViewModel init for habit: \(habit.title)")
-        print("   cachedHabitId: \(cachedHabitId)")
-        print("   initialDate: \(initialDate)")
-        
         // Load initial progress
         let initialProgress = habit.progressForDate(initialDate)
         progressCache[dateToKey(initialDate)] = initialProgress
-        print("   initial progress: \(initialProgress)")
-        
         setupStableSubscriptions()
         
         // Start local updates if needed
         if isTimeHabitToday && timerService.isTimerRunning(for: cachedHabitId) {
             // ✅ ВАЖНО: Восстанавливаем baseProgressWhenTimerStarted для уже запущенного таймера
             baseProgressWhenTimerStarted = habit.progressForDate(initialDate)
-            print("🔄 Restored baseProgressWhenTimerStarted: \(baseProgressWhenTimerStarted!)")
-            
             startLocalUpdates()
         }
     }
@@ -191,10 +182,7 @@ final class HabitDetailViewModel {
     private func setupStableSubscriptions() {
         let habitTitle = habit.title
         let habitId = cachedHabitId
-        
-        print("🔧 Setting up STABLE subscriptions for: \(habitTitle)")
-        print("   cachedHabitId: \(habitId)")
-        
+
         NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
@@ -204,12 +192,9 @@ final class HabitDetailViewModel {
                 await self?.handleAppWillEnterForeground()
             }
         }
-        
-        print("✅ STABLE subscriptions setup completed for: \(habitTitle)")
     }
     
     private func handleAppWillEnterForeground() async {
-        print("☀️ HabitDetailViewModel: App entering foreground for \(habit.title)")
         
         // ✅ Небольшая задержка чтобы HabitWidgetService успел сохранить данные
         try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 секунды
@@ -222,13 +207,10 @@ final class HabitDetailViewModel {
         let freshProgress = habit.progressForDate(currentDisplayedDate)
         progressCache[dateKey] = freshProgress
         
-        print("🔄 Progress cache refreshed: \(freshProgress)")
-        
         // ✅ ВАЖНО: Если таймер был остановлен извне, но все еще числится как активный
         if isTimeHabitToday && timerService.isTimerRunning(for: cachedHabitId) {
             // Проверяем, есть ли активная Live Activity
             if !hasActiveLiveActivity {
-                print("⚠️ Timer is running but no Live Activity - stopping timer")
                 // Останавливаем таймер и сохраняем прогресс
                 if let finalProgress = timerService.stopTimer(for: cachedHabitId) {
                     updateProgressInCacheAndDB(finalProgress)
@@ -252,10 +234,8 @@ final class HabitDetailViewModel {
         // ✅ КРИТИЧНО: Явное сохранение для CloudKit
         do {
             try modelContext.save()
-            print("🔄 Progress updated and saved for \(habit.title): \(newProgress)")
             WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
         } catch {
-            print("❌ Error saving progress: \(error.localizedDescription)")
             alertState.errorFeedbackTrigger.toggle()
         }
         
@@ -347,13 +327,10 @@ final class HabitDetailViewModel {
                 await self?.handleTimerTick()
             }
         }
-        
-        print("⏱️ Started precise 1-second timer updates for \(habit.title)")
     }
     
     private func handleTimerTick() async {
         guard timerService.isTimerRunning(for: cachedHabitId) else {
-            print("⚠️ Timer stopped, ending local updates")
             stopLocalUpdates()
             return
         }
@@ -366,8 +343,6 @@ final class HabitDetailViewModel {
             
             await showGoalAchievedNotification()
             hasShownGoalNotification = true
-            
-            print("🎉 Goal achieved for \(habit.title)! Timer continues running.")
             // ✅ НЕ останавливаем таймер - пользователь сам решает когда остановить
         }
         
@@ -386,15 +361,12 @@ final class HabitDetailViewModel {
         
         // 🔔 Push notification
         await sendGoalAchievedNotification()
-        
-        print("🎉 Goal achieved for \(habit.title)! Timer continues running.")
 
     }
     
     private func sendGoalAchievedNotification() async {
         guard NotificationManager.shared.notificationsEnabled,
               await NotificationManager.shared.ensureAuthorization() else {
-            print("📱 Notifications disabled, skipping goal notification")
             return
         }
         
@@ -411,9 +383,8 @@ final class HabitDetailViewModel {
         
         do {
             try await UNUserNotificationCenter.current().add(request)
-            print("📱 Goal achieved notification sent for \(habit.title)")
         } catch {
-            print("❌ Failed to send goal notification: \(error)")
+            
         }
     }
     
@@ -443,11 +414,6 @@ final class HabitDetailViewModel {
                 isTimerRunning: true,
                 timerStartTime: startTime
             )
-            
-            print("🔄 Live Activity synced:")
-            print("   elapsed: \(elapsed)s")
-            print("   baseProgress (saved): \(baseProgress)")
-            print("   Live Activity shows: \(baseProgress + elapsed)")
         }
     }
     
@@ -472,8 +438,6 @@ final class HabitDetailViewModel {
             return
         }
         
-        print("🚀 Starting timer for \(habit.title) with habitId: \(cachedHabitId)")
-        
         let baseProgress = currentProgress
         baseProgressWhenTimerStarted = baseProgress
         hasShownGoalNotification = false
@@ -495,17 +459,12 @@ final class HabitDetailViewModel {
                     )
                 }
             }
-            
-            print("✅ Timer started successfully for \(habit.title)")
-            print("   baseProgress saved: \(baseProgress)")
         } else {
             alertState.errorFeedbackTrigger.toggle()
-            print("❌ Failed to start timer for \(habit.title)")
         }
     }
     
     private func stopTimer() {
-        print("🛑 Stopping timer for \(habit.title) with habitId: \(cachedHabitId)")
         stopLocalUpdates()
         
         if let finalProgress = timerService.stopTimer(for: cachedHabitId) {
@@ -520,8 +479,6 @@ final class HabitDetailViewModel {
                     timerStartTime: nil
                 )
             }
-            
-            print("✅ Timer stopped for \(habit.title), final progress: \(finalProgress)")
         }
         
         // ✅ Очищаем состояние
@@ -549,8 +506,6 @@ final class HabitDetailViewModel {
             currentProgress: baseProgress, // ✅ Используем сохраненный базовый прогресс!
             timerStartTime: startTime
         )
-        
-        print("🚀 Live Activity started with saved baseProgress: \(baseProgress)")
     }
     
     private func stopTimerAndSaveLiveProgressIfNeeded() {
@@ -560,8 +515,6 @@ final class HabitDetailViewModel {
         stopLocalUpdates()
         _ = timerService.stopTimer(for: cachedHabitId)
         updateProgressInCacheAndDB(liveProgress)
-        print("🛑 Stopped timer and saved progress for \(habit.title): \(liveProgress)")
-        
         baseProgressWhenTimerStarted = nil
     }
     
@@ -597,18 +550,11 @@ final class HabitDetailViewModel {
     }
     
     private func debugTimerState() {
-        print("🔍 Timer State Debug:")
-        print("   isTimerRunning: \(isTimerRunning)")
-        print("   timerStartTime: \(String(describing: timerStartTime))")
-        print("   baseProgressWhenTimerStarted: \(String(describing: baseProgressWhenTimerStarted))")
-        print("   currentProgress: \(currentProgress)")
-        
         if let startTime = timerStartTime {
             let elapsed = Int(Date().timeIntervalSince(startTime))
-            print("   elapsed: \(elapsed)s")
             
             if let base = baseProgressWhenTimerStarted {
-                print("   expected Live Activity: \(base + elapsed)")
+                
             }
         }
     }
@@ -629,7 +575,6 @@ final class HabitDetailViewModel {
         guard isTimeHabitToday, timerService.isTimerRunning(for: cachedHabitId) else { return }
         if let liveProgress = timerService.getLiveProgress(for: cachedHabitId) {
             updateProgressInCacheAndDB(liveProgress)
-            print("🔄 Synced progress for \(habit.title): \(liveProgress)")
         }
     }
     

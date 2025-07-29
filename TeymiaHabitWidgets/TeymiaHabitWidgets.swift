@@ -64,12 +64,9 @@ struct HabitWidgetTimelineProvider: TimelineProvider {
             let activeHabits = allHabits.filter { habit in
                 habit.isActiveOnDate(date)
             }
-            
-            print("📊 Widget fetched \(activeHabits.count) active habits")
             return activeHabits
             
         } catch {
-            print("❌ Widget data fetch error: \(error)")
             return []
         }
     }

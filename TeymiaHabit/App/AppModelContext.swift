@@ -16,6 +16,5 @@ final class AppModelContext {
     
     func setModelContext(_ context: ModelContext) {
         _modelContext = context
-        print("✅ AppModelContext set successfully")
     }
 }

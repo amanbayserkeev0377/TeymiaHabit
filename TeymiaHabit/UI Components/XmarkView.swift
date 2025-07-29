@@ -9,10 +9,8 @@ struct XmarkView: View {
     /// The size of the button
     var size: CGFloat = 30
     
-    /// Optional tint color for the X icon (default is systemGray)
+    /// Styling options for the icon and background
     var iconColor: Color = Color(.systemGray)
-    
-    /// Background style settings
     var backgroundColor: Color = Color(.systemGray5)
     var cornerRadius: CGFloat = 15
     
@@ -28,7 +26,7 @@ struct XmarkView: View {
                 )
                 .contentShape(Circle())
         }
-        .buttonStyle(.plain) // Removes default button styling
+        .buttonStyle(.plain)
     }
 }
 

@@ -117,7 +117,6 @@ class AppIconManager: ObservableObject {
     
     // Sets a new app icon
     func setAppIcon(_ icon: AppIcon) {
-        print("Setting icon: \(icon.id)")
         applySpecificIcon(icon.name)
         currentIcon = icon
     }
@@ -125,7 +124,6 @@ class AppIconManager: ObservableObject {
     // Applies the specified icon
     private func applySpecificIcon(_ iconName: String?) {
         guard UIApplication.shared.supportsAlternateIcons else {
-            print("Device does not support alternate icons")
             return
         }
         

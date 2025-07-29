@@ -57,7 +57,6 @@ struct ActionButtonsSection: View {
     @ViewBuilder
     private var playPauseButton: some View {
         Button {
-            print("🎯 Timer button tapped")
             togglePressed.toggle()
             onTimerToggle()
         } label: {

@@ -28,11 +28,6 @@ struct TeymiaHabitApp: App {
     init() {
         // Configure RevenueCat FIRST
         RevenueCatConfig.configure()
-        
-        // Print current app configuration
-        print("🚀 Starting Teymia Habit")
-        print("📦 Bundle ID: \(Bundle.main.bundleIdentifier ?? "unknown")")
-        print("☁️ CloudKit Container: iCloud.com.amanbayserkeev.teymiahabit")
         PrivacyManager.shared.checkAndLockOnAppStart()
 
         

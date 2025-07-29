@@ -1,6 +1,9 @@
 import SwiftUI
 
 // MARK: - Reusable Color Picker Section Component
+
+/// Configurable color picker grid component with Pro feature support
+/// Used in both habit icon selection and app color customization
 struct ColorPickerSection: View {
     @Binding var selectedColor: HabitIconColor
     @State private var customColor = HabitIconColor.customColor
@@ -8,22 +11,38 @@ struct ColorPickerSection: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(ProManager.self) private var proManager
     
+    // MARK: - Configuration Properties
+    
     var columnsCount: Int = 7
     var buttonSize: CGFloat = 32
     var spacing: CGFloat = 12
     var showCustomPicker: Bool = true
-    var onProRequired: (() -> Void)? = nil // Callback для показа paywall
-    var enableProLocks: Bool = true // Включить Pro замки (false для IconPickerView)
+    var onProRequired: (() -> Void)? = nil // Callback for paywall presentation
+    var enableProLocks: Bool = true // Enable Pro locks (false for IconPickerView)
     
-    // ✅ Бесплатные цвета (3)
+    // MARK: - Constants
+    
+    /// Free colors available without Pro subscription
     private let freeColors: Set<HabitIconColor> = [
         .primary, .celestial, .brown, .red, .orange
     ]
     
-    // Computed properties
+    private enum DesignConstants {
+        static let selectedBorderScale: CGFloat = 0.9
+        static let selectedButtonScale: CGFloat = 1.1
+        static let lockIconScale: CGFloat = 0.5
+        static let customPickerLockScale: CGFloat = 0.35
+        static let lockedOpacity: Double = 0.8
+        static let animationDuration: Double = 0.2
+    }
+    
+    // MARK: - Computed Properties
+    
     private var colorColumns: [GridItem] {
         Array(repeating: GridItem(.flexible()), count: columnsCount)
     }
+    
+    // MARK: - Body
     
     var body: some View {
         LazyVGrid(columns: colorColumns, spacing: spacing) {
@@ -42,15 +61,17 @@ struct ColorPickerSection: View {
     // MARK: - Components
     
     /// Individual color button with circular design, haptic feedback and Pro lock support
+    /// - Parameter color: The habit icon color to display
+    /// - Returns: A configured color selection button
     private func colorButton(for color: HabitIconColor) -> some View {
         let isLocked = enableProLocks && !proManager.isPro && !freeColors.contains(color)
+        let isSelected = selectedColor == color && !isLocked
         
         return Button {
             if isLocked {
                 onProRequired?()
             } else {
                 selectedColor = color
-                // Add haptic feedback - will work everywhere this component is used
                 HapticManager.shared.playSelection()
             }
         } label: {
@@ -59,36 +80,29 @@ struct ColorPickerSection: View {
                 Circle()
                     .fill(color.adaptiveGradient(for: colorScheme))
                     .frame(width: buttonSize, height: buttonSize)
-                    .opacity(isLocked ? 0.8 : 1.0) // Слегка приглушаем заблокированные цвета
+                    .opacity(isLocked ? DesignConstants.lockedOpacity : 1.0)
                     .overlay(
-                        // Circular stroke for selected state (bigger, closer to edges)
+                        // Selection border
                         Circle()
-                            .strokeBorder(
-                                Color.white, 
-                                lineWidth: 2
+                            .strokeBorder(Color.white, lineWidth: 2)
+                            .frame(
+                                width: buttonSize * DesignConstants.selectedBorderScale,
+                                height: buttonSize * DesignConstants.selectedBorderScale
                             )
-                            .frame(width: buttonSize * 0.9, height: buttonSize * 0.9)
-                            .opacity(selectedColor == color && !isLocked ? 1 : 0)
-                            .animation(.easeInOut(duration: 0.2), value: selectedColor == color)
+                            .opacity(isSelected ? 1 : 0)
+                            .animation(.easeInOut(duration: DesignConstants.animationDuration), value: isSelected)
                     )
                 
-                // Pro lock overlay for circular design
+                // Pro lock overlay
                 if isLocked {
-                    Circle()
-                        .fill(.clear) // Прозрачный фон, чтобы цвет был виден
-                        .frame(width: buttonSize, height: buttonSize)
-                        .overlay(
-                            Image(systemName: "lock.fill")
-                                .font(.system(size: buttonSize * 0.5, weight: .medium))
-                                .foregroundStyle(.white)
-                        )
+                    lockOverlay
                 }
             }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(isLocked ? "Pro color: \(color.rawValue)" : "\(color.rawValue.localized) color")
-        .scaleEffect(selectedColor == color && !isLocked ? 1.1 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: selectedColor == color)
+        .accessibilityLabel(accessibilityLabel(for: color, isLocked: isLocked))
+        .scaleEffect(isSelected ? DesignConstants.selectedButtonScale : 1.0)
+        .animation(.easeInOut(duration: DesignConstants.animationDuration), value: isSelected)
     }
     
     /// Custom color picker with Pro lock support
@@ -107,45 +121,98 @@ struct ColorPickerSection: View {
                         HapticManager.shared.playSelection()
                     }
                 }
-                .accessibilityLabel(isLocked ? "Pro feature: Custom color picker" : "custom_color_picker".localized)
+                .accessibilityLabel(customPickerAccessibilityLabel(isLocked: isLocked))
             
             // Pro lock overlay for custom picker
             if isLocked {
                 Button {
                     onProRequired?()
                 } label: {
-                    Circle()
-                        .fill(.clear) // Прозрачный фон
-                        .frame(width: buttonSize, height: buttonSize)
-                        .overlay(
-                            Image(systemName: "lock.fill")
-                                .font(.system(size: buttonSize * 0.35, weight: .medium))
-                                .foregroundStyle(.white)
-                        )
+                    customPickerLockOverlay
                 }
                 .buttonStyle(.plain)
             }
         }
     }
+    
+    /// Lock overlay for regular color buttons
+    private var lockOverlay: some View {
+        Circle()
+            .fill(.clear)
+            .frame(width: buttonSize, height: buttonSize)
+            .overlay(
+                Image(systemName: "lock.fill")
+                    .font(.system(size: buttonSize * DesignConstants.lockIconScale, weight: .medium))
+                    .foregroundStyle(.white)
+            )
+    }
+    
+    /// Lock overlay for custom color picker
+    private var customPickerLockOverlay: some View {
+        Circle()
+            .fill(.clear)
+            .frame(width: buttonSize, height: buttonSize)
+            .overlay(
+                Image(systemName: "lock.fill")
+                    .font(.system(size: buttonSize * DesignConstants.customPickerLockScale, weight: .medium))
+                    .foregroundStyle(.white)
+            )
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Generates accessibility label for color button
+    /// - Parameters:
+    ///   - color: The color being labeled
+    ///   - isLocked: Whether the color is locked behind Pro
+    /// - Returns: Localized accessibility label
+    private func accessibilityLabel(for color: HabitIconColor, isLocked: Bool) -> String {
+        if isLocked {
+            return "Pro color: \(color.rawValue)"
+        } else {
+            return "\(color.rawValue.localized) color"
+        }
+    }
+    
+    /// Generates accessibility label for custom color picker
+    /// - Parameter isLocked: Whether the picker is locked behind Pro
+    /// - Returns: Localized accessibility label
+    private func customPickerAccessibilityLabel(isLocked: Bool) -> String {
+        if isLocked {
+            return "Pro feature: Custom color picker"
+        } else {
+            return "custom_color_picker".localized
+        }
+    }
 }
 
-// MARK: - Convenience initializers
+// MARK: - Convenience Initializers
+
 extension ColorPickerSection {
-    /// For IconPickerView usage (без Pro замков)
+    /// Creates color picker for habit icon selection (no Pro locks)
+    /// - Parameter selectedColor: Binding to the selected color
+    /// - Returns: Configured ColorPickerSection for icon selection
     static func forIconPicker(selectedColor: Binding<HabitIconColor>) -> ColorPickerSection {
         ColorPickerSection(
             selectedColor: selectedColor,
-            columnsCount: 8, // Consistent with iPhone layout
+            columnsCount: 8,
             buttonSize: 32,
             spacing: 12,
             showCustomPicker: true,
             onProRequired: nil,
-            enableProLocks: false // ✅ Отключаем замки для выбора цвета иконки привычки
+            enableProLocks: false // No Pro restrictions for habit icon colors
         )
     }
     
-    /// For AppColorPickerView usage (с Pro замками)
-    static func forAppColorPicker(selectedColor: Binding<HabitIconColor>, onProRequired: (() -> Void)? = nil) -> ColorPickerSection {
+    /// Creates color picker for app color customization (with Pro locks)
+    /// - Parameters:
+    ///   - selectedColor: Binding to the selected color
+    ///   - onProRequired: Callback when Pro feature is accessed
+    /// - Returns: Configured ColorPickerSection for app color selection
+    static func forAppColorPicker(
+        selectedColor: Binding<HabitIconColor>,
+        onProRequired: (() -> Void)? = nil
+    ) -> ColorPickerSection {
         ColorPickerSection(
             selectedColor: selectedColor,
             columnsCount: 8,
@@ -153,7 +220,7 @@ extension ColorPickerSection {
             spacing: 12,
             showCustomPicker: true,
             onProRequired: onProRequired,
-            enableProLocks: true // ✅ Включаем замки для выбора цвета приложения
+            enableProLocks: true // Enable Pro restrictions for app colors
         )
     }
 }
