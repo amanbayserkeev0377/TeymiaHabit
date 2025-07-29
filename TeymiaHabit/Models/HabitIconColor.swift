@@ -1,6 +1,9 @@
 import SwiftUI
 
+/// Color options for habit icons with adaptive dark/light mode support
+/// Each color automatically adapts to the current color scheme
 enum HabitIconColor: String, CaseIterable, Codable {
+    // MARK: - Basic Colors
     case primary = "primary"
     case red = "red"
     case orange = "orange"
@@ -9,12 +12,13 @@ enum HabitIconColor: String, CaseIterable, Codable {
     case green = "green"
     case blue = "blue"
     case purple = "purple"
-    case softLavender = "softLavender"
     case pink = "pink"
-    case sky = "sky"
     case brown = "brown"
-    case gray = "gray" // but not gray (for no migration)
-    case colorPicker = "colorPicker"
+    case gray = "gray"
+    
+    // MARK: - Extended Palette
+    case softLavender = "softLavender"
+    case sky = "sky"
     case coral = "coral"
     case bluePink = "bluePink"
     case oceanBlue = "oceanBlue"
@@ -26,12 +30,19 @@ enum HabitIconColor: String, CaseIterable, Codable {
     case cloudBurst = "cloudBurst"
     case candy = "candy"
     
+    // MARK: - Special Cases
+    case colorPicker = "colorPicker" // Custom user-defined color
+    
+    /// Custom color set by user through color picker
     static var customColor: Color = Color(uiColor: UIColor { traitCollection in
         traitCollection.userInterfaceStyle == .dark
         ? #colorLiteral(red: 0.1882352941, green: 0.7843137255, blue: 0.6705882353, alpha: 1)
         : #colorLiteral(red: 0.0, green: 0.6431372549, blue: 0.5490196078, alpha: 1)
     })
     
+    // MARK: - Adaptive Color (automatically switches based on color scheme)
+    
+    /// Primary color that adapts to current color scheme
     var color: Color {
         switch self {
         case .primary:
@@ -110,6 +121,8 @@ enum HabitIconColor: String, CaseIterable, Codable {
             })
         case .colorPicker:
             return Self.customColor
+        
+        // Extended palette colors (keeping original implementation)
         case .coral:
             return Color(uiColor: UIColor { traitCollection in
                 traitCollection.userInterfaceStyle == .dark
@@ -174,9 +187,11 @@ enum HabitIconColor: String, CaseIterable, Codable {
     }
 }
 
+// MARK: - Additional Color Variations (for gradient effects)
 
 extension HabitIconColor {
-    // MARK: - ✅ Dark Colors
+    
+    /// Darker variant of the color (used in gradients and special effects)
     var darkColor: Color {
         switch self {
         case .primary:
@@ -207,6 +222,8 @@ extension HabitIconColor {
             return Color(#colorLiteral(red: 0.15, green: 0.2, blue: 0.45, alpha: 1))
         case .colorPicker:
             return Self.customColor
+        
+        // Extended palette dark variants
         case .coral:
             return Color(#colorLiteral(red: 0.7098039216, green: 0.1215686275, blue: 0.1019607843, alpha: 1))
         case .bluePink:
@@ -230,7 +247,7 @@ extension HabitIconColor {
         }
     }
     
-    // MARK: - ✅ Light Colors
+    /// Lighter variant of the color (used in gradients and special effects)
     var lightColor: Color {
         switch self {
         case .primary:
@@ -261,6 +278,8 @@ extension HabitIconColor {
             return Color(#colorLiteral(red: 0.55, green: 0.6, blue: 0.9, alpha: 1))
         case .colorPicker:
             return Self.customColor
+        
+        // Extended palette light variants
         case .coral:
             return Color(#colorLiteral(red: 0.9764705882, green: 0.5568627451, blue: 0.9647058824, alpha: 1))
         case .bluePink:
@@ -284,7 +303,9 @@ extension HabitIconColor {
         }
     }
     
-    // MARK: - Adaptive Gradient
+    /// Creates adaptive gradient based on current color scheme
+    /// - Parameter colorScheme: Current color scheme (light/dark)
+    /// - Returns: LinearGradient that adapts to the color scheme
     func adaptiveGradient(for colorScheme: ColorScheme) -> LinearGradient {
         let topColor = colorScheme == .dark ? darkColor : lightColor
         let bottomColor = colorScheme == .dark ? lightColor : darkColor

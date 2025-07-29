@@ -1,6 +1,17 @@
+/*
+ * ConfettiSwiftUI
+ *
+ * Based on: https://github.com/simibac/ConfettiSwiftUI
+ * Original author: Simon Bachmann (@simibac)
+ *
+ * Adapted for Teymia Habit - minimal modifications for iOS 18+ compatibility
+ */
+
 import SwiftUI
 
-public enum ConfettiType:CaseIterable, Hashable {
+// MARK: - Confetti Types
+
+public enum ConfettiType: CaseIterable, Hashable {
     
     public enum Shape {
         case circle
@@ -15,7 +26,7 @@ public enum ConfettiType:CaseIterable, Hashable {
     case sfSymbol(symbolName: String)
     case image(String)
     
-    public var view:AnyView{
+    public var view: AnyView {
         switch self {
         case .shape(.square):
             return AnyView(Rectangle())
@@ -41,57 +52,58 @@ public enum ConfettiType:CaseIterable, Hashable {
     }
 }
 
-@available(iOS 14.0, macOS 11.0, watchOS 7, tvOS 14.0, *)
+// MARK: - Main Confetti Cannon
+
 public struct ConfettiCannon<T: Equatable>: View {
     @Binding var trigger: T
-    @StateObject private var confettiConfig:ConfettiConfig
+    @StateObject private var confettiConfig: ConfettiConfig
 
-    @State var animate:[Bool] = []
+    @State var animate: [Bool] = []
     @State var finishedAnimationCounter = 0
     @State var firstAppear = false
-    @State var error = ""
     
-    /// renders configurable confetti animation
+    /// Renders configurable confetti animation
     /// - Parameters:
-    ///   - trigger: on any change of this variable the animation is run
-    ///   - num: amount of confettis
-    ///   - colors: list of colors that is applied to the default shapes
-    ///   - confettiSize: size that confettis and emojis are scaled to
-    ///   - rainHeight: vertical distance that confettis pass
-    ///   - fadesOut: reduce opacity towards the end of the animation
-    ///   - opacity: maximum opacity that is reached during the animation
-    ///   - openingAngle: boundary that defines the opening angle in degrees
-    ///   - closingAngle: boundary that defines the closing angle in degrees
-    ///   - radius: explosion radius
-    ///   - repetitions: number of repetitions of the explosion
-    ///   - repetitionInterval: duration between the repetitions
-    ///   - hapticFeedback: play haptic feedback on explosion
-
-    public init(trigger:Binding<T>,
-         num:Int = 20,
-         confettis:[ConfettiType] = ConfettiType.allCases,
-         colors:[Color] = [.blue, .red, .green, .yellow, .pink, .purple, .orange],
-         confettiSize:CGFloat = 10.0,
-         rainHeight: CGFloat = 600.0,
-         fadesOut:Bool = true,
-         opacity:Double = 1.0,
-         openingAngle:Angle = .degrees(60),
-         closingAngle:Angle = .degrees(120),
-         radius:CGFloat = 300,
-         repetitions:Int = 1,
-         repetitionInterval:Double = 1.0,
-         hapticFeedback:Bool = true
+    ///   - trigger: Animation triggers when this value changes
+    ///   - num: Amount of confetti pieces
+    ///   - confettis: Types of confetti to display
+    ///   - colors: Colors applied to default shapes
+    ///   - confettiSize: Size that confetti pieces are scaled to
+    ///   - rainHeight: Vertical distance that confetti travels
+    ///   - fadesOut: Reduce opacity towards end of animation
+    ///   - opacity: Maximum opacity reached during animation
+    ///   - openingAngle: Opening angle boundary in degrees
+    ///   - closingAngle: Closing angle boundary in degrees
+    ///   - radius: Explosion radius
+    ///   - repetitions: Number of explosion repetitions
+    ///   - repetitionInterval: Duration between repetitions
+    ///   - hapticFeedback: Play haptic feedback on explosion
+    public init(
+        trigger: Binding<T>,
+        num: Int = 20,
+        confettis: [ConfettiType] = ConfettiType.allCases,
+        colors: [Color] = [.blue, .red, .green, .yellow, .pink, .purple, .orange],
+        confettiSize: CGFloat = 10.0,
+        rainHeight: CGFloat = 600.0,
+        fadesOut: Bool = true,
+        opacity: Double = 1.0,
+        openingAngle: Angle = .degrees(60),
+        closingAngle: Angle = .degrees(120),
+        radius: CGFloat = 300,
+        repetitions: Int = 1,
+        repetitionInterval: Double = 1.0,
+        hapticFeedback: Bool = true
     ) {
         self._trigger = trigger
         var shapes = [AnyView]()
         
-        for confetti in confettis{
-            for color in colors{
+        for confetti in confettis {
+            for color in colors {
                 switch confetti {
                 case .shape(_):
                     shapes.append(AnyView(confetti.view.foregroundColor(color).frame(width: confettiSize, height: confettiSize, alignment: .center)))
                 case .image(_):
-                    shapes.append(AnyView(confetti.view.frame(maxWidth:confettiSize, maxHeight: confettiSize)))
+                    shapes.append(AnyView(confetti.view.frame(maxWidth: confettiSize, maxHeight: confettiSize)))
                 default:
                     shapes.append(AnyView(confetti.view.foregroundColor(color).font(.system(size: confettiSize))))
                 }
@@ -116,33 +128,28 @@ public struct ConfettiCannon<T: Equatable>: View {
     }
 
     public var body: some View {
-        ZStack{
-            ForEach(finishedAnimationCounter..<animate.count, id:\.self){ i in
+        ZStack {
+            ForEach(finishedAnimationCounter..<animate.count, id: \.self) { i in
                 ConfettiContainer(
                     finishedAnimationCounter: $finishedAnimationCounter,
                     confettiConfig: confettiConfig
                 )
             }
         }
-        .onAppear(){
+        .onAppear {
             firstAppear = true
         }
         .onChange(of: trigger) { oldValue, newValue in
-            if firstAppear{
-                for i in 0..<confettiConfig.repetitions{
+            if firstAppear {
+                for i in 0..<confettiConfig.repetitions {
                     DispatchQueue.main.asyncAfter(deadline: .now() + confettiConfig.repetitionInterval * Double(i)) {
                         animate.append(false)
-#if canImport(UIKit) && !os(tvOS) && !os(visionOS)
+                        
+                        // Haptic feedback (simplified for iOS)
                         if confettiConfig.hapticFeedback {
                             let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
                             impactFeedback.impactOccurred()
                         }
-
-                        if confettiConfig.hapticFeedback {
-                            let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
-                            impactFeedback.impactOccurred()
-                        }
-#endif
                     }
                 }
             }
@@ -150,20 +157,21 @@ public struct ConfettiCannon<T: Equatable>: View {
     }
 }
 
-@available(iOS 14.0, macOS 11.0, watchOS 7, tvOS 14.0, *)
+// MARK: - Supporting Views
+
 struct ConfettiContainer: View {
-    @Binding var finishedAnimationCounter:Int
-    @StateObject var confettiConfig:ConfettiConfig
+    @Binding var finishedAnimationCounter: Int
+    @StateObject var confettiConfig: ConfettiConfig
     @State var firstAppear = true
 
-    var body: some View{
-        ZStack{
-            ForEach(0...confettiConfig.num-1, id:\.self){_ in
+    var body: some View {
+        ZStack {
+            ForEach(0...confettiConfig.num-1, id: \.self) { _ in
                 ConfettiView(confettiConfig: confettiConfig)
             }
         }
-        .onAppear(){
-            if firstAppear{
+        .onAppear {
+            if firstAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + confettiConfig.animationDuration) {
                     self.finishedAnimationCounter += 1
                 }
@@ -173,11 +181,10 @@ struct ConfettiContainer: View {
     }
 }
 
-@available(iOS 14.0, macOS 11.0, watchOS 7, tvOS 14.0, *)
-struct ConfettiView: View{
-    @State var location:CGPoint = CGPoint(x: 0, y: 0)
-    @State var opacity:Double = 0.0
-    @StateObject var confettiConfig:ConfettiConfig
+struct ConfettiView: View {
+    @State var location: CGPoint = CGPoint(x: 0, y: 0)
+    @State var opacity: Double = 0.0
+    @StateObject var confettiConfig: ConfettiConfig
     
     func getShape() -> AnyView {
         return confettiConfig.shapes.randomElement()!
@@ -188,7 +195,7 @@ struct ConfettiView: View{
     }
     
     func getSpinDirection() -> CGFloat {
-        let spinDirections:[CGFloat] = [-1.0, 1.0]
+        let spinDirections: [CGFloat] = [-1.0, 1.0]
         return spinDirections.randomElement()!
     }
     
@@ -209,21 +216,21 @@ struct ConfettiView: View{
     }
     
     func getDelayBeforeRainAnimation() -> TimeInterval {
-        confettiConfig.explosionAnimationDuration *  0.1
+        confettiConfig.explosionAnimationDuration * 0.1
     }
 
-    var body: some View{
-        ConfettiAnimationView(shape:getShape(), color:getColor(), spinDirX: getSpinDirection(), spinDirZ: getSpinDirection())
+    var body: some View {
+        ConfettiAnimationView(shape: getShape(), color: getColor(), spinDirX: getSpinDirection(), spinDirZ: getSpinDirection())
             .offset(x: location.x, y: location.y)
             .opacity(opacity)
-            .onAppear(){
+            .onAppear {
                 withAnimation(getAnimation()) {
                     opacity = confettiConfig.opacity
                     
-                    let randomAngle:CGFloat
-                    if confettiConfig.openingAngle.degrees <= confettiConfig.closingAngle.degrees{
+                    let randomAngle: CGFloat
+                    if confettiConfig.openingAngle.degrees <= confettiConfig.closingAngle.degrees {
                         randomAngle = CGFloat.random(in: CGFloat(confettiConfig.openingAngle.degrees)...CGFloat(confettiConfig.closingAngle.degrees))
-                    }else{
+                    } else {
                         randomAngle = CGFloat.random(in: CGFloat(confettiConfig.openingAngle.degrees)...CGFloat(confettiConfig.closingAngle.degrees + 360)).truncatingRemainder(dividingBy: 360)
                     }
                     
@@ -245,7 +252,6 @@ struct ConfettiView: View{
     func deg2rad(_ number: CGFloat) -> CGFloat {
         return number * CGFloat.pi / 180
     }
-    
 }
 
 struct ConfettiAnimationView: View {
@@ -254,32 +260,49 @@ struct ConfettiAnimationView: View {
     @State var spinDirX: CGFloat
     @State var spinDirZ: CGFloat
     @State var firstAppear = true
-
     
     @State var move = false
-    @State var xSpeed:Double = Double.random(in: 0.501...2.201)
-
+    @State var xSpeed: Double = Double.random(in: 0.501...2.201)
     @State var zSpeed = Double.random(in: 0.501...2.201)
     @State var anchor = CGFloat.random(in: 0...1).rounded()
     
     var body: some View {
         shape
             .foregroundColor(color)
-            .rotation3DEffect(.degrees(move ? 360:0), axis: (x: spinDirX, y: 0, z: 0))
+            .rotation3DEffect(.degrees(move ? 360 : 0), axis: (x: spinDirX, y: 0, z: 0))
             .animation(Animation.linear(duration: xSpeed).repeatCount(10, autoreverses: false), value: move)
-            .rotation3DEffect(.degrees(move ? 360:0), axis: (x: 0, y: 0, z: spinDirZ), anchor: UnitPoint(x: anchor, y: anchor))
+            .rotation3DEffect(.degrees(move ? 360 : 0), axis: (x: 0, y: 0, z: spinDirZ), anchor: UnitPoint(x: anchor, y: anchor))
             .animation(Animation.linear(duration: zSpeed).repeatForever(autoreverses: false), value: move)
-            .onAppear() {
+            .onAppear {
                 if firstAppear {
                     move = true
-                    firstAppear = true
+                    firstAppear = false
                 }
             }
     }
 }
 
+// MARK: - Configuration Class
+
 class ConfettiConfig: ObservableObject {
-    internal init(num: Int, shapes: [AnyView], colors: [Color], confettiSize: CGFloat, rainHeight: CGFloat, fadesOut: Bool, opacity: Double, openingAngle:Angle, closingAngle:Angle, radius:CGFloat, repetitions:Int, repetitionInterval:Double, hapticFeedback:Bool) {
+    let num: Int
+    let shapes: [AnyView]
+    let colors: [Color]
+    let confettiSize: CGFloat
+    let rainHeight: CGFloat
+    let fadesOut: Bool
+    let opacity: Double
+    let openingAngle: Angle
+    let closingAngle: Angle
+    let radius: CGFloat
+    let repetitions: Int
+    let repetitionInterval: Double
+    let hapticFeedback: Bool
+    
+    let explosionAnimationDuration: Double
+    let rainAnimationDuration: Double
+    
+    init(num: Int, shapes: [AnyView], colors: [Color], confettiSize: CGFloat, rainHeight: CGFloat, fadesOut: Bool, opacity: Double, openingAngle: Angle, closingAngle: Angle, radius: CGFloat, repetitions: Int, repetitionInterval: Double, hapticFeedback: Bool) {
         self.num = num
         self.shapes = shapes
         self.colors = colors
@@ -297,73 +320,34 @@ class ConfettiConfig: ObservableObject {
         self.hapticFeedback = hapticFeedback
     }
     
-    @Published var num:Int
-    @Published var shapes:[AnyView]
-    @Published var colors:[Color]
-    @Published var confettiSize:CGFloat
-    @Published var rainHeight:CGFloat
-    @Published var fadesOut:Bool
-    @Published var opacity:Double
-    @Published var openingAngle:Angle
-    @Published var closingAngle:Angle
-    @Published var radius:CGFloat
-    @Published var repetitions:Int
-    @Published var repetitionInterval:Double
-    @Published var explosionAnimationDuration:Double
-    @Published var rainAnimationDuration:Double
-    @Published var hapticFeedback:Bool
-
-    
-    var animationDuration:Double{
+    var animationDuration: Double {
         return explosionAnimationDuration + rainAnimationDuration
-    }
-    
-    var openingAngleRad:CGFloat{
-        return CGFloat(openingAngle.degrees) * 180 / .pi
-    }
-    
-    var closingAngleRad:CGFloat{
-        return CGFloat(closingAngle.degrees) * 180 / .pi
     }
 }
 
+// MARK: - View Extension
+
 public extension View {
-    
-    /// renders configurable confetti animation
+    /// Renders configurable confetti animation
     ///
-    /// - Usage:
-    ///
-    /// ```
-    ///    import SwiftUI
-    ///
-    ///    struct ContentView: View {
-    ///
-    ///        @State private var counter: Int = 0
-    ///
-    ///        var body: some View {
-    ///            Button("Wow") {
-    ///                counter += 1
-    ///            }
-    ///            .confettiCannon(counter: $counter)
-    ///        }
-    ///    }
-    /// ```
+    /// Based on ConfettiSwiftUI by Simon Bachmann
+    /// Source: https://github.com/simibac/ConfettiSwiftUI
     ///
     /// - Parameters:
-    ///   - counter: on any change of this variable the animation is run
-    ///   - num: amount of confettis
-    ///   - colors: list of colors that is applied to the default shapes
-    ///   - confettiSize: size that confettis and emojis are scaled to
-    ///   - rainHeight: vertical distance that confettis pass
-    ///   - fadesOut: reduce opacity towards the end of the animation
-    ///   - opacity: maximum opacity that is reached during the animation
-    ///   - openingAngle: boundary that defines the opening angle in degrees
-    ///   - closingAngle: boundary that defines the closing angle in degrees
-    ///   - radius: explosion radius
-    ///   - repetitions: number of repetitions of the explosion
-    ///   - repetitionInterval: duration between the repetitions
-    ///   - hapticFeedback: enable or disable haptic feedback
-    ///
+    ///   - trigger: Animation triggers when this value changes
+    ///   - num: Amount of confetti pieces
+    ///   - confettis: Types of confetti to display
+    ///   - colors: Colors applied to default shapes
+    ///   - confettiSize: Size that confetti pieces are scaled to
+    ///   - rainHeight: Vertical distance that confetti travels
+    ///   - fadesOut: Reduce opacity towards end of animation
+    ///   - opacity: Maximum opacity reached during animation
+    ///   - openingAngle: Opening angle boundary in degrees
+    ///   - closingAngle: Closing angle boundary in degrees
+    ///   - radius: Explosion radius
+    ///   - repetitions: Number of explosion repetitions
+    ///   - repetitionInterval: Duration between repetitions
+    ///   - hapticFeedback: Play haptic feedback on explosion
     @ViewBuilder func confettiCannon<T>(
         trigger: Binding<T>,
         num: Int = 20,
@@ -378,7 +362,7 @@ public extension View {
         radius: CGFloat = 300,
         repetitions: Int = 1,
         repetitionInterval: Double = 1.0,
-                hapticFeedback: Bool = true
+        hapticFeedback: Bool = true
     ) -> some View where T: Equatable {
         ZStack {
             self.layoutPriority(1)
@@ -402,6 +386,8 @@ public extension View {
     }
 }
 
+// MARK: - Custom Shapes
+
 public struct SlimRectangle: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -415,12 +401,6 @@ public struct SlimRectangle: Shape {
     }
 }
 
-struct SlimRectangle_Previews: PreviewProvider {
-    static var previews: some View {
-        SlimRectangle()
-    }
-}
-
 public struct Triangle: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -431,12 +411,6 @@ public struct Triangle: Shape {
         path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
 
         return path
-    }
-}
-
-struct Triangle_Previews: PreviewProvider {
-    static var previews: some View {
-        Triangle()
     }
 }
 
@@ -457,11 +431,5 @@ public struct RoundedCross: Shape {
         path.addQuadCurve(to: CGPoint(x: 2*rect.minX/3, y: 2*rect.maxY/3), control: CGPoint(x: rect.maxX/3, y: 2*rect.maxY/3))
 
         return path
-    }
-}
-
-struct RoundedCross_Previews: PreviewProvider {
-    static var previews: some View {
-        RoundedCross()
     }
 }
