@@ -52,6 +52,10 @@ final class PrivacyManager {
     var shouldShowPrivacySetup: Bool = false
     var authenticationError: String?
     
+    // ✅ ИСПРАВЛЕНИЕ: Отслеживание состояния приложения
+    private var lastActiveTime: Date = Date()
+    private var hasJustLaunched: Bool = true // Для отличия первого запуска от возврата из фона
+    
     // Authentication type
     var authenticationType: AuthenticationType {
         if PinManager.shared.isPinEnabled && privacySettings.biometricEnabled {
@@ -119,48 +123,51 @@ final class PrivacyManager {
     static let shared = PrivacyManager()
     
     private init() {
-        // Initial setup - app locking handled by checkAndLockOnAppStart()
+        // Initial setup handled by checkAndLockOnAppStart()
     }
     
     // MARK: - Setup & State Management
     
     func checkAndLockOnAppStart() {
         guard isPrivacyEnabled else {
-            print("🔐 Privacy not enabled, no lock on app start")
+            print("🔐 Privacy not enabled, app starts unlocked")
             return
         }
         
         let duration = autoLockDuration
-        print("🔐 App start - checking lock with duration: \(duration.displayName)")
+        print("🔐 checkAndLockOnAppStart - duration: \(duration.displayName)")
         
-        // ✅ ИСПРАВЛЕНИЕ: Проверяем нужно ли блокировать на старте
-        if duration == .immediate {
-            // Immediate - всегда блокируем при запуске
-            print("🔐 Immediate mode - locking on app start")
-            isAppLocked = true
-        } else {
-            // Другие режимы - проверяем время
-            let now = Date()
-            let lastTime = lastActiveTime
-            let timeInterval = now.timeIntervalSince(lastTime)
-            let requiredInterval = TimeInterval(duration.rawValue)
+        if hasJustLaunched {
+            // ✅ При первом запуске приложения
+            hasJustLaunched = false
             
-            print("🔐 App start time check: \(Int(timeInterval))s elapsed, need \(Int(requiredInterval))s")
-            print("🔐 Last active: \(lastTime)")
-            print("🔐 Current time: \(now)")
-            
-            if timeInterval >= requiredInterval {
-                print("🔐 ✅ Locking on app start - enough time elapsed")
+            if duration == .immediate {
+                // Immediate - всегда блокируем при запуске
+                print("🔐 First launch with immediate lock - locking app")
                 isAppLocked = true
             } else {
-                print("🔐 ❌ Not locking on app start - not enough time elapsed")
-                isAppLocked = false
+                // Другие режимы - проверяем время последней активности
+                let now = Date()
+                let lastTime = getLastActiveTime()
+                let timeInterval = now.timeIntervalSince(lastTime)
+                let requiredInterval = TimeInterval(duration.rawValue)
+                
+                let shouldLock = timeInterval >= requiredInterval
+                print("🔐 First launch - time since last active: \(timeInterval)s, required: \(requiredInterval)s, should lock: \(shouldLock)")
+                
+                isAppLocked = shouldLock
             }
+        } else {
+            // ✅ При возврате из фона - только проверяем время
+            checkAutoLockStatus()
         }
+        
+        updateLastActiveTime()
     }
     
     func lockApp() {
         guard isPrivacyEnabled else { return }
+        print("🔐 Manually locking app")
         isAppLocked = true
         authenticationError = nil
     }
@@ -168,12 +175,10 @@ final class PrivacyManager {
     // MARK: - Authentication
     func authenticate() async {
         guard isPrivacyEnabled else {
-            print("🔐 Privacy not enabled, skipping authentication")
             return
         }
         
-        print("🔐 Starting authentication with type: \(authenticationType)")
-        print("🔐 Current lock state: \(isAppLocked)")
+        print("🔐 Starting authentication - type: \(authenticationType)")
         
         switch authenticationType {
         case .systemAuth:
@@ -191,19 +196,19 @@ final class PrivacyManager {
         do {
             let success = try await authenticateUserWithSystem()
             await MainActor.run {
-                print("🔐 System authentication result: \(success)")
                 if success {
-                    print("✅ System authentication successful - unlocking app")
+                    print("🔐 System authentication successful")
                     isAppLocked = false
                     authenticationError = nil
+                    updateLastActiveTime()
                 } else {
-                    print("❌ System authentication failed")
+                    print("🔐 System authentication failed")
                     authenticationError = "authentication_failed".localized
                 }
             }
         } catch {
-            print("❌ System authentication error: \(error)")
             await MainActor.run {
+                print("🔐 System authentication error: \(error)")
                 authenticationError = error.localizedDescription
             }
         }
@@ -214,36 +219,22 @@ final class PrivacyManager {
         do {
             let success = try await authenticateUserWithBiometrics()
             await MainActor.run {
-                print("🔐 Biometric authentication result: \(success)")
                 if success {
-                    print("✅ Biometric authentication successful - unlocking app")
+                    print("🔐 Biometric authentication successful")
                     isAppLocked = false
                     authenticationError = nil
+                    updateLastActiveTime()
                 } else {
-                    print("❌ Biometric authentication failed - fallback to PIN")
+                    print("🔐 Biometric authentication failed - user can try PIN")
                     // Don't set error, just let PIN input handle it
                 }
             }
         } catch {
-            print("❌ Biometric authentication error: \(error) - fallback to PIN")
             await MainActor.run {
+                print("🔐 Biometric authentication error: \(error)")
                 // Don't set authenticationError, let user try PIN
             }
         }
-    }
-    
-    // PIN authentication
-    func authenticateWithPin(_ pin: String) -> Bool {
-        let success = PinManager.shared.validatePin(pin)
-        if success {
-            print("✅ PIN authentication successful - unlocking app")
-            isAppLocked = false
-            authenticationError = nil
-        } else {
-            print("❌ PIN authentication failed")
-            authenticationError = "Неверный код-пароль"
-        }
-        return success
     }
     
     private func authenticateUserWithSystem() async throws -> Bool {
@@ -276,6 +267,7 @@ final class PrivacyManager {
             await MainActor.run {
                 isPrivacyEnabled = true
                 isAppLocked = false
+                updateLastActiveTime()
             }
             return true
         }
@@ -297,6 +289,7 @@ final class PrivacyManager {
                 await MainActor.run {
                     isPrivacyEnabled = true
                     isAppLocked = false
+                    updateLastActiveTime()
                 }
                 return true
             }
@@ -351,12 +344,84 @@ final class PrivacyManager {
     // MARK: - PIN Management
     func enableBiometricsForPin() {
         privacySettings.biometricEnabled = true
-        print("🔐 Biometrics enabled for PIN authentication")
     }
     
     func disableBiometricsForPin() {
         privacySettings.biometricEnabled = false
-        print("🔐 Biometrics disabled for PIN authentication")
+    }
+    
+    // MARK: - Auto-Lock Support
+    private var autoLockDuration: AutoLockDuration {
+        let rawValue = UserDefaults.standard.integer(forKey: "autoLockDuration")
+        return AutoLockDuration(rawValue: rawValue) ?? .immediate
+    }
+    
+    private func getLastActiveTime() -> Date {
+        UserDefaults.standard.object(forKey: "lastActiveTime") as? Date ?? Date()
+    }
+    
+    func updateLastActiveTime() {
+        let now = Date()
+        UserDefaults.standard.set(now, forKey: "lastActiveTime")
+        print("🔐 Updated last active time: \(now)")
+    }
+    
+    func checkAutoLockStatus() {
+        guard isPrivacyEnabled else {
+            print("🔐 Privacy not enabled, skipping auto-lock check")
+            return
+        }
+        
+        let duration = autoLockDuration
+        print("🔐 Checking auto-lock status - duration: \(duration.displayName)")
+        
+        guard duration != .immediate else {
+            print("🔐 Immediate lock setting - no time check needed")
+            return
+        }
+        
+        let now = Date()
+        let lastTime = getLastActiveTime()
+        let timeInterval = now.timeIntervalSince(lastTime)
+        let requiredInterval = TimeInterval(duration.rawValue)
+        let shouldLock = timeInterval >= requiredInterval
+        
+        print("🔐 Time since last active: \(timeInterval)s, required: \(requiredInterval)s, should lock: \(shouldLock)")
+        
+        if shouldLock && !isAppLocked {
+            print("🔐 Auto-locking app due to timeout")
+            lockApp()
+        }
+    }
+    
+    func handleAppWillResignActive() {
+        updateLastActiveTime()
+        
+        let duration = autoLockDuration
+        print("🔐 App will resign active - duration: \(duration.displayName)")
+        
+        if duration == .immediate {
+            print("🔐 Immediate lock on resign active")
+            lockApp()
+        } else {
+            print("🔐 Delayed lock - will check on become active")
+        }
+    }
+    
+    func handleAppDidBecomeActive() {
+        print("🔐 handleAppDidBecomeActive called")
+        print("🔐 isPrivacyEnabled: \(isPrivacyEnabled)")
+        print("🔐 Current isAppLocked: \(isAppLocked)")
+        
+        hasJustLaunched = false // После первого возврата из фона
+        checkAutoLockStatus()
+        
+        print("🔐 After checkAutoLockStatus: \(isAppLocked)")
+        
+        // Обновляем время только если не заблокированы
+        if !isAppLocked {
+            updateLastActiveTime()
+        }
     }
 }
 
@@ -370,91 +435,5 @@ extension EnvironmentValues {
     var privacyManager: PrivacyManager {
         get { self[PrivacyManagerKey.self] }
         set { self[PrivacyManagerKey.self] = newValue }
-    }
-}
-
-// MARK: - Privacy Manager (дополнения для Auto-Lock)
-extension PrivacyManager {
-    
-    // MARK: - Auto-Lock Support
-    private var autoLockDuration: AutoLockDuration {
-        let rawValue = UserDefaults.standard.integer(forKey: "autoLockDuration")
-        return AutoLockDuration(rawValue: rawValue) ?? .immediate
-    }
-    
-    private var lastActiveTime: Date {
-        get {
-            let time = UserDefaults.standard.object(forKey: "lastActiveTime") as? Date ?? Date()
-            print("🔐 Getting lastActiveTime: \(time)")
-            return time
-        }
-        set {
-            print("🔐 Setting lastActiveTime: \(newValue)")
-            UserDefaults.standard.set(newValue, forKey: "lastActiveTime")
-        }
-    }
-    
-    func updateLastActiveTime() {
-        lastActiveTime = Date()
-        print("🔐 Updated lastActiveTime to now")
-    }
-    
-    func checkAutoLockStatus() {
-        guard isPrivacyEnabled else {
-            print("🔐 Privacy not enabled, skipping auto-lock check")
-            return
-        }
-        
-        let duration = autoLockDuration
-        print("🔐 Checking auto-lock with duration: \(duration.displayName) (\(duration.rawValue)s)")
-        
-        // ✅ ИСПРАВЛЕНИЕ: Immediate не должен блокировать при проверке
-        guard duration != .immediate else {
-            print("🔐 Immediate mode - no auto-lock check needed")
-            return
-        }
-        
-        let now = Date()
-        let lastTime = lastActiveTime
-        let timeInterval = now.timeIntervalSince(lastTime)
-        let requiredInterval = TimeInterval(duration.rawValue)
-        
-        print("🔐 Time check: \(Int(timeInterval))s elapsed, need \(Int(requiredInterval))s")
-        print("🔐 Last active: \(lastTime)")
-        print("🔐 Current time: \(now)")
-        print("🔐 Currently locked: \(isAppLocked)")
-        
-        let shouldLock = timeInterval >= requiredInterval
-        
-        if shouldLock && !isAppLocked {
-            print("🔐 ✅ Auto-lock triggered after \(duration.displayName)")
-            lockApp()
-        } else if shouldLock {
-            print("🔐 ⚠️ Should lock but already locked")
-        } else {
-            print("🔐 ❌ Not enough time elapsed for auto-lock")
-        }
-    }
-    
-    func handleAppWillResignActive() {
-        print("🔐 handleAppWillResignActive called")
-        updateLastActiveTime()
-        
-        let duration = autoLockDuration
-        print("🔐 Current auto-lock setting: \(duration.displayName)")
-        
-        // ✅ ИСПРАВЛЕНИЕ: Immediate блокирует только здесь
-        if duration == .immediate {
-            print("🔐 ✅ Immediate lock triggered on resign active")
-            lockApp()
-        } else {
-            print("🔐 ❌ Non-immediate mode, not locking on resign")
-        }
-    }
-    
-    func handleAppDidBecomeActive() {
-        print("🔐 handleAppDidBecomeActive called")
-        // ✅ ИСПРАВЛЕНИЕ: Immediate НЕ проверяется здесь
-        checkAutoLockStatus()
     }
 }

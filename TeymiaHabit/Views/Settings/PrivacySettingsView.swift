@@ -6,11 +6,7 @@ struct PrivacySettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.globalPin) private var globalPin
     
-    @State private var isSettingUpPrivacy = false
-    @State private var showingDisableConfirmation = false
     @State private var pinAction: PinAction = .setup
-    
-    // PIN setup flow states
     @State private var isAwaitingConfirmation = false
     @State private var firstPin = ""
     
@@ -18,20 +14,13 @@ struct PrivacySettingsView: View {
         case setup
         case change
         case verify
+        case disable
     }
     
     var body: some View {
         settingsContent
             .navigationTitle("passcode_faceid".localized)
             .navigationBarTitleDisplayMode(.inline)
-            .alert("Отключить код-пароль?", isPresented: $showingDisableConfirmation) {
-                Button("Отключить", role: .destructive) {
-                    disableProtection()
-                }
-                Button("Отмена", role: .cancel) { }
-            } message: {
-                Text("Это отключит защиту приложения. Вы сможете включить её снова в любое время.")
-            }
     }
     
     // MARK: - Settings Content
@@ -46,10 +35,11 @@ struct PrivacySettingsView: View {
                     Image("3d_shield_green")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 150, height: 125)
+                        .frame(width: 150, height: 150)
                     
                     Spacer()
                 }
+                .padding(.top, -20)
             }
             .listRowBackground(Color.clear)
             .listSectionSeparator(.hidden)
@@ -62,9 +52,9 @@ struct PrivacySettingsView: View {
                         startPinSetup()
                     } label: {
                         Label {
-                            Text("Turn Passcode On")
+                            Text("turn_passcode_on")
                                 .font(.body)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color(UIColor.label))
                         } icon: {
                             Image(systemName: "checkmark.shield")
                                 .foregroundStyle(
@@ -86,9 +76,9 @@ struct PrivacySettingsView: View {
                         startPinChange()
                     } label: {
                         Label {
-                            Text("Change passcode")
+                            Text("change_passcode".localized)
                                 .font(.body)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color(UIColor.label))
                         } icon: {
                             Image(systemName: "key")
                                 .foregroundStyle(
@@ -107,10 +97,10 @@ struct PrivacySettingsView: View {
                     
                     // Disable PIN
                     Button {
-                        showingDisableConfirmation = true
+                        startPinDisable()
                     } label: {
                         Label {
-                            Text("Disable passcode")
+                            Text("disable_passcode".localized)
                                 .font(.body)
                                 .foregroundStyle(.red)
                         } icon: {
@@ -139,7 +129,7 @@ struct PrivacySettingsView: View {
                     } label: {
                         HStack {
                             Label {
-                                Text("Request Passcode")
+                                Text("request_passcode".localized)
                                     .font(.body)
                             } icon: {
                                 Image(systemName: "timer")
@@ -234,7 +224,7 @@ struct PrivacySettingsView: View {
         pinAction = .setup
         isAwaitingConfirmation = false
         
-        globalPin.showPin("Введите пароль", { pin in
+        globalPin.showPin("create_passcode".localized, { pin in
             handlePinComplete(pin)
         }, {
             globalPin.hidePin()
@@ -244,7 +234,17 @@ struct PrivacySettingsView: View {
     private func startPinChange() {
         pinAction = .verify
         
-        globalPin.showPin("Введите текущий пароль", { pin in
+        globalPin.showPin("enter_current_passcode".localized, { pin in
+            handlePinComplete(pin)
+        }, {
+            globalPin.hidePin()
+        })
+    }
+    
+    private func startPinDisable() {
+        pinAction = .disable
+        
+        globalPin.showPin("enter_passcode".localized, { pin in
             handlePinComplete(pin)
         }, {
             globalPin.hidePin()
@@ -257,7 +257,7 @@ struct PrivacySettingsView: View {
             if !isAwaitingConfirmation {
                 firstPin = pin
                 isAwaitingConfirmation = true
-                globalPin.showPin("Повторите пароль", { confirmPin in
+                globalPin.showPin("confirm_passcode".localized, { confirmPin in
                     handlePinComplete(confirmPin)
                 }, { globalPin.hidePin() })
             } else {
@@ -270,9 +270,8 @@ struct PrivacySettingsView: View {
                     triggerPinDotsShake()
                     isAwaitingConfirmation = false
                     firstPin = ""
-                    // Небольшая задержка чтобы shake успел отработать
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        globalPin.showPin("Введите пароль", { retryPin in
+                        globalPin.showPin("create_passcode".localized, { retryPin in
                             handlePinComplete(retryPin)
                         }, { globalPin.hidePin() })
                     }
@@ -283,7 +282,7 @@ struct PrivacySettingsView: View {
             if !isAwaitingConfirmation {
                 firstPin = pin
                 isAwaitingConfirmation = true
-                globalPin.showPin("Повторите пароль", { confirmPin in
+                globalPin.showPin("confirm_passcode".localized, { confirmPin in
                     handlePinComplete(confirmPin)
                 }, { globalPin.hidePin() })
             } else {
@@ -297,7 +296,7 @@ struct PrivacySettingsView: View {
                     isAwaitingConfirmation = false
                     firstPin = ""
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        globalPin.showPin("Введите новый пароль", { retryPin in
+                        globalPin.showPin("enter_new_passcode".localized, { retryPin in
                             handlePinComplete(retryPin)
                         }, { globalPin.hidePin() })
                     }
@@ -310,14 +309,29 @@ struct PrivacySettingsView: View {
                 pinAction = .change
                 isAwaitingConfirmation = false
                 firstPin = ""
-                globalPin.showPin("Введите новый пароль", { newPin in
+                globalPin.showPin("enter_new_passcode".localized, { newPin in
                     handlePinComplete(newPin)
                 }, { globalPin.hidePin() })
             } else {
                 HapticManager.shared.play(.error)
                 triggerPinDotsShake()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    globalPin.showPin("Введите текущий пароль", { retryPin in
+                    globalPin.showPin("enter_current_passcode".localized, { retryPin in
+                        handlePinComplete(retryPin)
+                    }, { globalPin.hidePin() })
+                }
+            }
+            
+        case .disable:
+            if PinManager.shared.validatePin(pin) {
+                HapticManager.shared.playSelection()
+                globalPin.hidePin()
+                disableProtection()
+            } else {
+                HapticManager.shared.play(.error)
+                triggerPinDotsShake()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    globalPin.showPin("enter_passcode".localized, { retryPin in
                         handlePinComplete(retryPin)
                     }, { globalPin.hidePin() })
                 }
@@ -329,19 +343,34 @@ struct PrivacySettingsView: View {
         Task {
             let _ = await privacyManager.setupPrivacy()
             await MainActor.run {
-                globalPin.hidePin()
+                if privacyManager.biometricType != .none && !privacyManager.isBiometricEnabled {
+                    showBiometricPromo()
+                } else {
+                    globalPin.hidePin()
+                }
             }
         }
     }
+
+    private func showBiometricPromo() {
+        globalPin.showBiometricPromo(
+            privacyManager.biometricType,
+            privacyManager.biometricDisplayName,
+            {
+                privacyManager.enableBiometricsForPin()
+                globalPin.hidePin()
+                globalPin.hideBiometricPromo()
+            },
+            {
+                globalPin.hidePin()
+                globalPin.hideBiometricPromo()
+            }
+        )
+    }
     
     private func disableProtection() {
-        isSettingUpPrivacy = true
-        
         Task {
             _ = await privacyManager.disablePrivacy()
-            await MainActor.run {
-                isSettingUpPrivacy = false
-            }
         }
     }
 }
@@ -378,7 +407,7 @@ struct RequestPasscodeSettingsView: View {
                 }
             }
         }
-        .navigationTitle("Request Passcode")
+        .navigationTitle("request_passcode".localized)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -395,20 +424,19 @@ enum AutoLockDuration: Int, CaseIterable {
     var displayName: String {
         switch self {
         case .immediate:
-            return "Immediate"
+            return "immediately".localized
         case .oneMinute:
-            return "1 minute"
+            return "1_minute".localized
         case .fiveMinutes:
-            return "5 minutes"
+            return "5_minutes".localized
         case .fifteenMinutes:
-            return "15 minutes"
+            return "15_minutes".localized
         case .thirtyMinutes:
-            return "30 minutes"
+            return "30_minutes".localized
         case .oneHour:
-            return "1 hour"
+            return "1_hour".localized
         }
     }
     
     static var `default`: AutoLockDuration { .immediate }
 }
-

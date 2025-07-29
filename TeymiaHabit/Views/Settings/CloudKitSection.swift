@@ -35,7 +35,7 @@ struct CloudKitSyncView: View {
                     Image("3d_cloud_progradient")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 150, height: 125)
+                        .frame(width: 150, height: 150)
                     
                     Spacer()
                 }

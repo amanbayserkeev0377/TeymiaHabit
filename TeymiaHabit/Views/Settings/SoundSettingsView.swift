@@ -8,6 +8,22 @@ struct SoundSettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                
+                Section {
+                    HStack {
+                        Spacer()
+                        
+                        Image("3d_speaker_red")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 150, height: 150)
+                        
+                        Spacer()
+                    }
+                }
+                .listRowBackground(Color.clear)
+                .listSectionSeparator(.hidden)
+                
                 // Sound Toggle Section
                 Section {
                     Toggle("completion_sounds".localized, isOn: Binding(

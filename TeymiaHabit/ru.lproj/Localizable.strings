@@ -131,14 +131,6 @@
 /* ===================== Settings: Language ===================== */
 "language" = "Язык";
 
-/* ===================== Settings: Archived Habits ===================== */
-"archive" = "Архивировать";
-"archived_habits" = "Архив";
-"unarchive" = "Разархивировать";
-"archived_habits_footer" = "Смахните влево для разархивирования или удаления";
-"archived_date_format" = "Архивировано %@";
-"archived_habits_footer" = "Смахните влево, чтобы восстановить из архива или удалить";
-
 /* ===================== Settings: iCloud Sync ===================== */
 "icloud_sync" = "iCloud синхронизация";
 "icloud_sync_status" = "Статус синхронизации";
@@ -168,6 +160,38 @@
 "icloud_today_at" = "Сегодня в %@";
 "icloud_yesterday_at" = "Вчера в %@";
 "icloud_database_error" = "Ошибка доступа к iCloud";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Архивировать";
+"archived_habits" = "Архив";
+"unarchive" = "Разархивировать";
+"archived_habits_footer" = "Смахните влево для разархивирования или удаления";
+"archived_date_format" = "Архивировано %@";
+"archived_habits_footer" = "Смахните влево, чтобы восстановить из архива или удалить";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+
+"passcode_faceid" = "Пароль и Face ID";
+"enter_passcode" = "Введите пароль";
+"create_passcode" = "Создайте пароль";
+"enter_current_passcode" = "Введите текущий пароль";
+"confirm_passcode" = "Подтвердите пароль";
+"enter_new_passcode" = "Введите новый пароль";
+"request_passcode" = "Запрос пароля";
+"disable_passcode" = "Выключить пароль";
+"change_passcode" = "Сменить пароль";
+"turn_passcode_on" = "Включить пароль";
+"immediately" = "Сразу";
+"1_minute" = "1 минута";
+"5_minutes" = "5 минут";
+"15_minutes" = "15 минут";
+"30_minutes" = "30 минут";
+"1_hour" = "1 час";
+"not_now" = "Не сейчас";
+"enable" = "Включить";
+"biometric_unlock_description" = "Используйте %@ для быстрой и безопасной разблокировки приложения без ввода пароля.";
+"on" = "Вкл";
+"off" = "Выкл";
 
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Уведомления";

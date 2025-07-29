@@ -131,14 +131,6 @@
 /* ===================== Settings: Language ===================== */
 "language" = "Тил";
 
-/* ===================== Settings: Archived Habits ===================== */
-"archive" = "Архивдөө";
-"archived_habits" = "Архивделген адаттар";
-"unarchive" = "Архивден чыгаруу";
-"archived_habits_footer" = "Солго сүрүп, архивден чыгарыңыз же жойуңуз";
-"archived_date_format" = "Архивделди %@";
-"archived_habits_footer" = "Солго сүрүңүз, архивден чыгаруу же өчүрүү үчүн";
-
 /* ===================== Settings: iCloud Sync ===================== */
 "icloud_sync" = "iCloud байланыш";
 "icloud_sync_status" = "Синхрондоштуруу абалы";
@@ -170,6 +162,37 @@
 "icloud_yesterday_at" = "Кечээ %@";
 "icloud_database_error" = "iCloud маалымат базасына кирүү катасы";
 
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Архивдөө";
+"archived_habits" = "Архивделген адаттар";
+"unarchive" = "Архивден чыгаруу";
+"archived_habits_footer" = "Солго сүрүп, архивден чыгарыңыз же жойуңуз";
+"archived_date_format" = "Архивделди %@";
+"archived_habits_footer" = "Солго сүрүңүз, архивден чыгаруу же өчүрүү үчүн";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+
+"passcode_faceid" = "Сырсөз жана Face ID";
+"enter_passcode" = "Сырсөздү киргизиңиз";
+"create_passcode" = "Сырсөз түзүңүз";
+"enter_current_passcode" = "Учурдагы сырсөздү киргизиңиз";
+"confirm_passcode" = "Сырсөздү ырастаңыз";
+"enter_new_passcode" = "Жаңы сырсөздү киргизиңиз";
+"request_passcode" = "Сырсөз суроосу";
+"disable_passcode" = "Сырсөздү өчүрүү";
+"change_passcode" = "Сырсөздү өзгөртүү";
+"turn_passcode_on" = "Сырсөздү күйгүзүү";
+"immediately" = "Дароо";
+"1_minute" = "1 мүнөт";
+"5_minutes" = "5 мүнөт";
+"15_minutes" = "15 мүнөт";
+"30_minutes" = "30 мүнөт";
+"1_hour" = "1 саат";
+"not_now" = "Азыр эмес";
+"enable" = "Күйгүзүү";
+"biometric_unlock_description" = "Колдонмону сырсөз киргизбестен тез жана коопсуз ачуу үчүн %@ колдонуңуз.";
+"on" = "Күйүк";
+"off" = "Өчүк";
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Эскертмелер";
 "haptics" = "Вибрациялуу жооп";

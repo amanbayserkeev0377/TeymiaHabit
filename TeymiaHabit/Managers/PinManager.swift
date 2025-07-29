@@ -24,7 +24,6 @@ final class PinManager {
         let hashedPin = hashPin(pin)
         UserDefaults.standard.set(hashedPin, forKey: pinKey)
         isPinEnabled = true
-        print("🔐 PIN set successfully")
     }
     
     func validatePin(_ pin: String) -> Bool {
@@ -34,14 +33,12 @@ final class PinManager {
         
         let enteredHash = hashPin(pin)
         let isValid = enteredHash == storedHash
-        print("🔐 PIN validation: \(isValid ? "SUCCESS" : "FAILED")")
         return isValid
     }
     
     func removePin() {
         UserDefaults.standard.removeObject(forKey: pinKey)
         isPinEnabled = false
-        print("🔐 PIN removed")
     }
     
     private func hashPin(_ pin: String) -> String {
@@ -51,7 +48,7 @@ final class PinManager {
     }
 }
 
-// MARK: - Упрощенный PIN Auth Manager (без ошибок)
+// MARK: - Упрощенный PIN Auth Manager
 @Observable
 final class PinAuthManager {
     var attemptCount: Int = 0
@@ -64,7 +61,7 @@ final class PinAuthManager {
             return true
         } else {
             HapticManager.shared.play(.error)
-            onShake() // Вызываем shake анимацию
+            onShake()
             attemptCount += 1
             return false
         }

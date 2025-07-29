@@ -23,13 +23,12 @@ struct GlobalPinView: View {
                             .background(Circle().fill(.regularMaterial))
                     }
                 }
-                .padding(.top, 20)
-                .padding(.horizontal, 24)
+                .padding(.top, 40)
+                .padding(.horizontal, 40)
                 
                 Spacer()
                 
-                // ✅ Группа: Иконка + Текст + Точки (компактно)
-                VStack(spacing: 20) {
+                VStack(spacing: 30) {
                     Image("TeymiaHabitBlank")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -42,9 +41,8 @@ struct GlobalPinView: View {
                     PinDotsView(pin: pin)
                 }
                 
-                Spacer(minLength: 50) // Большой отступ до клавиатуры
+                Spacer(minLength: 50)
                 
-                // ✅ Клавиатура отдельно
                 CustomNumberPad(
                     onNumberTap: addDigit,
                     onDeleteTap: removeDigit,

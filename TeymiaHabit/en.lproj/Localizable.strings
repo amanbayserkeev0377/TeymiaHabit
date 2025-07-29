@@ -134,14 +134,6 @@
 /* ===================== Settings: Language ===================== */
 "language" = "Language";
 
-/* ===================== Settings: Archived Habits ===================== */
-"archive" = "Archive";
-"archived_habits" = "Archived Habits";
-"unarchive" = "Unarchive";
-"archived_habits_footer" = "Swipe left to unarchive or delete";
-"archived_date_format" = "Archived %@";
-
-
 /* ===================== Settings: iCloud Sync ===================== */
 "icloud_sync" = "iCloud Sync";
 "icloud_sync_status" = "Sync Status";
@@ -172,6 +164,39 @@
 "icloud_today_at" = "Today at %@";
 "icloud_yesterday_at" = "Yesterday at %@";
 "icloud_database_error" = "iCloud database access error";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Archive";
+"archived_habits" = "Archived Habits";
+"unarchive" = "Unarchive";
+"archived_habits_footer" = "Swipe left to unarchive or delete";
+"archived_date_format" = "Archived %@";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+
+"passcode_faceid" = "Passcode & Face ID";
+"enter_passcode" = "Enter Passcode";
+"create_passcode" = "Create Passcode";
+"enter_current_passcode" = "Enter Current Passcode";
+"confirm_passcode" = "Confirm Passcode";
+"enter_new_passcode" = "Enter New Passcode";
+"request_passcode" = "Request Passcode";
+"disable_passcode" = "Disable Passcode";
+"change_passcode" = "Change Passcode";
+"turn_passcode_on" = "Turn Passcode On";
+"passcode_faceid" = "Passcode & Face ID";
+"immediately" = "Immediate";
+"1_minute" = "1 minute";
+"5_minutes" = "5 minutes";
+"15_minutes" = "15 minutes";
+"30_minutes" = "30 minutes";
+"1_hour" = "1 hour";
+"not_now" = "Not Now";
+"enable" = "Enable";
+"biometric_unlock_description" = "Use %@ to unlock the app quickly and securely without entering your passcode.";
+"on" = "On";
+"off" = "Off";
+
 
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Notifications";

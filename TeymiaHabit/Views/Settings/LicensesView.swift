@@ -175,7 +175,10 @@ struct LicensesView: View {
                 LicenseRow(iconName: "3d_cat", attribution: "3d Cat by Vecteezy", url: "https://www.vecteezy.com/png/56252376-3d-cat-setting-is-isolated-on-transparent-background")
                 
                 LicenseRow(iconName: "3d_cookie", attribution: "3d Cookies by Vecteezy", url: "https://www.vecteezy.com/png/48719944-heap-of-cookies-and-chocolate-3d-clip")
-                LicenseRow(iconName: "3d_shield_green", attribution: "3d Shield Checkmark", url: "https://www.vecteezy.com/png/47248302-3d-shield-checkmark-icon-3d-shield-checkmark-symbol-3d-shield-checkmark-photo")
+                
+                LicenseRow(iconName: "3d_shield_green", attribution: "3d Shield Checkmark by Vecteezy", url: "https://www.vecteezy.com/png/47248302-3d-shield-checkmark-icon-3d-shield-checkmark-symbol-3d-shield-checkmark-photo")
+                
+                LicenseRow(iconName: "3d_speaker_red", attribution: "3d Speaker Red by Vecteezy", url: "https://www.vecteezy.com/png/57876772-vibrant-artistic-speaker-wire-red-and-black-strands-isolated-element-transparent-background-authentic")
             }
         }
         .navigationTitle("licenses".localized)

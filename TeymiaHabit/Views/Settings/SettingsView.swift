@@ -50,23 +50,7 @@ struct SettingsView: View {
                             }
                         )
                     }
-                    //Passcode & Face ID
-                    NavigationLink {
-                        PrivacySettingsView()
-                    } label: {
-                        HStack {
-                            Label(
-                                title: { Text("passcode_faceid".localized) },
-                                icon: {
-                                    Image(systemName: "faceid")
-                                        .withIOSSettingsIcon(lightColors: [
-                                            Color(#colorLiteral(red: 0.4666666667, green: 0.8666666667, blue: 0.4, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.1176470588, green: 0.5647058824, blue: 0.1176470588, alpha: 1))
-                                        ])
-                                }
-                            )
-                        }
-                    }
+                    
                     // Archived habits
                     NavigationLink {
                         ArchivedHabitsView()
@@ -84,6 +68,27 @@ struct SettingsView: View {
                             )
                             Spacer()
                             ArchivedHabitsCountBadge()
+                        }
+                    }
+                    
+                    //Passcode & Face ID
+                    NavigationLink {
+                        PrivacySettingsView()
+                    } label: {
+                        HStack {
+                            Label(
+                                title: { Text("passcode_faceid".localized) },
+                                icon: {
+                                    Image(systemName: "faceid")
+                                        .withIOSSettingsIcon(lightColors: [
+                                            Color(#colorLiteral(red: 0.4666666667, green: 0.8666666667, blue: 0.4, alpha: 1)),
+                                            Color(#colorLiteral(red: 0.1176470588, green: 0.5647058824, blue: 0.1176470588, alpha: 1))
+                                        ])
+                                }
+                            )
+                            Spacer()
+                            Text(privacyStatusText)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
@@ -142,6 +147,14 @@ struct SettingsView: View {
             .navigationTitle("settings".localized)
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
+        }
+    }
+    
+    private var privacyStatusText: String {
+        if PrivacyManager.shared.isPrivacyEnabled {
+            return "on".localized
+        } else {
+            return "off".localized
         }
     }
 }

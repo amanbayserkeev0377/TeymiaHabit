@@ -136,6 +136,8 @@ struct HomeView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openHabitFromDeeplink)) { notification in
+            print("🔗 HomeView received deeplink notification")
+            
             if let habit = notification.object as? Habit {
                 // ✅ Проверяем, не та ли же привычка уже открыта
                 if selectedHabit?.uuid == habit.uuid {
@@ -151,6 +153,10 @@ struct HomeView: View {
                     selectedHabit = habit
                 }
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .dismissAllSheets)) { _ in
+            print("🔄 Dismissing all sheets")
+            selectedHabit = nil
         }
         .sheet(item: $selectedHabit) { habit in
             NavigationStack {

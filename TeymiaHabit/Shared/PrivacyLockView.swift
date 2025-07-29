@@ -3,10 +3,12 @@ import LocalAuthentication
 
 struct PrivacyLockView: View {
     @Environment(\.privacyManager) private var privacyManager
+    @Environment(\.scenePhase) private var scenePhase
     @State private var isAuthenticating = false
     @State private var enteredPin = ""
     @State private var authManager = PinAuthManager()
-    @State private var pinDots = PinDotsView(pin: "")
+    @State private var hasTriedBiometricOnAppear = false
+    @State private var lastScenePhase: ScenePhase = .inactive // ✅ ДОБАВЛЕНО: Отслеживаем предыдущую фазу
     
     var body: some View {
         ZStack {
@@ -18,13 +20,13 @@ struct PrivacyLockView: View {
                 Spacer()
                 Spacer()
                 
-                VStack(spacing: 20) {
+                VStack(spacing: 30) {
                     Image("TeymiaHabitBlank")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 80, height: 80)
                     
-                    Text("Введите пароль")
+                    Text("enter_passcode".localized)
                         .font(.title3)
                         .foregroundStyle(.primary)
                     
@@ -33,7 +35,6 @@ struct PrivacyLockView: View {
                 
                 Spacer(minLength: 50)
                 
-                // ✅ Клавиатура отдельно
                 CustomNumberPad(
                     onNumberTap: addDigit,
                     onDeleteTap: removeDigit,
@@ -46,9 +47,46 @@ struct PrivacyLockView: View {
                 Spacer()
             }
         }
-        .onAppear { handleViewAppear() }
+        .onAppear {
+            handleViewAppear()
+        }
         .onChange(of: privacyManager.isAppLocked) { _, newValue in
-            if !newValue { resetAuthStates() }
+            if !newValue {
+                resetAuthStates()
+            }
+        }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            // ✅ ИСПРАВЛЕНИЕ 2: Улучшенная логика обработки scene phase
+            print("🔐 Scene phase changed: \(lastScenePhase) -> \(newPhase)")
+            
+            switch newPhase {
+            case .background:
+                hasTriedBiometricOnAppear = false
+                print("🔐 App went to background - resetting biometric flag")
+                
+            case .active:
+                // ✅ Запускаем биометрию только если:
+                // 1. Приложение заблокировано
+                // 2. Мы не аутентифицируемся сейчас
+                // 3. Не пробовали биометрию еще
+                // 4. Пришли из background или inactive (не из другого active состояния)
+                if privacyManager.isAppLocked &&
+                   !isAuthenticating &&
+                   !hasTriedBiometricOnAppear &&
+                   (lastScenePhase == .background || lastScenePhase == .inactive) {
+                    print("🔐 Scene became active from \(lastScenePhase) while locked - starting biometric")
+                    handleBiometricOnSceneActive()
+                }
+                
+            case .inactive:
+                hasTriedBiometricOnAppear = false 
+                print("🔐 App became inactive - resetting biometric flag")
+                
+            @unknown default:
+                break
+            }
+            
+            lastScenePhase = newPhase
         }
     }
     
@@ -61,15 +99,46 @@ struct PrivacyLockView: View {
     }
     
     private func handleViewAppear() {
+        print("🔐 PrivacyLockView appeared")
+        print("🔐 AuthType: \(privacyManager.authenticationType)")
+        print("🔐 CanUseBiometrics: \(privacyManager.canUseBiometrics)")
+        print("🔐 BiometricEnabled: \(privacyManager.isBiometricEnabled)")
+        print("🔐 hasTriedBiometricOnAppear: \(hasTriedBiometricOnAppear)")
+        
         resetAuthStates()
         
+        // ✅ При первом появлении всегда пробуем биометрию
         switch privacyManager.authenticationType {
         case .systemAuth:
+            print("🔐 Starting system auth")
             authenticateWithSystem()
         case .customPin:
+            print("🔐 Custom PIN only - no auto biometric")
             break
         case .both:
             if privacyManager.canUseBiometrics && privacyManager.isBiometricEnabled {
+                print("🔐 Starting biometric auth on appear")
+                hasTriedBiometricOnAppear = true
+                authenticateWithBiometrics()
+            } else {
+                print("🔐 Biometric not available - canUse: \(privacyManager.canUseBiometrics), enabled: \(privacyManager.isBiometricEnabled)")
+            }
+        }
+    }
+    
+    // ✅ ДОБАВЛЕНО: Отдельный метод для биометрии при смене scene phase
+    private func handleBiometricOnSceneActive() {
+        switch privacyManager.authenticationType {
+        case .systemAuth:
+            print("🔐 Starting system auth on scene active")
+            authenticateWithSystem()
+        case .customPin:
+            print("🔐 Custom PIN only - no biometric on scene active")
+            break
+        case .both:
+            if privacyManager.canUseBiometrics && privacyManager.isBiometricEnabled {
+                print("🔐 Starting biometric auth on scene active")
+                hasTriedBiometricOnAppear = true
                 authenticateWithBiometrics()
             }
         }
@@ -79,6 +148,7 @@ struct PrivacyLockView: View {
         isAuthenticating = false
         enteredPin = ""
         authManager.reset()
+        // ✅ НЕ сбрасываем hasTriedBiometricOnAppear здесь, только при фазах приложения
     }
     
     private func authenticateWithSystem() {
@@ -94,12 +164,18 @@ struct PrivacyLockView: View {
     }
     
     private func authenticateWithBiometrics() {
-        guard !isAuthenticating else { return }
+        guard !isAuthenticating else {
+            print("🔐 Already authenticating - skipping biometric request")
+            return
+        }
+        
+        print("🔐 Starting biometric authentication...")
         isAuthenticating = true
         
         Task {
             await privacyManager.authenticate()
             await MainActor.run {
+                print("🔐 Biometric authentication completed")
                 isAuthenticating = false
             }
         }
@@ -134,5 +210,14 @@ struct PrivacyLockView: View {
     private func removeDigit() {
         guard !enteredPin.isEmpty else { return }
         enteredPin = String(enteredPin.dropLast())
+    }
+}
+
+// ✅ ДОБАВЛЕНО: Функция для PinDotsView shake animation (если не существует)
+extension PrivacyLockView {
+    private func triggerPinDotsShake() {
+        // Implement shake animation for PIN dots
+        // This should trigger the shake animation in PinDotsView
+        HapticManager.shared.play(.error)
     }
 }
