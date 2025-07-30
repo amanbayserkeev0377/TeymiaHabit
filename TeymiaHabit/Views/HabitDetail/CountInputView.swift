@@ -20,7 +20,6 @@ struct CountInputView: View {
                 .font(.headline)
                 .foregroundStyle(.primary)
             
-            // Input field
             HStack {
                 TextField("".localized, text: $inputText)
                     .font(.system(size: 24, weight: .medium))
@@ -50,9 +49,7 @@ struct CountInputView: View {
             .animation(.easeInOut(duration: 0.2), value: isTextFieldFocused)
             .animation(.easeInOut(duration: 0.15), value: inputText.isEmpty)
             
-            // Buttons
             HStack(spacing: 12) {
-                // Cancel button
                 Button {
                     isPresented = false
                 } label: {
@@ -67,7 +64,6 @@ struct CountInputView: View {
                         )
                 }
                 
-                // Add button
                 Button {
                     guard let count = Int(inputText), count > 0 else { return }
                     onConfirm(count)

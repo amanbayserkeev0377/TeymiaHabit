@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ToggleColorModifier: ViewModifier {
+private struct ToggleColorModifier: ViewModifier {
     @ObservedObject private var colorManager = AppColorManager.shared
     @Environment(\.colorScheme) private var colorScheme
     

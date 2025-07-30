@@ -1,6 +1,8 @@
 import SwiftUI
 
-struct SettingsIconModifier: ViewModifier {
+// MARK: - Settings Icon Modifier
+
+private struct SettingsIconModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     
     let lightColors: [Color]
@@ -10,16 +12,14 @@ struct SettingsIconModifier: ViewModifier {
         content
             .foregroundStyle(
                 colorScheme == .dark ?
-                // ✅ ТЕМНАЯ тема: иконка цветная с единой логикой
                 LinearGradient(
                     colors: [
-                        lightColors.first ?? .blue,    // светлый вверх
-                        lightColors.last ?? .blue      // темный низ
+                        lightColors.first ?? .blue,
+                        lightColors.last ?? .blue
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 ) :
-                // ✅ СВЕТЛАЯ тема: иконка белая
                 LinearGradient(colors: [.white, .white], startPoint: .top, endPoint: .bottom)
             )
             .font(.system(size: fontSize, weight: .medium))
@@ -29,11 +29,9 @@ struct SettingsIconModifier: ViewModifier {
                     .fill(
                         LinearGradient(
                             colors: colorScheme == .dark ? [
-                                // ✅ ТЕМНАЯ тема: серый фон с единой логикой (темный → светлый)
                                 Color(#colorLiteral(red: 0.08235294118, green: 0.08235294118, blue: 0.08235294118, alpha: 1)),
                                 Color(#colorLiteral(red: 0.2605174184, green: 0.2605243921, blue: 0.260520637, alpha: 1))
                             ] : [
-                                // ✅ СВЕТЛАЯ тема: цветной фон с единой логикой (светлый → темный)
                                 lightColors.first ?? .blue,
                                 lightColors.last ?? .blue
                             ],
@@ -45,26 +43,16 @@ struct SettingsIconModifier: ViewModifier {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .stroke(
                                 Color.gray.opacity(0.4),
-                                lineWidth:  0.4
+                                lineWidth: 0.4
                             )
                     )
             )
     }
 }
 
-extension View {
-    func withIOSSettingsIcon(
-        lightColors: [Color],
-        fontSize: CGFloat = 14
-    ) -> some View {
-        modifier(SettingsIconModifier(
-            lightColors: lightColors,
-            fontSize: fontSize
-        ))
-    }
-}
+// MARK: - Gradient Icon Modifier
 
-struct GradientIconModifier: ViewModifier {
+private struct GradientIconModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     
     let gradientColors: [Color]
@@ -92,7 +80,7 @@ struct GradientIconModifier: ViewModifier {
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .stroke(
                             Color.gray.opacity(0.4),
-                            lineWidth:  0.4
+                            lineWidth: 0.4
                         )
                 )
             
@@ -107,7 +95,19 @@ struct GradientIconModifier: ViewModifier {
     }
 }
 
+// MARK: - View Extensions
+
 extension View {
+    func withIOSSettingsIcon(
+        lightColors: [Color],
+        fontSize: CGFloat = 14
+    ) -> some View {
+        modifier(SettingsIconModifier(
+            lightColors: lightColors,
+            fontSize: fontSize
+        ))
+    }
+    
     func withGradientIcon(
         colors: [Color],
         startPoint: UnitPoint = .top,

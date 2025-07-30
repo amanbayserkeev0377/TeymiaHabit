@@ -11,7 +11,7 @@ import SwiftData
     }
     
     func getProgress(for date: Date) -> Double {
-        return progressCache[date] ?? 0
+        progressCache[date] ?? 0
     }
     
     func clear() {
@@ -19,8 +19,8 @@ import SwiftData
         lastUpdateTimestamp = Date()
     }
     
+    /// Triggers UI refresh by updating timestamp
     func refresh() {
-        // Просто обновляем timestamp для триггера обновления UI
         lastUpdateTimestamp = Date()
     }
 }

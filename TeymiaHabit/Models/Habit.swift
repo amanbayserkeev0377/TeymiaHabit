@@ -14,7 +14,7 @@ final class Habit {
     
     var title: String = ""
     var type: HabitType = HabitType.count
-    var goal: Int = 1 // Daily goal value (count for count habits, seconds for time habits)
+    var goal: Int = 1
     var iconName: String? = "checkmark"
     var iconColor: HabitIconColor = HabitIconColor.primary
     
@@ -171,8 +171,6 @@ extension Habit {
     /// Considers both the start date and active weekdays
     func isActiveOnDate(_ date: Date) -> Bool {
         let calendar = Calendar.userPreferred
-        
-        // Check if date is before habit start date
         let dateStartOfDay = calendar.startOfDay(for: date)
         let startDateOfDay = calendar.startOfDay(for: startDate)
         
@@ -180,7 +178,6 @@ extension Habit {
             return false
         }
         
-        // Check if this weekday is active
         let weekday = Weekday.from(date: date)
         return isActive(on: weekday)
     }
@@ -269,7 +266,6 @@ extension Habit {
 
 extension Habit {
     
-    /// Formatted goal string with proper localization for time units
     var formattedGoal: String {
         switch type {
         case .count:
@@ -284,9 +280,7 @@ extension Habit {
 
 extension Habit {
     
-    /// Updates progress for a specific date (replaces existing completions)
     func updateProgress(to newValue: Int, for date: Date, modelContext: ModelContext) {
-        // Remove existing completions for this date
         if let existingCompletions = completions?.filter({
             Calendar.current.isDate($0.date, inSameDayAs: date)
         }) {
@@ -295,7 +289,6 @@ extension Habit {
             }
         }
         
-        // Add new completion if value > 0
         if newValue > 0 {
             let completion = HabitCompletion(
                 date: date,
@@ -305,7 +298,6 @@ extension Habit {
             modelContext.insert(completion)
         }
         
-        // Save changes
         try? modelContext.save()
     }
     

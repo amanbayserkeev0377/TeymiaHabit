@@ -25,8 +25,6 @@ struct PrivacyLockView: View {
         static let pinClearDelay: Double = 0.5
     }
     
-    // MARK: - Body
-    
     var body: some View {
         ZStack {
             Rectangle()
@@ -99,6 +97,10 @@ struct PrivacyLockView: View {
         }
     }
     
+    private var canUseBiometrics: Bool {
+        privacyManager.canUseBiometrics && privacyManager.isBiometricEnabled
+    }
+    
     // MARK: - Lifecycle Methods
     
     private func handleViewAppear() {
@@ -122,7 +124,6 @@ struct PrivacyLockView: View {
         }
     }
     
-    /// Handles scene phase transitions for biometric re-authentication
     private func handleScenePhaseChange(from oldPhase: ScenePhase, to newPhase: ScenePhase) {
         switch newPhase {
         case .background:
@@ -139,7 +140,6 @@ struct PrivacyLockView: View {
         }
     }
     
-    /// Handles app becoming active and potential biometric re-authentication
     private func handleSceneActivation(from fromPhase: ScenePhase) {
         let shouldTryBiometric = privacyManager.isAppLocked &&
                                 !isAuthenticating &&
@@ -179,7 +179,6 @@ struct PrivacyLockView: View {
         performAuthentication()
     }
     
-    /// Common authentication logic
     private func performAuthentication() {
         isAuthenticating = true
         
@@ -193,7 +192,6 @@ struct PrivacyLockView: View {
     
     // MARK: - PIN Entry Methods
     
-    /// Handles PIN entry completion and validation
     private func handlePinEntry(_ pin: String) {
         let success = authManager.handlePinEntry(pin) {
             triggerPinShakeAnimation()
@@ -237,11 +235,6 @@ struct PrivacyLockView: View {
     private func resetAuthStates() {
         isAuthenticating = false
         enteredPin = ""
-        authManager.reset()
-    }
-    
-    private var canUseBiometrics: Bool {
-        privacyManager.canUseBiometrics && privacyManager.isBiometricEnabled
     }
     
     private func triggerPinShakeAnimation() {

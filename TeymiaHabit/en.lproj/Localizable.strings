@@ -203,6 +203,7 @@
 "haptics" = "Haptics";
 "sounds" = "Sounds";
 "completion_sounds" = "Completion Sounds";
+"default_sound" = "Default";
 
 /* ===================== Settings: Support & Feedback ===================== */
 "rate_app" = "Rate App";

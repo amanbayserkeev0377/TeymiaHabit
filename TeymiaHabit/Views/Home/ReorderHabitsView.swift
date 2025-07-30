@@ -56,7 +56,6 @@ struct ReorderHabitsView: View {
     }
     
     private func saveReorder() {
-        // Update displayOrder for all habits
         for (index, habit) in reorderedHabits.enumerated() {
             habit.displayOrder = index
         }
@@ -65,20 +64,19 @@ struct ReorderHabitsView: View {
             try modelContext.save()
             HapticManager.shared.play(.success)
         } catch {
-            print("❌ Error saving reorder: \(error.localizedDescription)")
             HapticManager.shared.play(.error)
         }
     }
 }
 
 // MARK: - Reorder Habit Row
+
 struct ReorderHabitRow: View {
     let habit: Habit
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         HStack(spacing: 12) {
-            // Habit icon
             universalIcon(
                 iconId: habit.iconName,
                 baseSize: 24,
@@ -87,7 +85,6 @@ struct ReorderHabitRow: View {
             )
             .frame(width: 36, height: 36)
             
-            // Habit info
             VStack(alignment: .leading, spacing: 2) {
                 Text(habit.title)
                     .font(.subheadline.weight(.medium))

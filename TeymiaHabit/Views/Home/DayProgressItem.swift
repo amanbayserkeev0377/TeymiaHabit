@@ -7,14 +7,14 @@ struct DayProgressItem: View, Equatable {
     let onTap: () -> Void
     var showProgressRing: Bool = true
     var habit: Habit? = nil
-    var isOverallProgress: Bool = false  // ✅ NEW: Флаг для общего прогресса
+    var isOverallProgress: Bool = false
     
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ObservedObject private var colorManager = AppColorManager.shared
     
     private var calendar: Calendar {
-        return Calendar.userPreferred
+        Calendar.userPreferred
     }
     
     private var dayNumber: String {
@@ -33,17 +33,14 @@ struct DayProgressItem: View, Equatable {
         date <= Date().addingTimeInterval(86400 * 365)
     }
     
-    // UPDATED: Properly determine isExceeded
     private var progressColors: [Color] {
         if progress > 0 {
             let isCompleted = progress >= 1.0
             let isExceeded: Bool
             
             if isOverallProgress {
-                // Для общего прогресса: exceeded если средний progress > 1.0
                 isExceeded = progress > 1.0
             } else {
-                // Для отдельной привычки: используем метод habit
                 isExceeded = habit?.isExceededForDate(date) ?? false
             }
             
@@ -54,12 +51,10 @@ struct DayProgressItem: View, Equatable {
                 colorScheme: colorScheme
             )
         } else {
-            // No progress - gray colors
             return [Color.gray.opacity(0.3), Color.gray.opacity(0.2)]
         }
     }
     
-    // Размеры для разных значений dynamic type
     private var circleSize: CGFloat {
         switch dynamicTypeSize {
         case .accessibility5: return 40
@@ -93,7 +88,6 @@ struct DayProgressItem: View, Equatable {
         }
     }
     
-    // Цвет текста для дня
     private var dayTextColor: Color {
         if isToday {
             return .orange
@@ -106,7 +100,6 @@ struct DayProgressItem: View, Equatable {
         }
     }
     
-    // Вес шрифта
     private var fontWeight: Font.Weight {
         if isSelected {
             return .bold
@@ -118,7 +111,6 @@ struct DayProgressItem: View, Equatable {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 6) {
-                // Круг прогресса и число
                 ZStack {
                     if showProgressRing && !isFutureDate {
                         Circle()
@@ -141,14 +133,12 @@ struct DayProgressItem: View, Equatable {
                             .animation(.easeInOut(duration: 0.5), value: progress)
                     }
                     
-                    // Число дня месяца
                     Text(dayNumber)
                         .font(.system(size: fontSize, weight: fontWeight))
                         .foregroundColor(dayTextColor)
                 }
                 .frame(width: circleSize, height: circleSize)
                 
-                // Индикатор выбранного дня (точка под числом)
                 Circle()
                     .fill(isToday ? Color.orange : Color.primary)
                     .frame(width: 4, height: 4)
@@ -159,13 +149,12 @@ struct DayProgressItem: View, Equatable {
         .disabled(isFutureDate || !isValidDate)
     }
     
-    // UPDATED: Include habit in equality check
     static func == (lhs: DayProgressItem, rhs: DayProgressItem) -> Bool {
-        return Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date) &&
+        Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date) &&
         lhs.isSelected == rhs.isSelected &&
         abs(lhs.progress - rhs.progress) < 0.01 &&
         lhs.showProgressRing == rhs.showProgressRing &&
         lhs.habit?.id == rhs.habit?.id &&
-        lhs.isOverallProgress == rhs.isOverallProgress  // ✅ Добавляем новый параметр
+        lhs.isOverallProgress == rhs.isOverallProgress
     }
 }

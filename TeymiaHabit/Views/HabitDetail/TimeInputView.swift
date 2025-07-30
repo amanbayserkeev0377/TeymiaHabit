@@ -1,22 +1,15 @@
 import SwiftUI
 
 struct TimeInputView: View {
-    
-    // MARK: - Properties
     let habit: Habit
     @Binding var isPresented: Bool
     let onConfirm: (Int, Int) -> Void
     
-    // MARK: - Environment
     @Environment(\.colorScheme) private var colorScheme
-    
-    // MARK: - State
     @State private var selectedTime: Date = {
         let calendar = Calendar.current
         return calendar.date(bySettingHour: 0, minute: 0, second: 0, of: Date()) ?? Date()
     }()
-    
-    // MARK: - Body
     
     var body: some View {
         VStack(spacing: 24) {
@@ -33,9 +26,7 @@ struct TimeInputView: View {
             .labelsHidden()
             .frame(maxHeight: 140)
             
-            // Buttons
             HStack(spacing: 12) {
-                // Cancel button
                 Button {
                     isPresented = false
                 } label: {
@@ -50,7 +41,6 @@ struct TimeInputView: View {
                         )
                 }
                 
-                // Add button
                 Button {
                     let components = Calendar.current.dateComponents([.hour, .minute], from: selectedTime)
                     let hours = components.hour ?? 0

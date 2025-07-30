@@ -5,8 +5,8 @@ import Foundation
 struct ChartDataPoint: Identifiable, Equatable {
     let id = UUID()
     let date: Date
-    let value: Int // Progress value (seconds for time habits, count for count habits)
-    let goal: Int // Target goal for the habit
+    let value: Int
+    let goal: Int
     let habit: Habit
     
     // MARK: - Equatable

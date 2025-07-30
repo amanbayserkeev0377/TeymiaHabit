@@ -1,8 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Centralized haptic feedback manager for the app
-/// Provides consistent haptic feedback with user preference support
+/// Centralized haptic feedback manager with user preference support
 final class HapticManager {
     static let shared = HapticManager()
     
@@ -10,7 +9,6 @@ final class HapticManager {
     
     private init() {}
     
-    /// Play notification feedback (success, error, warning)
     func play(_ feedbackType: UINotificationFeedbackGenerator.FeedbackType) {
         guard hapticsEnabled else { return }
         
@@ -18,7 +16,6 @@ final class HapticManager {
         generator.notificationOccurred(feedbackType)
     }
     
-    /// Play selection feedback (light tap for selections and navigation)
     func playSelection() {
         guard hapticsEnabled else { return }
         
@@ -26,7 +23,6 @@ final class HapticManager {
         generator.selectionChanged()
     }
     
-    /// Play impact feedback (for button presses and interactions)
     func playImpact(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
         guard hapticsEnabled else { return }
         

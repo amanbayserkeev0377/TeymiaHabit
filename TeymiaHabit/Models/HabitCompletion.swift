@@ -6,7 +6,7 @@ import SwiftData
 @Model
 final class HabitCompletion {
     var date: Date = Date()
-    var value: Int = 0 // Progress value: count for count-based habits, seconds for time-based habits
+    var value: Int = 0
     var habit: Habit?
     
     // MARK: - Initializers

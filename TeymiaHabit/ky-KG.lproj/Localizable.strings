@@ -198,6 +198,7 @@
 "haptics" = "Вибрациялуу жооп";
 "sounds" = "Үндөр";
 "completion_sounds" = "Жыйынтык үндөрү";
+"default_sound" = "Демейки";
 
 /* ===================== Settings: Support & Feedback ===================== */
 "rate_app" = "Баалоо";

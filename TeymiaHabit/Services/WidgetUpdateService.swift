@@ -1,6 +1,7 @@
 import Foundation
 import WidgetKit
 
+/// Service for managing Home Screen widget updates
 @MainActor
 final class WidgetUpdateService {
     static let shared = WidgetUpdateService()
@@ -14,7 +15,6 @@ final class WidgetUpdateService {
     /// Reload widgets with delay for database synchronization
     func reloadWidgetsAfterDataChange() {
         Task {
-            // Wait for data to sync to App Group
             try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
             WidgetCenter.shared.reloadAllTimelines()
         }

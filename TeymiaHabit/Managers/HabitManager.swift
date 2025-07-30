@@ -9,7 +9,7 @@ enum HabitManagerError: LocalizedError {
     }
 }
 
-/// Manages lifecycle of HabitDetailViewModels to prevent memory leaks and ensure proper cleanup
+/// Manages lifecycle of HabitDetailViewModels to prevent memory leaks
 /// Reuses ViewModels for the same habit to maintain state during navigation
 @MainActor
 final class HabitManager: ObservableObject {
@@ -19,7 +19,8 @@ final class HabitManager: ObservableObject {
     
     private init() {}
     
-    /// Gets or creates a ViewModel for a habit, reusing existing ones when possible
+    // MARK: - ViewModel Management
+    
     func getViewModel(for habit: Habit, date: Date, modelContext: ModelContext) throws -> HabitDetailViewModel {
         let habitId = habit.uuid.uuidString
         
@@ -38,7 +39,6 @@ final class HabitManager: ObservableObject {
         return viewModel
     }
     
-    /// Removes and cleans up a specific ViewModel
     func removeViewModel(for habitId: String) {
         if let viewModel = viewModels[habitId] {
             viewModel.syncWithTimerService()
@@ -46,6 +46,8 @@ final class HabitManager: ObservableObject {
             viewModels.removeValue(forKey: habitId)
         }
     }
+    
+    // MARK: - Cleanup
     
     /// Cleans up ViewModels that don't have active timers or Live Activities
     func cleanupInactiveViewModels() {
@@ -64,7 +66,6 @@ final class HabitManager: ObservableObject {
         }
     }
     
-    /// Cleans up all ViewModels (called on app termination)
     func cleanupAllViewModels() {
         for (_, viewModel) in viewModels {
             viewModel.syncWithTimerService()

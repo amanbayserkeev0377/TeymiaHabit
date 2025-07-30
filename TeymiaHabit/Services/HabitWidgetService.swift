@@ -2,6 +2,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 
+/// Service for handling progress updates from Live Activities to main app database
 @Observable @MainActor
 final class HabitWidgetService {
     static let shared = HabitWidgetService()
@@ -9,8 +10,6 @@ final class HabitWidgetService {
     private let appGroupsID = "group.com.amanbayserkeev.teymiahabit"
     
     private init() {}
-    
-    // MARK: - Database Operations
     
     func saveProgressToDatabase(habitId: String, progress: Int) async {
         guard let habitUUID = UUID(uuidString: habitId),
@@ -34,13 +33,11 @@ final class HabitWidgetService {
         
         try? mainContext.save()
         
-        // Notify other contexts about changes
         NotificationCenter.default.post(
             name: .NSManagedObjectContextDidSave,
             object: mainContext
         )
         
-        // Update widgets after saving
         WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
     }
 }

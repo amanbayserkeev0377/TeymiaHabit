@@ -16,21 +16,19 @@ struct ActionButtonsSection: View {
     }
         
     var body: some View {
-            HStack(spacing: 18) {
-                if habit.type == .time && isToday {
-                    // 3 buttons for time habits on today
-                    resetButton
-                    playPauseButton
-                    manualEntryButton(icon: "clock")
-                } else {
-                    // 2 buttons for count habits or past dates - centered
-                    Spacer()
-                    resetButton
-                    manualEntryButton(icon: "keyboard")
-                    Spacer()
-                }
+        HStack(spacing: 18) {
+            if habit.type == .time && isToday {
+                resetButton
+                playPauseButton
+                manualEntryButton(icon: "clock")
+            } else {
+                Spacer()
+                resetButton
+                manualEntryButton(icon: "keyboard")
+                Spacer()
             }
-            .frame(maxWidth: .infinity)
+        }
+        .frame(maxWidth: .infinity)
     }
     
     // MARK: - Button Components

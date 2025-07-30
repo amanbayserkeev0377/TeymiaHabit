@@ -1,23 +1,22 @@
 import SwiftUI
 
-// MARK: - Common AlertState
+// MARK: - Alert State
+
 struct AlertState: Equatable {
     var isDeleteAlertPresented: Bool = false
     var date: Date? = nil
-    
     var successFeedbackTrigger: Bool = false
     var errorFeedbackTrigger: Bool = false
     
     static func == (lhs: AlertState, rhs: AlertState) -> Bool {
-        return lhs.isDeleteAlertPresented == rhs.isDeleteAlertPresented &&
+        lhs.isDeleteAlertPresented == rhs.isDeleteAlertPresented &&
         lhs.date?.timeIntervalSince1970 == rhs.date?.timeIntervalSince1970
     }
 }
 
-// MARK: - Habit Delete Alerts
+// MARK: - Alert Modifiers
 
-// Single Habit Delete Alert
-struct DeleteSingleHabitAlertModifier: ViewModifier {
+private struct DeleteSingleHabitAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
     let habitName: String
     let onDelete: () -> Void
@@ -33,7 +32,6 @@ struct DeleteSingleHabitAlertModifier: ViewModifier {
             } message: {
                 Text("alert_delete_habit_message".localized(with: habitName))
             }
-        // ✅ Цвет привычки для alert
             .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
     }
 }
@@ -41,16 +39,13 @@ struct DeleteSingleHabitAlertModifier: ViewModifier {
 // MARK: - View Extensions
 
 extension View {
-    // MARK: - Habit Delete Alert Extensions
-    
-    /// Alert for deleting a single habit
     func deleteSingleHabitAlert(
         isPresented: Binding<Bool>,
         habitName: String,
         onDelete: @escaping () -> Void,
         habit: Habit? = nil
     ) -> some View {
-        self.modifier(DeleteSingleHabitAlertModifier(
+        modifier(DeleteSingleHabitAlertModifier(
             isPresented: isPresented,
             habitName: habitName,
             onDelete: onDelete,

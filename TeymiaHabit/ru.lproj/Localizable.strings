@@ -198,6 +198,7 @@
 "haptics" = "Виброотклик";
 "sounds" = "Звуки";
 "completion_sounds" = "Звуки выполнения";
+"default_sound" = "По умолчанию";
 
 /* ===================== Settings: Support & Feedback ===================== */
 "rate_app" = "Оценить";

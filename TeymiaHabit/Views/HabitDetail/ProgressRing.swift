@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum ProgressRingStyle {
-    case detail    // Прогресс внутри кольца (для HabitDetailView)
-    case compact   // Пустое кольцо (для HomeView)
+    case detail
+    case compact
 }
 
 struct ProgressRing: View {
@@ -18,13 +18,11 @@ struct ProgressRing: View {
     var fontSize: CGFloat? = nil
     var iconSize: CGFloat? = nil
     
-    // ✅ Простое локальное состояние только для анимации
     @State private var animateCheckmark = false
-    
     @Environment(\.colorScheme) private var colorScheme
     
     private var ringColors: [Color] {
-        return AppColorManager.shared.getRingColors(
+        AppColorManager.shared.getRingColors(
             for: habit,
             isCompleted: isCompleted,
             isExceeded: isExceeded,
@@ -33,36 +31,33 @@ struct ProgressRing: View {
     }
     
     private var completedTextGradient: AnyShapeStyle {
-        return AppColorManager.getCompletedBarStyle(for: colorScheme)
+        AppColorManager.getCompletedBarStyle(for: colorScheme)
     }
     
     private var exceededTextGradient: AnyShapeStyle {
-        return AppColorManager.getExceededBarStyle(for: colorScheme)
+        AppColorManager.getExceededBarStyle(for: colorScheme)
     }
     
     private var adaptiveLineWidth: CGFloat {
-        return lineWidth ?? (size * 0.11)
+        lineWidth ?? (size * 0.11)
     }
     
     private var adaptedFontSize: CGFloat {
         if let customFontSize = fontSize {
             return customFontSize
         }
-        
         return size * 0.20
     }
     
     private var adaptedIconSize: CGFloat {
-        return iconSize ?? (size * 0.4)
+        iconSize ?? (size * 0.4)
     }
     
     var body: some View {
         ZStack {
-            // Фоновый круг
             Circle()
                 .stroke(Color.secondary.opacity(0.1), lineWidth: adaptiveLineWidth)
             
-            // Прогресс круг - ТОЛЬКО анимация заполнения кольца
             Circle()
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(
@@ -79,10 +74,8 @@ struct ProgressRing: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.5), value: progress)
             
-            // Контент внутри кольца
             if style == .detail {
                 ZStack {
-                    // ✅ Галочка для completed (но не exceeded)
                     if isCompleted && !isExceeded {
                         Image(systemName: "checkmark")
                             .font(.system(size: adaptedIconSize, weight: .bold))
@@ -90,7 +83,6 @@ struct ProgressRing: View {
                             .transition(.scale.combined(with: .opacity))
                     }
                     
-                    // ✅ Exceeded text
                     if isExceeded {
                         Group {
                             if let habit = habit {
@@ -110,7 +102,6 @@ struct ProgressRing: View {
                         .transition(.scale.combined(with: .opacity))
                     }
                     
-                    // ✅ In progress text
                     if !isCompleted {
                         Group {
                             if let habit = habit {
@@ -130,13 +121,11 @@ struct ProgressRing: View {
                         .transition(.scale.combined(with: .opacity))
                     }
                 }
-                // ✅ Плавные переходы между состояниями с scale эффектом
                 .animation(.easeInOut(duration: 0.4), value: isCompleted)
                 .animation(.easeInOut(duration: 0.4), value: isExceeded)
             } else if style == .compact {
-                // ✅ Всегда показываем серую галочку как основу
                 ZStack {
-                    // Серая галочка (всегда видна при < 100%)
+                    /// Gray checkmark base (visible when not completed)
                     Image(systemName: "checkmark")
                         .font(.system(size: adaptedIconSize, weight: .bold))
                         .foregroundStyle(AnyShapeStyle(Color.secondary.opacity(0.3)))
@@ -145,7 +134,7 @@ struct ProgressRing: View {
                         .animation(.easeInOut(duration: 0.4).delay(0.2), value: isCompleted)
                         .animation(.easeInOut(duration: 0.4).delay(0.2), value: isExceeded)
                     
-                    // Цветная галочка (появляется при completed/exceeded)
+                    /// Colored checkmark (appears when completed/exceeded)
                     Image(systemName: "checkmark")
                         .font(.system(size: adaptedIconSize, weight: .bold))
                         .foregroundStyle(
@@ -164,7 +153,6 @@ struct ProgressRing: View {
     // MARK: - Helper Methods
     
     private func getProgressText(for habit: Habit) -> String {
-        // Получаем прогресс из currentValue
         let progress = Int(currentValue) ?? 0
         
         switch habit.type {
@@ -179,8 +167,6 @@ struct ProgressRing: View {
 // MARK: - Convenience Initializers
 
 extension ProgressRing {
-    
-    // Для HabitDetailView - с текстом внутри "прогресс/цель"
     static func detail(
         progress: Double,
         currentProgress: Int,
@@ -194,8 +180,7 @@ extension ProgressRing {
         fontSize: CGFloat? = nil,
         iconSize: CGFloat? = nil
     ) -> ProgressRing {
-        
-        return ProgressRing(
+        ProgressRing(
             progress: progress,
             currentValue: "\(currentProgress)",
             isCompleted: isCompleted,
@@ -209,7 +194,6 @@ extension ProgressRing {
         )
     }
     
-    // Для HomeView - пустое кольцо
     static func compact(
         progress: Double,
         isCompleted: Bool,
@@ -218,7 +202,7 @@ extension ProgressRing {
         size: CGFloat = 52,
         lineWidth: CGFloat? = nil
     ) -> ProgressRing {
-        return ProgressRing(
+        ProgressRing(
             progress: progress,
             currentValue: "",
             isCompleted: isCompleted,

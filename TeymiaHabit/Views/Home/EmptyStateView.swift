@@ -43,7 +43,6 @@ struct EmptyStateView: View {
                     .offset(y: subtitleOffset)
             }
             
-            // Подсказка о FAB
             HStack(spacing: 8) {
                 Text("empty_view_tap".localized)
                     .foregroundStyle(.secondary)
@@ -64,21 +63,16 @@ struct EmptyStateView: View {
         .frame(maxWidth: .infinity)
         .padding(.top, 60)
         .onAppear {
-            // Поэтапное появление с красивыми задержками
-            
-            // 1. Заголовок появляется первым
             withAnimation(.easeOut(duration: 1.5).delay(0.8)) {
                 titleOpacity = 1.0
                 titleOffset = 0
             }
             
-            // 2. Подзаголовок появляется вторым
             withAnimation(.easeOut(duration: 1.5).delay(1.6)) {
                 subtitleOpacity = 1.0
                 subtitleOffset = 0
             }
             
-            // 3. Подсказка появляется последней
             withAnimation(.easeOut(duration: 1.2).delay(2.4)) {
                 hintOpacity = 1.0
                 hintOffset = 0

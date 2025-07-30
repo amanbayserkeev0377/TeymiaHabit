@@ -11,19 +11,16 @@ struct StreaksView: View {
                 .foregroundStyle(laurelGradient)
             
             Group {
-                // Streak
                 StatColumn(
                     value: "\(viewModel.currentStreak)",
                     label: "streak".localized
                 )
                 
-                // Best
                 StatColumn(
                     value: "\(viewModel.bestStreak)",
                     label: "best".localized
                 )
                 
-                // Total
                 StatColumn(
                     value: "\(viewModel.totalValue)",
                     label: "total".localized
@@ -40,10 +37,7 @@ struct StreaksView: View {
     // MARK: - Gradient for Laurel Branches
     
     private var laurelGradient: LinearGradient {
-        // Get habit color - viewModel.habit is not optional
         let habitColor = viewModel.habit.iconColor
-        
-        // Use adaptive gradient: light theme = light top → dark bottom, dark theme = dark top → light bottom
         return habitColor.adaptiveGradient(
             for: colorScheme)
     }

@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 
 // MARK: - Sound Types
+
 enum CompletionSound: String, CaseIterable, Identifiable {
     case `default`
     case chime
@@ -26,7 +27,7 @@ enum CompletionSound: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .default: return "Default"
+        case .default: return "default_sound".localized
         case .chime: return "Chime"
         case .chord: return "Chord"
         case .click: return "Click"
@@ -48,16 +49,16 @@ enum CompletionSound: String, CaseIterable, Identifiable {
     }
 
     var requiresPro: Bool {
-        return self != .default
+        self != .default
     }
     
-    // File extension
     var fileExtension: String {
-        return "wav"
+        "wav"
     }
 }
 
 // MARK: - SoundManager
+
 @Observable
 final class SoundManager {
     static let shared = SoundManager()
@@ -65,30 +66,26 @@ final class SoundManager {
     private var audioPlayer: AVAudioPlayer?
     private let userDefaults = UserDefaults.standard
     
-    // ✅ Используем private(set) для selectedSound чтобы SwiftUI мог отслеживать изменения
     private(set) var selectedSound: CompletionSound {
         didSet {
-            userDefaults.set(selectedSound.rawValue, forKey: "selectedCompletionSound")
+            userDefaults.set(selectedSound.rawValue, forKey: UserDefaults.SoundKeys.selectedCompletionSound)
         }
     }
     
-    // ✅ Используем private(set) для isSoundEnabled
     private(set) var isSoundEnabled: Bool {
         didSet {
-            userDefaults.set(isSoundEnabled, forKey: "completionSoundEnabled")
+            userDefaults.set(isSoundEnabled, forKey: UserDefaults.SoundKeys.completionSoundEnabled)
         }
     }
     
     private init() {
-        // Initialize from UserDefaults
-        let rawValue = userDefaults.string(forKey: "selectedCompletionSound") ?? CompletionSound.default.rawValue
+        let rawValue = userDefaults.string(forKey: UserDefaults.SoundKeys.selectedCompletionSound) ?? CompletionSound.default.rawValue
         self.selectedSound = CompletionSound(rawValue: rawValue) ?? .default
         
-        // Default to enabled if not set
-        if userDefaults.object(forKey: "completionSoundEnabled") == nil {
+        if userDefaults.object(forKey: UserDefaults.SoundKeys.completionSoundEnabled) == nil {
             self.isSoundEnabled = true
         } else {
-            self.isSoundEnabled = userDefaults.bool(forKey: "completionSoundEnabled")
+            self.isSoundEnabled = userDefaults.bool(forKey: UserDefaults.SoundKeys.completionSoundEnabled)
         }
         
         setupAudioSession()
@@ -101,29 +98,53 @@ final class SoundManager {
     
     // MARK: - Public Methods
     
-    /// Update selected sound - this will trigger UI updates
     func setSelectedSound(_ sound: CompletionSound) {
         selectedSound = sound
     }
     
-    /// Toggle sound enabled/disabled
     func setSoundEnabled(_ enabled: Bool) {
         isSoundEnabled = enabled
     }
     
-    /// Check and reset to default sound if Pro required and user lost Pro access
     @MainActor
     func validateSelectedSoundForProStatus() {
         if selectedSound.requiresPro && !ProManager.shared.isPro {
-            print("🔄 User lost Pro access, resetting sound to default")
-            selectedSound = .default // Reset to default free sound
+            selectedSound = .default
         }
     }
     
-    // MARK: - Pro Status Observation
+    // MARK: - Audio Playback
+    
+    func playCompletionSound() {
+        guard isSoundEnabled else { return }
+        playSound(selectedSound)
+    }
+    
+    func playSound(_ sound: CompletionSound) {
+        guard let url = Bundle.main.url(
+            forResource: sound.rawValue,
+            withExtension: sound.fileExtension
+        ) else {
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.volume = 0.7
+            audioPlayer?.play()
+        } catch {
+            // Silent fail for audio playback errors
+        }
+    }
+    
+    func stopCurrentSound() {
+        audioPlayer?.stop()
+        audioPlayer = nil
+    }
+    
+    // MARK: - Private Methods
     
     private func startObservingProStatus() {
-        // Observe Pro status changes
         NotificationCenter.default.addObserver(
             forName: .proStatusChanged,
             object: nil,
@@ -135,7 +156,6 @@ final class SoundManager {
         }
     }
     
-    // MARK: - Audio Session Setup
     private func setupAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setCategory(
@@ -145,43 +165,13 @@ final class SoundManager {
             )
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("❌ Failed to setup audio session: \(error)")
+            // Silent fail for audio session setup
         }
-    }
-    
-    // MARK: - Play Completion Sound
-    func playCompletionSound() {
-        guard isSoundEnabled else { return }
-        playSound(selectedSound)
-    }
-    
-    // MARK: - Play Specific Sound (for preview)
-    func playSound(_ sound: CompletionSound) {
-        guard let url = Bundle.main.url(
-            forResource: sound.rawValue,
-            withExtension: sound.fileExtension
-        ) else {
-            print("❌ Sound file not found: \(sound.rawValue).\(sound.fileExtension)")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.volume = 0.7 // Adjust volume as needed
-            audioPlayer?.play()
-        } catch {
-            print("❌ Failed to play sound: \(error)")
-        }
-    }
-    
-    // MARK: - Stop Current Sound
-    func stopCurrentSound() {
-        audioPlayer?.stop()
-        audioPlayer = nil
     }
 }
 
-// MARK: - UserDefaults Keys Extension
+// MARK: - UserDefaults Keys
+
 extension UserDefaults {
     enum SoundKeys {
         static let selectedCompletionSound = "selectedCompletionSound"
