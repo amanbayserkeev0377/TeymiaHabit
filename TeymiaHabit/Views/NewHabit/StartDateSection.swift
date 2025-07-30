@@ -10,8 +10,8 @@ struct StartDateSection: View {
                 icon: {
                     Image(systemName: "calendar.badge.clock")
                         .withIOSSettingsIcon(lightColors: [
-                            Color(#colorLiteral(red: 0.75, green: 0.65, blue: 0.55, alpha: 1)), // Коричневато-золотой
-                            Color(#colorLiteral(red: 0.4, green: 0.35, blue: 0.3, alpha: 1))    // Темно-коричневый
+                            Color(#colorLiteral(red: 0.75, green: 0.65, blue: 0.55, alpha: 1)),
+                            Color(#colorLiteral(red: 0.4, green: 0.35, blue: 0.3, alpha: 1))
                         ])
                 }
             )

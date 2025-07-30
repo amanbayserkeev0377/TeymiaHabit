@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - External Link Modifier
+
 struct ExternalLinkModifier: ViewModifier {
     var trailingText: String? = nil
     
@@ -21,54 +23,19 @@ struct ExternalLinkModifier: ViewModifier {
     }
 }
 
-// MARK: - New Styled External Link Modifier
-struct StyledExternalLinkModifier: ViewModifier {
-    let lightColors: [Color]
-    var trailingText: String? = nil
-    
-    func body(content: Content) -> some View {
-        HStack {
-            content
-            
-            Spacer()
-            
-            if let text = trailingText {
-                Text(text)
-                    .foregroundStyle(.secondary)
-            }
-            
-            Image(systemName: "arrow.up.right")
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundStyle(.tertiary)
-        }
-    }
-}
+
 
 extension View {
     func withExternalLinkIcon(trailingText: String? = nil) -> some View {
         self.modifier(ExternalLinkModifier(trailingText: trailingText))
     }
-    
-    // New method for styled external links
-    func withStyledExternalLink(lightColors: [Color], trailingText: String? = nil) -> some View {
-        Label(
-            title: { self },
-            icon: {
-                Image(systemName: "arrow.up.right") // This will be overridden
-                    .withIOSSettingsIcon(lightColors: lightColors)
-            }
-        )
-        .modifier(StyledExternalLinkModifier(lightColors: lightColors, trailingText: trailingText))
-    }
 }
+
+// MARK: - About Section
 
 struct AboutSection: View {
     var body: some View {
-        
-        // MARK: - Support & Feedback
         Section {
-            // Rate App
             Button {
                 if let url = URL(string: "https://apps.apple.com/app/id6746747903") {
                     UIApplication.shared.open(url)
@@ -88,7 +55,6 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
-            // Share App
             ShareLink(
                 item: URL(string: "https://apps.apple.com/app/id6746747903")!
             ) {
@@ -106,7 +72,6 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
-            // Contact Developer
             Button {
                 if let url = URL(string: "https://t.me/amanbayserkeev0377") {
                     UIApplication.shared.open(url)
@@ -127,9 +92,7 @@ struct AboutSection: View {
             .tint(.primary)
         }
         
-        // MARK: - Legal (ОБНОВЛЕННЫЙ РАЗДЕЛ)
         Section {
-            // Privacy Policy - прямая ссылка
             Button {
                 if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
                     UIApplication.shared.open(url)
@@ -149,7 +112,6 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
-            // Terms of Service - прямая ссылка
             Button {
                 if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {
                     UIApplication.shared.open(url)
@@ -169,7 +131,6 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
-            // Licenses
             NavigationLink {
                 LicensesView()
             } label: {
@@ -180,7 +141,7 @@ struct AboutSection: View {
                             .withIOSSettingsIcon(lightColors: [
                                 Color(#colorLiteral(red: 0.7333333333, green: 0.7333333333, blue: 0.7607843137, alpha: 1)),
                                 Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3254901961, alpha: 1))
-                                ])
+                            ])
                     }
                 )
             }

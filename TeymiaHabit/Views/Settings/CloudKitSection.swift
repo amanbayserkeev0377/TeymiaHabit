@@ -43,7 +43,6 @@ struct CloudKitSyncView: View {
             .listRowBackground(Color.clear)
             .listSectionSeparator(.hidden)
             
-            // Status Section
             Section {
                 HStack {
                     statusIcon(cloudKitStatus.statusInfo.icon)
@@ -67,7 +66,6 @@ struct CloudKitSyncView: View {
                 }
             }
             
-            // Manual Sync - только если CloudKit доступен
             if case .available = cloudKitStatus {
                 Section {
                     Button {
@@ -108,7 +106,6 @@ struct CloudKitSyncView: View {
                     }
                     .disabled(isSyncing)
                     
-                    // Last sync time - показываем только если есть время
                     if let lastSyncTime = lastSyncTime {
                         HStack {
                             Image(systemName: "clock.fill")
@@ -135,7 +132,6 @@ struct CloudKitSyncView: View {
                 }
             }
             
-            // How it works
             Section("icloud_how_sync_works".localized) {
                 SyncInfoRow(
                     icon: "icloud.and.arrow.up.fill",
@@ -156,7 +152,6 @@ struct CloudKitSyncView: View {
                 )
             }
             
-            // Troubleshooting
             if case .unavailable = cloudKitStatus {
                 Section {
                     HStack {

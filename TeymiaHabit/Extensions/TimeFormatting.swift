@@ -1,10 +1,8 @@
 import Foundation
 
-// MARK: - Int Extensions for Time Formatting
+// MARK: - Extensions
 
 extension Int {
-    /// Formats seconds to a string like "1:30:45" (hours:minutes:seconds) or "23:45" (minutes:seconds)
-    /// Used for displaying progress of time habits
     func formattedAsTime() -> String {
         let hours = self / 3600
         let minutes = (self % 3600) / 60
@@ -17,8 +15,6 @@ extension Int {
         }
     }
         
-    /// Formats seconds as localized duration (e.g., "1h 30m", "45m", "1h")
-    /// Used for displaying goals with proper localization
     func formattedAsLocalizedDuration() -> String {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
@@ -27,10 +23,7 @@ extension Int {
     }
 }
 
-// MARK: - Date Extensions
-
 extension Date {
-    /// Formats date to a string like "January 1"
     var formattedDayMonth: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM d"
@@ -45,8 +38,6 @@ extension Date {
         Calendar.current.isDateInYesterday(self)
     }
 }
-
-// MARK: - DateFormatter Extensions
 
 extension DateFormatter {
     static let monthYear: DateFormatter = {
@@ -73,14 +64,13 @@ extension DateFormatter {
         return formatter
     }()
     
-    /// Uses nominative case for month names (Russian localization specific)
+    // Uses nominative case for month names (Russian localization)
     static let nominativeMonthYear: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "LLLL yyyy"  // LLLL for nominative case
+        formatter.dateFormat = "LLLL yyyy"
         return formatter
     }()
     
-    /// Formats date as "day Month" with capitalized month name
     static func dayAndCapitalizedMonth(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM"
@@ -89,7 +79,6 @@ extension DateFormatter {
         return capitalizeFirstLetterAfterSpace(in: dateString)
     }
     
-    /// Formats date as "Month year" in nominative case with capitalized month
     static func capitalizedNominativeMonthYear(from date: Date) -> String {
         let dateString = nominativeMonthYear.string(from: date)
         return dateString.capitalizingFirstLetter()
@@ -111,8 +100,6 @@ extension DateFormatter {
     }
 }
 
-// MARK: - String Extensions
-
 private extension String {
     func capitalizingFirstLetter() -> String {
         guard let firstChar = self.first else { return self }
@@ -120,10 +107,8 @@ private extension String {
     }
 }
 
-// MARK: - Progress State Enum
-
 enum ProgressState {
-    case inProgress  // < 100%
-    case completed   // = 100%
-    case exceeded    // > 100%
+    case inProgress
+    case completed
+    case exceeded
 }

@@ -15,7 +15,6 @@ struct BiometricPromoView: View {
                 Spacer()
                 Spacer()
                 
-                // Biometric Icon
                 biometricIcon
                     .font(.system(size: 80))
                     .foregroundStyle(
@@ -30,7 +29,6 @@ struct BiometricPromoView: View {
                     )
                     .padding(.bottom, 30)
                 
-                // Title & Description
                 VStack(spacing: 16) {
                     Text("enable".localized + " \(privacyManager.biometricDisplayName)")
                         .font(.title2)
@@ -48,9 +46,7 @@ struct BiometricPromoView: View {
                 Spacer()
                 Spacer()
                 
-                // Buttons
                 VStack(spacing: 16) {
-                    // Enable Button
                     Button {
                         HapticManager.shared.playSelection()
                         onEnable()
@@ -74,7 +70,6 @@ struct BiometricPromoView: View {
                     }
                     .buttonStyle(.plain)
                     
-                    // Not Now Button
                     Button {
                         HapticManager.shared.playSelection()
                         onDismiss()
@@ -107,7 +102,7 @@ struct BiometricPromoView: View {
         case .opticID:
             Image(systemName: "opticid")
         default:
-            Image(systemName: "key.fill") //fallback
+            Image(systemName: "key.fill")
         }
     }
 }

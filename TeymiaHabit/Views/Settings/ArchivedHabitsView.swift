@@ -7,7 +7,6 @@ struct ArchivedHabitsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var colorManager = AppColorManager.shared
     
-    // Query only archived habits
     @Query(
         filter: #Predicate<Habit> { habit in
             habit.isArchived
@@ -43,7 +42,8 @@ struct ArchivedHabitsView: View {
         }
     }
     
-    // MARK: - List Content
+    // MARK: - Private Methods
+    
     @ViewBuilder
     private var listContent: some View {
         if archivedHabits.isEmpty {
@@ -62,7 +62,6 @@ struct ArchivedHabitsView: View {
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
         } else {
-            // Footer с подсказкой о swipe actions
             Section(
                 footer: Text("archived_habits_footer".localized)
                     .font(.footnote)
@@ -71,7 +70,6 @@ struct ArchivedHabitsView: View {
                 ForEach(archivedHabits) { habit in
                     archivedHabitRow(habit)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            // Delete action (red)
                             Button(role: .destructive) {
                                 habitToDelete = habit
                                 isDeleteSingleAlertPresented = true
@@ -80,7 +78,6 @@ struct ArchivedHabitsView: View {
                             }
                             .tint(.red)
                             
-                            // Unarchive action (cyan)
                             Button {
                                 unarchiveHabit(habit)
                             } label: {
@@ -93,7 +90,6 @@ struct ArchivedHabitsView: View {
         }
     }
     
-    // MARK: - Archived Habit Row
     @ViewBuilder
     private func archivedHabitRow(_ habit: Habit) -> some View {
         Button {
@@ -108,7 +104,6 @@ struct ArchivedHabitsView: View {
                 )
                 .frame(width: 36, height: 36)
                 
-                // Название привычки (одна строка)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(habit.title)
                         .font(.subheadline.weight(.medium))
@@ -122,7 +117,6 @@ struct ArchivedHabitsView: View {
                 
                 Spacer()
                 
-                // Chevron для показа что можно нажать
                 Image(systemName: "chevron.right")
                     .foregroundStyle(Color(uiColor: .systemGray3))
                     .font(.footnote)
@@ -132,8 +126,6 @@ struct ArchivedHabitsView: View {
         }
     }
     
-    // MARK: - Helper Methods
-    
     private func unarchiveHabit(_ habit: Habit) {
         habit.isArchived = false
         try? modelContext.save()
@@ -141,18 +133,14 @@ struct ArchivedHabitsView: View {
     }
     
     private func deleteHabit(_ habit: Habit) {
-        // Cancel notifications
         NotificationManager.shared.cancelNotifications(for: habit)
-        
-        // Delete from model context
         modelContext.delete(habit)
-        
         try? modelContext.save()
         HapticManager.shared.play(.error)
     }
 }
 
-// MARK: - Archived Habits Count Badge
+// MARK: - Badge Component
 
 struct ArchivedHabitsCountBadge: View {
     @Query(

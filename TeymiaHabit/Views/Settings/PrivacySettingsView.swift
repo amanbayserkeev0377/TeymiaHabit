@@ -10,6 +10,8 @@ struct PrivacySettingsView: View {
     @State private var isAwaitingConfirmation = false
     @State private var firstPin = ""
     
+    @AppStorage("autoLockDuration") private var autoLockDuration = AutoLockDuration.immediate.rawValue
+    
     enum PinAction {
         case setup
         case change
@@ -23,11 +25,11 @@ struct PrivacySettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
     }
     
-    // MARK: - Settings Content
+    // MARK: - Private Methods
+    
     @ViewBuilder
     private var settingsContent: some View {
         List {
-            // 3D Icon Section
             Section {
                 HStack {
                     Spacer()
@@ -44,10 +46,8 @@ struct PrivacySettingsView: View {
             .listRowBackground(Color.clear)
             .listSectionSeparator(.hidden)
             
-            // PIN Code Section
             Section {
                 if !privacyManager.isPrivacyEnabled || !privacyManager.hasPinSet {
-                    // Turn Passcode On Button
                     Button {
                         startPinSetup()
                     } label: {
@@ -71,7 +71,6 @@ struct PrivacySettingsView: View {
                         }
                     }
                 } else {
-                    // Change PIN
                     Button {
                         startPinChange()
                     } label: {
@@ -95,7 +94,6 @@ struct PrivacySettingsView: View {
                         }
                     }
                     
-                    // Disable PIN
                     Button {
                         startPinDisable()
                     } label: {
@@ -121,7 +119,6 @@ struct PrivacySettingsView: View {
                 }
             }
             
-            // Auto-Lock Section (только когда PIN включен) - NavigationLink
             if privacyManager.isPrivacyEnabled && privacyManager.hasPinSet {
                 Section {
                     NavigationLink {
@@ -155,7 +152,6 @@ struct PrivacySettingsView: View {
                 }
             }
             
-            // Biometric Authentication Section (только когда PIN включен)
             if privacyManager.isPrivacyEnabled && privacyManager.hasPinSet && privacyManager.biometricType != .none {
                 Section {
                     HStack {
@@ -196,15 +192,11 @@ struct PrivacySettingsView: View {
         }
     }
     
-    // MARK: - Auto-Lock Display Name
-    @AppStorage("autoLockDuration") private var autoLockDuration = AutoLockDuration.immediate.rawValue
-    
     private var currentAutoLockDisplayName: String {
         let duration = AutoLockDuration(rawValue: autoLockDuration) ?? .immediate
         return duration.displayName
     }
     
-    // MARK: - Biometric Icon
     @ViewBuilder
     private var biometricIcon: some View {
         switch privacyManager.biometricType {
@@ -219,7 +211,6 @@ struct PrivacySettingsView: View {
         }
     }
     
-    // MARK: - PIN Actions
     private func startPinSetup() {
         pinAction = .setup
         isAwaitingConfirmation = false
@@ -375,7 +366,8 @@ struct PrivacySettingsView: View {
     }
 }
 
-// MARK: - Auto-Lock Settings View
+// MARK: - Request Passcode Settings
+
 struct RequestPasscodeSettingsView: View {
     @AppStorage("autoLockDuration") private var autoLockDuration = AutoLockDuration.immediate.rawValue
     
@@ -412,7 +404,6 @@ struct RequestPasscodeSettingsView: View {
     }
 }
 
-// MARK: - Auto-Lock Duration Enum
 enum AutoLockDuration: Int, CaseIterable {
     case immediate = 0
     case oneMinute = 60

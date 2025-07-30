@@ -1,8 +1,6 @@
 import SwiftUI
 import LocalAuthentication
 
-/// Privacy lock screen that handles biometric and PIN authentication
-/// Automatically attempts biometric authentication when appropriate
 struct PrivacyLockView: View {
     @Environment(\.privacyManager) private var privacyManager
     @Environment(\.scenePhase) private var scenePhase

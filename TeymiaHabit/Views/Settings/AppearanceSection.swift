@@ -16,7 +16,6 @@ struct AppearanceSection: View {
     @Environment(ProManager.self) private var proManager
     @Environment(\.colorScheme) private var colorScheme
     
-    
     var body: some View {
         NavigationLink {
             AppColorPickerView()
@@ -60,7 +59,6 @@ struct AppColorPickerView: View {
     var body: some View {
         NavigationStack {
             Form {
-                // MARK: - Appearance Section
                 Section {
                     ForEach(ThemeMode.allCases, id: \.self) { mode in
                         Button {
@@ -93,7 +91,6 @@ struct AppColorPickerView: View {
                     Text("appearance_mode".localized)
                 }
                 
-                // MARK: - App Color Section
                 Section {
                     ColorPickerSection.forAppColorPicker(
                         selectedColor: Binding(
@@ -108,7 +105,6 @@ struct AppColorPickerView: View {
                     Text("app_color".localized)
                 }
                 
-                // MARK: - App Icon Section
                 Section {
                     AppIconGridView(
                         selectedIcon: iconManager.currentIcon,
@@ -137,7 +133,8 @@ struct AppColorPickerView: View {
     }
 }
 
-// MARK: - App Icon Grid Component
+// MARK: - App Icon Components
+
 struct AppIconGridView: View {
     let selectedIcon: AppIcon
     let onIconSelected: (AppIcon) -> Void
@@ -164,7 +161,6 @@ struct AppIconGridView: View {
     }
 }
 
-// MARK: - Individual App Icon Button
 struct AppIconButton: View {
     @ObservedObject private var colorManager = AppColorManager.shared
     
@@ -177,7 +173,6 @@ struct AppIconButton: View {
         Button(action: onTap) {
             VStack(spacing: 8) {
                 ZStack {
-                    // Icon image
                     Image(icon.preview)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -185,18 +180,16 @@ struct AppIconButton: View {
                         .cornerRadius(12)
                         .opacity(isLocked ? 0.6 : 1.0)
                     
-                    // Selection indicator
                     if isSelected && !isLocked {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(colorManager.selectedColor.color, lineWidth: 2)
                             .frame(width: 60, height: 60)
                     }
                     
-                    // Pro lock overlay
                     if isLocked {
                         VStack {
                             ProLockBadge()
-                                .scaleEffect(0.7) // Делаем поменьше
+                                .scaleEffect(0.7)
                             Spacer()
                         }
                     }

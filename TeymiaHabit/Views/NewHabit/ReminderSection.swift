@@ -47,7 +47,6 @@ struct ReminderSection: View {
             .withToggleColor()
             .disabled(isProcessingToggle)
             
-            // ✅ АНИМИРОВАННЫЙ БЛОК напоминаний
             if isReminderEnabled {
                 Group {
                     ForEach(Array(reminderTimes.indices), id: \.self) { index in
@@ -62,7 +61,6 @@ struct ReminderSection: View {
                             .labelsHidden()
                             .datePickerStyle(.compact)
                             
-                            // Remove reminder button
                             if reminderTimes.count > 1 && (proManager.isPro || index > 0) {
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.3)) {
@@ -115,6 +113,8 @@ struct ReminderSection: View {
         }
     }
     
+    // MARK: - Private Methods
+    
     private func handleReminderToggle(_ newValue: Bool) async {
         let isAuthorized = await NotificationManager.shared.ensureAuthorization()
         
@@ -122,13 +122,11 @@ struct ReminderSection: View {
             isProcessingToggle = false
             
             if !isAuthorized {
-                // ✅ Анимация при отклонении разрешения
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isReminderEnabled = false
                 }
                 isNotificationPermissionAlertPresented = true
             } else {
-                // ✅ Анимация при успешном включении
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isReminderEnabled = newValue
                 }

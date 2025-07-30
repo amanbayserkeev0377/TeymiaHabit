@@ -212,7 +212,6 @@ struct LicenseRow: View {
                     .frame(width: iconSize, height: iconSize)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                 
-                // Attribution text
                 Text(attribution)
                     .font(.subheadline)
                     .foregroundStyle(.primary)

@@ -1,7 +1,5 @@
 import SwiftUI
 
-// MARK: - Alert State
-
 struct AlertState: Equatable {
     var isDeleteAlertPresented: Bool = false
     var date: Date? = nil
@@ -13,8 +11,6 @@ struct AlertState: Equatable {
         lhs.date?.timeIntervalSince1970 == rhs.date?.timeIntervalSince1970
     }
 }
-
-// MARK: - Alert Modifiers
 
 private struct DeleteSingleHabitAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
@@ -35,8 +31,6 @@ private struct DeleteSingleHabitAlertModifier: ViewModifier {
             .tint(habit?.iconColor.color ?? AppColorManager.shared.selectedColor.color)
     }
 }
-
-// MARK: - View Extensions
 
 extension View {
     func deleteSingleHabitAlert(

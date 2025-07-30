@@ -2,18 +2,14 @@ import SwiftUI
 import SwiftData
 
 struct NewHabitView: View {
-    // MARK: - Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-
     
-    // MARK: - Properties
     private let habit: Habit?
     private let template: HabitTemplate?
     private let onSaveCompletion: (() -> Void)?
     
-    // MARK: - State
     @State private var title = ""
     @State private var selectedType: HabitType = .count
     @State private var countGoal: Int = 1
@@ -31,13 +27,13 @@ struct NewHabitView: View {
     @FocusState private var isCountFocused: Bool
     
     // MARK: - Initialization
+    
     init(habit: Habit? = nil, template: HabitTemplate? = nil, onSaveCompletion: (() -> Void)? = nil) {
         self.habit = habit
         self.template = template
         self.onSaveCompletion = onSaveCompletion
         
         if let habit = habit {
-            // Existing habit editing
             _title = State(initialValue: habit.title)
             _selectedType = State(initialValue: habit.type)
             _countGoal = State(initialValue: habit.type == .count ? habit.goal : 1)
@@ -50,13 +46,11 @@ struct NewHabitView: View {
             _selectedIcon = State(initialValue: habit.iconName ?? "checkmark")
             _selectedIconColor = State(initialValue: habit.iconColor)
         } else if let template = template {
-            // Apply template
             _title = State(initialValue: template.name.localized)
             _selectedType = State(initialValue: template.habitType)
             _selectedIcon = State(initialValue: template.icon)
             _selectedIconColor = State(initialValue: template.iconColor)
             
-            // Set goal based on type
             if template.habitType == .count {
                 _countGoal = State(initialValue: template.defaultGoal)
                 _hours = State(initialValue: 1)
@@ -70,6 +64,7 @@ struct NewHabitView: View {
     }
     
     // MARK: - Computed Properties
+    
     private var isFormValid: Bool {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let hasValidTitle = !trimmedTitle.isEmpty
@@ -96,17 +91,16 @@ struct NewHabitView: View {
     }
     
     // MARK: - Body
+    
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    // Name
                     NameFieldSection(
                         title: $title,
                         isFocused: $isTitleFocused
                     )
                     
-                    // Icon
                     IconSection(
                         selectedIcon: $selectedIcon,
                         selectedColor: $selectedIconColor,
@@ -116,7 +110,6 @@ struct NewHabitView: View {
                     )
                 }
                 
-                // Goal
                 GoalSection(
                     selectedType: $selectedType,
                     countGoal: $countGoal,
@@ -126,14 +119,10 @@ struct NewHabitView: View {
                 )
                 
                 Section {
-                    // Start Date
                     StartDateSection(startDate: $startDate)
-                    
-                    // Active Days
                     ActiveDaysSection(activeDays: $activeDays)
                 }
                 
-                // Reminders
                 Section {
                     ReminderSection(
                         isReminderEnabled: $isReminderEnabled,
@@ -145,7 +134,6 @@ struct NewHabitView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                // Space for button
                 Color.clear.frame(height: 80)
             }
             .navigationTitle(habit == nil ? "create_habit".localized : "edit_habit".localized)
@@ -170,7 +158,6 @@ struct NewHabitView: View {
                     }
                 }
             }
-            
             .overlay(alignment: .bottom) {
                 Button {
                     guard isFormValid else { return }
@@ -204,9 +191,9 @@ struct NewHabitView: View {
         .presentationDragIndicator(.visible)
     }
     
-    // MARK: - Methods
+    // MARK: - Private Methods
+    
     private func saveHabit() {
-        // Validation and correction
         if selectedType == .count && countGoal > 999999 {
             countGoal = 999999
         }
@@ -220,7 +207,6 @@ struct NewHabitView: View {
         }
         
         if let existingHabit = habit {
-            // Update existing habit
             existingHabit.update(
                 title: title,
                 type: selectedType,
@@ -234,7 +220,6 @@ struct NewHabitView: View {
             
             handleNotifications(for: existingHabit)
         } else {
-            // Create new habit
             let newHabit = Habit(
                 title: title,
                 type: selectedType,
@@ -250,9 +235,9 @@ struct NewHabitView: View {
             modelContext.insert(newHabit)
             handleNotifications(for: newHabit)
         }
+        
         WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
         
-        // Call completion callback if provided, otherwise just dismiss
         if let onSaveCompletion = onSaveCompletion {
             onSaveCompletion()
         } else {
@@ -260,25 +245,21 @@ struct NewHabitView: View {
         }
     }
     
-    // Handle notifications when saving
     private func handleNotifications(for habit: Habit) {
         if isReminderEnabled {
             Task {
-                // Check permissions using ensureAuthorization
                 let isAuthorized = await NotificationManager.shared.ensureAuthorization()
                 
                 if isAuthorized {
                     let success = await NotificationManager.shared.scheduleNotifications(for: habit)
                     if !success {
-                        print("Failed to schedule notifications")
+                        // Silent fail for non-critical operation
                     }
                 } else {
-                    // If user denied permissions
                     isReminderEnabled = false
                 }
             }
         } else {
-            // Cancel existing notifications
             NotificationManager.shared.cancelNotifications(for: habit)
         }
     }

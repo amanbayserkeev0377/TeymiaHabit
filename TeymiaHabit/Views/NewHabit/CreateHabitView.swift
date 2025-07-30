@@ -10,23 +10,20 @@ struct CreateHabitView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
-                // Background for entire screen
                 Color(UIColor.systemGroupedBackground)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Scrollable content
                     ScrollView {
                         VStack(spacing: 24) {
                             templatesGrid
                         }
                         .padding(.horizontal)
                         .padding(.top, 24)
-                        .padding(.bottom, 100) // Space for bottom button
+                        .padding(.bottom, 100)
                     }
                 }
                 
-                // Floating custom habit button
                 customHabitButton
             }
             .navigationTitle("create_habit".localized)
@@ -43,23 +40,21 @@ struct CreateHabitView: View {
         .sheet(isPresented: $showingNewHabitView) {
             if let template = selectedTemplate {
                 NewHabitView(template: template) {
-                    // Callback to dismiss both views
                     dismiss()
                 }
             }
         }
         .sheet(isPresented: $showingCustomHabit) {
             NewHabitView {
-                // Callback to dismiss both views
                 dismiss()
             }
         }
     }
     
-    // MARK: - Custom Habit Button
+    // MARK: - View Components
+    
     private var customHabitButton: some View {
         VStack(spacing: 0) {
-            // Button area
             Button {
                 showingCustomHabit = true
             } label: {
@@ -84,7 +79,6 @@ struct CreateHabitView: View {
         }
     }
     
-    // MARK: - Templates Grid
     private var templatesGrid: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
             ForEach(HabitTemplate.allTemplates, id: \.id) { template in
@@ -93,14 +87,12 @@ struct CreateHabitView: View {
         }
     }
     
-    // MARK: - Template Card
     private func templateCard(template: HabitTemplate) -> some View {
         Button {
             selectedTemplate = template
             showingNewHabitView = true
         } label: {
             VStack(spacing: 12) {
-                // Icon with colored background
                 Image(systemName: template.icon)
                     .font(.system(size: 26, weight: .medium))
                     .foregroundStyle(template.iconColor.adaptiveGradient(for: colorScheme))
@@ -110,7 +102,6 @@ struct CreateHabitView: View {
                             .fill(template.iconColor.color.opacity(0.15))
                     )
                 
-                // Title
                 Text(template.name.localized)
                     .font(.subheadline)
                     .fontWeight(.medium)
@@ -120,7 +111,6 @@ struct CreateHabitView: View {
                     .foregroundStyle(.primary)
                     .frame(height: 40)
                     .frame(maxWidth: .infinity)
-
             }
             .frame(maxWidth: .infinity)
             .frame(height: 120)
@@ -142,7 +132,8 @@ struct CreateHabitView: View {
     }
 }
 
-// MARK: - HabitTemplate Model
+// MARK: - Habit Template Model
+
 struct HabitTemplate: Identifiable {
     let id = UUID()
     let name: String
@@ -243,7 +234,6 @@ struct HabitTemplate: Identifiable {
             habitType: .count,
             defaultGoal: 1
         ),
-
         HabitTemplate(
             name: "practice_coding".localized,
             icon: "keyboard.fill",

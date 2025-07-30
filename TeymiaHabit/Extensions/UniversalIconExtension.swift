@@ -1,7 +1,5 @@
 import SwiftUI
 
-// MARK: - Universal Icon Extension
-
 extension View {
     @ViewBuilder
     func universalIcon(

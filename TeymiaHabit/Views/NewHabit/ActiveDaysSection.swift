@@ -1,21 +1,18 @@
 import SwiftUI
 
+// MARK: - Active Days Section
+
 struct ActiveDaysSection: View {
     @Binding var activeDays: [Bool]
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
     
     private var calendar: Calendar {
-        return Calendar.userPreferred
+        Calendar.userPreferred
     }
     
     private var activeDaysDescription: String {
         let allActive = activeDays.allSatisfy { $0 }
-        
-        if allActive {
-            return "everyday".localized
-        } else {
-            return "every_week".localized
-        }
+        return allActive ? "everyday".localized : "every_week".localized
     }
     
     var body: some View {
@@ -26,10 +23,9 @@ struct ActiveDaysSection: View {
                     icon: {
                         Image(systemName: "cloud.sun.fill")
                             .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 1, green: 0.8, blue: 0.2, alpha: 1)), // Золотой
-                                Color(#colorLiteral(red: 0.9, green: 0.6, blue: 0.1, alpha: 1))  // Темно-золотой
-                            ], fontSize: 13  
-                            )
+                                Color(#colorLiteral(red: 1, green: 0.8, blue: 0.2, alpha: 1)),
+                                Color(#colorLiteral(red: 0.9, green: 0.6, blue: 0.1, alpha: 1))
+                            ], fontSize: 13)
                     }
                 )
                 
@@ -43,6 +39,8 @@ struct ActiveDaysSection: View {
         }
     }
 }
+
+// MARK: - Active Days Selection View
 
 struct ActiveDaysSelectionView: View {
     @Binding var activeDays: [Bool]
@@ -106,6 +104,7 @@ struct ActiveDaysSelectionView: View {
         .navigationTitle("active_days".localized)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: activeDays) { oldValue, newValue in
+            // Prevent deselecting all days
             if newValue.allSatisfy({ !$0 }) {
                 activeDays = oldValue
             }

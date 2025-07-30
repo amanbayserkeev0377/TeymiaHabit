@@ -2,13 +2,11 @@ import SwiftUI
 
 // MARK: - PIN Dots View
 
-/// Visual representation of PIN input progress with shake animation for errors
 struct PinDotsView: View {
     let pin: String
     let length: Int
     @State private var shakeAmount: CGFloat = 0
     
-    // Design constants
     private enum DesignConstants {
         static let dotSize: CGFloat = 16
         static let dotSpacing: CGFloat = 16
@@ -20,10 +18,6 @@ struct PinDotsView: View {
         static let shakeRepeatCount = 6
     }
     
-    /// Creates PIN dots view
-    /// - Parameters:
-    ///   - pin: Current PIN string
-    ///   - length: Total PIN length (default: 4)
     init(pin: String, length: Int = 4) {
         self.pin = pin
         self.length = length
@@ -41,9 +35,6 @@ struct PinDotsView: View {
         }
     }
     
-    /// Individual PIN dot that shows filled/empty state
-    /// - Parameter index: Position of the dot
-    /// - Returns: Styled circle representing PIN digit
     private func pinDot(at index: Int) -> some View {
         Circle()
             .fill(pin.count > index ? Color.primary : Color.clear)
@@ -55,7 +46,6 @@ struct PinDotsView: View {
             .animation(.easeInOut(duration: DesignConstants.animationDuration), value: pin.count)
     }
     
-    /// Triggers shake animation for incorrect PIN feedback
     private func shake() {
         withAnimation(.easeInOut(duration: DesignConstants.shakeAnimationDuration).repeatCount(DesignConstants.shakeRepeatCount, autoreverses: true)) {
             shakeAmount = DesignConstants.shakeDistance
@@ -71,7 +61,6 @@ struct PinDotsView: View {
 
 // MARK: - Custom Number Pad
 
-/// Custom numeric keypad with optional biometric authentication button
 struct CustomNumberPad: View {
     @Environment(\.privacyManager) private var privacyManager
     
@@ -80,26 +69,18 @@ struct CustomNumberPad: View {
     let showBiometricButton: Bool
     let onBiometricTap: (() -> Void)?
     
-    // Design constants
     private enum DesignConstants {
         static let buttonSize: CGFloat = 80
         static let buttonSpacing: CGFloat = 20
         static let horizontalPadding: CGFloat = 40
     }
     
-    /// Number grid layout (3x3 for digits 1-9)
     private let numbers = [
         ["1", "2", "3"],
         ["4", "5", "6"],
         ["7", "8", "9"]
     ]
     
-    /// Creates custom number pad
-    /// - Parameters:
-    ///   - onNumberTap: Callback for number button taps
-    ///   - onDeleteTap: Callback for delete button tap
-    ///   - showBiometricButton: Whether to show biometric authentication button
-    ///   - onBiometricTap: Callback for biometric button tap
     init(
         onNumberTap: @escaping (String) -> Void,
         onDeleteTap: @escaping () -> Void,
@@ -114,7 +95,6 @@ struct CustomNumberPad: View {
     
     var body: some View {
         VStack(spacing: DesignConstants.buttonSpacing) {
-            // Number rows (1-9)
             ForEach(numbers, id: \.self) { row in
                 HStack(spacing: DesignConstants.buttonSpacing) {
                     ForEach(row, id: \.self) { item in
@@ -128,16 +108,13 @@ struct CustomNumberPad: View {
                 }
             }
             
-            // Bottom row: biometric/empty, 0, delete
             HStack(spacing: DesignConstants.buttonSpacing) {
-                // Left slot: biometric button or empty space
                 if showBiometricButton {
                     biometricButton
                 } else {
                     emptyButtonSpace
                 }
                 
-                // Center: zero button
                 NumberPadButton(
                     item: "0",
                     size: DesignConstants.buttonSize,
@@ -145,7 +122,6 @@ struct CustomNumberPad: View {
                     onDeleteTap: onDeleteTap
                 )
                 
-                // Right: delete button
                 NumberPadButton(
                     item: "delete",
                     size: DesignConstants.buttonSize,
@@ -157,7 +133,6 @@ struct CustomNumberPad: View {
         .padding(.horizontal, DesignConstants.horizontalPadding)
     }
     
-    /// Biometric authentication button
     private var biometricButton: some View {
         Button {
             HapticManager.shared.playSelection()
@@ -171,13 +146,11 @@ struct CustomNumberPad: View {
         .buttonStyle(.plain)
     }
     
-    /// Empty space when biometric button is not shown
     private var emptyButtonSpace: some View {
         Color.clear
             .frame(width: DesignConstants.buttonSize, height: DesignConstants.buttonSize)
     }
     
-    /// Biometric icon based on device capability
     @ViewBuilder
     private var biometricIcon: some View {
         switch privacyManager.biometricType {
@@ -195,19 +168,12 @@ struct CustomNumberPad: View {
 
 // MARK: - Number Pad Button
 
-/// Individual button for the custom number pad
 struct NumberPadButton: View {
     let item: String
     let size: CGFloat
     let onNumberTap: (String) -> Void
     let onDeleteTap: () -> Void
     
-    /// Creates number pad button
-    /// - Parameters:
-    ///   - item: Button content ("0"-"9", "delete", or empty string)
-    ///   - size: Button size (width and height)
-    ///   - onNumberTap: Callback for number taps
-    ///   - onDeleteTap: Callback for delete button tap
     init(
         item: String,
         size: CGFloat = 80,
@@ -230,7 +196,6 @@ struct NumberPadButton: View {
         .disabled(item.isEmpty)
     }
     
-    /// Button content based on item type
     @ViewBuilder
     private var buttonContent: some View {
         if item == "delete" {
@@ -242,7 +207,6 @@ struct NumberPadButton: View {
         }
     }
     
-    /// Delete button (backspace icon)
     private var deleteButtonContent: some View {
         Image(systemName: "delete.left")
             .font(.title)
@@ -250,7 +214,6 @@ struct NumberPadButton: View {
             .frame(width: size, height: size)
     }
     
-    /// Number button (digit with background circle)
     private var numberButtonContent: some View {
         ZStack {
             Circle()
@@ -263,13 +226,11 @@ struct NumberPadButton: View {
         }
     }
     
-    /// Empty button space
     private var emptyButtonContent: some View {
         Color.clear
             .frame(width: size, height: size)
     }
     
-    /// Handles button tap with haptic feedback
     private func handleButtonTap() {
         HapticManager.shared.playSelection()
         
@@ -284,13 +245,11 @@ struct NumberPadButton: View {
 // MARK: - Notification Names
 
 extension Notification.Name {
-    /// Posted to trigger PIN dots shake animation
     static let shakePinDots = Notification.Name("shakePinDots")
 }
 
 // MARK: - Global Functions
 
-/// Triggers PIN dots shake animation from anywhere in the app
 func triggerPinDotsShake() {
     NotificationCenter.default.post(name: .shakePinDots, object: nil)
 }

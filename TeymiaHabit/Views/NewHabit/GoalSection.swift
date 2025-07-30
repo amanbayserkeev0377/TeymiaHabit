@@ -15,12 +15,11 @@ struct GoalSection: View {
             HStack(spacing: 12) {
                 Image(systemName: "trophy.fill")
                     .withIOSSettingsIcon(lightColors: [
-                        Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)), // Яркий зеленый
-                        Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1))  // Темно-зеленый
-                    ],
-                    fontSize: 17
-                    )
+                        Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
+                        Color(#colorLiteral(red: 0.2, green: 0.6, blue: 0.3, alpha: 1))
+                    ], fontSize: 17)
                     .symbolEffect(.bounce, options: .repeat(1), value: selectedType)
+                
                 Text("daily_goal".localized)
                 
                 Spacer()
@@ -34,7 +33,6 @@ struct GoalSection: View {
                 .frame(maxWidth: 170)
             }
             
-            // Компонент ввода в зависимости от типа
             if selectedType == .count {
                 HStack(spacing: 12) {
                     Image(systemName: "number")
@@ -97,7 +95,8 @@ struct GoalSection: View {
         }
     }
     
-    // Синхронизация между timeDate и часами/минутами
+    // MARK: - Private Methods
+    
     private func updateHoursAndMinutesFromTimeDate() {
         let components = Calendar.current.dateComponents([.hour, .minute], from: timeDate)
         hours = components.hour ?? 0
@@ -108,7 +107,6 @@ struct GoalSection: View {
         timeDate = Calendar.current.date(bySettingHour: hours, minute: minutes, second: 0, of: Date()) ?? Date()
     }
     
-    // Инициализация значений при появлении
     private func initializeValues() {
         if selectedType == .count {
             if countGoal <= 0 {
@@ -124,7 +122,6 @@ struct GoalSection: View {
         }
     }
     
-    // Сброс полей при смене типа
     private func resetFieldsForType(_ type: HabitType) {
         if type == .count {
             if countGoal <= 0 {

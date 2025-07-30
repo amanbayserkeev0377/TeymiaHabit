@@ -1,15 +1,9 @@
 import SwiftUI
 
-/// A styled close button "X" that matches Apple's default UI style
 struct XmarkView: View {
     var action: () -> Void
     
-    // MARK: - Properties
-    
-    /// The size of the button
     var size: CGFloat = 30
-    
-    /// Styling options for the icon and background
     var iconColor: Color = Color(.systemGray)
     var backgroundColor: Color = Color(.systemGray5)
     var cornerRadius: CGFloat = 15
@@ -30,10 +24,9 @@ struct XmarkView: View {
     }
 }
 
-// MARK: - Convenience View Extensions
+// MARK: - Extensions
 
 extension View {
-    /// Adds a standard iOS-style dismiss X button to the top trailing corner of the view
     func withDismissButton(onDismiss: @escaping () -> Void) -> some View {
         self.overlay(
             XmarkView(action: onDismiss)

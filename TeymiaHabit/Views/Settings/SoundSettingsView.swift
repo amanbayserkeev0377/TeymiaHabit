@@ -24,7 +24,6 @@ struct SoundSettingsView: View {
                 .listRowBackground(Color.clear)
                 .listSectionSeparator(.hidden)
                 
-                // Sound Toggle Section
                 Section {
                     Toggle("completion_sounds".localized, isOn: Binding(
                         get: { soundManager.isSoundEnabled },
@@ -33,7 +32,6 @@ struct SoundSettingsView: View {
                     .withToggleColor()
                 }
                 
-                // Sound Selection Section
                 if soundManager.isSoundEnabled {
                     Section {
                         ForEach(CompletionSound.allCases) { sound in
@@ -57,30 +55,19 @@ struct SoundSettingsView: View {
     }
     
     private func selectSound(_ sound: CompletionSound) {
-        // Check if sound requires Pro FIRST
         if sound.requiresPro && !proManager.isPro {
-            // Play preview first
             soundManager.playSound(sound)
-            
-            // Show paywall after a short delay to let preview play
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 showProPaywall = true
             }
             return
         }
-        
-        // ✅ Play preview for selected sound
         soundManager.playSound(sound)
-        
-        // ✅ Set as selected sound using new method
         soundManager.setSelectedSound(sound)
-        
-        // Provide haptic feedback
         HapticManager.shared.playSelection()
     }
 }
 
-// MARK: - Sound Row View
 struct SoundRowView: View {
     let sound: CompletionSound
     let isSelected: Bool
@@ -96,14 +83,12 @@ struct SoundRowView: View {
                 
                 Spacer()
                 
-                // ✅ Галочка для выбранного звука
                 Image(systemName: "checkmark")
                     .fontWeight(.semibold)
                     .withAppGradient()
                     .opacity(isSelected ? 1 : 0)
                     .animation(.easeInOut, value: isSelected)
                 
-                // ✅ ProLockBadge для платных звуков
                 if sound.requiresPro && !isPro {
                     ProLockBadge()
                 }
