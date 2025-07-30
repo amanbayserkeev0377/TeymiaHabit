@@ -1,15 +1,14 @@
 import SwiftUI
 
 struct HabitStatsListCard: View {
+    
     let habit: Habit
     let onTap: () -> Void
     
     @Environment(\.colorScheme) private var colorScheme
 
-    // Create individual ViewModel for each habit
     @State private var viewModel: HabitStatsViewModel
     
-    // Initialize with habit-specific ViewModel
     init(habit: Habit, onTap: @escaping () -> Void) {
         self.habit = habit
         self.onTap = onTap
@@ -21,23 +20,20 @@ struct HabitStatsListCard: View {
             HapticManager.shared.playSelection()
             onTap()
         }) {
-            VStack(alignment: .leading, spacing: 12) { // Основной контейнер
-                // Header with habit info
+            VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 16) {
-                    // Habit icon с background
                     universalIcon(
                         iconId: habit.iconName,
-                        baseSize: 26, // Консистентно с HabitCard
+                        baseSize: 26,
                         color: habit.iconColor,
                         colorScheme: colorScheme
                     )
-                    .frame(width: 54, height: 54) // Консистентно с HabitCard
+                    .frame(width: 54, height: 54)
                     .background(
                         Circle()
                             .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
                     )
                     
-                    // Текст слева выровнен
                     VStack(alignment: .leading, spacing: 3) {
                         Text(habit.title)
                             .font(.body.weight(.medium))
@@ -48,11 +44,8 @@ struct HabitStatsListCard: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                    
-                    Spacer() // Толкает контент влево
+                    Spacer()
                 }
-                
-                // StreaksView отдельно
                 StreaksView(viewModel: viewModel)
             }
             .padding(.horizontal, 16)

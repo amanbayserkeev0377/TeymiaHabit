@@ -3,7 +3,7 @@ import SwiftUI
 struct ProSettingsSection: View {
     @Environment(ProManager.self) private var proManager
     @State private var showingPaywall = false
-    @State private var isStartingTrial = false // ⭐ Добавляем состояние загрузки
+    @State private var isStartingTrial = false
     
     var body: some View {
         Section {
@@ -24,7 +24,6 @@ struct ProSettingsSection: View {
             showingPaywall = true
         } label: {
             VStack(spacing: 16) {
-                // Верхняя часть - иконка и заголовки
                 HStack(spacing: 12) {
                     Image("3d_star_progradient")
                         .resizable()
@@ -50,12 +49,9 @@ struct ProSettingsSection: View {
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 
-                // ⭐ УЛУЧШЕННАЯ кнопка FREE TRIAL
                 FreeTrialButton(
                     isLoading: $isStartingTrial,
-                    onTap: {
-                        startFreeTrial()
-                    }
+                    onTap: startFreeTrial
                 )
             }
             .padding(.horizontal, 20)
@@ -83,7 +79,7 @@ struct ProSettingsSection: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Start Free Trial
+    // MARK: - Free Trial
     private func startFreeTrial() {
         guard !isStartingTrial else { return }
         
@@ -93,7 +89,6 @@ struct ProSettingsSection: View {
         Task {
             guard let offerings = proManager.offerings,
                   let currentOffering = offerings.current else {
-                print("❌ No offerings available for free trial")
                 await MainActor.run {
                     isStartingTrial = false
                     HapticManager.shared.play(.error)
@@ -105,7 +100,6 @@ struct ProSettingsSection: View {
                                currentOffering.availablePackages.first { $0.packageType == .annual }
             
             guard let package = yearlyPackage else {
-                print("❌ Yearly package not found for free trial")
                 await MainActor.run {
                     isStartingTrial = false
                     HapticManager.shared.play(.error)
@@ -113,18 +107,14 @@ struct ProSettingsSection: View {
                 return
             }
             
-            print("🎯 Starting free trial with yearly package: \(package.storeProduct.localizedTitle)")
-            
             let success = await proManager.purchase(package: package)
             
             await MainActor.run {
                 isStartingTrial = false
                 
                 if success {
-                    print("✅ Free trial started successfully!")
                     HapticManager.shared.play(.success)
                 } else {
-                    print("❌ Free trial purchase failed")
                     HapticManager.shared.play(.error)
                 }
             }
@@ -132,7 +122,7 @@ struct ProSettingsSection: View {
     }
 }
 
-// MARK: - Отдельный компонент кнопки
+// MARK: - Free Trial Button
 struct FreeTrialButton: View {
     @Binding var isLoading: Bool
     let onTap: () -> Void
@@ -140,9 +130,7 @@ struct FreeTrialButton: View {
     @State private var isPressed = false
     
     var body: some View {
-        Button {
-            onTap()
-        } label: {
+        Button(action: onTap) {
             HStack(spacing: 10) {
                 Spacer()
                 

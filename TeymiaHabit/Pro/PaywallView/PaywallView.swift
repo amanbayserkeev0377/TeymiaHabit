@@ -15,12 +15,9 @@ struct PaywallView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
-                // Main Content (ScrollView)
                 ScrollView {
                     VStack(spacing: 32) {
-                        // Header with laurels
                         PaywallHeaderSection()
-                        
                         PaywallExpandedFeaturesSection {
                             restorePurchases()
                         }
@@ -32,7 +29,6 @@ struct PaywallView: View {
                     .padding(.vertical, 20)
                 }
                 
-                // Bottom Overlay with Pricing
                 if let offerings = proManager.offerings,
                    let currentOffering = offerings.current,
                    !currentOffering.availablePackages.isEmpty {
@@ -90,27 +86,20 @@ struct PaywallView: View {
               let currentOffering = offerings.current,
               !currentOffering.availablePackages.isEmpty else { return }
         
-        // ✅ ПРИОРИТЕТ 1: Yearly план (лучший для habit tracking)
         if let yearlyPackage = currentOffering.annual {
             selectedPackage = yearlyPackage
             return
         }
-        
-        // ✅ ПРИОРИТЕТ 2: Yearly через packageType (на случай если .annual не работает)
         if let yearlyPackage = currentOffering.availablePackages.first(where: { $0.packageType == .annual }) {
             selectedPackage = yearlyPackage
             return
         }
-        
-        // ✅ ПРИОРИТЕТ 3: Lifetime (если нет yearly)
         if let lifetimePackage = currentOffering.availablePackages.first(where: {
             $0.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase
         }) {
             selectedPackage = lifetimePackage
             return
         }
-        
-        // ✅ ПРИОРИТЕТ 4: Fallback на первый пакет
         selectedPackage = currentOffering.availablePackages.first
     }
     
@@ -161,12 +150,12 @@ struct PaywallView: View {
     }
 }
 
-// MARK: - Expanded Features Section (больше фичей)
+// MARK: - Expanded Features Section
+
 struct PaywallExpandedFeaturesSection: View {
     let onRestorePurchases: () -> Void
     var body: some View {
         VStack(spacing: 24) {
-            // Основные фичи
             VStack(spacing: 20) {
                 ForEach(ProFeature.allFeatures, id: \.id) { feature in
                     FeatureRow(feature: feature)
@@ -180,13 +169,13 @@ struct PaywallExpandedFeaturesSection: View {
     }
 }
 
-// MARK: - Scrollable Footer (restore + legal в content)
+// MARK: - Scrollable Footer
+
 struct PaywallScrollableFooter: View {
     let onRestorePurchases: () -> Void
     
     var body: some View {
         VStack(spacing: 20) {
-            // Restore button
             Button("paywall_restore_purchases_button".localized) {
                 onRestorePurchases()
             }
@@ -214,15 +203,12 @@ struct PaywallScrollableFooter: View {
                         .foregroundStyle(.blue)
                 }
             }
-            
-            // Legal text (более компактно)
             Text("paywall_legal_text".localized)
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
             
-            // Terms and Privacy
             HStack(spacing: 30) {
                 Button("terms_of_service".localized) {
                     if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {

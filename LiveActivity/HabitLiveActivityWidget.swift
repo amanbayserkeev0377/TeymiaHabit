@@ -10,72 +10,70 @@ struct HabitLiveActivityWidget: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                        VStack {
-                            Spacer()
-                            LiveActivityHabitIcon(context: context, size: 28)
-                                .frame(width: 54, height: 54)
-                            Spacer()
-                        }
-                        .padding(.leading, 8)
+                    VStack {
+                        Spacer()
+                        LiveActivityHabitIcon(context: context, size: 28)
+                            .frame(width: 54, height: 54)
+                        Spacer()
                     }
+                    .padding(.leading, 8)
+                }
                 
                 DynamicIslandExpandedRegion(.center) {
-                        VStack {
-                            Spacer()
-                            VStack(alignment: .leading, spacing: 3) {
-                                // Habit Name - выровнено влево
-                                Text(context.attributes.habitName)
-                                    .font(.body.weight(.medium))
-                                    .lineLimit(2)
-                                    .foregroundStyle(.primary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                // ✅ Стабильный таймер с overlay для фиксированной позиции - влево
-                                let baseProgress = context.state.currentProgress
-                                let templateText = baseProgress >= 3600 ? "9:99:99" : "99:99"
+                    VStack {
+                        Spacer()
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(context.attributes.habitName)
+                                .font(.body.weight(.medium))
+                                .lineLimit(2)
+                                .foregroundStyle(.primary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Text(templateText)
-                                    .font(.system(.title3, design: .rounded))
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.clear)  // Прозрачный шаблон
-                                    .monospacedDigit()
-                                    .overlay(alignment: .leading) {
-                                        if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
-                                            let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
-                                            
-                                            Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
-                                                .font(.system(.title3, design: .rounded))
-                                                .fontWeight(.bold)
-                                                .foregroundStyle(.primary)
-                                                .monospacedDigit()
-                                                .lineLimit(1)
-                                                .minimumScaleFactor(0.8)
-                                        } else {
-                                            Text(baseProgress.formattedAsTime())
-                                                .font(.system(.title3, design: .rounded))
-                                                .fontWeight(.bold)
-                                                .foregroundStyle(.primary)
-                                                .monospacedDigit()
-                                                .lineLimit(1)
-                                                .minimumScaleFactor(0.8)
-                                        }
+                            let baseProgress = context.state.currentProgress
+                            let templateText = baseProgress >= 3600 ? "9:99:99" : "99:99"
+                            
+                            Text(templateText)
+                                .font(.system(.title3, design: .rounded))
+                                .fontWeight(.bold)
+                                .foregroundColor(.clear)
+                                .monospacedDigit()
+                                .overlay(alignment: .leading) {
+                                    if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
+                                        let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
+                                        
+                                        Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
+                                            .font(.system(.title3, design: .rounded))
+                                            .fontWeight(.bold)
+                                            .foregroundStyle(.primary)
+                                            .monospacedDigit()
+                                            .lineLimit(1)
+                                            .minimumScaleFactor(0.8)
+                                    } else {
+                                        Text(baseProgress.formattedAsTime())
+                                            .font(.system(.title3, design: .rounded))
+                                            .fontWeight(.bold)
+                                            .foregroundStyle(.primary)
+                                            .monospacedDigit()
+                                            .lineLimit(1)
+                                            .minimumScaleFactor(0.8)
                                     }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            Spacer()
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .padding(.bottom, 18)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        Spacer()
                     }
+                    .padding(.bottom, 18)
+                }
                 
                 DynamicIslandExpandedRegion(.trailing) {
-                        VStack {
-                            Spacer()
-                            LiveActivityProgressRing(context: context)
-                            Spacer()
-                        }
-                        .padding(.trailing, 8)
+                    VStack {
+                        Spacer()
+                        LiveActivityProgressRing(context: context)
+                        Spacer()
                     }
+                    .padding(.trailing, 8)
+                }
             } compactLeading: {
                 LiveActivityHabitIcon(context: context, size: 16)
             } compactTrailing: {
@@ -88,13 +86,12 @@ struct HabitLiveActivityWidget: Widget {
     }
 }
 
-// MARK: - Compact Live Activity Content (УПРОЩЕННЫЙ ДИЗАЙН)
+// MARK: - Compact Live Activity Content
 struct CompactLiveActivityContent: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     
     @Environment(\.colorScheme) private var colorScheme
     
-    // ✅ Вычисляем текущий прогресс
     private var currentProgress: Int {
         if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
             let elapsed = Int(Date().timeIntervalSince(startTime))
@@ -105,18 +102,16 @@ struct CompactLiveActivityContent: View {
     }
     
     private var isCompleted: Bool {
-        return currentProgress >= context.attributes.habitGoal
+        currentProgress >= context.attributes.habitGoal
     }
     
     private var isExceeded: Bool {
-        return currentProgress > context.attributes.habitGoal
+        currentProgress > context.attributes.habitGoal
     }
     
-    // ✅ Форматированный прогресс и цель
     private var formattedProgress: String {
-        return currentProgress.formattedAsTime()
+        currentProgress.formattedAsTime()
     }
-    
     
     var body: some View {
         HStack(spacing: 16) {
@@ -127,7 +122,6 @@ struct CompactLiveActivityContent: View {
                         .fill(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
                 )
             
-            // ✅ Middle: Title and progress/goal
             VStack(alignment: .leading, spacing: 3) {
                 Text(context.attributes.habitName)
                     .font(.body.weight(.medium))
@@ -155,7 +149,6 @@ struct CompactLiveActivityContent: View {
             
             Spacer()
             
-            // ✅ Right: Progress Ring (обновленный)
             LiveActivityProgressRing(context: context)
         }
         .padding(.horizontal, 16)
@@ -173,7 +166,6 @@ struct LiveActivityProgressRing: View {
     private let ringSize: CGFloat = 52
     private let lineWidth: CGFloat = 6
     
-    // ✅ Вычисляем текущий прогресс
     private var currentProgress: Int {
         if context.state.isTimerRunning, let startTime = context.state.timerStartTime {
             let elapsed = Int(Date().timeIntervalSince(startTime))
@@ -189,16 +181,15 @@ struct LiveActivityProgressRing: View {
     }
     
     private var isCompleted: Bool {
-        return currentProgress >= context.attributes.habitGoal
+        currentProgress >= context.attributes.habitGoal
     }
     
     private var isExceeded: Bool {
-        return currentProgress > context.attributes.habitGoal
+        currentProgress > context.attributes.habitGoal
     }
     
-    // ✅ Ring colors
     private var ringColors: [Color] {
-        return LiveActivityColorManager.getRingColors(  // <- Статический метод
+        LiveActivityColorManager.getRingColors(
             habitColor: context.attributes.habitIconColor,
             isCompleted: isCompleted,
             isExceeded: isExceeded,
@@ -207,16 +198,14 @@ struct LiveActivityProgressRing: View {
     }
     
     private var adaptedIconSize: CGFloat {
-        return ringSize * 0.4
+        ringSize * 0.4
     }
     
     var body: some View {
         ZStack {
-            // Background circle
             Circle()
                 .stroke(Color.secondary.opacity(0.1), lineWidth: lineWidth)
             
-            // Progress circle
             Circle()
                 .trim(from: 0, to: min(completionPercentage, 1.0))
                 .stroke(
@@ -233,7 +222,6 @@ struct LiveActivityProgressRing: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.5), value: completionPercentage)
             
-            // ✅ Checkmark
             Image(systemName: "checkmark")
                 .font(.system(size: adaptedIconSize, weight: .bold))
                 .foregroundStyle(
@@ -246,17 +234,18 @@ struct LiveActivityProgressRing: View {
     }
 }
 
+// MARK: - Timer Display View
 struct TimerDisplayView: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     
     private var templateText: String {
-            let current = context.state.currentProgress
-            if current >= 3600 {
-                return "9:99:99"
-            } else {
-                return "99:99"
-            }
+        let current = context.state.currentProgress
+        if current >= 3600 {
+            return "9:99:99"
+        } else {
+            return "99:99"
         }
+    }
     
     var body: some View {
         if context.state.isTimerRunning, let startTime = context.state.timerStartTime {

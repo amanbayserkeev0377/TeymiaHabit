@@ -1,6 +1,7 @@
 import SwiftUI
 
 // MARK: - Pro Feature Model
+
 struct ProFeature {
     let id = UUID()
     let icon: String
@@ -20,8 +21,7 @@ struct ProFeature {
         self.lightColors = colors
         self.darkColors = colors.reversed()
     }
-    
-    // ⭐ Full initializer (если нужны разные цвета)
+
     init(icon: String, title: String, description: String, lightColors: [Color], darkColors: [Color]) {
         self.icon = icon
         self.title = title
@@ -83,6 +83,7 @@ struct ProFeature {
 }
 
 // MARK: - FeatureRow
+
 struct FeatureRow: View {
     let feature: ProFeature
     @Environment(\.colorScheme) private var colorScheme
@@ -117,7 +118,6 @@ struct FeatureRow: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(
                         colorScheme == .dark ?
-                        // ✅ ТЕМНАЯ тема: иконка цветная
                         LinearGradient(
                             colors: [
                                 feature.lightColors[0],
@@ -126,12 +126,9 @@ struct FeatureRow: View {
                             startPoint: .top,
                             endPoint: .bottom
                         ) :
-                        // ✅ СВЕТЛАЯ тема: иконка белая
                         LinearGradient(colors: [.white, .white], startPoint: .top, endPoint: .bottom)
                     )
             }
-            
-            // Text content
             VStack(alignment: .leading, spacing: 4) {
                 Text(feature.title)
                     .font(.headline)

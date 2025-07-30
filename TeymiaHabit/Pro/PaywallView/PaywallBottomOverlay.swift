@@ -1,7 +1,6 @@
 import SwiftUI
 import RevenueCat
 
-// MARK: - Paywall Bottom Overlay
 struct PaywallBottomOverlay: View {
     let offerings: Offerings
     @Binding var selectedPackage: Package?
@@ -11,7 +10,6 @@ struct PaywallBottomOverlay: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Pricing Cards
             HStack(spacing: 12) {
                 ForEach(sortedPackages, id: \.identifier) { package in
                     PricingCard(
@@ -25,8 +23,6 @@ struct PaywallBottomOverlay: View {
                     }
                 }
             }
-            
-            // Purchase Button
             PurchaseButton(
                 selectedPackage: selectedPackage,
                 offerings: offerings,
@@ -43,7 +39,6 @@ struct PaywallBottomOverlay: View {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(.ultraThinMaterial)
                 
-                // gradient overlay
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(
                         LinearGradient(
@@ -97,7 +92,6 @@ struct PaywallBottomOverlay: View {
     }
 }
 
-// MARK: - Pricing Card с улучшенными анимациями
 struct PricingCard: View {
     let package: Package
     let offerings: Offerings
@@ -105,7 +99,6 @@ struct PricingCard: View {
     let colorScheme: ColorScheme
     let onTap: () -> Void
     
-    // ИСПРАВЛЕНИЕ: Добавляем флаг для контроля анимации
     @State private var hasAppeared = false
     
     private var cardType: PricingCardType {
@@ -148,7 +141,6 @@ struct PricingCard: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 8) {
-                // Icon
                 Image(systemName: cardIcon)
                     .font(.system(size: 24, weight: .medium))
                     .foregroundStyle(isSelected ? .white : .primary)
@@ -201,7 +193,6 @@ struct PricingCard: View {
                     )
             )
             .overlay(
-                // Floating premium badge
                 Group {
                     if let badgeText = badgeText {
                         Text(badgeText)
@@ -232,10 +223,8 @@ struct PricingCard: View {
         }
         .buttonStyle(.plain)
         .scaleEffect(isSelected ? 1.08 : 1.0)
-        // ИСПРАВЛЕНИЕ: Анимация только после появления
         .animation(hasAppeared ? .easeInOut(duration: 0.25) : .none, value: isSelected)
         .onAppear {
-            // Включаем анимации через небольшую задержку
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 hasAppeared = true
             }
@@ -243,7 +232,6 @@ struct PricingCard: View {
     }
 }
 
-// MARK: - Purchase Button
 struct PurchaseButton: View {
     let selectedPackage: Package?
     let offerings: Offerings
@@ -276,12 +264,10 @@ struct PurchaseButton: View {
         
         let yearlyPrice = selectedPackage.storeProduct.price
         let yearlyPricePerMonth = yearlyPrice / 12
-        
-        // Берем валюту из самого годового пакета
         let currencySymbol = extractCurrencySymbol(from: selectedPackage.storeProduct.localizedPriceString)
         let monthlyPriceDouble = NSDecimalNumber(decimal: yearlyPricePerMonth).doubleValue
-        
         let displayPrice: String
+        
         if monthlyPriceDouble < 1 {
             displayPrice = String(format: "%.2f", monthlyPriceDouble)
         } else if monthlyPriceDouble < 10 {
@@ -360,6 +346,7 @@ struct PurchaseButton: View {
 }
 
 // MARK: - Helper Types
+
 enum PricingCardType {
     case monthly, yearly, lifetime
 }

@@ -2,28 +2,24 @@ import SwiftUI
 
 struct CardColors {
     
-    // MARK: - Completion Rate Colors
     static func completionRate(for colorScheme: ColorScheme) -> Color {
         return colorScheme == .dark
             ? Color(#colorLiteral(red: 0.6627380788, green: 0.6627506256, blue: 0.8563500881, alpha: 1))
             : Color(#colorLiteral(red: 0.2627380788, green: 0.2627506256, blue: 0.4563500881, alpha: 1))
     }
 
-    // MARK: - Active Days Colors
     static func activeDays(for colorScheme: ColorScheme) -> Color {
         return colorScheme == .dark
             ? Color(#colorLiteral(red: 0.9803726077, green: 0.4384494722, blue: 0.4061130285, alpha: 1))
             : Color(#colorLiteral(red: 0.8303726077, green: 0.2884494722, blue: 0.2561130285, alpha: 1))
     }
 
-    // MARK: - Habits Done Colors
     static func habitsDone(for colorScheme: ColorScheme) -> Color {
         return colorScheme == .dark
             ? Color(#colorLiteral(red: 0.4411377907, green: 0.7888615131, blue: 0.2720118761, alpha: 1))
             : Color(#colorLiteral(red: 0.3411377907, green: 0.6388615131, blue: 0.1220118761, alpha: 1))
     }
 
-    // MARK: - Active Habits Colors
     static func activeHabits(for colorScheme: ColorScheme) -> Color {
         return colorScheme == .dark
             ? Color(#colorLiteral(red: 0.433128655, green: 0.6248013973, blue: 0.8752619624, alpha: 1))
@@ -31,6 +27,7 @@ struct CardColors {
     }
     
     // MARK: - Convenience Methods
+    
     static func color(for card: InfoCard, colorScheme: ColorScheme) -> Color {
         switch card {
         case .completionRate:
@@ -59,9 +56,7 @@ struct OverviewStatsView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // ✅ Stats Grid - новые градиентные карточки с 3D иконками
             LazyVGrid(columns: gridColumns, spacing: 16) {
-                // 1. Completion Rate
                 StatCardInteractive(
                     title: "overall_completion".localized,
                     value: "\(Int(overallCompletionRate * 100))%",
@@ -70,7 +65,6 @@ struct OverviewStatsView: View {
                     icon3DAsset: "CardInfo_completion_rate",
                     iconSize: 46
                 )
-                // 2. Active Days
                 StatCardInteractive(
                     title: "active_days_total".localized,
                     value: "\(totalActiveDays)",
@@ -78,8 +72,6 @@ struct OverviewStatsView: View {
                     cardColor: CardColors.activeDays(for: colorScheme),
                     icon3DAsset: "CardInfo_active_days"
                 )
-                
-                // 3. Habits Done
                 StatCardInteractive(
                     title: "completed_total".localized,
                     value: "\(totalCompletedHabits)",
@@ -87,7 +79,6 @@ struct OverviewStatsView: View {
                     cardColor: CardColors.habitsDone(for: colorScheme),
                     icon3DAsset: "CardInfo_habits_done"
                 )
-                // 4. Active Habits
                 StatCardInteractive(
                     title: "active_habits".localized,
                     value: "\(activeHabitsCount)",
@@ -116,7 +107,6 @@ struct OverviewStatsView: View {
         ]
     }
     
-    // ДОБАВИТЬ эти простые computed properties:
     private var totalCompletedHabits: Int {
         habits.reduce(0) { total, habit in
             total + (habit.completions?.filter { $0.value >= habit.goal }.count ?? 0)
@@ -197,7 +187,7 @@ enum InfoCard: String, Identifiable {
     var id: String { rawValue }
 }
 
-// MARK: - StatCardInteractive (✅ ОБНОВЛЕННАЯ ВЕРСИЯ)
+// MARK: - StatCardInteractive
 
 struct StatCardInteractive: View {
     let title: String
@@ -250,7 +240,6 @@ struct StatCardInteractive: View {
                 Spacer(minLength: 8)
                 
                 HStack(spacing: 12) {
-                    // ✅ 3D Иконка
                     Image(icon3DAsset)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -320,9 +309,7 @@ struct CardInfoView: View {
                     .padding(.top, 0)
                     .padding(.bottom, 20)
                     
-                    // Контент с отступами
                     VStack(alignment: .leading, spacing: 24) {
-                        // Card description
                         VStack(alignment: .leading, spacing: 8) {
                             Text("what_it_shows".localized)
                                 .font(.headline)
@@ -332,8 +319,6 @@ struct CardInfoView: View {
                                 .font(.body)
                                 .foregroundStyle(.secondary)
                         }
-                        
-                        // How it's calculated
                         VStack(alignment: .leading, spacing: 8) {
                             Text("how_its_calculated".localized)
                                 .font(.headline)
@@ -343,8 +328,6 @@ struct CardInfoView: View {
                                 .font(.body)
                                 .foregroundStyle(.secondary)
                         }
-                        
-                        // Example
                         VStack(alignment: .leading, spacing: 8) {
                             Text("example".localized)
                                 .font(.headline)
@@ -385,7 +368,6 @@ struct CardInfoView: View {
     }
     
     private var cardImageSize: CGSize {
-        // Единый размер для всех карточек
         return CGSize(width: 200, height: 160)
     }
     

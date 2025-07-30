@@ -183,21 +183,18 @@ struct CloudKitSyncView: View {
         }
     }
     
-    // MARK: - Manual Sync Methods
+    // MARK: - Private Methods
+    
     private func forceiCloudSync() {
         isSyncing = true
         
         Task {
             do {
-                // 1. Сначала сохраняем локальные изменения
                 try modelContext.save()
-                print("📱 Local changes saved to SwiftData")
                 
-                // 2. Даем CloudKit время на автоматическую синхронизацию
-                // SwiftData автоматически синхронизируется с CloudKit при save()
-                try await Task.sleep(nanoseconds: 3_000_000_000) // 3 секунды
+                // Wait for automatic CloudKit sync
+                try await Task.sleep(nanoseconds: 3_000_000_000)
                 
-                // 3. Проверяем доступность CloudKit
                 let container = CKContainer(identifier: "iCloud.com.amanbayserkeev.teymiahabit")
                 let accountStatus = try await container.accountStatus()
                 
@@ -205,7 +202,6 @@ struct CloudKitSyncView: View {
                     throw CloudKitError.accountNotAvailable
                 }
                 
-                // 4. Обновляем время последней синхронизации
                 await MainActor.run {
                     let now = Date()
                     lastSyncTime = now
@@ -244,7 +240,6 @@ struct CloudKitSyncView: View {
         }
     }
     
-    // MARK: - Icon Views
     @ViewBuilder
     private func statusIcon(_ iconName: String) -> some View {
         switch iconName {
@@ -341,7 +336,6 @@ struct CloudKitSyncView: View {
             .frame(width: 30, height: 30)
     }
     
-    // MARK: - Helper Methods
     private func checkCloudKitStatus() {
         Task {
             await checkAccountStatus()
@@ -351,14 +345,11 @@ struct CloudKitSyncView: View {
     @MainActor
     private func checkAccountStatus() async {
         do {
-            // Use correct container ID
             let container = CKContainer(identifier: "iCloud.com.amanbayserkeev.teymiahabit")
-            
             let accountStatus = try await container.accountStatus()
             
             switch accountStatus {
             case .available:
-                // Check database availability
                 do {
                     let database = container.privateCloudDatabase
                     _ = try await database.allRecordZones()
@@ -388,12 +379,10 @@ struct CloudKitSyncView: View {
     }
 }
 
-// MARK: - Custom Error Types
 enum CloudKitError: Error {
     case accountNotAvailable
 }
 
-// MARK: - Helper Views (без изменений)
 struct SyncInfoRow: View {
     let icon: String
     let title: String

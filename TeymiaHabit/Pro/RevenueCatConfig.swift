@@ -24,18 +24,14 @@ struct RevenueCatConfig {
         #if DEBUG
         Purchases.logLevel = .debug
         #else
-        Purchases.logLevel = .info  // Изменено для диагностики
+        Purchases.logLevel = .info
         #endif
         
-        print("🔑 RevenueCat API Key: \(apiKey.prefix(10))...")
         Purchases.configure(withAPIKey: apiKey)
-        
-        print("✅ RevenueCat configured successfully")
         setUserAttributes()
     }
     
     private static func setUserAttributes() {
-        // Example: Set user locale
         Purchases.shared.attribution.setAttributes(["locale": Locale.current.identifier])
     }
 }
@@ -49,7 +45,6 @@ extension RevenueCatConfig {
                 return
             }
             
-            // Check both subscription entitlement AND lifetime purchase
             let hasActiveEntitlement = customerInfo.entitlements[Entitlements.pro]?.isActive == true
             let hasLifetime = customerInfo.nonSubscriptions.contains { nonSub in
                 nonSub.productIdentifier == ProductIdentifiers.lifetimePurchase

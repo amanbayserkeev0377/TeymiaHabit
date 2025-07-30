@@ -6,13 +6,14 @@ struct HabitStatisticsView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     // MARK: - Properties
+    
     let habit: Habit
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(ProManager.self) private var proManager
     
-    
     // MARK: - State
+    
     @State private var selectedDate: Date = Date()
     @State private var viewModel: HabitStatsViewModel
     @State private var detailViewModel: HabitDetailViewModel?
@@ -20,7 +21,6 @@ struct HabitStatisticsView: View {
     @State private var alertState = AlertState()
     @State private var updateCounter = 0
     @State private var showingPaywall = false
-    
     @State private var inputManager = InputOverlayManager()
     @State private var barChartTimeRange: ChartTimeRange = .week
     
@@ -34,7 +34,6 @@ struct HabitStatisticsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Monthly Calendar
                 Section {
                     ZStack {
                         MonthlyCalendarView(
@@ -67,7 +66,6 @@ struct HabitStatisticsView: View {
                 }
                 .listSectionSeparator(.hidden)
                 
-                // Bar Charts Section
                 Section {
                     ZStack {
                         VStack(spacing: 16) {
@@ -98,8 +96,6 @@ struct HabitStatisticsView: View {
                 }
                 .listSectionSeparator(.hidden)
                 
-                
-                // Habit Details Section
                 Section {
                     // Start date
                     HStack {
@@ -113,7 +109,6 @@ struct HabitStatisticsView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    // Goal
                     HStack {
                         Image(systemName: "trophy")
                             .withHabitGradient(habit, colorScheme: colorScheme)
@@ -125,7 +120,6 @@ struct HabitStatisticsView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    // Active days
                     HStack {
                         Image(systemName: "cloud.sun")
                             .withHabitGradient(habit, colorScheme: colorScheme)
@@ -138,7 +132,6 @@ struct HabitStatisticsView: View {
                     }
                 }
                 
-                // Actions Section
                 Section {
                     Button {
                         showingResetAlert = true
@@ -174,7 +167,6 @@ struct HabitStatisticsView: View {
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
-            // Change handlers
             .onChange(of: updateCounter) { _, _ in
                 viewModel.refresh()
             }
@@ -188,7 +180,6 @@ struct HabitStatisticsView: View {
                     HapticManager.shared.play(.error)
                 }
             }
-            // Alerts
             .deleteSingleHabitAlert(
                 isPresented: $alertState.isDeleteAlertPresented,
                 habitName: habit.title,
@@ -221,7 +212,7 @@ struct HabitStatisticsView: View {
         .presentationDragIndicator(.visible)
     }
     
-    // MARK: - 📊 Bar Chart Content
+    // MARK: - Bar Chart Content
     
     @ViewBuilder
     private var barChartContent: some View {
@@ -243,7 +234,7 @@ struct HabitStatisticsView: View {
         }
     }
     
-    // MARK: - Helper Methods (остаются без изменений)
+    // MARK: - Helper Methods
     
     private func handleCalendarAction(_ action: CalendarAction, date: Date) {
         switch action {

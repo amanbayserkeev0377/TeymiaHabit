@@ -20,12 +20,10 @@ struct OpenHabitIntent: AppIntent {
             throw AppIntentError.failed
         }
         
-        // Open main app with deep link
         do {
             _ = try await OpenURLIntent(url).perform()
         } catch {
-            // Ignore error - this is expected when switching apps
-            print("OpenURL completed (may not return): \(error)")
+            // Expected behavior when switching between apps
         }
         
         return .result()

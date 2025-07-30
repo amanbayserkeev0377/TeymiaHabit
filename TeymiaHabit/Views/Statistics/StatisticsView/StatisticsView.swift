@@ -35,8 +35,7 @@ struct StatisticsView: View {
                         }
                         .padding(.horizontal, 8)
                         .padding(.top, 16)
-                        
-                        // Habits List with individual StreaksView
+
                         LazyVStack(spacing: 12) {
                             ForEach(habits) { habit in
                                 HabitStatsListCard(habit: habit) {

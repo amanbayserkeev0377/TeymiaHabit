@@ -8,25 +8,21 @@ class ProManager {
     private(set) var isPro: Bool = false
     private(set) var offerings: Offerings?
     private(set) var isLoading: Bool = false
-    
-    // MARK: - New: Track purchase type
     private(set) var hasLifetimePurchase: Bool = false
     private(set) var hasActiveSubscription: Bool = false
     
     private init() {
-        // ✅ AUTO-ENABLE PRO for Development version
-#if DEBUG
+        #if DEBUG
         isPro = true
         hasLifetimePurchase = true
-        print("🧪 DEBUG: Auto-enabled Pro status for Debug build")
-#endif
+        #endif
         
         checkProStatus()
         loadOfferings()
     }
     
-#if DEBUG
-    // MARK: - Debug Methods (только для тестирования)
+    // MARK: - Debug Methods
+    #if DEBUG
     @MainActor
     func resetProStatusForTesting() {
         let previousProStatus = isPro
@@ -35,28 +31,19 @@ class ProManager {
         hasLifetimePurchase = false
         hasActiveSubscription = false
         
-        // ✅ Отправляем уведомление о смене статуса для тестирования
         if previousProStatus != isPro {
-            print("🧪 Pro status changed from \(previousProStatus) to \(isPro) - sending notification")
             NotificationCenter.default.post(name: .proStatusChanged, object: nil)
         }
-        
-        print("🧪 Pro status reset for testing")
     }
     
     @MainActor
     func setProStatusForTesting(_ status: Bool) {
         let previousProStatus = isPro
-        
         isPro = status
         
-        // ✅ Отправляем уведомление о смене статуса для тестирования
         if previousProStatus != isPro {
-            print("🧪 Pro status changed from \(previousProStatus) to \(isPro) - sending notification")
             NotificationCenter.default.post(name: .proStatusChanged, object: nil)
         }
-        
-        print("🧪 Pro status set to: \(status)")
     }
     
     func toggleProStatusForTesting() {
@@ -64,23 +51,18 @@ class ProManager {
             let previousProStatus = isPro
             isPro.toggle()
             
-            // ✅ Отправляем уведомление о смене статуса для тестирования
             if previousProStatus != isPro {
-                print("🧪 Pro status changed from \(previousProStatus) to \(isPro) - sending notification")
                 NotificationCenter.default.post(name: .proStatusChanged, object: nil)
             }
-            
-            print("🧪 Pro status toggled to: \(isPro)")
         }
     }
-#endif
+    #endif
     
     // MARK: - Pro Status
-    
     func checkProStatus() {
-#if DEBUG
-        print("🧪 DEBUG: Skipping RevenueCat check for Debug build")
-#else
+        #if DEBUG
+        return
+        #else
         Task {
             await MainActor.run {
                 isLoading = true
@@ -94,10 +76,7 @@ class ProManager {
                     self.isLoading = false
                 }
                 
-                print("✅ Pro status checked - isPro: \(isPro), subscription: \(hasActiveSubscription), lifetime: \(hasLifetimePurchase)")
-                
             } catch {
-                print("❌ Error checking pro status: \(error)")
                 await MainActor.run {
                     self.isPro = false
                     self.hasActiveSubscription = false
@@ -106,7 +85,7 @@ class ProManager {
                 }
             }
         }
-#endif
+        #endif
     }
     
     // MARK: - Offerings
@@ -117,7 +96,6 @@ class ProManager {
             }
             
             do {
-                // КРИТИЧНО: Добавляем таймаут для Apple Review
                 let offerings = try await withTimeout(seconds: 8) {
                     try await Purchases.shared.offerings()
                 }
@@ -127,13 +105,8 @@ class ProManager {
                     self.isLoading = false
                 }
                 
-                print("✅ Offerings loaded: \(offerings.current?.availablePackages.count ?? 0) packages")
-                
             } catch {
-                print("❌ Offerings timeout or error: \(error)")
-                
                 await MainActor.run {
-                    // Принудительно останавливаем загрузку после таймаута
                     self.offerings = nil
                     self.isLoading = false
                 }
@@ -142,27 +115,19 @@ class ProManager {
     }
     
     // MARK: - Purchase
-    
     func purchase(package: Package) async -> Bool {
         do {
             let result = try await Purchases.shared.purchase(package: package)
-            
-            // Re-check status after purchase
             await updateProStatusFromCustomerInfo(result.customerInfo)
-            
             return isPro
         } catch {
-            print("❌ Purchase error: \(error)")
             return false
         }
     }
     
-    // MARK: - Purchase Lifetime (separate method for clarity)
     func purchaseLifetime() async -> Bool {
-        // Get lifetime package from offerings
         guard let offerings = offerings,
               let lifetimePackage = findLifetimePackage(in: offerings) else {
-            print("❌ Lifetime package not found in offerings")
             return false
         }
         
@@ -170,20 +135,17 @@ class ProManager {
     }
     
     // MARK: - Restore
-    
     func restorePurchases() async -> Bool {
         do {
             let customerInfo = try await Purchases.shared.restorePurchases()
             await updateProStatusFromCustomerInfo(customerInfo)
             return isPro
         } catch {
-            print("❌ Restore error: \(error)")
             return false
         }
     }
     
     // MARK: - Helper Methods
-    
     private func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
         try await withThrowingTaskGroup(of: T.self) { group in
             group.addTask {
@@ -205,18 +167,15 @@ class ProManager {
     }
     
     private func updateProStatusFromCustomerInfo(_ customerInfo: CustomerInfo) async {
-#if DEBUG
-        print("🧪 DEBUG: Keeping Pro status for Debug build")
-#else
-        // Check subscription entitlement
+        #if DEBUG
+        return
+        #else
         let hasActiveEntitlement = customerInfo.entitlements[RevenueCatConfig.Entitlements.pro]?.isActive == true
         
-        // Check lifetime purchase (Non-Consumable)
         let hasLifetime = customerInfo.nonSubscriptions.contains { nonSub in
             nonSub.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase
         }
         
-        // User has Pro if they have either active subscription OR lifetime purchase
         let hasPro = hasActiveEntitlement || hasLifetime
         
         await MainActor.run {
@@ -226,25 +185,20 @@ class ProManager {
             self.hasActiveSubscription = hasActiveEntitlement
             self.hasLifetimePurchase = hasLifetime
             
-            // ✅ Notify about Pro status change ONLY if it actually changed
             if previousProStatus != hasPro {
-                print("🔄 Pro status changed from \(previousProStatus) to \(hasPro)")
                 NotificationCenter.default.post(name: .proStatusChanged, object: nil)
             }
         }
-#endif
+        #endif
     }
     
-    // MARK: - Public method to find lifetime package
     func findLifetimePackage(in offerings: Offerings) -> Package? {
-        // Look for lifetime in current offering
         if let lifetimePackage = offerings.current?.availablePackages.first(where: {
             $0.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase
         }) {
             return lifetimePackage
         }
         
-        // Look in all offerings if not in current
         for offering in offerings.all.values {
             if let lifetimePackage = offering.availablePackages.first(where: {
                 $0.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase
@@ -264,10 +218,6 @@ extension ProManager {
     }
     
     var maxRemindersCount: Int {
-        // ✅ Logic: Pro users can have up to 10 reminders. Free users have a technical limit of 2 reminders,
-        // but the "+" (Add Reminder) button is hidden, so they can only add 1 by default.
-        // Without Pro, the user doesn't see the "Add Reminder" button and can add only a single reminder.
-        // However, the limit is set to 2 for system stability and internal logic.
         isPro ? 10 : 2
     }
 }

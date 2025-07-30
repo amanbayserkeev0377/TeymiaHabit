@@ -17,14 +17,13 @@ struct MonthlyCalendarView: View {
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
     
     // MARK: - State
-    @State private var selectedActionDate: Date? = nil
+    @State private var selectedActionDate: Date?
     @State private var showingActionSheet = false
     @State private var months: [Date] = []
     @State private var currentMonthIndex: Int = 0
     @State private var calendarDays: [[Date?]] = []
     @State private var isLoading: Bool = false
     
-    // Отслеживаем обновления через @Query
     @Query private var completions: [HabitCompletion]
     
     private var calendar: Calendar {
@@ -38,7 +37,6 @@ struct MonthlyCalendarView: View {
         self.updateCounter = updateCounter
         self.onActionRequested = onActionRequested
         
-        // Настраиваем @Query для отслеживания завершений этой привычки
         let habitId = habit.id
         let habitPredicate = #Predicate<HabitCompletion> { completion in
             completion.habit?.id == habitId
@@ -46,48 +44,12 @@ struct MonthlyCalendarView: View {
         self._completions = Query(filter: habitPredicate)
     }
     
+    // MARK: - Body
     var body: some View {
         VStack(spacing: 10) {
-            // Заголовок месяца и кнопки навигации
-            HStack {
-                // Previous month button (слева) - унифицированный с WeeklyHabitChart
-                Button(action: showPreviousMonth) {
-                    Image(systemName: "chevron.left")
-                        .font(.headline)
-                        .foregroundStyle(canNavigateToPreviousMonth ? .primary : Color.gray.opacity(0.5))
-                        .contentShape(Rectangle())
-                        .frame(width: 44, height: 44) // Увеличиваем до 44x44 как в WeeklyHabitChart
-                }
-                .disabled(!canNavigateToPreviousMonth)
-                .buttonStyle(BorderlessButtonStyle())
-                
-                Spacer()
-                
-                // Название месяца по центру
-                Text(DateFormatter.capitalizedNominativeMonthYear(from: currentMonth))
-                    .font(.headline)
-                    .fontWeight(.medium)
-                
-                Spacer()
-                
-                // Next month button (справа) - унифицированный с WeeklyHabitChart
-                Button(action: showNextMonth) {
-                    Image(systemName: "chevron.right")
-                        .font(.headline)
-                        .foregroundStyle(canNavigateToNextMonth ? .primary : Color.gray.opacity(0.5))
-                        .contentShape(Rectangle())
-                        .frame(width: 44, height: 44) // Увеличиваем до 44x44 как в WeeklyHabitChart
-                }
-                .disabled(!canNavigateToNextMonth)
-                .buttonStyle(BorderlessButtonStyle())
-            }
-            .padding(.horizontal, 8)
-            .zIndex(1)
-            
-            // Дни недели
+            monthNavigationHeader
             weekdayHeader
             
-            // Месячный календарь
             if isLoading {
                 ProgressView()
                     .frame(height: 250)
@@ -95,66 +57,109 @@ struct MonthlyCalendarView: View {
                 Text("loading_calendar".localized)
                     .frame(height: 250)
             } else {
-                // Месячная сетка с swipe gestures
-                VStack {
-                    monthGrid(forMonth: currentMonth)
-                        .frame(height: min(CGFloat(calendarDays.count) * 55, 300))
-                        .id("month-\(currentMonthIndex)-\(updateCounter)") // Уникальный ID обновляет контент
-                        .gesture(
-                            // Swipe gesture для навигации по месяцам (аналогично WeeklyHabitChart)
-                            DragGesture(minimumDistance: 50)
-                                .onEnded { value in
-                                    let horizontalDistance = value.translation.width
-                                    let verticalDistance = abs(value.translation.height)
-                                    
-                                    // Only handle primarily horizontal swipes
-                                    if abs(horizontalDistance) > verticalDistance * 2 {
-                                        withAnimation(.easeInOut(duration: 0.3)) {
-                                            if horizontalDistance > 0 && canNavigateToPreviousMonth {
-                                                showPreviousMonth()
-                                            } else if horizontalDistance < 0 && canNavigateToNextMonth {
-                                                showNextMonth()
-                                            }
-                                        }
-                                    }
-                                }
-                        )
-                }
-                .background(Color.clear)
+                monthGridContainer
             }
         }
         .padding(.vertical)
         .padding(.horizontal, 5)
-        .onAppear {
-            isLoading = true
-            generateMonths()
-            findCurrentMonthIndex()
-            generateCalendarDays()
-            isLoading = false
-        }
-        // Обновляем при смене выбранной даты (без анимации)
+        .onAppear(perform: setupCalendar)
         .onChange(of: selectedDate) { _, newDate in
-            if let monthIndex = findMonthIndex(for: newDate) {
-                if monthIndex != currentMonthIndex {
-                    currentMonthIndex = monthIndex
-                    generateCalendarDays()
-                }
-            }
+            updateMonthIfNeeded(for: newDate)
         }
-        // Учитываем внешний счётчик обновлений
         .onChange(of: updateCounter) { _, _ in
-            // Принудительно обновляем интерфейс
             generateCalendarDays()
         }
         .onChange(of: weekdayPrefs.firstDayOfWeek) { _, _ in
             generateCalendarDays()
         }
-        // Диалог для действий с датой
         .confirmationDialog(
             Text(dialogTitle),
             isPresented: $showingActionSheet,
             titleVisibility: .visible
         ) {
+            actionSheetButtons
+        }
+    }
+    
+    // MARK: - Components
+    private var monthNavigationHeader: some View {
+        HStack {
+            Button(action: showPreviousMonth) {
+                Image(systemName: "chevron.left")
+                    .font(.headline)
+                    .foregroundStyle(canNavigateToPreviousMonth ? .primary : Color.gray.opacity(0.5))
+                    .contentShape(Rectangle())
+                    .frame(width: 44, height: 44)
+            }
+            .disabled(!canNavigateToPreviousMonth)
+            .buttonStyle(BorderlessButtonStyle())
+            
+            Spacer()
+            
+            Text(DateFormatter.capitalizedNominativeMonthYear(from: currentMonth))
+                .font(.headline)
+                .fontWeight(.medium)
+            
+            Spacer()
+            
+            Button(action: showNextMonth) {
+                Image(systemName: "chevron.right")
+                    .font(.headline)
+                    .foregroundStyle(canNavigateToNextMonth ? .primary : Color.gray.opacity(0.5))
+                    .contentShape(Rectangle())
+                    .frame(width: 44, height: 44)
+            }
+            .disabled(!canNavigateToNextMonth)
+            .buttonStyle(BorderlessButtonStyle())
+        }
+        .padding(.horizontal, 8)
+        .zIndex(1)
+    }
+    
+    private var weekdayHeader: some View {
+        HStack(spacing: 0) {
+            ForEach(0..<7, id: \.self) { index in
+                Text(calendar.orderedWeekdayInitials[index])
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.bottom, 8)
+    }
+    
+    private var monthGridContainer: some View {
+        VStack {
+            monthGrid(forMonth: currentMonth)
+                .frame(height: min(CGFloat(calendarDays.count) * 55, 300))
+                .id("month-\(currentMonthIndex)-\(updateCounter)")
+                .gesture(swipeGesture)
+        }
+        .background(Color.clear)
+    }
+    
+    private var swipeGesture: some Gesture {
+        DragGesture(minimumDistance: 50)
+            .onEnded { value in
+                let horizontalDistance = value.translation.width
+                let verticalDistance = abs(value.translation.height)
+                
+                if abs(horizontalDistance) > verticalDistance * 2 {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        if horizontalDistance > 0 && canNavigateToPreviousMonth {
+                            showPreviousMonth()
+                        } else if horizontalDistance < 0 && canNavigateToNextMonth {
+                            showNextMonth()
+                        }
+                    }
+                }
+            }
+    }
+    
+    private var actionSheetButtons: some View {
+        Group {
             Button("complete".localized) {
                 if let date = selectedActionDate {
                     onActionRequested(.complete, date)
@@ -179,28 +184,11 @@ struct MonthlyCalendarView: View {
         }
     }
     
-    // MARK: - Components
-    
-    private var weekdayHeader: some View {
-        HStack(spacing: 0) {
-            ForEach(0..<7, id: \.self) { index in
-                Text(calendar.orderedWeekdayInitials[index])
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.bottom, 8)
-    }
-    
     private func monthGrid(forMonth month: Date) -> some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 12) {
             ForEach(0..<calendarDays.count, id: \.self) { row in
                 ForEach(0..<7, id: \.self) { column in
                     if let date = calendarDays[row][column] {
-                        // Проверяем, активна ли дата
                         let isActiveDate = date <= Date() && date >= habit.startDate && habit.isActiveOnDate(date)
                         let progress = habit.completionPercentageForDate(date)
                         
@@ -210,17 +198,15 @@ struct MonthlyCalendarView: View {
                             progress: progress,
                             onTap: {
                                 selectedDate = date
-                                // Показываем действия только для активных дат
                                 if isActiveDate {
                                     selectedActionDate = date
                                     showingActionSheet = true
                                 }
                             },
-                            showProgressRing: isActiveDate, // Показываем кольцо только для активных дней
+                            showProgressRing: isActiveDate,
                             habit: habit
                         )
                         .frame(width: 40, height: 40)
-                        // Уникальный ID для элемента дня
                         .id("\(row)-\(column)-\(date.timeIntervalSince1970)-\(progress)-\(updateCounter)")
                         .buttonStyle(BorderlessButtonStyle())
                     } else {
@@ -233,28 +219,23 @@ struct MonthlyCalendarView: View {
         .padding(.horizontal, 8)
     }
     
-    // MARK: - Computed Property
+    // MARK: - Computed Properties
     private var dialogTitle: String {
         guard let selectedActionDate = selectedActionDate else { return "" }
         
         let dateString = dateFormatter.string(from: selectedActionDate)
-        
         let progressFormatted = habit.formattedProgress(for: selectedActionDate)
         let goalFormatted = habit.formattedGoal
         
         return "\(dateString)\n\(progressFormatted) / \(goalFormatted)"
     }
     
-    // MARK: - Helper Properties
-    
     private var currentMonth: Date {
         months.isEmpty ? Date() : months[currentMonthIndex]
     }
     
-    // MARK: - Navigation Logic (Updated)
-    
     private var canNavigateToPreviousMonth: Bool {
-        return currentMonthIndex > 0
+        currentMonthIndex > 0
     }
     
     private var canNavigateToNextMonth: Bool {
@@ -268,40 +249,50 @@ struct MonthlyCalendarView: View {
                   displayedMonthComponents.month! >= currentMonthComponents.month!))
     }
     
-    // MARK: - Methods
+    // MARK: - Setup Methods
+    private func setupCalendar() {
+        isLoading = true
+        generateMonths()
+        findCurrentMonthIndex()
+        generateCalendarDays()
+        isLoading = false
+    }
     
+    private func updateMonthIfNeeded(for newDate: Date) {
+        if let monthIndex = findMonthIndex(for: newDate) {
+            if monthIndex != currentMonthIndex {
+                currentMonthIndex = monthIndex
+                generateCalendarDays()
+            }
+        }
+    }
+    
+    // MARK: - Calendar Generation
     private func generateMonths() {
         let today = Date()
-        
-        // Применяем ограничение истории
         let effectiveStartDate = HistoryLimits.limitStartDate(habit.startDate)
         
-        // Создаем массив дат для месяцев - сначала получаем компоненты
         let startComponents = calendar.dateComponents([.year, .month], from: effectiveStartDate)
         let todayComponents = calendar.dateComponents([.year, .month], from: today)
         
-        // Гарантируем, что у нас есть корректные начальные даты
         guard let startMonth = calendar.date(from: startComponents),
               let currentMonth = calendar.date(from: todayComponents) else {
-            months = [today] // Дефолтное значение если что-то пошло не так
+            months = [today]
             return
         }
         
         var generatedMonths: [Date] = []
         var currentDate = startMonth
         
-        // Генерируем месяцы от начала привычки до текущего месяца
         while currentDate <= currentMonth {
             generatedMonths.append(currentDate)
             
-            // Добавляем месяц безопасным способом
             guard let nextMonth = calendar.date(byAdding: DateComponents(month: 1), to: currentDate) else {
                 break
             }
             currentDate = nextMonth
         }
         
-        // Если нет месяцев или слишком мало, генерируем хотя бы текущий
         if generatedMonths.isEmpty {
             generatedMonths = [currentMonth]
         }
@@ -317,32 +308,26 @@ struct MonthlyCalendarView: View {
         
         let month = months[currentMonthIndex]
         
-        // Получаем количество дней в месяце
         guard let range = calendar.range(of: .day, in: .month, for: month) else {
             calendarDays = []
             return
         }
         let numDays = range.count
         
-        // Получаем первый день месяца
         guard let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: month)) else {
             calendarDays = []
             return
         }
         
-        // Получаем день недели для первого дня месяца (0-6, где 0 - первый день недели в календаре)
         var firstWeekday = calendar.component(.weekday, from: firstDay) - calendar.firstWeekday
         if firstWeekday < 0 {
             firstWeekday += 7
         }
         
-        // Создаем массив дней для календаря
         var days: [[Date?]] = []
-        
-        // Создаем первую неделю с пустыми ячейками в начале
         var week: [Date?] = Array(repeating: nil, count: 7)
         
-        // Заполняем первую неделю
+        // Fill first week
         for day in 0..<min(7, numDays + firstWeekday) {
             if day >= firstWeekday {
                 let dayOffset = day - firstWeekday
@@ -353,9 +338,9 @@ struct MonthlyCalendarView: View {
         }
         days.append(week)
         
-        // Заполняем остальные недели
+        // Fill remaining weeks
         let remainingDays = numDays - (7 - firstWeekday)
-        let remainingWeeks = (remainingDays + 6) / 7 // Округление вверх
+        let remainingWeeks = (remainingDays + 6) / 7
         
         for weekNum in 0..<remainingWeeks {
             week = Array(repeating: nil, count: 7)
@@ -375,6 +360,7 @@ struct MonthlyCalendarView: View {
         calendarDays = days
     }
     
+    // MARK: - Helper Methods
     private func findMonthIndex(for date: Date) -> Int? {
         let targetComponents = calendar.dateComponents([.year, .month], from: date)
         
@@ -392,35 +378,27 @@ struct MonthlyCalendarView: View {
         if let index = findMonthIndex(for: selectedDate) {
             currentMonthIndex = index
         } else if !months.isEmpty {
-            // Если выбранная дата не найдена в месяцах, устанавливаем последний месяц
             currentMonthIndex = months.count - 1
         }
     }
     
-    // MARK: - Navigation Actions (Updated with Swipe Support)
-    
+    // MARK: - Navigation Actions
     private func showPreviousMonth() {
         guard canNavigateToPreviousMonth else { return }
-        
-        // Используем ту же анимацию что и в WeeklyHabitChart для консистентности
         currentMonthIndex -= 1
         generateCalendarDays()
     }
     
     private func showNextMonth() {
         guard canNavigateToNextMonth else { return }
-        
-        // Используем ту же анимацию что и в WeeklyHabitChart для консистентности  
         currentMonthIndex += 1
         generateCalendarDays()
     }
     
     // MARK: - Formatters
-    
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter
     }()
-    
 }

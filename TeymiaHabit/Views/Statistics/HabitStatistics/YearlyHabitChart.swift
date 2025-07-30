@@ -1,21 +1,18 @@
 import SwiftUI
 import Charts
 
-struct WeeklyHabitChart: View {
+struct YearlyHabitChart: View {
     
     @Environment(\.colorScheme) private var colorScheme
-
-    // MARK: - Properties
-    let habit: Habit
-    let updateCounter: Int // Add update counter parameter
     
-    // MARK: - State
-    @State private var weeks: [Date] = []
-    @State private var currentWeekIndex: Int = 0
+    let habit: Habit
+    let updateCounter: Int
+    
+    @State private var years: [Date] = []
+    @State private var currentYearIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
     
-    // MARK: - Calendar
     private var calendar: Calendar {
         Calendar.userPreferred
     }
@@ -23,15 +20,14 @@ struct WeeklyHabitChart: View {
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Header with navigation and stats
-            headerView
             
-            // Chart
+            headerView
             chartView
+            
         }
         .onAppear {
-            setupWeeks()
-            findCurrentWeekIndex()  
+            setupYears()
+            findCurrentYearIndex()
             generateChartData()
         }
         .onChange(of: habit.goal) { _, _ in
@@ -41,15 +37,12 @@ struct WeeklyHabitChart: View {
             generateChartData()
         }
         .onChange(of: updateCounter) { _, _ in
-            // React to external data changes (from calendar actions)
             generateChartData()
         }
         .onChange(of: selectedDate) { oldValue, newValue in
-            // Haptic feedback only when selection actually changes
-            if let old = oldValue, let new = newValue, !calendar.isDate(old, inSameDayAs: new) {
+            if let old = oldValue, let new = newValue, !calendar.isDate(old, equalTo: new, toGranularity: .month) {
                 HapticManager.shared.playSelection()
             }
-            // Or when first selecting (nil -> Date)
             else if oldValue == nil && newValue != nil {
                 HapticManager.shared.playSelection()
             }
@@ -60,61 +53,57 @@ struct WeeklyHabitChart: View {
     @ViewBuilder
     private var headerView: some View {
         VStack(spacing: 12) {
-            // Week range navigation with wider chevron touch areas
             HStack {
-                Button(action: showPreviousWeek) {
+                Button(action: showPreviousYear) {
                     Image(systemName: "chevron.left")
                         .font(.headline)
-                        .foregroundStyle(canNavigateToPreviousWeek ? .primary : Color.gray.opacity(0.5))
+                        .foregroundStyle(canNavigateToPreviousYear ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44) // Wider touch area
+                        .frame(width: 44, height: 44)
                 }
-                .disabled(!canNavigateToPreviousWeek)
+                .disabled(!canNavigateToPreviousYear)
                 .buttonStyle(BorderlessButtonStyle())
                 
                 Spacer()
                 
-                Text(weekRangeString)
+                Text(yearRangeString)
                     .font(.headline)
                     .fontWeight(.medium)
                 
                 Spacer()
                 
-                Button(action: showNextWeek) {
+                Button(action: showNextYear) {
                     Image(systemName: "chevron.right")
                         .font(.headline)
-                        .foregroundStyle(canNavigateToNextWeek ? .primary : Color.gray.opacity(0.5))
+                        .foregroundStyle(canNavigateToNextYear ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44) // Wider touch area
+                        .frame(width: 44, height: 44)
                 }
-                .disabled(!canNavigateToNextWeek)
+                .disabled(!canNavigateToNextYear)
                 .buttonStyle(BorderlessButtonStyle())
             }
-            .padding(.horizontal, 8) // Smaller padding for navigation
+            .padding(.horizontal, 8)
             
-            // Stats row - aligned exactly with chart bars
             HStack {
-                // AVERAGE - align with left edge of first bar
                 VStack(alignment: .leading, spacing: 2) {
                     Text("average".localized)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                        
-                        Text(averageValueFormatted)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                    
+                    Text(averageValueFormatted)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .withHabitGradient(habit, colorScheme: colorScheme)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // SELECTED - центральная колонка (только при selection)
                 if let selectedDate = selectedDate,
                    let selectedDataPoint = chartData.first(where: {
-                       calendar.isDate($0.date, inSameDayAs: selectedDate)
+                       calendar.isDate($0.date, equalTo: selectedDate, toGranularity: .month)
                    }) {
                     VStack(alignment: .center, spacing: 2) {
-                        Text(shortDateFormatter.string(from: selectedDate))
+                        Text(monthYearFormatter.string(from: selectedDate).capitalized)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .textCase(.uppercase)
@@ -127,47 +116,44 @@ struct WeeklyHabitChart: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                // TOTAL - align with right edge of last bar
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("total".localized)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .textCase(.uppercase)
                     
-                    Text(weeklyTotalFormatted)
+                    Text(yearlyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
                         .withHabitGradient(habit, colorScheme: colorScheme)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .padding(.horizontal, 0) // No padding - align with chart edges
+            .padding(.horizontal, 0)
         }
     }
     
-    // MARK: - Chart View
     @ViewBuilder
     private var chartView: some View {
             Chart(chartData) { dataPoint in
                 BarMark(
-                    x: .value("Day", dataPoint.date, unit: .day),
+                    x: .value("Month", dataPoint.date, unit: .month),
                     y: .value("Progress", dataPoint.value)
                 )
                 .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(4)
+                .cornerRadius(3)
                 .opacity(selectedDate == nil ? 1.0 : 
-                        (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.4))
+                        (calendar.component(.month, from: dataPoint.date) == calendar.component(.month, from: selectedDate!) &&
+                         calendar.component(.year, from: dataPoint.date) == calendar.component(.year, from: selectedDate!) ? 1.0 : 0.4))
             }
             .frame(height: 200)
             .chartXAxis {
-                AxisMarks(values: chartData.map { $0.date }) { value in
+                AxisMarks(values: xAxisValues) { value in
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
                         .foregroundStyle(.gray.opacity(0.3))
                     AxisValueLabel {
                         if let date = value.as(Date.self) {
-                            let weekdayIndex = calendar.component(.weekday, from: date) - 1
-                            let shortName = calendar.shortWeekdaySymbols[weekdayIndex]
-                            Text(shortName)
+                            Text(firstLetterOfMonth(from: date))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -202,8 +188,8 @@ struct WeeklyHabitChart: View {
                     }
                 }
             }
-            .id("week-\(currentWeekIndex)-\(updateCounter)")
-        }
+            .id("year-\(currentYearIndex)-\(updateCounter)")
+    }
     
     // MARK: - Computed Properties
     
@@ -215,54 +201,37 @@ struct WeeklyHabitChart: View {
                 
                 if abs(horizontalDistance) > verticalDistance * 2 {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        if horizontalDistance > 0 && canNavigateToPreviousWeek {
-                            showPreviousWeek()
-                        } else if horizontalDistance < 0 && canNavigateToNextWeek {
-                            showNextWeek()
+                        if horizontalDistance > 0 && canNavigateToPreviousYear {
+                            showPreviousYear()
+                        } else if horizontalDistance < 0 && canNavigateToNextYear {
+                            showNextYear()
                         }
                     }
                 }
             }
     }
-    
-    private var currentWeekStart: Date {
-        guard !weeks.isEmpty && currentWeekIndex >= 0 && currentWeekIndex < weeks.count else {
+        
+    private var currentYear: Date {
+        guard !years.isEmpty && currentYearIndex >= 0 && currentYearIndex < years.count else {
             return Date()
         }
-        return weeks[currentWeekIndex]
+        return years[currentYearIndex]
     }
     
-    private var currentWeekEnd: Date {
-        calendar.date(byAdding: .day, value: 6, to: currentWeekStart) ?? currentWeekStart
-    }
-    
-    private var weekRangeString: String {
+    private var yearRangeString: String {
         let formatter = DateFormatter()
-        
-        if calendar.isDate(currentWeekStart, equalTo: currentWeekEnd, toGranularity: .month) {
-            let startDay = calendar.component(.day, from: currentWeekStart)
-            let endDay = calendar.component(.day, from: currentWeekEnd)
-            formatter.dateFormat = "MMM yyyy"
-            let monthYear = formatter.string(from: currentWeekStart)
-            return "\(startDay)–\(endDay) \(monthYear)"
-        } else {
-            formatter.dateFormat = "d MMM"
-            let startString = formatter.string(from: currentWeekStart)
-            let endString = formatter.string(from: currentWeekEnd)
-            formatter.dateFormat = "yyyy"
-            let year = formatter.string(from: currentWeekEnd)
-            return "\(startString)–\(endString) \(year)"
-        }
+        formatter.dateFormat = "yyyy"
+        return formatter.string(from: currentYear)
     }
     
     private var averageValueFormatted: String {
         guard !chartData.isEmpty else { return "0" }
         
-        let activeDaysData = chartData.filter { $0.value > 0 }
-        guard !activeDaysData.isEmpty else { return "0" }
+        let activeMonthsData = chartData.filter { $0.value > 0 }
+        guard !activeMonthsData.isEmpty else { return "0" }
         
-        let total = activeDaysData.reduce(0) { $0 + $1.value }
-        let average = total / activeDaysData.count
+        let total = activeMonthsData.reduce(0) { $0 + $1.value }
+        let average = total / activeMonthsData.count
         
         switch habit.type {
         case .count:
@@ -272,7 +241,7 @@ struct WeeklyHabitChart: View {
         }
     }
     
-    private var weeklyTotalFormatted: String {
+    private var yearlyTotalFormatted: String {
         guard !chartData.isEmpty else { return "0" }
         
         let total = chartData.reduce(0) { $0 + $1.value }
@@ -285,10 +254,23 @@ struct WeeklyHabitChart: View {
         }
     }
     
-    private var shortDateFormatter: DateFormatter {
+    private var monthYearFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d MMM"
+        formatter.dateFormat = "LLLL"
         return formatter
+    }
+    
+    private var shortMonthFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        return formatter
+    }
+    
+    private func firstLetterOfMonth(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        let monthName = formatter.string(from: date)
+        return String(monthName.prefix(1)).uppercased()
     }
     
     private func formatTimeWithoutSeconds(_ seconds: Int) -> String {
@@ -318,34 +300,39 @@ struct WeeklyHabitChart: View {
         return habit.type == .time ? values.map { $0 * 3600 } : values
     }
     
-    private var canNavigateToPreviousWeek: Bool {
-        return currentWeekIndex > 0
+    private var xAxisValues: [Date] {
+        return chartData.map { $0.date }
     }
     
-    private var canNavigateToNextWeek: Bool {
-        guard !weeks.isEmpty else { return false }
+    private var canNavigateToPreviousYear: Bool {
+        return currentYearIndex > 0
+    }
+    
+    private var canNavigateToNextYear: Bool {
+        guard !years.isEmpty else { return false }
         
         let today = Date()
-        let todayWeekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let currentYearComponents = calendar.dateComponents([.year], from: today)
+        let displayedYearComponents = calendar.dateComponents([.year], from: currentYear)
         
-        return currentWeekIndex < weeks.count - 1 && currentWeekStart < todayWeekStart
+        return displayedYearComponents.year! < currentYearComponents.year!
     }
     
     // MARK: - Navigation Methods
     
-    private func showPreviousWeek() {
-        guard canNavigateToPreviousWeek else { return }
+    private func showPreviousYear() {
+        guard canNavigateToPreviousYear else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
-            currentWeekIndex -= 1
+            currentYearIndex -= 1
             selectedDate = nil
             generateChartData()
         }
     }
     
-    private func showNextWeek() {
-        guard canNavigateToNextWeek else { return }
+    private func showNextYear() {
+        guard canNavigateToNextYear else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
-            currentWeekIndex += 1
+            currentYearIndex += 1
             selectedDate = nil
             generateChartData()
         }
@@ -354,79 +341,67 @@ struct WeeklyHabitChart: View {
     // MARK: - Bar Color
     
     private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
-        let date = dataPoint.date
         let value = dataPoint.value
         
-        // Future dates or inactive days
-        if !habit.isActiveOnDate(date) || date > Date() {
-            return AppColorManager.getInactiveBarStyle()
-        }
-        
-        // No progress
         if value == 0 {
             return AppColorManager.getNoProgressBarStyle()
         }
         
-        // Use unified chart bar style from AppColorManager
-        return AppColorManager.getChartBarStyle(
-            isCompleted: dataPoint.isCompleted,
-            isExceeded: dataPoint.isOverAchieved,
-            habit: habit,
-            colorScheme: colorScheme
-        )
+        return AppColorManager.getPartialProgressBarStyle(for: habit, colorScheme: colorScheme)
     }
     
     // MARK: - Helper Methods
     
-    private func setupWeeks() {
+    private func setupYears() {
         
         let today = Date()
-        let todayWeekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let currentYearComponents = calendar.dateComponents([.year], from: today)
+        let currentYear = calendar.date(from: currentYearComponents) ?? today
         
         let effectiveStartDate = HistoryLimits.limitStartDate(habit.startDate)
-        let habitStartWeekStart = calendar.dateInterval(of: .weekOfYear, for: effectiveStartDate)?.start ?? effectiveStartDate
+        let habitStartComponents = calendar.dateComponents([.year], from: effectiveStartDate)
+        let habitStartYear = calendar.date(from: habitStartComponents) ?? effectiveStartDate
         
-        var weeksList: [Date] = []
-        var currentWeek = habitStartWeekStart
+        var yearsList: [Date] = []
+        var currentYearDate = habitStartYear
         
-        while currentWeek <= todayWeekStart {
-            weeksList.append(currentWeek)
-            currentWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: currentWeek) ?? currentWeek
+        while currentYearDate <= currentYear {
+            yearsList.append(currentYearDate)
+            currentYearDate = calendar.date(byAdding: .year, value: 1, to: currentYearDate) ?? currentYearDate
         }
         
-        weeks = weeksList
+        years = yearsList
     }
     
-    private func findCurrentWeekIndex() {
+    private func findCurrentYearIndex() {
         let today = Date()
-        let todayWeekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let currentYearComponents = calendar.dateComponents([.year], from: today)
+        let currentYear = calendar.date(from: currentYearComponents) ?? today
         
-        if let index = weeks.firstIndex(where: { calendar.isDate($0, equalTo: todayWeekStart, toGranularity: .day) }) {
-            currentWeekIndex = index
+        if let index = years.firstIndex(where: { calendar.isDate($0, equalTo: currentYear, toGranularity: .year) }) {
+            currentYearIndex = index
         } else {
-            currentWeekIndex = max(0, weeks.count - 1)
+            currentYearIndex = max(0, years.count - 1)
         }
     }
     
     private func generateChartData() {
-        guard !weeks.isEmpty && currentWeekIndex >= 0 && currentWeekIndex < weeks.count else {
+        guard !years.isEmpty && currentYearIndex >= 0 && currentYearIndex < years.count else {
             chartData = []
             return
         }
         
-        let weekStart = currentWeekStart
+        let year = currentYear
         var data: [ChartDataPoint] = []
         
-        for dayOffset in 0...6 {
-            guard let currentDate = calendar.date(byAdding: .day, value: dayOffset, to: weekStart) else { continue }
+        for month in 1...12 {
+            guard let monthDate = calendar.date(byAdding: .month, value: month - 1, to: year) else { continue }
             
-            let progress = habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date() 
-                ? habit.progressForDate(currentDate) 
-                : 0
+            let monthProgress = calculateMonthlyProgress(for: monthDate)
             
             let dataPoint = ChartDataPoint(
-                date: currentDate,
-                value: progress,
+                date: monthDate,
+                value: monthProgress,
                 goal: habit.goal,
                 habit: habit
             )
@@ -435,5 +410,24 @@ struct WeeklyHabitChart: View {
         }
         
         chartData = data
+    }
+    
+    private func calculateMonthlyProgress(for monthDate: Date) -> Int {
+        guard let range = calendar.range(of: .day, in: .month, for: monthDate),
+              let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: monthDate)) else {
+            return 0
+        }
+        
+        var totalProgress = 0
+        
+        for day in 1...range.count {
+            guard let currentDate = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else { continue }
+            
+            if habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date() {
+                totalProgress += habit.progressForDate(currentDate)
+            }
+        }
+        
+        return totalProgress
     }
 }

@@ -11,10 +11,6 @@ struct OpenHabitIntent: LiveActivityIntent {
     init(habitId: String) { self.habitId = habitId }
     
     func perform() async throws -> some IntentResult {
-        // ИСПРАВЛЕНО: Widget extensions не имеют доступа к UIApplication
-        // Вместо этого используем URL схему через App Intents
-        
-        // Записываем deep link action в UserDefaults для основного приложения
         let userDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit")
         
         let deepLinkAction = [

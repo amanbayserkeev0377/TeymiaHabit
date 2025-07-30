@@ -5,14 +5,11 @@ struct ProStatisticsOverlay: View {
     
     var body: some View {
         ZStack {
-            // Полноэкранная блокирующая область
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture {
                     onTap()
                 }
-            
-            // Центральная карточка с замком
             VStack(spacing: 16) {
                 Image(systemName: "lock.fill")
                     .font(.system(size: 32, weight: .medium))
