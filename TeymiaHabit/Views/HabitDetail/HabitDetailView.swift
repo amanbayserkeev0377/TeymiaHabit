@@ -10,8 +10,6 @@ struct HabitDetailView: View {
     @State private var isEditPresented = false
     @State private var inputManager = InputOverlayManager()
     @State private var showingStatistics = false
-    @State private var minusPressed = false
-    @State private var plusPressed = false
     @State private var confettiTrigger = 0
     
     @Environment(\.modelContext) private var modelContext
@@ -273,7 +271,7 @@ struct HabitDetailView: View {
             
             // Minus Button
             Button {
-                minusPressed.toggle()
+                HapticManager.shared.playSelection()
                 viewModel.decrementProgress()
             } label: {
                 Image(systemName: "minus")
@@ -288,7 +286,6 @@ struct HabitDetailView: View {
                     )
             }
             .disabled(viewModel.currentProgress <= 0)
-            .hapticFeedback(.impact(weight: .light), trigger: minusPressed)
             
             Spacer()
             
@@ -310,7 +307,7 @@ struct HabitDetailView: View {
             
             // Plus Button
             Button {
-                plusPressed.toggle()
+                HapticManager.shared.playSelection()
                 viewModel.incrementProgress()
             } label: {
                 Image(systemName: "plus")
@@ -324,7 +321,6 @@ struct HabitDetailView: View {
                             )
                     )
             }
-            .hapticFeedback(.impact(weight: .light), trigger: plusPressed)
             
             Spacer()
         }
@@ -333,6 +329,9 @@ struct HabitDetailView: View {
     // MARK: - Complete Button
     private func completeButtonView(viewModel: HabitDetailViewModel) -> some View {
         Button(action: {
+            if !viewModel.isAlreadyCompleted {
+                HapticManager.shared.playImpact(.medium)
+            }
             viewModel.completeHabit()
         }) {
             Text(viewModel.isAlreadyCompleted ? "completed".localized : "complete".localized)
@@ -353,7 +352,6 @@ struct HabitDetailView: View {
         .disabled(viewModel.isAlreadyCompleted)
         .scaleEffect(viewModel.isAlreadyCompleted ? 0.97 : 1.0)
         .animation(.smooth(duration: 1.0), value: viewModel.isAlreadyCompleted)
-        .modifier(HapticManager.shared.sensoryFeedback(.impact(weight: .medium), trigger: !viewModel.isAlreadyCompleted))
         .padding(.horizontal, 24)
     }
     

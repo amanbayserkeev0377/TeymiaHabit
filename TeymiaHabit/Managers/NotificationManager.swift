@@ -33,31 +33,24 @@ class NotificationManager {
     func ensureAuthorization() async -> Bool {
         
         let settings = await UNUserNotificationCenter.current().notificationSettings()
-        print("🔔 Current authorization status: \(settings.authorizationStatus.rawValue)")
         
         if settings.authorizationStatus == .authorized {
             permissionStatus = true
-            print("🔔 Already authorized")
             return true
         }
         
         if settings.authorizationStatus == .notDetermined {
-            print("🔔 Requesting authorization...")
             do {
                 let options: UNAuthorizationOptions = [.alert, .sound,]
                 let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: options)
                 
                 permissionStatus = granted
-                print("🔔 Authorization granted: \(granted)")
                 return granted
             } catch {
-                print("🔔 Authorization error: \(error)")
                 permissionStatus = false
                 return false
             }
         }
-        
-        print("🔔 Authorization denied or other status: \(settings.authorizationStatus)")
         return settings.authorizationStatus == .authorized
     }
     
@@ -107,8 +100,6 @@ class NotificationManager {
                 do {
                     try await UNUserNotificationCenter.current().add(request)
                 } catch {
-                    print("Ошибка при планировании уведомления: \(error.localizedDescription)")
-                    // Продолжаем добавлять другие уведомления, если возможно
                 }
             }
         }
@@ -156,10 +147,7 @@ class NotificationManager {
             for habit in habitsWithReminders {
                 _ = await scheduleNotifications(for: habit)
             }
-            
-            print("✅ Updated notifications for \(habitsWithReminders.count) habits")
         } catch {
-            print("❌ Error updating notifications: \(error)")
         }
     }
     
@@ -172,7 +160,6 @@ class NotificationManager {
 extension NotificationManager {
     /// Limit reminders to free tier (effectively 1 per habit) when losing Pro access
     func limitRemindersForFreeTier(modelContext: ModelContext) async {
-        print("🔔 Limiting reminders to free tier (max 2, but effectively 1 per habit)")
         
         do {
             let descriptor = FetchDescriptor<Habit>()
@@ -186,21 +173,17 @@ extension NotificationManager {
                     let limitedReminders = Array(reminderTimes.prefix(2))
                     habit.reminderTimes = limitedReminders
                     changedHabitsCount += 1
-                    
-                    print("🔔 Limited reminders for '\(habit.title)' from \(reminderTimes.count) to \(limitedReminders.count)")
                 }
             }
             
             if changedHabitsCount > 0 {
                 try modelContext.save()
-                print("✅ Limited reminders for \(changedHabitsCount) habits")
                 
                 // Reschedule notifications for affected habits
                 await updateAllNotifications(modelContext: modelContext)
             }
             
         } catch {
-            print("❌ Failed to limit reminders: \(error)")
         }
     }
 }

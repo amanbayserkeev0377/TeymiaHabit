@@ -7,19 +7,16 @@ final class WidgetUpdateService {
     
     private init() {}
     
-    /// Главный метод обновления виджетов
     func reloadWidgets() {
         WidgetCenter.shared.reloadAllTimelines()
-        print("🔄 Widgets reloaded")
     }
     
-    /// Обновление с задержкой для синхронизации с базой данных
+    /// Reload widgets with delay for database synchronization
     func reloadWidgetsAfterDataChange() {
         Task {
-            // Ждем чтобы данные сохранились в App Group
+            // Wait for data to sync to App Group
             try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
             WidgetCenter.shared.reloadAllTimelines()
-            print("🔄 Widgets reloaded after data change")
         }
     }
 }

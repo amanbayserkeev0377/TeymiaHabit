@@ -42,7 +42,6 @@ enum HabitIconColor: String, CaseIterable, Codable {
     
     // MARK: - Adaptive Color (automatically switches based on color scheme)
     
-    /// Primary color that adapts to current color scheme
     var color: Color {
         switch self {
         case .primary:
@@ -122,7 +121,7 @@ enum HabitIconColor: String, CaseIterable, Codable {
         case .colorPicker:
             return Self.customColor
         
-        // Extended palette colors (keeping original implementation)
+        // Extended palette colors
         case .coral:
             return Color(uiColor: UIColor { traitCollection in
                 traitCollection.userInterfaceStyle == .dark
@@ -304,8 +303,6 @@ extension HabitIconColor {
     }
     
     /// Creates adaptive gradient based on current color scheme
-    /// - Parameter colorScheme: Current color scheme (light/dark)
-    /// - Returns: LinearGradient that adapts to the color scheme
     func adaptiveGradient(for colorScheme: ColorScheme) -> LinearGradient {
         let topColor = colorScheme == .dark ? darkColor : lightColor
         let bottomColor = colorScheme == .dark ? lightColor : darkColor

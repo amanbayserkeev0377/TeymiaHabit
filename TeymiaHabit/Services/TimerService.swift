@@ -34,22 +34,18 @@ final class TimerService {
         return min(currentProgress, 86400) // Cap at 24 hours
     }
     
-    /// Check if timer is running for habit
     func isTimerRunning(for habitId: String) -> Bool {
-        return activeTimers[habitId] != nil
+        activeTimers[habitId] != nil
     }
     
-    /// Start timer for habit with base progress
     func startTimer(for habitId: String, baseProgress: Int) -> Bool {
         // Check if already running
         if activeTimers[habitId] != nil {
-            print("⚠️ Timer already running for: \(habitId)")
             return true
         }
         
         // Check timer limit
         guard activeTimers.count < maxTimers else {
-            print("❌ Timer limit reached: \(activeTimers.count)/\(maxTimers)")
             return false
         }
         
@@ -66,14 +62,12 @@ final class TimerService {
         }
         
         triggerUIUpdate()
-        print("✅ Timer started: \(habitId), base: \(baseProgress) (\(activeTimers.count)/\(maxTimers))")
         return true
     }
     
     /// Stop timer and return final progress
     func stopTimer(for habitId: String) -> Int? {
         guard let timerData = activeTimers[habitId] else {
-            print("⚠️ Timer was not running for: \(habitId)")
             return nil
         }
         
@@ -90,31 +84,29 @@ final class TimerService {
         }
         
         triggerUIUpdate()
-        print("✅ Timer stopped: \(habitId), final: \(finalProgress) (remaining: \(activeTimers.count))")
         return finalProgress
     }
     
-    /// Get timer start time (for Live Activities)
     func getTimerStartTime(for habitId: String) -> Date? {
-        return activeTimers[habitId]?.startTime
+        activeTimers[habitId]?.startTime
     }
     
     // MARK: - Status
     
     var activeTimerCount: Int {
-        return activeTimers.count
+        activeTimers.count
     }
     
     var canStartNewTimer: Bool {
-        return activeTimers.count < maxTimers
+        activeTimers.count < maxTimers
     }
     
     var remainingSlots: Int {
-        return maxTimers - activeTimers.count
+        maxTimers - activeTimers.count
     }
     
     var hasActiveTimers: Bool {
-        return !activeTimers.isEmpty
+        !activeTimers.isEmpty
     }
     
     // MARK: - Cleanup
@@ -144,14 +136,11 @@ final class TimerService {
                 self?.triggerUIUpdate()
             }
         }
-        
-        print("⏱️ UI Timer started for \(activeTimers.count) active timers")
     }
     
     private func stopUITimer() {
         uiTimer?.invalidate()
         uiTimer = nil
-        print("⏱️ UI Timer stopped")
     }
     
     // MARK: - UI Update Helper
@@ -162,40 +151,19 @@ final class TimerService {
     
     // MARK: - App Lifecycle Support
     
-    /// Call when app enters background (for Live Activities)
     func handleAppDidEnterBackground() {
-        print("🌙 TimerService: App entered background with \(activeTimers.count) active timers")
-        
-        // Print debug info for Live Activities
-        for (habitId, timerData) in activeTimers {
-            let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
-            let currentProgress = timerData.baseProgress + elapsed
-            print("   - \(habitId): \(currentProgress) total (\(elapsed)s elapsed)")
-        }
+        // Background handling for Live Activities
+        // Timers continue running, UI timer stops automatically
     }
     
-    /// Call when app enters foreground
     func handleAppWillEnterForeground() {
-        print("☀️ TimerService: App entering foreground")
-        
         // Restart UI timer if we have active timers but no UI timer
         if !activeTimers.isEmpty && uiTimer == nil {
-            print("☀️ Restarting UI timer for \(activeTimers.count) active timers")
             startUITimer()
         }
         
         // Force UI update to refresh all views
         triggerUIUpdate()
-        
-        // Debug current state
-        if !activeTimers.isEmpty {
-            print("☀️ Active timers after foreground:")
-            for (habitId, timerData) in activeTimers {
-                let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
-                let currentProgress = timerData.baseProgress + elapsed
-                print("   - \(habitId): \(currentProgress) total (\(elapsed)s elapsed)")
-            }
-        }
     }
     
     /// Check if any timers are from previous day and clean them up
@@ -213,7 +181,6 @@ final class TimerService {
         
         // Remove stale timers
         for habitId in staleTimers {
-            print("🗑️ Removing stale timer: \(habitId)")
             activeTimers.removeValue(forKey: habitId)
         }
         
@@ -224,21 +191,6 @@ final class TimerService {
         
         if !staleTimers.isEmpty {
             triggerUIUpdate()
-        }
-    }
-    
-    // MARK: - Debug Helpers
-    
-    func debugCurrentState() {
-        print("🔍 TimerService Debug State:")
-        print("   Active timers: \(activeTimers.count)/\(maxTimers)")
-        print("   UI Timer running: \(uiTimer != nil)")
-        print("   Update trigger: \(updateTrigger)")
-        
-        for (habitId, timerData) in activeTimers {
-            let elapsed = Int(Date().timeIntervalSince(timerData.startTime))
-            let currentProgress = timerData.baseProgress + elapsed
-            print("   - \(habitId): base=\(timerData.baseProgress), elapsed=\(elapsed), current=\(currentProgress)")
         }
     }
 }

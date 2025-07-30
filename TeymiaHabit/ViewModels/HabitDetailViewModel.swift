@@ -63,9 +63,6 @@ final class HabitDetailViewModel {
                     
                     hasPlayedTimerCompletionSound = true
                     
-                    // ✅ Сохрани title ДО closure
-                    let habitTitle = habit.title
-                    
                     // ✅ АСИНХРОННЫЙ ВЫЗОВ без self
                     DispatchQueue.main.async {
                         SoundManager.shared.playCompletionSound()
@@ -180,8 +177,6 @@ final class HabitDetailViewModel {
     // MARK: - Subscriptions
     
     private func setupStableSubscriptions() {
-        let habitTitle = habit.title
-        let habitId = cachedHabitId
 
         NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
@@ -546,16 +541,6 @@ final class HabitDetailViewModel {
         
         Task {
             await liveActivityManager.endActivity(for: cachedHabitId)
-        }
-    }
-    
-    private func debugTimerState() {
-        if let startTime = timerStartTime {
-            let elapsed = Int(Date().timeIntervalSince(startTime))
-            
-            if let base = baseProgressWhenTimerStarted {
-                
-            }
         }
     }
     

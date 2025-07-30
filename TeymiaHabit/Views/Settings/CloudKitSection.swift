@@ -356,21 +356,17 @@ struct CloudKitSyncView: View {
     @MainActor
     private func checkAccountStatus() async {
         do {
-            // 🔍 ДИАГНОСТИКА
-            let bundleId = Bundle.main.bundleIdentifier ?? "unknown"
-            let expectedContainerID = "iCloud.com.amanbayserkeev.teymiahabit"
-            
-            // ИСПОЛЬЗУЕМ ПРАВИЛЬНЫЙ CONTAINER ID (без дублирования)
-            let container = CKContainer(identifier: expectedContainerID)
+            // Use correct container ID
+            let container = CKContainer(identifier: "iCloud.com.amanbayserkeev.teymiahabit")
             
             let accountStatus = try await container.accountStatus()
             
             switch accountStatus {
             case .available:
-                // Дополнительно проверяем доступность базы данных
+                // Check database availability
                 do {
                     let database = container.privateCloudDatabase
-                    let zones = try await database.allRecordZones()
+                    _ = try await database.allRecordZones()
                     cloudKitStatus = .available
                 } catch {
                     cloudKitStatus = .error("icloud_database_error".localized)

@@ -229,7 +229,10 @@ struct StatCardInteractive: View {
     }
     
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            HapticManager.shared.playSelection()
+            onTap()
+        }) {
             VStack(spacing: 0) {
                 Text(title)
                     .font(.headline)
@@ -279,7 +282,6 @@ struct StatCardInteractive: View {
             )
             .scaleEffect(isPressed ? 0.97 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isPressed)
-            .hapticFeedback(.selection, trigger: isPressed)
         }
         .buttonStyle(.plain)
         .simultaneousGesture(

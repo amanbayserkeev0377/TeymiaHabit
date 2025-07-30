@@ -1,7 +1,6 @@
 import SwiftData
 import Foundation
 
-// Singleton для доступа к основному ModelContext приложения
 @MainActor
 final class AppModelContext {
     static let shared = AppModelContext()

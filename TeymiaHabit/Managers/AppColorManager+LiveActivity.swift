@@ -1,9 +1,19 @@
 import SwiftUI
 
-// MARK: - LiveActivity-only Color Manager
+// MARK: - LiveActivity Color Manager
+
+/// Standalone color manager for LiveActivity extensions
+/// Duplicates colors from main AppColorManager to avoid dependencies
 struct LiveActivityColorManager {
     
-    /// Get ring colors for LiveActivity - completely independent
+    // MARK: - Color Constants
+    private static let completedLightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
+    private static let completedDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
+    private static let exceededLightMint = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))
+    private static let exceededDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
+    
+    // MARK: - Ring Colors
+    
     static func getRingColors(
         habitColor: HabitIconColor,
         isCompleted: Bool,
@@ -27,7 +37,7 @@ struct LiveActivityColorManager {
         colorScheme: ColorScheme
     ) -> (top: Color, bottom: Color) {
         
-        enum LocalHabitState {
+        enum HabitState {
             case inProgress, completed, exceeded
             
             init(isCompleted: Bool, isExceeded: Bool) {
@@ -41,43 +51,29 @@ struct LiveActivityColorManager {
             }
         }
         
-        let habitState = LocalHabitState(isCompleted: isCompleted, isExceeded: isExceeded)
+        let habitState = HabitState(isCompleted: isCompleted, isExceeded: isExceeded)
         
         switch habitState {
         case .completed:
-            let lightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
-            let darkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
-            
-            let visualTop = colorScheme == .dark ? darkGreen : lightGreen
-            let visualBottom = colorScheme == .dark ? lightGreen : darkGreen
-            
+            let visualTop = colorScheme == .dark ? completedDarkGreen : completedLightGreen
+            let visualBottom = colorScheme == .dark ? completedLightGreen : completedDarkGreen
             return (top: visualTop, bottom: visualBottom)
             
         case .exceeded:
-            let lightMint = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))
-            let darkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
-            
-            let visualTop = colorScheme == .dark ? darkGreen : lightMint
-            let visualBottom = colorScheme == .dark ? lightMint : darkGreen
-            
+            let visualTop = colorScheme == .dark ? exceededDarkGreen : exceededLightMint
+            let visualBottom = colorScheme == .dark ? exceededLightMint : exceededDarkGreen
             return (top: visualTop, bottom: visualBottom)
             
         case .inProgress:
-            let lightColor = habitColor.lightColor
-            let darkColor = habitColor.darkColor
-            
-            let visualTop = colorScheme == .dark ? darkColor : lightColor
-            let visualBottom = colorScheme == .dark ? lightColor : darkColor
-            
+            let visualTop = colorScheme == .dark ? habitColor.darkColor : habitColor.lightColor
+            let visualBottom = colorScheme == .dark ? habitColor.lightColor : habitColor.darkColor
             return (top: visualTop, bottom: visualBottom)
         }
     }
     
-    /// Static completed bars gradient
+    // MARK: - Bar Styles
+    
     static func getCompletedBarStyle(for colorScheme: ColorScheme) -> AnyShapeStyle {
-        let completedLightGreen = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.3, alpha: 1))
-        let completedDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
-        
         let topColor = colorScheme == .dark ? completedDarkGreen : completedLightGreen
         let bottomColor = colorScheme == .dark ? completedLightGreen : completedDarkGreen
         
@@ -90,11 +86,7 @@ struct LiveActivityColorManager {
         )
     }
     
-    /// Static exceeded bars gradient
     static func getExceededBarStyle(for colorScheme: ColorScheme) -> AnyShapeStyle {
-        let exceededLightMint = Color(#colorLiteral(red: 0.5, green: 0.85, blue: 0.9, alpha: 1))
-        let exceededDarkGreen = Color(#colorLiteral(red: 0.2, green: 0.55, blue: 0.05, alpha: 1))
-        
         let topColor = colorScheme == .dark ? exceededDarkGreen : exceededLightMint
         let bottomColor = colorScheme == .dark ? exceededLightMint : exceededDarkGreen
         

@@ -1,26 +1,25 @@
 import Foundation
 
-/// Централизованные ограничения для истории привычек
+/// Centralized history limits for habit tracking across the app
 enum HistoryLimits {
-    /// Максимальная история привычек в годах
-    /// Используется во всех графиках, календарях и при создании привычек
+    /// Maximum habit history in years (used in charts, calendars, and date pickers)
     static let maxYears = 5
     
-    /// Вычисляет самую раннюю дату, которую можно показывать в приложении
+    /// Returns the earliest date that can be displayed in the app
     static func earliestAllowedDate() -> Date {
         let calendar = Calendar.current
         return calendar.date(byAdding: .year, value: -maxYears, to: Date()) ?? Date()
     }
     
-    /// Применяет ограничение к дате начала привычки для отображения
-    /// - Parameter startDate: Исходная дата начала привычки
-    /// - Returns: Дата с учетом ограничения (не раньше чем maxYears назад)
+    /// Applies history limit to habit start date for display purposes
+    /// - Parameter startDate: Original habit start date
+    /// - Returns: Date clamped to history limit (not earlier than maxYears ago)
     static func limitStartDate(_ startDate: Date) -> Date {
-        return max(startDate, earliestAllowedDate())
+        max(startDate, earliestAllowedDate())
     }
     
-    /// Диапазон дат для DatePicker при создании/редактировании привычки
+    /// Date range for DatePicker when creating/editing habits
     static var datePickerRange: ClosedRange<Date> {
-        return earliestAllowedDate()...Date()
+        earliestAllowedDate()...Date()
     }
 }

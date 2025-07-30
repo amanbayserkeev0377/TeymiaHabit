@@ -9,10 +9,6 @@ struct ActionButtonsSection: View {
     var onTimerToggle: () -> Void
     var onManualEntry: () -> Void
     
-    @State private var resetPressed = false
-    @State private var togglePressed = false
-    @State private var manualEntryPressed = false
-    
     @Environment(\.colorScheme) private var colorScheme
     
     private var isToday: Bool {
@@ -42,22 +38,20 @@ struct ActionButtonsSection: View {
     @ViewBuilder
     private var resetButton: some View {
         Button {
-            resetPressed.toggle()
+            HapticManager.shared.play(.error)
             onReset()
         } label: {
             Image(systemName: "arrow.counterclockwise")
                 .font(.system(size: 24, weight: .semibold))
                 .withHabitGradient(habit, colorScheme: colorScheme)
                 .frame(minWidth: 52, minHeight: 52)
-                .symbolEffect(.rotate, options: .speed(6.0), value: resetPressed)
         }
-        .errorHaptic(trigger: resetPressed)
     }
     
     @ViewBuilder
     private var playPauseButton: some View {
         Button {
-            togglePressed.toggle()
+            HapticManager.shared.playImpact(.medium)
             onTimerToggle()
         } label: {
             Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
@@ -66,13 +60,12 @@ struct ActionButtonsSection: View {
                 .withHabitGradient(habit, colorScheme: colorScheme)
                 .frame(minWidth: 52, minHeight: 52)
         }
-        .hapticFeedback(.impact(weight: .medium), trigger: togglePressed)
     }
     
     @ViewBuilder
     private func manualEntryButton(icon: String) -> some View {
         Button {
-            manualEntryPressed.toggle()
+            HapticManager.shared.playImpact(.medium)
             onManualEntry()
         } label: {
             Image(systemName: icon)
@@ -80,6 +73,5 @@ struct ActionButtonsSection: View {
                 .withHabitGradient(habit, colorScheme: colorScheme)
                 .frame(minWidth: 52, minHeight: 52)
         }
-        .hapticFeedback(.impact(weight: .medium), trigger: manualEntryPressed)
     }
 }

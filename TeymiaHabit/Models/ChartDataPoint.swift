@@ -17,25 +17,21 @@ struct ChartDataPoint: Identifiable, Equatable {
     
     // MARK: - Progress Calculation
     
-    /// Returns completion percentage as a value between 0.0 and 1.0
     var completionPercentage: Double {
         guard goal > 0 else { return 0 }
         return Double(value) / Double(goal)
     }
     
-    /// Whether the daily goal was reached or exceeded
     var isCompleted: Bool {
         value >= goal
     }
     
-    /// Whether the progress exceeded the daily goal
     var isOverAchieved: Bool {
         value > goal
     }
     
     // MARK: - Formatting
     
-    /// Formatted value based on habit type (count or time)
     var formattedValue: String {
         switch habit.type {
         case .count:
@@ -45,7 +41,6 @@ struct ChartDataPoint: Identifiable, Equatable {
         }
     }
     
-    /// Formatted goal based on habit type (count or time)
     var formattedGoal: String {
         switch habit.type {
         case .count:
@@ -55,8 +50,7 @@ struct ChartDataPoint: Identifiable, Equatable {
         }
     }
     
-    /// Formatted time without seconds for cleaner chart display
-    /// For count habits, returns the same as formattedValue
+    /// Returns formatted time without seconds for cleaner chart display
     var formattedValueWithoutSeconds: String {
         switch habit.type {
         case .count:

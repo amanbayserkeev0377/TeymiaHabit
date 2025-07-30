@@ -217,7 +217,6 @@ struct HomeView: View {
                                         habit: habit,
                                         date: selectedDate,
                                         onTap: {
-                                            print("🎯 Карточка нажата: \(habit.title)")
                                             selectedHabit = habit
                                         },
                                         onEdit: { habitToEdit = habit },
@@ -346,7 +345,6 @@ struct HabitCardView: View {
         hasPlayedCompletionSound = true
         SoundManager.shared.playCompletionSound()
         HapticManager.shared.play(.success)
-        print("🎉 Timer completion in HomeView for \(habit.title)!")
     }
     
     private var cardCompletionPercentage: Double {
@@ -515,13 +513,11 @@ struct HabitCardView: View {
             if cardIsCompleted {
                 // Если завершена - сбрасываем на 0
                 viewModel.resetProgress()
-                print("🔄 Habit reset via ProgressRing tap: \(habit.title)")
             } else {
                 // Если не завершена - завершаем
                 let wasCompleted = cardIsCompleted // ✅ Сохраняем состояние ДО изменения
                 viewModel.completeHabit()
                 SoundManager.shared.playCompletionSound()
-                print("✅ Habit completed via ProgressRing tap: \(habit.title)")
                 
                 // ✅ Показываем конфетти если привычка стала завершенной
                 if !wasCompleted {
@@ -531,18 +527,15 @@ struct HabitCardView: View {
             HapticManager.shared.play(.success)
             WidgetUpdateService.shared.reloadWidgets()
         } catch {
-            print("❌ Failed to get ViewModel: \(error)")
             // Fallback - direct habit methods
             if cardIsCompleted {
                 // ✅ Исправил логику: если завершена - сбрасываем
                 habit.resetProgress(for: date, modelContext: modelContext)
-                print("🔄 Habit reset via fallback: \(habit.title)")
             } else {
                 // ✅ Если НЕ завершена - завершаем
                 let wasCompleted = cardIsCompleted // ✅ Сохраняем состояние ДО изменения
                 habit.complete(for: date, modelContext: modelContext)
                 SoundManager.shared.playCompletionSound()
-                print("✅ Habit completed via fallback: \(habit.title)")
                 
                 // ✅ Конфетти и в fallback случае
                 if !wasCompleted {
@@ -595,8 +588,6 @@ struct HabitCardView: View {
         cardTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             timerUpdateTrigger += 1
         }
-        
-        print("🔄 Started card timer for \(habit.title)")
     }
     
     private func stopCardTimer() {

@@ -26,10 +26,8 @@ struct TeymiaHabitApp: App {
     @State private var globalBiometricDismiss: (() -> Void)?
     
     init() {
-        // Configure RevenueCat FIRST
         RevenueCatConfig.configure()
         PrivacyManager.shared.checkAndLockOnAppStart()
-
         
         do {
             let schema = Schema([Habit.self, HabitCompletion.self])
@@ -43,12 +41,8 @@ struct TeymiaHabitApp: App {
                 for: schema,
                 configurations: [modelConfiguration]
             )
-            
-            print("✅ Local storage initialized successfully")
-            print("✅ CloudKit container initialized: iCloud.com.amanbayserkeev.teymiahabit")
         } catch {
-            print("❌ ModelContainer initialization error: \(error)")
-            fatalError("Не удалось создать ModelContainer: \(error)")
+            fatalError("Failed to create ModelContainer: \(error)")
         }
     }
     
@@ -71,23 +65,13 @@ struct TeymiaHabitApp: App {
                         handleAppTermination()
                     }
                 
-                let _ = print("🔐 TeymiaHabitApp: Checking isAppLocked = \(privacyManager.isAppLocked)")
-                
-                // ✅ ИСПРАВЛЕНИЕ 1: Проверяем блокировку и обрабатываем pending deeplink
                 if privacyManager.isAppLocked {
                     PrivacyLockView()
                         .transition(.opacity)
                         .zIndex(10000)
                         .allowsHitTesting(true)
-                        .onAppear {
-                            print("🔐 TeymiaHabitApp: PrivacyLockView appeared")
-                        }
-                        .onDisappear {
-                            print("🔐 TeymiaHabitApp: PrivacyLockView disappeared")
-                        }
                 }
                 
-                // ✅ Глобальный PIN overlay
                 if showingGlobalPinView {
                     GlobalPinView(
                         title: globalPinTitle,
@@ -103,7 +87,6 @@ struct TeymiaHabitApp: App {
                     .zIndex(2000)
                 }
                 
-                // ✅ Биометрический промо overlay
                 if showingBiometricPromo {
                     BiometricPromoView(
                         onEnable: {
@@ -114,21 +97,13 @@ struct TeymiaHabitApp: App {
                         }
                     )
                     .transition(.opacity)
-                    .zIndex(2500) // Выше чем PIN
+                    .zIndex(2500)
                 }
             }
             .environment(privacyManager)
             .onChange(of: privacyManager.isAppLocked) { _, newValue in
                 if !newValue && pendingDeeplink != nil {
-                    print("🔓 App unlocked at APP LEVEL - processing pending deeplink")
-                    if let habit = pendingDeeplink {
-                        NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            openHabitDirectly(habit)
-                            pendingDeeplink = nil
-                        }
-                    }
+                    handlePendingDeeplink()
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: privacyManager.isAppLocked)
@@ -137,89 +112,70 @@ struct TeymiaHabitApp: App {
         }
         .modelContainer(container)
         .onChange(of: scenePhase) { _, newPhase in
-            switch newPhase {
-            case .background:
-                handleAppBackground()
-                privacyManager.handleAppWillResignActive()
-                
-            case .inactive:
-                print("📱 App becoming inactive")
-                saveDataContext()
-                
-            case .active:
-                print("📱 App became active")
-                handleAppForeground()
-                privacyManager.handleAppDidBecomeActive()
-                
-            @unknown default:
-                print("📱 Unknown scene phase")
-                break
-            }
+            handleScenePhaseChange(newPhase)
         }
     }
     
-    // MARK: - DeepLink Handler
+    // MARK: - Scene Phase Management
+    
+    private func handleScenePhaseChange(_ phase: ScenePhase) {
+        switch phase {
+        case .background:
+            handleAppBackground()
+            privacyManager.handleAppWillResignActive()
+            
+        case .inactive:
+            saveDataContext()
+            
+        case .active:
+            handleAppForeground()
+            privacyManager.handleAppDidBecomeActive()
+            
+        @unknown default:
+            break
+        }
+    }
+    
+    // MARK: - DeepLink Handling
     
     private func handleDeepLink(_ url: URL) {
-        print("🔗 Received deeplink: \(url)")
-        
-        guard url.scheme == "teymiahabit" else {
-            print("⚠️ Unknown URL scheme: \(url.scheme ?? "nil")")
+        guard url.scheme == "teymiahabit",
+              url.host == "habit",
+              let habitId = url.pathComponents.last,
+              let habitUUID = UUID(uuidString: habitId) else {
             return
         }
         
-        guard url.host == "habit" else {
-            print("⚠️ Unknown URL host: \(url.host ?? "nil")")
-            return
-        }
-        
-        let pathComponents = url.pathComponents
-        guard pathComponents.count >= 2,
-              let habitId = pathComponents.last else {
-            print("⚠️ Invalid URL path: \(url.path)")
-            return
-        }
-        
-        print("✅ Deeplink to habit: \(habitId)")
-        
-        // ✅ ИСПРАВЛЕНИЕ: Ищем привычку и проверяем блокировку
         Task { @MainActor in
-            do {
-                guard let habitUUID = UUID(uuidString: habitId) else {
-                    print("❌ Invalid habit UUID: \(habitId)")
-                    return
+            let descriptor = FetchDescriptor<Habit>(
+                predicate: #Predicate<Habit> { habit in
+                    habit.uuid == habitUUID && !habit.isArchived
                 }
-                
-                let descriptor = FetchDescriptor<Habit>(
-                    predicate: #Predicate<Habit> { habit in
-                        habit.uuid == habitUUID && !habit.isArchived
-                    }
-                )
-                
-                let habits = try container.mainContext.fetch(descriptor)
-                
-                if let foundHabit = habits.first {
-                    print("✅ Found habit for deeplink: \(foundHabit.title)")
-                    
-                    // ✅ ИСПРАВЛЕНИЕ: Проверяем блокировку
-                    if privacyManager.isAppLocked {
-                        print("🔐 App is locked - storing deeplink for later")
-                        pendingDeeplink = foundHabit
-                    } else {
-                        print("🔗 App unlocked - processing deeplink immediately")
-                        openHabitDirectly(foundHabit)
-                    }
-                } else {
-                    print("❌ Habit not found for ID: \(habitId)")
-                }
-                
-            } catch {
-                print("❌ Error fetching habit for deeplink: \(error)")
+            )
+            
+            guard let foundHabit = try? container.mainContext.fetch(descriptor).first else {
+                return
+            }
+            
+            if privacyManager.isAppLocked {
+                pendingDeeplink = foundHabit
+            } else {
+                openHabitDirectly(foundHabit)
             }
         }
     }
     
-    // ✅ ДОБАВЛЕНО: Отдельная функция для открытия привычки
+    private func handlePendingDeeplink() {
+        if let habit = pendingDeeplink {
+            NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                openHabitDirectly(habit)
+                pendingDeeplink = nil
+            }
+        }
+    }
+    
     private func openHabitDirectly(_ habit: Habit) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             NotificationCenter.default.post(
@@ -232,71 +188,44 @@ struct TeymiaHabitApp: App {
     // MARK: - Live Activities Setup
     
     private func setupLiveActivities() {
-        print("🎬 Setting up Live Activities...")
-        
-        // ✅ Восстанавливаем существующие Live Activities при запуске
         Task {
             await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
         }
-        
-        print("✅ Live Activities setup completed")
     }
     
     // MARK: - App Lifecycle Methods
     
     private func handleAppBackground() {
-        print("📱 App going to background")
         saveDataContext()
         
         if privacyManager.isPrivacyEnabled {
-                NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
-            }
+            NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
+        }
         
-        // ✅ Сообщаем TimerService о переходе в фон
         TimerService.shared.handleAppDidEnterBackground()
-        
-        // ✅ Очищаем только действительно неактивные ViewModel
         HabitManager.shared.cleanupInactiveViewModels()
-        
-        print("📱 Background transition completed")
     }
     
     private func handleAppForeground() {
-        print("📱 App will enter foreground")
-        
         WidgetUpdateService.shared.reloadWidgets()
         TimerService.shared.handleAppWillEnterForeground()
         
-        // ✅ Синхронизируем состояние Live Activities
         Task {
             await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
         }
-        
-        print("📱 Foreground transition completed")
     }
     
     private func handleAppTermination() {
-        print("💀 App is being terminated - cleaning up")
-        
-        // ✅ Очищаем ViewModel'ы
         HabitManager.shared.cleanupAllViewModels()
-        
-        // ✅ Сохраняем данные последний раз
         saveDataContext()
-        
-        print("💀 App termination cleanup completed")
     }
     
     private func saveDataContext() {
-        do {
-            try container.mainContext.save()
-            print("✅ Data saved on background")
-        } catch {
-            print("❌ Failed to save on background: \(error)")
-        }
+        try? container.mainContext.save()
     }
     
-    // ✅ Обновляем globalPinEnvironment с биометрическим промо
+    // MARK: - Global PIN Environment
+    
     private var globalPinEnvironment: GlobalPinEnvironment {
         GlobalPinEnvironment(
             showPin: { title, onComplete, onDismiss in
@@ -313,7 +242,6 @@ struct TeymiaHabitApp: App {
                 globalPinDismiss = nil
             },
             showBiometricPromo: { biometricType, displayName, onEnable, onDismiss in
-                print("🔐 TeymiaHabitApp: Showing biometric promo for \(displayName)")
                 globalBiometricType = biometricType
                 globalBiometricDisplayName = displayName
                 globalBiometricEnable = onEnable
@@ -321,7 +249,6 @@ struct TeymiaHabitApp: App {
                 showingBiometricPromo = true
             },
             hideBiometricPromo: {
-                print("🔐 TeymiaHabitApp: Hiding biometric promo")
                 showingBiometricPromo = false
                 globalBiometricType = .none
                 globalBiometricDisplayName = ""
@@ -331,6 +258,8 @@ struct TeymiaHabitApp: App {
         )
     }
 }
+
+// MARK: - Global PIN Environment
 
 struct GlobalPinEnvironment {
     let showPin: (String, @escaping (String) -> Void, @escaping () -> Void) -> Void

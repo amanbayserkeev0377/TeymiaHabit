@@ -5,10 +5,12 @@ enum HabitManagerError: LocalizedError {
     case invalidHabit
     
     var errorDescription: String? {
-        return "Invalid habit UUID"
+        "Invalid habit UUID"
     }
 }
 
+/// Manages lifecycle of HabitDetailViewModels to prevent memory leaks and ensure proper cleanup
+/// Reuses ViewModels for the same habit to maintain state during navigation
 @MainActor
 final class HabitManager: ObservableObject {
     static let shared = HabitManager()
@@ -17,6 +19,7 @@ final class HabitManager: ObservableObject {
     
     private init() {}
     
+    /// Gets or creates a ViewModel for a habit, reusing existing ones when possible
     func getViewModel(for habit: Habit, date: Date, modelContext: ModelContext) throws -> HabitDetailViewModel {
         let habitId = habit.uuid.uuidString
         
@@ -25,28 +28,26 @@ final class HabitManager: ObservableObject {
         }
         
         if let existingViewModel = viewModels[habitId] {
-            print("🔄 Reusing ViewModel for \(habit.title)")
             existingViewModel.updateDisplayedDate(date)
             return existingViewModel
         }
         
-        print("🔧 Creating NEW ViewModel for \(habit.title)")
         let viewModel = HabitDetailViewModel(habit: habit, initialDate: date, modelContext: modelContext)
         viewModels[habitId] = viewModel
         
-        print("📊 Total ViewModels: \(viewModels.count)")
         return viewModel
     }
     
+    /// Removes and cleans up a specific ViewModel
     func removeViewModel(for habitId: String) {
         if let viewModel = viewModels[habitId] {
-            print("🗑️ Removing ViewModel for habitId: \(habitId)")
             viewModel.syncWithTimerService()
             viewModel.cleanup()
             viewModels.removeValue(forKey: habitId)
         }
     }
     
+    /// Cleans up ViewModels that don't have active timers or Live Activities
     func cleanupInactiveViewModels() {
         let timerService = TimerService.shared
         let liveActivityManager = HabitLiveActivityManager.shared
@@ -56,19 +57,15 @@ final class HabitManager: ObservableObject {
             let hasActiveLiveActivity = liveActivityManager.hasActiveActivity(for: habitId)
             
             if !hasActiveTimer && !hasActiveLiveActivity {
-                print("🧹 Cleaning up inactive ViewModel for habitId: \(habitId)")
                 viewModel.syncWithTimerService()
                 viewModel.cleanup()
                 viewModels.removeValue(forKey: habitId)
             }
         }
-        
-        print("📊 Active ViewModels: \(viewModels.count)")
     }
     
+    /// Cleans up all ViewModels (called on app termination)
     func cleanupAllViewModels() {
-        print("🧹 Cleaning up all ViewModels: \(viewModels.count)")
-        
         for (_, viewModel) in viewModels {
             viewModel.syncWithTimerService()
             viewModel.cleanup()
