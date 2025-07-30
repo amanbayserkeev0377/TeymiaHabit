@@ -31,10 +31,20 @@ A modern, feature-rich habit tracking app built with the latest iOS technologies
 ## ✨ Features
 
 ### Core Features
-- **Track any habit**: Counter-based or timer-based tracking
-- **Smart scheduling**: Active days configuration per habit
+- **Multiple habit types**: Counter-based and timer-based tracking
+- **Concurrent timers**: Run multiple habit timers simultaneously
+- **Background persistence**: Timers continue when app is closed
+- **Smart scheduling**: Configure active days per habit
 - **Progress visualization**: Beautiful charts and calendar views
-- **Streak tracking**: Monitor your consistency over time
+- **Streak tracking**: Monitor consistency over time
+- **Completion sounds**: Audio feedback for achievements
+- **Archive system**: Organize completed habits
+
+### Security & Privacy
+- **Biometric lock**: Face ID/Touch ID app protection
+- **Custom passcode**: 4-digit PIN security
+- **Auto-lock**: Configurable timeout settings
+- **Privacy-first**: Data stays on your devices only
 
 ### iOS 18+ Integration
 - **Live Activities**: Interactive timer widgets on Lock Screen
@@ -110,18 +120,22 @@ CloudKit works with any Apple ID, but for production:
 - **Dependency Injection** - Through SwiftUI Environment
 - **Protocol-Oriented Design** - Flexible and testable code
 
-### Key Components
+### Project Structure
 
 ```
 TeymiaHabit/
-├── App/                    # App configuration and setup
+├── App/                    # App configuration
 ├── Models/                 # SwiftData models
-├── Views/                  # SwiftUI views organized by feature
-├── Services/               # Business logic and managers
-├── Extensions/             # Swift and SwiftUI extensions
-├── Pro/                    # Monetization and premium features
-├── TeymiaHabitLiveActivity/  # Live Activities extension
-└── TeymiaHabitWidgets/     # Widget extension
+├── Views/                  # SwiftUI views
+├── ViewModels/             # MVVM view models
+├── Managers/               # Core managers
+├── Services/               # Business logic
+├── UI Components/          # Reusable components
+├── Extensions/             # Swift extensions
+├── Pro/                    # Premium features
+├── Sounds/                 # Audio assets
+├── LiveActivity/           # Live Activities
+└── TeymiaHabitWidgets/     # Widgets
 ```
 
 ### Modern iOS Features Implementation
