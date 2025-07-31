@@ -236,12 +236,6 @@ This is primarily an educational resource, but contributions are welcome:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- Built with love using Swift and SwiftUI
-- Icons and graphics created specifically for this project
-- Inspired by the iOS design system and Human Interface Guidelines
-
 ## 📞 Contact
 
 - **App Store**: [Teymia Habit](https://apps.apple.com/app/teymia-habit/id6746747903)
