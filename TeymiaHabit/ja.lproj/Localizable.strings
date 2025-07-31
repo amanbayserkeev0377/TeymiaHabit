@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "習慣を削除";
+"alert_delete_habit_message" = "「%@」を本当に削除しますか？";
+
+// History Reset Alert
+"alert_reset_history" = "履歴をリセット";
+"alert_reset_history_message" = "これにより、すべての習慣の完了データが完全に削除されます。この操作は元に戻せません。";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "通知の許可が必要です";
+"alert_notifications_permission_message" = "習慣のリマインダーを受信するには、設定で通知を有効にしてください。";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "追加";
+"button_done" = "完了";
+"button_delete" = "削除";
+"button_cancel" = "キャンセル";
+"button_edit" = "編集";
+"button_save" = "保存";
+"button_reset" = "リセット";
+"button_reset_progress" = "進捗をリセット";
+"complete" = "完了する";
+"completed" = "完了済み";
+
+/* ===================== General ===================== */
+"today" = "今日";
+"yesterday" = "昨日";
+"count" = "回数";
+"time" = "時間";
+"goal" = "目標：%@";
+"streak" = "連続記録";
+"best" = "最高記録";
+"total" = "合計";
+"week" = "週";
+"month" = "月";
+"year" = "年";
+"widget_no_active_habits_today" = "今日のアクティブな習慣はありません";
+"widget_title" = "習慣";
+"widget_description" = "習慣の進捗を追跡";
+
+/* ===================== Main Tab View ===================== */
+"home" = "ホーム";
+"statistics" = "統計";
+"settings" = "設定";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "習慣の名前";
+"icon_and_color" = "アイコンと色";
+"goalsection_choose_time" = "時間を選択（時:分）";
+"goalsection_enter_count" = "回数を入力";
+"active_days" = "アクティブな日";
+"everyday" = "毎日";
+"every_week" = "毎週";
+"select_days" = "日を選択";
+"reminders" = "リマインダー";
+"reminder" = "リマインダー";
+"create_custom_habit" = "カスタム習慣を作成";
+// Habit Templates
+"reading" = "読書";
+"meditation" = "瞑想";
+"drink_water" = "水を飲む";
+"practice_yoga" = "ヨガをする";
+"running" = "ランニング";
+"learn_language" = "言語を学ぶ";
+"focus" = "集中";
+"cold_shower" = "冷水シャワー";
+"workout" = "ワークアウト";
+"swimming" = "水泳";
+"cycling" = "サイクリング";
+"take_vitamins" = "ビタミンを摂る";
+"eat_vegetables" = "野菜を食べる";
+"practice_coding" = "プログラミングを練習";
+"plan_my_day" = "1日を計画";
+"journaling" = "日記を書く";
+"call_parents" = "親に電話";
+"play_piano" = "ピアノを弾く";
+"wakeup_early" = "早起き";
+"take_a_walk" = "散歩する";
+
+/* ===================== Other ===================== */
+"add_count" = "回数を追加";
+"add_progress" = "進捗を追加";
+"add_reminder" = "リマインダーを追加";
+"add_time" = "時間を追加";
+"create_habit" = "習慣を作成";
+"daily_goal" = "毎日の目標";
+"delete_habit" = "習慣を削除";
+"edit_habit" = "習慣を編集";
+"health" = "健康";
+"hobbies" = "趣味";
+"lifestyle" = "ライフスタイル";
+"loading_calendar" = "カレンダーを読み込み中…";
+"productivity" = "生産性";
+"reset_all_history" = "すべての履歴をリセット";
+"start_date" = "開始日";
+"reorder" = "並べ替え";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "習慣の時間です！";
+"notifications_dont_forget" = "忘れずに：%@";
+"goal_achieved_title" = "🎉 目標達成！";
+"goal_achieved_body" = "%@を完了しました！";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "外観";
+"appearance_mode" = "外観モード";
+"appearance_dark" = "ダーク";
+"appearance_light" = "ライト";
+"appearance_system" = "システム";
+"app_color" = "アプリの色";
+"app_icon" = "アプリのアイコン";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "週の開始";
+"week_start_system" = "システム";
+
+/* ===================== Settings: Language ===================== */
+"language" = "言語";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "iCloud同期";
+"icloud_sync_status" = "同期ステータス";
+"icloud_sync_active" = "アクティブ";
+"icloud_checking_status" = "確認中…";
+"icloud_not_signed_in" = "iCloudにログイン";
+"icloud_restricted" = "iCloudが制限されています";
+"icloud_how_sync_works" = "同期の仕組み";
+"icloud_automatic_backup" = "自動バックアップ";
+"icloud_automatic_backup_desc" = "すべての習慣はあなたのiCloudに自動的に保存されます";
+"icloud_cross_device_sync" = "デバイス間同期";
+"icloud_cross_device_sync_desc" = "iPhone、iPad、その他のデバイスで習慣にアクセス";
+"icloud_private_secure" = "プライバシーとセキュリティ";
+"icloud_private_secure_desc" = "データはあなたの個人iCloudにのみ保存されます";
+"icloud_troubleshooting" = "トラブルシューティング";
+"icloud_signin_required" = "同期にはiCloudへのログインが必要です";
+"icloud_signin_steps" = "設定 → [あなたの名前] → iCloud → ログイン";
+"icloud_status_unknown" = "ステータス不明";
+"icloud_temporarily_unavailable" = "一時的に利用不可";
+"icloud_unknown_error" = "不明なエラー";
+"icloud_check_failed" = "確認に失敗";
+"icloud_force_sync" = "強制同期";
+"icloud_force_sync_desc" = "iCloud同期を手動で開始";
+"icloud_last_sync" = "最終同期";
+"icloud_manual_sync" = "手動同期";
+"icloud_manual_sync_footer" = "データが他のデバイスに自動的に表示されない場合、手動同期を使用してください";
+"icloud_today_at" = "今日%@";
+"icloud_yesterday_at" = "昨日%@";
+"icloud_database_error" = "iCloudデータベースアクセスエラー";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "アーカイブ";
+"archived_habits" = "アーカイブされた習慣";
+"unarchive" = "アーカイブ解除";
+"archived_habits_footer" = "左にスワイプしてアーカイブ解除または削除";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "パスコードとFace ID";
+"enter_passcode" = "パスコードを入力";
+"create_passcode" = "パスコードを作成";
+"enter_current_passcode" = "現在のパスコードを入力";
+"confirm_passcode" = "パスコードを確認";
+"enter_new_passcode" = "新しいパスコードを入力";
+"request_passcode" = "パスコードを要求";
+"disable_passcode" = "パスコードを無効化";
+"change_passcode" = "パスコードを変更";
+"turn_passcode_on" = "パスコードを有効化";
+"passcode_faceid" = "パスコードとFace ID";
+"immediately" = "即時";
+"1_minute" = "1分";
+"5_minutes" = "5分";
+"15_minutes" = "15分";
+"30_minutes" = "30分";
+"1_hour" = "1時間";
+"not_now" = "今はしない";
+"enable" = "有効化";
+"biometric_unlock_description" = "%@を使用して、パスコードを入力せずにアプリを迅速かつ安全にロック解除します。";
+"on" = "オン";
+"off" = "オフ";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "通知";
+"haptics" = "ハプティクス";
+"sounds" = "サウンド";
+"completion_sounds" = "完了サウンド";
+"default_sound" = "デフォルト";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "アプリを評価";
+"share_app" = "アプリを共有";
+"contact_developer" = "開発者に連絡";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "利用規約";
+"privacy_policy" = "プライバシーポリシー";
+"licenses" = "ライセンス";
+"licenses_section_attributions" = "帰属表示";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "プレミアム機能をアンロック";
+"paywall_purchase_result_title" = "購入結果";
+"paywall_ok_button" = "OK";
+"paywall_processing_button" = "処理中…";
+"paywall_restore_purchases_button" = "購入を復元";
+"paywall_family_sharing_button" = "ファミリー共有をサポート";
+"paywall_legal_text" = "購入確認時にApple IDアカウントに請求されます。自動更新は、現在の期間終了の少なくとも24時間前にオフにしない限り自動的に更新されます。";
+"paywall_purchase_failed_message" = "購入に失敗しました。もう一度お試しください。";
+"paywall_restore_success_message" = "購入が正常に復元されました！";
+"paywall_no_purchases_to_restore_message" = "復元する購入はありません。";
+// Pro Features
+"paywall_unlimited_habits_title" = "無制限の習慣";
+"paywall_unlimited_habits_description" = "必要なだけ習慣を作成";
+"paywall_detailed_statistics_title" = "詳細な統計";
+"paywall_detailed_statistics_description" = "高度なカレンダービューと進捗グラフ";
+"paywall_multiple_reminders_title" = "複数のリマインダー";
+"paywall_multiple_reminders_description" = "1日を通して無制限のリマインダーを設定";
+"paywall_completion_sounds_title" = "完了サウンド";
+"paywall_completion_sounds_description" = "習慣完了時のプレミアムサウンドエフェクト";
+"paywall_premium_icons_title" = "プレミアム3Dアイコン";
+"paywall_premium_icons_description" = "習慣を際立たせる美しい3Dアイコン";
+"paywall_custom_colors_icons_title" = "カスタムカラーとアイコン";
+"paywall_custom_colors_icons_description" = "テーマとアプリのアイコンでパーソナライズ";
+"paywall_upcoming_features_title" = "早期アクセス";
+"paywall_upcoming_features_description" = "誰よりも早く新機能にアクセス";
+"paywall_support_creator_title" = "開発者をサポート";
+"paywall_support_creator_description" = "1人の開発者、チームなし — あなたのサポートが大きな意味を持ちます";
+
+"paywall_yearly_plan" = "年間";
+"paywall_monthly_plan" = "月間";
+"paywall_7_days_free_trial" = "7日間無料";
+"paywall_lifetime_plan" = "永久";
+"paywall_get_lifetime" = "永久アクセスを取得";
+"paywall_subscribe" = "サブスクライブ";
+"paywall_start_trial_monthly" = "7日間無料トライアル開始 %@/月";
+"paywall_continue" = "続ける";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "バージョン";
+"made_with" = "製作";
+"in_kyrgyzstan" = "キルギスで";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "今日から始め、明日成長";
+"empty_view_title3" = "一歩ずつ";
+"empty_view_tap" = "タップ";
+"empty_view_to_create_habit" = "最初の習慣を作成する";
+
+/* ===================== Statistics  ===================== */
+"average" = "平均";
+"tap_dates" = "日付をタップして進捗を編集";
+"press_hold_bars" = "バーを長押しで詳細を表示";
+
+// Overview Stats Cards
+"active_habits" = "アクティブな習慣";
+"completed_total" = "完了";
+"active_days_total" = "アクティブな日数";
+"overall_completion" = "全体の完了率";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "表示内容：";
+"how_its_calculated" = "計算方法：";
+"example" = "例：";
+
+// Completed Total Card
+"completed_total_description" = "全期間での習慣の完了回数。毎日目標を達成した習慣は、この合計にカウントされます。";
+"completed_total_calculation" = "習慣の追跡開始以来、毎日目標を達成または超えた日をカウントします。";
+"completed_total_example" = "「エクササイズ」を30回、「読書」を45回、「瞑想」を60回完了した場合、合計は135回です。";
+
+// Active Days Total Card
+"active_days_total_description" = "追跡履歴全体で、少なくとも1つの習慣で進捗を達成した日数。";
+"active_days_total_calculation" = "最初の追跡日から今日まで、任意の習慣で進捗を達成したユニークな日をカウントします。";
+"active_days_total_example" = "100日間習慣を追跡し、85日で進捗を達成した場合、アクティブな日数は85日です。";
+
+// Overall Completion Card
+"overall_completion_description" = "全習慣および全期間での平均完了率。全体の継続性とパフォーマンスを示します。";
+"overall_completion_calculation" = "各習慣の完了率を計算し、追跡履歴全体でその平均を取ります。";
+"overall_completion_example" = "すべての習慣で平均78%の完了率の場合、継続的に良好なパフォーマンスを示しています。";
+
+// Active Habits Card
+"active_habits_description" = "現在追跡中の習慣の数（アーカイブされた習慣を除く）。現在の習慣の負荷を概観します。";
+"active_habits_calculation" = "アーカイブされていないすべての習慣をカウントします。週のすべての日でアクティブでない習慣もルーチンの一部として含まれます。";
+"active_habits_example" = "「朝のエクササイズ」「本を読む」「水を飲む」を追跡し、「スペイン語を学ぶ」をアーカイブした場合、アクティブな習慣の数は3です。";

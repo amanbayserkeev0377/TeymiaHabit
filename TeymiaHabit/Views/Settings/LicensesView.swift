@@ -179,6 +179,8 @@ struct LicensesView: View {
                 LicenseRow(iconName: "3d_shield_green", attribution: "3d Shield Checkmark by Vecteezy", url: "https://www.vecteezy.com/png/47248302-3d-shield-checkmark-icon-3d-shield-checkmark-symbol-3d-shield-checkmark-photo")
                 
                 LicenseRow(iconName: "3d_speaker_red", attribution: "3d Speaker Red by Vecteezy", url: "https://www.vecteezy.com/png/57876772-vibrant-artistic-speaker-wire-red-and-black-strands-isolated-element-transparent-background-authentic")
+                
+                LicenseRow(iconName: "3d_soc_github", attribution: "3d Github by IconScout", url: "https://iconscout.com/free-3d-illustration/github-6903961_5640285")
             }
         }
         .navigationTitle("licenses".localized)

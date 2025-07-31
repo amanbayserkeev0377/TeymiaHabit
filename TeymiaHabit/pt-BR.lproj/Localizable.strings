@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "Excluir Hábito";
+"alert_delete_habit_message" = "Tem certeza de que deseja excluir «%@»?";
+
+// History Reset Alert
+"alert_reset_history" = "Redefinir Histórico";
+"alert_reset_history_message" = "Isso excluirá permanentemente todos os dados de conclusão de hábitos. Esta ação não pode ser desfeita.";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "Permissão de Notificações Necessária";
+"alert_notifications_permission_message" = "Para receber lembretes de hábitos, ative as notificações em Ajustes.";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "Adicionar";
+"button_done" = "Concluído";
+"button_delete" = "Excluir";
+"button_cancel" = "Cancelar";
+"button_edit" = "Editar";
+"button_save" = "Salvar";
+"button_reset" = "Redefinir";
+"button_reset_progress" = "Redefinir progresso";
+"complete" = "Completar";
+"completed" = "Concluído";
+
+/* ===================== General ===================== */
+"today" = "Hoje";
+"yesterday" = "Ontem";
+"count" = "Contagem";
+"time" = "Tempo";
+"goal" = "Meta: %@";
+"streak" = "Sequência";
+"best" = "Melhor";
+"total" = "Total";
+"week" = "Semana";
+"month" = "Mês";
+"year" = "Ano";
+"widget_no_active_habits_today" = "Nenhum hábito ativo para hoje";
+"widget_title" = "Hábitos";
+"widget_description" = "Acompanhe o progresso dos seus hábitos";
+
+/* ===================== Main Tab View ===================== */
+"home" = "Início";
+"statistics" = "Estatísticas";
+"settings" = "Ajustes";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "Nome do Hábito";
+"icon_and_color" = "Ícone e Cor";
+"goalsection_choose_time" = "Escolher hora (h:min)";
+"goalsection_enter_count" = "Inserir contagem";
+"active_days" = "Dias ativos";
+"everyday" = "Todos os dias";
+"every_week" = "Toda semana";
+"select_days" = "Selecionar dias";
+"reminders" = "Lembretes";
+"reminder" = "Lembrete";
+"create_custom_habit" = "Criar Hábito Personalizado";
+// Habit Templates
+"reading" = "Leitura";
+"meditation" = "Meditação";
+"drink_water" = "Beber Água";
+"practice_yoga" = "Praticar Yoga";
+"running" = "Correr";
+"learn_language" = "Aprender Idioma";
+"focus" = "Foco";
+"cold_shower" = "Banho Frio";
+"workout" = "Treino";
+"swimming" = "Natação";
+"cycling" = "Ciclismo";
+"take_vitamins" = "Tomar Vitaminas";
+"eat_vegetables" = "Comer Vegetais";
+"practice_coding" = "Praticar Programação";
+"plan_my_day" = "Planejar Meu Dia";
+"journaling" = "Escrever Diário";
+"call_parents" = "Ligar para os Pais";
+"play_piano" = "Tocar Piano";
+"wakeup_early" = "Acordar Cedo";
+"take_a_walk" = "Caminhar";
+
+/* ===================== Other ===================== */
+"add_count" = "Adicionar Contagem";
+"add_progress" = "Adicionar Progresso";
+"add_reminder" = "Adicionar Lembrete";
+"add_time" = "Adicionar Tempo";
+"create_habit" = "Criar Hábito";
+"daily_goal" = "Meta Diária";
+"delete_habit" = "Excluir Hábito";
+"edit_habit" = "Editar Hábito";
+"health" = "Saúde";
+"hobbies" = "Hobbies";
+"lifestyle" = "Estilo de Vida";
+"loading_calendar" = "Carregando calendário…";
+"productivity" = "Produtividade";
+"reset_all_history" = "Redefinir histórico";
+"start_date" = "Data de Início";
+"reorder" = "Reorganizar";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "Hora do seu hábito!";
+"notifications_dont_forget" = "Não esqueça de completar: %@";
+"goal_achieved_title" = "🎉 Meta Alcançada!";
+"goal_achieved_body" = "Você completou %@!";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "Aparência";
+"appearance_mode" = "Modo de Aparência";
+"appearance_dark" = "Escuro";
+"appearance_light" = "Claro";
+"appearance_system" = "Sistema";
+"app_color" = "Cor do App";
+"app_icon" = "Ícone do App";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "Início da Semana";
+"week_start_system" = "Sistema";
+
+/* ===================== Settings: Language ===================== */
+"language" = "Idioma";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "Sincronização com iCloud";
+"icloud_sync_status" = "Status da Sincronização";
+"icloud_sync_active" = "Ativa";
+"icloud_checking_status" = "Verificando…";
+"icloud_not_signed_in" = "Faça login no iCloud";
+"icloud_restricted" = "iCloud está restrito";
+"icloud_how_sync_works" = "Como funciona a sincronização";
+"icloud_automatic_backup" = "Backup Automático";
+"icloud_automatic_backup_desc" = "Todos os hábitos são salvos automaticamente no seu iCloud";
+"icloud_cross_device_sync" = "Sincronização entre Dispositivos";
+"icloud_cross_device_sync_desc" = "Acesse seus hábitos no iPhone, iPad e outros dispositivos";
+"icloud_private_secure" = "Privacidade e Segurança";
+"icloud_private_secure_desc" = "Os dados são armazenados apenas no seu iCloud pessoal";
+"icloud_troubleshooting" = "Solução de Problemas";
+"icloud_signin_required" = "Login no iCloud é necessário para sincronização";
+"icloud_signin_steps" = "Ajustes → [Seu Nome] → iCloud → Fazer Login";
+"icloud_status_unknown" = "Status Desconhecido";
+"icloud_temporarily_unavailable" = "Temporariamente Indisponível";
+"icloud_unknown_error" = "Erro Desconhecido";
+"icloud_check_failed" = "Verificação Falhou";
+"icloud_force_sync" = "Forçar Sincronização";
+"icloud_force_sync_desc" = "Acionar manualmente a sincronização com o iCloud";
+"icloud_last_sync" = "Última Sincronização";
+"icloud_manual_sync" = "Sincronização Manual";
+"icloud_manual_sync_footer" = "Use a sincronização manual se os dados não aparecerem automaticamente em outros dispositivos";
+"icloud_today_at" = "Hoje às %@";
+"icloud_yesterday_at" = "Ontem às %@";
+"icloud_database_error" = "Erro de acesso ao banco de dados do iCloud";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Arquivar";
+"archived_habits" = "Hábitos Arquivados";
+"unarchive" = "Desarquivar";
+"archived_habits_footer" = "Deslize para a esquerda para desarquivar ou excluir";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "Código e Face ID";
+"enter_passcode" = "Inserir Código";
+"create_passcode" = "Criar Código";
+"enter_current_passcode" = "Inserir Código Atual";
+"confirm_passcode" = "Confirmar Código";
+"enter_new_passcode" = "Inserir Novo Código";
+"request_passcode" = "Exigir Código";
+"disable_passcode" = "Desativar Código";
+"change_passcode" = "Alterar Código";
+"turn_passcode_on" = "Ativar Código";
+"passcode_faceid" = "Código e Face ID";
+"immediately" = "Imediato";
+"1_minute" = "1 minuto";
+"5_minutes" = "5 minutos";
+"15_minutes" = "15 minutos";
+"30_minutes" = "30 minutos";
+"1_hour" = "1 hora";
+"not_now" = "Agora Não";
+"enable" = "Ativar";
+"biometric_unlock_description" = "Use %@ para desbloquear o app de forma rápida e segura sem inserir o código.";
+"on" = "Ligado";
+"off" = "Desligado";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "Notificações";
+"haptics" = "Resposta Tátil";
+"sounds" = "Sons";
+"completion_sounds" = "Sons de Conclusão";
+"default_sound" = "Padrão";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "Avaliar App";
+"share_app" = "Compartilhar App";
+"contact_developer" = "Contactar Desenvolvedor";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "Termos de Serviço";
+"privacy_policy" = "Política de Privacidade";
+"licenses" = "Licenças";
+"licenses_section_attributions" = "Atribuições";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "Desbloquear Recursos Premium";
+"paywall_purchase_result_title" = "Resultado da Compra";
+"paywall_ok_button" = "OK";
+"paywall_processing_button" = "Processando…";
+"paywall_restore_purchases_button" = "Restaurar Compras";
+"paywall_family_sharing_button" = "Suporta Compartilhamento Familiar";
+"paywall_legal_text" = "O pagamento será cobrado na sua conta Apple ID ao confirmar a compra. A assinatura é renovada automaticamente, a menos que a renovação automática seja desativada pelo menos 24 horas antes do fim do período atual.";
+"paywall_purchase_failed_message" = "Compra falhou. Tente novamente.";
+"paywall_restore_success_message" = "Compras restauradas com sucesso!";
+"paywall_no_purchases_to_restore_message" = "Nenhuma compra para restaurar.";
+// Pro Features
+"paywall_unlimited_habits_title" = "Hábitos Ilimitados";
+"paywall_unlimited_habits_description" = "Crie quantos hábitos você precisar";
+"paywall_detailed_statistics_title" = "Estatísticas Detalhadas";
+"paywall_detailed_statistics_description" = "Visualização avançada de calendário e gráficos de progresso";
+"paywall_multiple_reminders_title" = "Múltiplos Lembretes";
+"paywall_multiple_reminders_description" = "Defina lembretes ilimitados para seus hábitos ao longo do dia";
+"paywall_completion_sounds_title" = "Sons de Conclusão";
+"paywall_completion_sounds_description" = "Efeitos sonoros premium ao completar hábitos";
+"paywall_premium_icons_title" = "Ícones 3D Premium";
+"paywall_premium_icons_description" = "Ícones 3D incríveis para destacar seus hábitos";
+"paywall_custom_colors_icons_title" = "Cores e Ícones Personalizados";
+"paywall_custom_colors_icons_description" = "Personalize com temas e ícones do app";
+"paywall_upcoming_features_title" = "Acesso Antecipado";
+"paywall_upcoming_features_description" = "Tenha acesso a novos recursos antes de todos";
+"paywall_support_creator_title" = "Apoiar o Criador";
+"paywall_support_creator_description" = "Uma pessoa, sem equipe – seu apoio faz a diferença";
+
+"paywall_yearly_plan" = "Anual";
+"paywall_monthly_plan" = "Mensal";
+"paywall_7_days_free_trial" = "7 dias grátis";
+"paywall_lifetime_plan" = "Vitalício";
+"paywall_get_lifetime" = "Obter Vitalício";
+"paywall_subscribe" = "Assinar";
+"paywall_start_trial_monthly" = "Comece 7 dias grátis %@/mês";
+"paywall_continue" = "Continuar";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "versão";
+"made_with" = "Feito com";
+"in_kyrgyzstan" = "no Quirguistão";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "Comece Hoje, Cresça Amanhã";
+"empty_view_title3" = "Passo a Passo";
+"empty_view_tap" = "Toque";
+"empty_view_to_create_habit" = "para criar seu primeiro hábito";
+
+/* ===================== Statistics  ===================== */
+"average" = "Média";
+"tap_dates" = "Toque nas datas para editar o progresso";
+"press_hold_bars" = "Pressione e segure as barras para detalhes";
+
+// Overview Stats Cards
+"active_habits" = "Hábitos Ativos";
+"completed_total" = "Concluídos";
+"active_days_total" = "Dias Ativos";
+"overall_completion" = "Taxa de Conclusão";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "O que mostra:";
+"how_its_calculated" = "Como é calculado:";
+"example" = "Exemplo:";
+
+// Completed Total Card
+"completed_total_description" = "Número de vezes que você concluiu hábitos ao longo de todo o tempo. Cada vez que você atinge uma meta diária de qualquer hábito, isso é contado.";
+"completed_total_calculation" = "Contamos cada dia em que você atingiu ou superou sua meta diária para qualquer hábito, desde o início do seu rastreamento de hábitos.";
+"completed_total_example" = "Se você completou 'Exercício' 30 vezes, 'Leitura' 45 vezes e 'Meditação' 60 vezes, seu total seria 135 conclusões.";
+
+// Active Days Total Card
+"active_days_total_description" = "Número de dias em que você progrediu em pelo menos um hábito ao longo de todo o seu histórico de rastreamento.";
+"active_days_total_calculation" = "Contamos dias únicos em que você fez progresso em qualquer hábito, desde o seu primeiro dia de rastreamento até hoje.";
+"active_days_total_example" = "Se você rastreou hábitos por 100 dias e progrediu em 85 desses dias, sua contagem de dias ativos é 85.";
+
+// Overall Completion Card
+"overall_completion_description" = "Sua taxa média de conclusão em todos os hábitos ao longo de todo o tempo. Isso mostra sua consistência e desempenho geral.";
+"overall_completion_calculation" = "Calculamos a porcentagem de conclusão para cada hábito concluído e, em seguida, fazemos a média de todas essas porcentagens ao longo de todo o seu histórico de rastreamento.";
+"overall_completion_example" = "Se, em todos os seus hábitos e ao longo de todo o tempo, você tem uma média de 78% de conclusão, isso mostra que você está se saindo bem de forma consistente.";
+
+// Active Habits Card
+"active_habits_description" = "Número de hábitos que você está rastreando atualmente (excluindo hábitos arquivados). Isso dá uma visão geral da sua carga atual de hábitos.";
+"active_habits_calculation" = "Contamos todos os hábitos não arquivados, incluindo aqueles que podem não estar ativos todos os dias da semana, mas ainda fazem parte da sua rotina.";
+"active_habits_example" = "Se você está rastreando 'Exercício Matinal', 'Ler Livros' e 'Beber Água', mas arquivou 'Aprender Espanhol', sua contagem de hábitos ativos é 3.";

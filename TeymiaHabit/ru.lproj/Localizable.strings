@@ -4,9 +4,6 @@
 "alert_delete_habit" = "Удалить привычку";
 "alert_delete_habit_message" = "Вы уверены, что хотите удалить «%@»?";
 
-"alert_delete_multiple_habits" = "Удалить выбранные привычки";
-"alert_delete_multiple_habits_message" = "Вы уверены, что хотите удалить %d выбранных привычек?";
-
 // History Reset Alert
 "alert_reset_history" = "Сбросить историю";
 "alert_reset_history_message" = "Это безвозвратно удалит все данные о выполнении привычки. Это действие нельзя отменить.";
@@ -21,10 +18,8 @@
 "button_done" = "Готово";
 "button_delete" = "Удалить";
 "button_cancel" = "Отмена";
-"button_close" = "Закрыть";
 "button_edit" = "Изменить";
 "button_save" = "Сохранить";
-"button_ok" = "OK";
 "button_reset" = "Сбросить";
 "button_reset_progress" = "Сбросить прогресс";
 "complete" = "Выполнить";
@@ -33,16 +28,12 @@
 /* ===================== General ===================== */
 "today" = "Сегодня";
 "yesterday" = "Вчера";
-"items_selected" = "%d выбрано";
 "count" = "Количество";
 "time" = "Время";
-"hours" = "Часы";
 "goal" = "Цель: %@";
-"minutes" = "Минуты";
 "streak" = "Подряд";
 "best" = "Рекорд";
 "total" = "Всего";
-"version" = "версия";
 "week" = "Неделя";
 "month" = "Месяц";
 "year" = "Год";
@@ -94,12 +85,10 @@
 "add_progress" = "Добавить прогресс";
 "add_reminder" = "Добавить";
 "add_time" = "Добавить время";
-"choose_icon" = "Выбрать иконку";
 "create_habit" = "Создать привычку";
 "daily_goal" = "Цель";
 "delete_habit" = "Удалить привычку";
 "edit_habit" = "Редактировать";
-"habits" = "Привычки";
 "health" = "Здоровье";
 "hobbies" = "Хобби";
 "lifestyle" = "Образ жизни";
@@ -165,8 +154,6 @@
 "archive" = "Архивировать";
 "archived_habits" = "Архив";
 "unarchive" = "Разархивировать";
-"archived_habits_footer" = "Смахните влево для разархивирования или удаления";
-"archived_date_format" = "Архивировано %@";
 "archived_habits_footer" = "Смахните влево, чтобы восстановить из архива или удалить";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
@@ -204,7 +191,6 @@
 "rate_app" = "Оценить";
 "share_app" = "Поделиться";
 "contact_developer" = "Связаться с разработчиком";
-"report_bug" = "Сообщить об ошибке";
 
 /* ===================== Settings: LEGAL ===================== */
 
@@ -212,12 +198,6 @@
 "privacy_policy" = "Политика конфиденциальности";
 "licenses" = "Лицензии";
 "licenses_section_attributions" = "Атрибуция";
-
-
-/* ===================== Settings - Purchases ===================== */
-"restore_purchases" = "Восстановить покупки";
-"restore_purchases_success" = "Покупки успешно восстановлены!";
-"restore_purchases_no_purchases" = "Нет покупок для восстановления.";
 
 /* ===================== PayWall ===================== */
 
@@ -259,7 +239,7 @@
 "paywall_continue" = "Продолжить";
 
 /* ===================== Settings: Teymia Habit - version ===================== */
-"Teymia Habit – %@ %@" = "Teymia Habit – %1$@ %2$@";
+"version" = "версия";
 "made_with" = "Сделано с";
 "in_kyrgyzstan" = "в Кыргызстане";
 
@@ -274,8 +254,6 @@
 "average" = "В среднем";
 "tap_dates" = "Нажмите на дату, чтобы изменить прогресс";
 "press_hold_bars" = "Зажмите столбцы для просмотра данных";
-"bar_chart_header" = "Просмотр прогресса за разные недели, месяцы, годы";
-"line_chart_header" = "Ваш прогресс за последнюю неделю, месяц, год";
 
 // Overview Stats Cards
 "active_habits" = "Активные привычки";

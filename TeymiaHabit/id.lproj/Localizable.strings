@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "Hapus Kebiasaan";
+"alert_delete_habit_message" = "Apakah Anda yakin ingin menghapus «%@»?";
+
+// History Reset Alert
+"alert_reset_history" = "Atur Ulang Riwayat";
+"alert_reset_history_message" = "Tindakan ini akan menghapus semua data penyelesaian kebiasaan secara permanen. Tindakan ini tidak dapat dibatalkan.";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "Izin Notifikasi Diperlukan";
+"alert_notifications_permission_message" = "Untuk menerima pengingat kebiasaan, silakan aktifkan notifikasi di Pengaturan.";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "Tambah";
+"button_done" = "Selesai";
+"button_delete" = "Hapus";
+"button_cancel" = "Batal";
+"button_edit" = "Edit";
+"button_save" = "Simpan";
+"button_reset" = "Atur Ulang";
+"button_reset_progress" = "Atur Ulang Kemajuan";
+"complete" = "Selesaikan";
+"completed" = "Selesai";
+
+/* ===================== General ===================== */
+"today" = "Hari Ini";
+"yesterday" = "Kemarin";
+"count" = "Jumlah";
+"time" = "Waktu";
+"goal" = "Tujuan: %@";
+"streak" = "Streak";
+"best" = "Terbaik";
+"total" = "Total";
+"week" = "Minggu";
+"month" = "Bulan";
+"year" = "Tahun";
+"widget_no_active_habits_today" = "Tidak ada kebiasaan aktif hari ini";
+"widget_title" = "Kebiasaan";
+"widget_description" = "Lacak kemajuan kebiasaan Anda";
+
+/* ===================== Main Tab View ===================== */
+"home" = "Beranda";
+"statistics" = "Statistik";
+"settings" = "Pengaturan";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "Nama Kebiasaan";
+"icon_and_color" = "Ikon dan Warna";
+"goalsection_choose_time" = "Pilih Waktu (jam:menit)";
+"goalsection_enter_count" = "Masukkan Jumlah";
+"active_days" = "Hari Aktif";
+"everyday" = "Setiap Hari";
+"every_week" = "Setiap Minggu";
+"select_days" = "Pilih Hari";
+"reminders" = "Pengingat";
+"reminder" = "Pengingat";
+"create_custom_habit" = "Buat Kebiasaan Kustom";
+// Habit Templates
+"reading" = "Membaca";
+"meditation" = "Meditasi";
+"drink_water" = "Minum Air";
+"practice_yoga" = "Latihan Yoga";
+"running" = "Lari";
+"learn_language" = "Belajar Bahasa";
+"focus" = "Fokus";
+"cold_shower" = "Mandi Air Dingin";
+"workout" = "Olahraga";
+"swimming" = "Berenang";
+"cycling" = "Bersepeda";
+"take_vitamins" = "Minum Vitamin";
+"eat_vegetables" = "Makan Sayuran";
+"practice_coding" = "Latihan Pemrograman";
+"plan_my_day" = "Rencanakan Hari Saya";
+"journaling" = "Menulis Jurnal";
+"call_parents" = "Menghubungi Orang Tua";
+"play_piano" = "Bermain Piano";
+"wakeup_early" = "Bangun Pagi";
+"take_a_walk" = "Jalan-jalan";
+
+/* ===================== Other ===================== */
+"add_count" = "Tambah Jumlah";
+"add_progress" = "Tambah Kemajuan";
+"add_reminder" = "Tambah Pengingat";
+"add_time" = "Tambah Waktu";
+"create_habit" = "Buat Kebiasaan";
+"daily_goal" = "Tujuan Harian";
+"delete_habit" = "Hapus Kebiasaan";
+"edit_habit" = "Edit Kebiasaan";
+"health" = "Kesehatan";
+"hobbies" = "Hobi";
+"lifestyle" = "Gaya Hidup";
+"loading_calendar" = "Memuat kalender…";
+"productivity" = "Produktivitas";
+"reset_all_history" = "Atur Ulang Semua Riwayat";
+"start_date" = "Tanggal Mulai";
+"reorder" = "Urutkan Ulang";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "Saatnya menjalankan kebiasaan Anda!";
+"notifications_dont_forget" = "Jangan lupa menyelesaikan: %@";
+"goal_achieved_title" = "🎉 Tujuan Tercapai!";
+"goal_achieved_body" = "Anda telah menyelesaikan %@!";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "Tampilan";
+"appearance_mode" = "Mode Tampilan";
+"appearance_dark" = "Gelap";
+"appearance_light" = "Terang";
+"appearance_system" = "Sistem";
+"app_color" = "Warna Aplikasi";
+"app_icon" = "Ikon Aplikasi";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "Hari Mulai Minggu";
+"week_start_system" = "Sistem";
+
+/* ===================== Settings: Language ===================== */
+"language" = "Bahasa";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "Sinkronisasi iCloud";
+"icloud_sync_status" = "Status Sinkronisasi";
+"icloud_sync_active" = "Aktif";
+"icloud_checking_status" = "Memeriksa…";
+"icloud_not_signed_in" = "Masuk ke iCloud";
+"icloud_restricted" = "iCloud Dibatasi";
+"icloud_how_sync_works" = "Cara Kerja Sinkronisasi";
+"icloud_automatic_backup" = "Cadangan Otomatis";
+"icloud_automatic_backup_desc" = "Semua kebiasaan Anda akan disimpan secara otomatis ke iCloud Anda";
+"icloud_cross_device_sync" = "Sinkronisasi Antar Perangkat";
+"icloud_cross_device_sync_desc" = "Akses kebiasaan Anda di iPhone, iPad, dan perangkat lainnya";
+"icloud_private_secure" = "Privasi dan Keamanan";
+"icloud_private_secure_desc" = "Data hanya disimpan di iCloud pribadi Anda";
+"icloud_troubleshooting" = "Pemecahan Masalah";
+"icloud_signin_required" = "Masuk ke iCloud diperlukan untuk sinkronisasi";
+"icloud_signin_steps" = "Pengaturan → [Nama Anda] → iCloud → Masuk";
+"icloud_status_unknown" = "Status Tidak Diketahui";
+"icloud_temporarily_unavailable" = "Sementara Tidak Tersedia";
+"icloud_unknown_error" = "Kesalahan Tidak Diketahui";
+"icloud_check_failed" = "Pemeriksaan Gagal";
+"icloud_force_sync" = "Paksa Sinkronisasi";
+"icloud_force_sync_desc" = "Mulai sinkronisasi iCloud secara manual";
+"icloud_last_sync" = "Sinkronisasi Terakhir";
+"icloud_manual_sync" = "Sinkronisasi Manual";
+"icloud_manual_sync_footer" = "Gunakan sinkronisasi manual jika data tidak muncul otomatis di perangkat lain";
+"icloud_today_at" = "Hari ini pada %@";
+"icloud_yesterday_at" = "Kemarin pada %@";
+"icloud_database_error" = "Kesalahan akses basis data iCloud";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Arsipkan";
+"archived_habits" = "Kebiasaan yang Diarsipkan";
+"unarchive" = "Batalkan Arsip";
+"archived_habits_footer" = "Geser ke kiri untuk membatalkan arsip atau menghapus";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "Kode Sandi dan Face ID";
+"enter_passcode" = "Masukkan Kode Sandi";
+"create_passcode" = "Buat Kode Sandi";
+"enter_current_passcode" = "Masukkan Kode Sandi Saat Ini";
+"confirm_passcode" = "Konfirmasi Kode Sandi";
+"enter_new_passcode" = "Masukkan Kode Sandi Baru";
+"request_passcode" = "Memerlukan Kode Sandi";
+"disable_passcode" = "Nonaktifkan Kode Sandi";
+"change_passcode" = "Ubah Kode Sandi";
+"turn_passcode_on" = "Aktifkan Kode Sandi";
+"passcode_faceid" = "Kode Sandi dan Face ID";
+"immediately" = "Segera";
+"1_minute" = "1 Menit";
+"5_minutes" = "5 Menit";
+"15_minutes" = "15 Menit";
+"30_minutes" = "30 Menit";
+"1_hour" = "1 Jam";
+"not_now" = "Tidak Sekarang";
+"enable" = "Aktifkan";
+"biometric_unlock_description" = "Gunakan %@ untuk membuka aplikasi dengan cepat dan aman tanpa memasukkan kode sandi.";
+"on" = "Aktif";
+"off" = "Nonaktif";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "Notifikasi";
+"haptics" = "Umpan Balik Haptik";
+"sounds" = "Suara";
+"completion_sounds" = "Suara Penyelesaian";
+"default_sound" = "Default";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "Nilai Aplikasi";
+"share_app" = "Bagikan Aplikasi";
+"contact_developer" = "Hubungi Pengembang";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "Ketentuan Layanan";
+"privacy_policy" = "Kebijakan Privasi";
+"licenses" = "Lisensi";
+"licenses_section_attributions" = "Atribusi";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "Buka Fitur Premium";
+"paywall_purchase_result_title" = "Hasil Pembelian";
+"paywall_ok_button" = "OK";
+"paywall_processing_button" = "Memproses…";
+"paywall_restore_purchases_button" = "Pulihkan Pembelian";
+"paywall_family_sharing_button" = "Mendukung Berbagi Keluarga";
+"paywall_legal_text" = "Pembayaran akan ditagih ke akun Apple ID Anda saat konfirmasi pembelian. Langganan akan diperbarui secara otomatis kecuali perpanjangan otomatis dimatikan setidaknya 24 jam sebelum akhir periode saat ini.";
+"paywall_purchase_failed_message" = "Pembelian gagal. Silakan coba lagi.";
+"paywall_restore_success_message" = "Pembelian berhasil dipulihkan!";
+"paywall_no_purchases_to_restore_message" = "Tidak ada pembelian untuk dipulihkan.";
+// Pro Features
+"paywall_unlimited_habits_title" = "Kebiasaan Tanpa Batas";
+"paywall_unlimited_habits_description" = "Buat kebiasaan sebanyak yang Anda inginkan";
+"paywall_detailed_statistics_title" = "Statistik Rinci";
+"paywall_detailed_statistics_description" = "Tampilan kalender lanjutan dan grafik kemajuan";
+"paywall_multiple_reminders_title" = "Pengingat Berganda";
+"paywall_multiple_reminders_description" = "Atur pengingat tanpa batas untuk kebiasaan Anda sepanjang hari";
+"paywall_completion_sounds_title" = "Suara Penyelesaian";
+"paywall_completion_sounds_description" = "Efek suara premium saat menyelesaikan kebiasaan";
+"paywall_premium_icons_title" = "Ikon 3D Premium";
+"paywall_premium_icons_description" = "Ikon 3D menakjubkan untuk menonjolkan kebiasaan Anda";
+"paywall_custom_colors_icons_title" = "Warna dan Ikon Kustom";
+"paywall_custom_colors_icons_description" = "Personalisasi dengan tema dan ikon aplikasi";
+"paywall_upcoming_features_title" = "Akses Awal";
+"paywall_upcoming_features_description" = "Dapatkan fitur baru lebih dulu dari yang lain";
+"paywall_support_creator_title" = "Dukung Pengembang";
+"paywall_support_creator_description" = "Pengembang tunggal, tanpa tim — dukungan Anda membuat perbedaan besar";
+
+"paywall_yearly_plan" = "Tahunan";
+"paywall_monthly_plan" = "Bulanan";
+"paywall_7_days_free_trial" = "Uji Coba Gratis 7 Hari";
+"paywall_lifetime_plan" = "Seumur Hidup";
+"paywall_get_lifetime" = "Dapatkan Akses Seumur Hidup";
+"paywall_subscribe" = "Berlangganan";
+"paywall_start_trial_monthly" = "Mulai Uji Coba Gratis 7 Hari %@/bulan";
+"paywall_continue" = "Lanjutkan";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "Versi";
+"made_with" = "Dibuat dengan";
+"in_kyrgyzstan" = "di Kirgistan";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "Mulai Hari Ini, Berkembang Besok";
+"empty_view_title3" = "Langkah demi Langkah";
+"empty_view_tap" = "Ketuk";
+"empty_view_to_create_habit" = "untuk membuat kebiasaan pertama Anda";
+
+/* ===================== Statistics  ===================== */
+"average" = "Rata-rata";
+"tap_dates" = "Ketuk tanggal untuk mengedit kemajuan";
+"press_hold_bars" = "Tekan dan tahan batang untuk melihat detail";
+
+// Overview Stats Cards
+"active_habits" = "Kebiasaan Aktif";
+"completed_total" = "Selesai";
+"active_days_total" = "Hari Aktif";
+"overall_completion" = "Tingkat Penyelesaian Keseluruhan";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "Apa yang ditampilkan:";
+"how_its_calculated" = "Bagaimana dihitung:";
+"example" = "Contoh:";
+
+// Completed Total Card
+"completed_total_description" = "Jumlah kebiasaan yang diselesaikan sepanjang waktu. Setiap kali Anda mencapai target harian dari kebiasaan apa pun, itu ditambahkan ke total ini.";
+"completed_total_calculation" = "Kami menghitung setiap hari Anda mencapai atau melampaui target harian dari kebiasaan apa pun, sejak Anda mulai melacak kebiasaan.";
+"completed_total_example" = "Jika Anda menyelesaikan 'Olahraga' 30 kali, 'Membaca' 45 kali, dan 'Meditasi' 60 kali, total Anda akan menjadi 135 penyelesaian.";
+
+// Active Days Total Card
+"active_days_total_description" = "Jumlah hari Anda membuat kemajuan pada setidaknya satu kebiasaan selama seluruh riwayat pelacakan.";
+"active_days_total_calculation" = "Kami menghitung hari-hari unik di mana Anda membuat kemajuan pada kebiasaan apa pun, dari tanggal pelacakan pertama hingga sekarang.";
+"active_days_total_example" = "Jika Anda melacak kebiasaan selama 100 hari dan membuat kemajuan pada 85 hari, jumlah hari aktif Anda adalah 85.";
+
+// Overall Completion Card
+"overall_completion_description" = "Tingkat penyelesaian rata-rata dari semua kebiasaan Anda sepanjang waktu. Ini menunjukkan konsistensi dan performa keseluruhan Anda.";
+"overall_completion_calculation" = "Kami menghitung persentase penyelesaian untuk setiap kebiasaan yang diselesaikan, kemudian mengambil rata-rata dari persentase ini untuk seluruh riwayat pelacakan.";
+"overall_completion_example" = "Jika tingkat penyelesaian rata-rata semua kebiasaan Anda adalah 78%, ini menunjukkan bahwa Anda berkinerja baik secara konsisten.";
+
+// Active Habits Card
+"active_habits_description" = "Jumlah kebiasaan yang sedang Anda lacak saat ini (tidak termasuk kebiasaan yang diarsipkan). Ini memberikan gambaran umum tentang beban kebiasaan Anda saat ini.";
+"active_habits_calculation" = "Kami menghitung semua kebiasaan yang tidak diarsipkan, termasuk yang mungkin tidak aktif setiap hari dalam seminggu tetapi masih menjadi bagian dari rutinitas Anda.";
+"active_habits_example" = "Jika Anda sedang melacak 'Olahraga Pagi', 'Membaca Buku', dan 'Minum Air', tetapi telah mengarsipkan 'Belajar Bahasa Spanyol', jumlah kebiasaan aktif Anda adalah 3.";

@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "Xóa Thói quen";
+"alert_delete_habit_message" = "Bạn có chắc chắn muốn xóa «%@»?";
+
+// History Reset Alert
+"alert_reset_history" = "Đặt lại Lịch sử";
+"alert_reset_history_message" = "Hành động này sẽ xóa vĩnh viễn tất cả dữ liệu hoàn thành thói quen. Hành động này không thể hoàn tác.";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "Yêu cầu Quyền thông báo";
+"alert_notifications_permission_message" = "Để nhận nhắc nhở thói quen, vui lòng bật thông báo trong Cài đặt.";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "Thêm";
+"button_done" = "Xong";
+"button_delete" = "Xóa";
+"button_cancel" = "Hủy";
+"button_edit" = "Chỉnh sửa";
+"button_save" = "Lưu";
+"button_reset" = "Đặt lại";
+"button_reset_progress" = "Đặt lại Tiến độ";
+"complete" = "Hoàn thành";
+"completed" = "Đã hoàn thành";
+
+/* ===================== General ===================== */
+"today" = "Hôm nay";
+"yesterday" = "Hôm qua";
+"count" = "Số lần";
+"time" = "Thời gian";
+"goal" = "Mục tiêu: %@";
+"streak" = "Chuỗi liên tiếp";
+"best" = "Tốt nhất";
+"total" = "Tổng cộng";
+"week" = "Tuần";
+"month" = "Tháng";
+"year" = "Năm";
+"widget_no_active_habits_today" = "Hôm nay không có thói quen nào đang hoạt động";
+"widget_title" = "Thói quen";
+"widget_description" = "Theo dõi tiến độ thói quen của bạn";
+
+/* ===================== Main Tab View ===================== */
+"home" = "Trang chủ";
+"statistics" = "Thống kê";
+"settings" = "Cài đặt";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "Tên thói quen";
+"icon_and_color" = "Biểu tượng và Màu sắc";
+"goalsection_choose_time" = "Chọn thời gian (giờ:phút)";
+"goalsection_enter_count" = "Nhập số lần";
+"active_days" = "Ngày hoạt động";
+"everyday" = "Mỗi ngày";
+"every_week" = "Mỗi tuần";
+"select_days" = "Chọn ngày";
+"reminders" = "Nhắc nhở";
+"reminder" = "Nhắc nhở";
+"create_custom_habit" = "Tạo thói quen tùy chỉnh";
+// Habit Templates
+"reading" = "Đọc sách";
+"meditation" = "Thiền";
+"drink_water" = "Uống nước";
+"practice_yoga" = "Tập yoga";
+"running" = "Chạy bộ";
+"learn_language" = "Học ngôn ngữ";
+"focus" = "Tập trung";
+"cold_shower" = "Tắm nước lạnh";
+"workout" = "Tập thể dục";
+"swimming" = "Bơi lội";
+"cycling" = "Đạp xe";
+"take_vitamins" = "Uống vitamin";
+"eat_vegetables" = "Ăn rau củ";
+"practice_coding" = "Luyện lập trình";
+"plan_my_day" = "Lập kế hoạch ngày";
+"journaling" = "Viết nhật ký";
+"call_parents" = "Gọi điện cho bố mẹ";
+"play_piano" = "Chơi piano";
+"wakeup_early" = "Thức dậy sớm";
+"take_a_walk" = "Đi bộ";
+
+/* ===================== Other ===================== */
+"add_count" = "Thêm số lần";
+"add_progress" = "Thêm tiến độ";
+"add_reminder" = "Thêm nhắc nhở";
+"add_time" = "Thêm thời gian";
+"create_habit" = "Tạo thói quen";
+"daily_goal" = "Mục tiêu hàng ngày";
+"delete_habit" = "Xóa thói quen";
+"edit_habit" = "Chỉnh sửa thói quen";
+"health" = "Sức khỏe";
+"hobbies" = "Sở thích";
+"lifestyle" = "Lối sống";
+"loading_calendar" = "Đang tải lịch…";
+"productivity" = "Năng suất";
+"reset_all_history" = "Đặt lại toàn bộ lịch sử";
+"start_date" = "Ngày bắt đầu";
+"reorder" = "Sắp xếp lại";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "Đã đến lúc thực hiện thói quen của bạn!";
+"notifications_dont_forget" = "Đừng quên hoàn thành: %@";
+"goal_achieved_title" = "🎉 Mục tiêu đạt được!";
+"goal_achieved_body" = "Bạn đã hoàn thành %@!";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "Giao diện";
+"appearance_mode" = "Chế độ giao diện";
+"appearance_dark" = "Tối";
+"appearance_light" = "Sáng";
+"appearance_system" = "Hệ thống";
+"app_color" = "Màu ứng dụng";
+"app_icon" = "Biểu tượng ứng dụng";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "Ngày bắt đầu tuần";
+"week_start_system" = "Hệ thống";
+
+/* ===================== Settings: Language ===================== */
+"language" = "Ngôn ngữ";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "Đồng bộ iCloud";
+"icloud_sync_status" = "Trạng thái đồng bộ";
+"icloud_sync_active" = "Hoạt động";
+"icloud_checking_status" = "Đang kiểm tra…";
+"icloud_not_signed_in" = "Đăng nhập vào iCloud";
+"icloud_restricted" = "iCloud bị hạn chế";
+"icloud_how_sync_works" = "Đồng bộ hoạt động như thế nào";
+"icloud_automatic_backup" = "Sao lưu tự động";
+"icloud_automatic_backup_desc" = "Tất cả thói quen của bạn được tự động lưu vào iCloud";
+"icloud_cross_device_sync" = "Đồng bộ đa thiết bị";
+"icloud_cross_device_sync_desc" = "Truy cập thói quen của bạn trên iPhone, iPad và các thiết bị khác";
+"icloud_private_secure" = "Bảo mật và riêng tư";
+"icloud_private_secure_desc" = "Dữ liệu chỉ được lưu trữ trong iCloud cá nhân của bạn";
+"icloud_troubleshooting" = "Khắc phục sự cố";
+"icloud_signin_required" = "Cần đăng nhập iCloud để đồng bộ";
+"icloud_signin_steps" = "Cài đặt → [Tên của bạn] → iCloud → Đăng nhập";
+"icloud_status_unknown" = "Trạng thái không xác định";
+"icloud_temporarily_unavailable" = "Tạm thời không khả dụng";
+"icloud_unknown_error" = "Lỗi không xác định";
+"icloud_check_failed" = "Kiểm tra thất bại";
+"icloud_force_sync" = "Buộc đồng bộ";
+"icloud_force_sync_desc" = "Kích hoạt đồng bộ iCloud thủ công";
+"icloud_last_sync" = "Đồng bộ lần cuối";
+"icloud_manual_sync" = "Đồng bộ thủ công";
+"icloud_manual_sync_footer" = "Sử dụng đồng bộ thủ công nếu dữ liệu không tự động xuất hiện trên các thiết bị khác";
+"icloud_today_at" = "Hôm nay lúc %@";
+"icloud_yesterday_at" = "Hôm qua lúc %@";
+"icloud_database_error" = "Lỗi truy cập cơ sở dữ liệu iCloud";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Lưu trữ";
+"archived_habits" = "Thói quen đã lưu trữ";
+"unarchive" = "Bỏ lưu trữ";
+"archived_habits_footer" = "Vuốt sang trái để bỏ lưu trữ hoặc xóa";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "Mật mã và Face ID";
+"enter_passcode" = "Nhập mật mã";
+"create_passcode" = "Tạo mật mã";
+"enter_current_passcode" = "Nhập mật mã hiện tại";
+"confirm_passcode" = "Xác nhận mật mã";
+"enter_new_passcode" = "Nhập mật mã mới";
+"request_passcode" = "Yêu cầu mật mã";
+"disable_passcode" = "Tắt mật mã";
+"change_passcode" = "Thay đổi mật mã";
+"turn_passcode_on" = "Bật mật mã";
+"passcode_faceid" = "Mật mã và Face ID";
+"immediately" = "Ngay lập tức";
+"1_minute" = "1 phút";
+"5_minutes" = "5 phút";
+"15_minutes" = "15 phút";
+"30_minutes" = "30 phút";
+"1_hour" = "1 giờ";
+"not_now" = "Không bây giờ";
+"enable" = "Bật";
+"biometric_unlock_description" = "Sử dụng %@ để mở khóa ứng dụng nhanh chóng và an toàn mà không cần nhập mật mã.";
+"on" = "Bật";
+"off" = "Tắt";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "Thông báo";
+"haptics" = "Phản hồi xúc giác";
+"sounds" = "Âm thanh";
+"completion_sounds" = "Âm thanh hoàn thành";
+"default_sound" = "Mặc định";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "Đánh giá ứng dụng";
+"share_app" = "Chia sẻ ứng dụng";
+"contact_developer" = "Liên hệ với nhà phát triển";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "Điều khoản dịch vụ";
+"privacy_policy" = "Chính sách quyền riêng tư";
+"licenses" = "Giấy phép";
+"licenses_section_attributions" = "Ghi công";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "Mở khóa các tính năng cao cấp";
+"paywall_purchase_result_title" = "Kết quả mua hàng";
+"paywall_ok_button" = "OK";
+"paywall_processing_button" = "Đang xử lý…";
+"paywall_restore_purchases_button" = "Khôi phục mua hàng";
+"paywall_family_sharing_button" = "Hỗ trợ Chia sẻ Gia đình";
+"paywall_legal_text" = "Thanh toán sẽ được trừ từ tài khoản Apple ID của bạn khi xác nhận mua hàng. Đăng ký sẽ tự động gia hạn trừ khi tự động gia hạn bị tắt ít nhất 24 giờ trước khi kết thúc kỳ hiện tại.";
+"paywall_purchase_failed_message" = "Mua hàng thất bại. Vui lòng thử lại.";
+"paywall_restore_success_message" = "Mua hàng đã được khôi phục thành công!";
+"paywall_no_purchases_to_restore_message" = "Không có mua hàng nào để khôi phục.";
+// Pro Features
+"paywall_unlimited_habits_title" = "Thói quen không giới hạn";
+"paywall_unlimited_habits_description" = "Tạo bao nhiêu thói quen tùy ý";
+"paywall_detailed_statistics_title" = "Thống kê chi tiết";
+"paywall_detailed_statistics_description" = "Chế độ xem lịch nâng cao và biểu đồ tiến độ";
+"paywall_multiple_reminders_title" = "Nhiều nhắc nhở";
+"paywall_multiple_reminders_description" = "Thiết lập nhắc nhở không giới hạn cho thói quen của bạn suốt cả ngày";
+"paywall_completion_sounds_title" = "Âm thanh hoàn thành";
+"paywall_completion_sounds_description" = "Hiệu ứng âm thanh cao cấp khi hoàn thành thói quen";
+"paywall_premium_icons_title" = "Biểu tượng 3D cao cấp";
+"paywall_premium_icons_description" = "Biểu tượng 3D tuyệt đẹp để làm nổi bật thói quen của bạn";
+"paywall_custom_colors_icons_title" = "Màu sắc và biểu tượng tùy chỉnh";
+"paywall_custom_colors_icons_description" = "Cá nhân hóa ứng dụng với các chủ đề và biểu tượng ứng dụng";
+"paywall_upcoming_features_title" = "Truy cập sớm";
+"paywall_upcoming_features_description" = "Nhận các tính năng mới trước mọi người";
+"paywall_support_creator_title" = "Hỗ trợ nhà phát triển";
+"paywall_support_creator_description" = "Một người phát triển, không có đội ngũ — sự hỗ trợ của bạn tạo nên sự khác biệt";
+
+"paywall_yearly_plan" = "Hàng năm";
+"paywall_monthly_plan" = "Hàng tháng";
+"paywall_7_days_free_trial" = "Dùng thử miễn phí 7 ngày";
+"paywall_lifetime_plan" = "Trọn đời";
+"paywall_get_lifetime" = "Nhận quyền truy cập trọn đời";
+"paywall_subscribe" = "Đăng ký";
+"paywall_start_trial_monthly" = "Bắt đầu dùng thử miễn phí 7 ngày %@/tháng";
+"paywall_continue" = "Tiếp tục";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "Phiên bản";
+"made_with" = "Được tạo bởi";
+"in_kyrgyzstan" = "tại Kyrgyzstan";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "Bắt đầu hôm nay, Phát triển ngày mai";
+"empty_view_title3" = "Từng bước một";
+"empty_view_tap" = "Chạm";
+"empty_view_to_create_habit" = "để tạo thói quen đầu tiên của bạn";
+
+/* ===================== Statistics  ===================== */
+"average" = "Trung bình";
+"tap_dates" = "Chạm vào ngày để chỉnh sửa tiến độ";
+"press_hold_bars" = "Nhấn và giữ các thanh để xem chi tiết";
+
+// Overview Stats Cards
+"active_habits" = "Thói quen đang hoạt động";
+"completed_total" = "Hoàn thành";
+"active_days_total" = "Ngày hoạt động";
+"overall_completion" = "Tỷ lệ hoàn thành tổng thể";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "Nó hiển thị gì:";
+"how_its_calculated" = "Cách tính toán:";
+"example" = "Ví dụ:";
+
+// Completed Total Card
+"completed_total_description" = "Số lần bạn hoàn thành thói quen theo thời gian. Mỗi khi bạn đạt được mục tiêu hàng ngày của bất kỳ thói quen nào, nó được thêm vào tổng số này.";
+"completed_total_calculation" = "Chúng tôi đếm mỗi ngày bạn đạt được hoặc vượt qua mục tiêu hàng ngày của bất kỳ thói quen nào, kể từ khi bạn bắt đầu theo dõi thói quen.";
+"completed_total_example" = "Nếu bạn hoàn thành 'Tập thể dục' 30 lần, 'Đọc sách' 45 lần và 'Thiền' 60 lần, tổng số của bạn sẽ là 135 lần hoàn thành.";
+
+// Active Days Total Card
+"active_days_total_description" = "Số ngày bạn đã đạt được tiến bộ trong ít nhất một thói quen trong toàn bộ lịch sử theo dõi.";
+"active_days_total_calculation" = "Chúng tôi đếm các ngày duy nhất mà bạn đạt được tiến bộ trong bất kỳ thói quen nào, từ ngày theo dõi đầu tiên đến nay.";
+"active_days_total_example" = "Nếu bạn đã theo dõi thói quen trong 100 ngày và đạt tiến bộ trong 85 ngày, số ngày hoạt động của bạn là 85.";
+
+// Overall Completion Card
+"overall_completion_description" = "Tỷ lệ hoàn thành trung bình của tất cả các thói quen theo thời gian. Điều này cho thấy sự nhất quán và hiệu suất tổng thể của bạn.";
+"overall_completion_calculation" = "Chúng tôi tính toán phần trăm hoàn thành cho mỗi thói quen đã hoàn thành, sau đó lấy trung bình của các phần trăm này trong toàn bộ lịch sử theo dõi.";
+"overall_completion_example" = "Nếu tỷ lệ hoàn thành trung bình của tất cả các thói quen của bạn là 78%, điều này cho thấy bạn đang thực hiện tốt một cách nhất quán.";
+
+// Active Habits Card
+"active_habits_description" = "Số lượng thói quen bạn hiện đang theo dõi (ngoại trừ các thói quen đã lưu trữ). Điều này cung cấp cái nhìn tổng quan về khối lượng thói quen hiện tại của bạn.";
+"active_habits_calculation" = "Chúng tôi đếm tất cả các thói quen chưa được lưu trữ, bao gồm cả những thói quen có thể không hoạt động mỗi ngày trong tuần nhưng vẫn là một phần của thói quen của bạn.";
+"active_habits_example" = "Nếu bạn đang theo dõi 'Tập thể dục buổi sáng', 'Đọc sách' và 'Uống nước', nhưng đã lưu trữ 'Học tiếng Tây Ban Nha', số thói quen đang hoạt động của bạn là 3.";

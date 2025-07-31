@@ -4,9 +4,6 @@
 "alert_delete_habit" = "Адатты өчүрүү";
 "alert_delete_habit_message" = "Сиз чындап эле «%@» адатты өчүргүңүз келеби?";
 
-"alert_delete_multiple_habits" = "Тандалган адаттарды өчүрүү";
-"alert_delete_multiple_habits_message" = "Сиз чындап эле %d тандалган адатты түбөлүккө өчүргүңүз келеби?";
-
 // History Reset Alert
 "alert_reset_history" = "Тарыхты өчүрүү";
 "alert_reset_history_message" = "Бул адаттын бардык аткарылган маалыматын биротоло өчүрөт. Бул аракетти кайтарууга болбойт.";
@@ -21,10 +18,8 @@
 "button_done" = "Бүттү";
 "button_delete" = "Жоюу";
 "button_cancel" = "Токтотуу";
-"button_close" = "Жабуу";
 "button_edit" = "Түзөтүү";
 "button_save" = "Сактоо";
-"button_ok" = "OK";
 "button_reset" = "Өчүрүү";
 "button_reset_progress" = "Прогрессти өчүрүү";
 "complete" = "Аткаруу";
@@ -33,16 +28,12 @@
 /* ===================== General ===================== */
 "today" = "Бүгүн";
 "yesterday" = "Кечээ";
-"items_selected" = "%d тандалды";
 "count" = "Сан";
 "time" = "Убакыт";
-"hours" = "Саат";
 "goal" = "Максат: %@";
-"minutes" = "Мүнөт";
 "streak" = "Катасыз";
 "best" = "Мыкты";
 "total" = "Жалпы";
-"version" = "версия";
 "week" = "Жума";
 "month" = "Ай";
 "year" = "Жыл";
@@ -94,12 +85,10 @@
 "add_progress" = "Прогрессти кошуу";
 "add_reminder" = "Кошуу";
 "add_time" = "Убакыт кошуу";
-"choose_icon" = "Белги тандоо";
 "create_habit" = "Адат түзүү";
 "daily_goal" = "Максат";
 "delete_habit" = "Адатты өчүрүү";
 "edit_habit" = "Адатты оңдоо";
-"habits" = "Адаттар";
 "health" = "Саламаттык";
 "hobbies" = "Кызыгуу";
 "lifestyle" = "Жашоо";
@@ -152,7 +141,6 @@
 "icloud_temporarily_unavailable" = "Азыр жеткиликсиз";
 "icloud_unknown_error" = "Белгисиз ката чыкты";
 "icloud_check_failed" = "Текшерүү ишке ашкан жок";
-
 "icloud_force_sync" = "Синхрондоштуруу";
 "icloud_force_sync_desc" = "iCloud менен кол менен синхрондоштурууну баштоо";
 "icloud_last_sync" = "Акыркы синхрондоштуруу";
@@ -167,8 +155,6 @@
 "archived_habits" = "Архивделген адаттар";
 "unarchive" = "Архивден чыгаруу";
 "archived_habits_footer" = "Солго сүрүп, архивден чыгарыңыз же жойуңуз";
-"archived_date_format" = "Архивделди %@";
-"archived_habits_footer" = "Солго сүрүңүз, архивден чыгаруу же өчүрүү үчүн";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
 
@@ -193,6 +179,7 @@
 "biometric_unlock_description" = "Колдонмону сырсөз киргизбестен тез жана коопсуз ачуу үчүн %@ колдонуңуз.";
 "on" = "Күйүк";
 "off" = "Өчүк";
+
 /* ===================== Settings: Sounds & Feedback ===================== */
 "notifications" = "Эскертмелер";
 "haptics" = "Вибрациялуу жооп";
@@ -204,7 +191,6 @@
 "rate_app" = "Баалоо";
 "share_app" = "Бөлүшүү";
 "contact_developer" = "Разработчик менен байланышуу";
-"report_bug" = "Катаны билдирүү";
 
 /* ===================== Settings: LEGAL ===================== */
 
@@ -212,12 +198,6 @@
 "privacy_policy" = "Купуялык Саясаты";
 "licenses" = "Лицензиялар";
 "licenses_section_attributions" = "Атрибуция";
-
-
-/* ===================== Settings - Purchases ===================== */
-"restore_purchases" = "Сатып алууларды кайталоо";
-"restore_purchases_success" = "Сатып алуулар ийгиликтүү кайтты!";
-"restore_purchases_no_purchases" = "Кайтарылчу сатып алуулар жок экен.";
 
 /* ===================== PayWall ===================== */
 
@@ -259,7 +239,7 @@
 "paywall_continue" = "Улантуу";
 
 /* ===================== Settings: Teymia Habit - version ===================== */
-"Teymia Habit – %@ %@" = "Teymia Habit – %1$@ %2$@";
+"version" = "версия";
 "made_with" = "Кыргызстанда";
 "in_kyrgyzstan" = "менен жасалган";
 
@@ -274,8 +254,6 @@
 "average" = "Орточо";
 "tap_dates" = "Прогрессти өзгөртүү үчүн даталарды басыңыз";
 "press_hold_bars" = "Маалымат көрүү үчүн тилкелерди басып туруңуз";
-"bar_chart_header" = "Ар кандай жума, ай, жылдардагы прогрессти көрүү";
-"line_chart_header" = "Соңку жума, ай, жылдагы ийгилигиңиз";
 
 // Overview Stats Cards
 "active_habits" = "Активдүү адаттар";

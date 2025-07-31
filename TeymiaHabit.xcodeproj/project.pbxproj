@@ -295,6 +295,21 @@
 				ru,
 				"ky-KG",
 				Base,
+				"zh-Hans",
+				es,
+				fr,
+				de,
+				"pt-BR",
+				ja,
+				ko,
+				hi,
+				"zh-HK",
+				"zh-Hant",
+				tr,
+				kk,
+				vi,
+				it,
+				id,
 			);
 			mainGroup = 07A95EF12D9849F300044A7A;
 			minimizedProjectReferenceProxies = 1;

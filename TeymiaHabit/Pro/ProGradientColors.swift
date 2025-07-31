@@ -22,6 +22,7 @@ struct ProGradientColors {
     )
     
     static let proAccentColor = Color(#colorLiteral(red: 0.4925274849, green: 0.5225450397, blue: 0.9995061755, alpha: 1))
+    static let gradientColors = colors
 }
 
 // MARK: - View Extensions

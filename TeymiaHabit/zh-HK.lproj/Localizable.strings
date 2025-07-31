@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "刪除習慣";
+"alert_delete_habit_message" = "你確定要刪除「%@」嗎？";
+
+// History Reset Alert
+"alert_reset_history" = "重置記錄";
+"alert_reset_history_message" = "這將永久刪除所有習慣完成數據。此操作無法撤銷。";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "需要通知許可";
+"alert_notifications_permission_message" = "要接收習慣提醒，請在設定中啟用通知。";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "添加";
+"button_done" = "完成";
+"button_delete" = "刪除";
+"button_cancel" = "取消";
+"button_edit" = "編輯";
+"button_save" = "儲存";
+"button_reset" = "重置";
+"button_reset_progress" = "重置進度";
+"complete" = "完成";
+"completed" = "已完成";
+
+/* ===================== General ===================== */
+"today" = "今天";
+"yesterday" = "昨天";
+"count" = "次數";
+"time" = "時間";
+"goal" = "目標：%@";
+"streak" = "連續記錄";
+"best" = "最佳";
+"total" = "總計";
+"week" = "週";
+"month" = "月";
+"year" = "年";
+"widget_no_active_habits_today" = "今天沒有活躍的習慣";
+"widget_title" = "習慣";
+"widget_description" = "追蹤你的習慣進度";
+
+/* ===================== Main Tab View ===================== */
+"home" = "首頁";
+"statistics" = "統計";
+"settings" = "設定";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "習慣名稱";
+"icon_and_color" = "圖標與顏色";
+"goalsection_choose_time" = "選擇時間（小時：分鐘）";
+"goalsection_enter_count" = "輸入次數";
+"active_days" = "活躍日子";
+"everyday" = "每天";
+"every_week" = "每週";
+"select_days" = "選擇日子";
+"reminders" = "提醒";
+"reminder" = "提醒";
+"create_custom_habit" = "創建自訂習慣";
+// Habit Templates
+"reading" = "閱讀";
+"meditation" = "冥想";
+"drink_water" = "喝水";
+"practice_yoga" = "練習瑜伽";
+"running" = "跑步";
+"learn_language" = "學習語言";
+"focus" = "專注";
+"cold_shower" = "冷水浴";
+"workout" = "鍛煉";
+"swimming" = "游泳";
+"cycling" = "騎自行車";
+"take_vitamins" = "服用維他命";
+"eat_vegetables" = "吃蔬菜";
+"practice_coding" = "練習編程";
+"plan_my_day" = "計劃我的日子";
+"journaling" = "寫日記";
+"call_parents" = "聯繫父母";
+"play_piano" = "彈鋼琴";
+"wakeup_early" = "早起";
+"take_a_walk" = "散步";
+
+/* ===================== Other ===================== */
+"add_count" = "添加次數";
+"add_progress" = "添加進度";
+"add_reminder" = "添加提醒";
+"add_time" = "添加時間";
+"create_habit" = "創建習慣";
+"daily_goal" = "每日目標";
+"delete_habit" = "刪除習慣";
+"edit_habit" = "編輯習慣";
+"health" = "健康";
+"hobbies" = "愛好";
+"lifestyle" = "生活方式";
+"loading_calendar" = "正在載入日曆…";
+"productivity" = "生產力";
+"reset_all_history" = "重置所有記錄";
+"start_date" = "開始日期";
+"reorder" = "重新排序";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "是時候執行你的習慣了！";
+"notifications_dont_forget" = "別忘了完成：%@";
+"goal_achieved_title" = "🎉 目標達成！";
+"goal_achieved_body" = "你已完成 %@！";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "外觀";
+"appearance_mode" = "外觀模式";
+"appearance_dark" = "深色";
+"appearance_light" = "淺色";
+"appearance_system" = "系統";
+"app_color" = "應用程式顏色";
+"app_icon" = "應用程式圖標";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "一週開始";
+"week_start_system" = "系統";
+
+/* ===================== Settings: Language ===================== */
+"language" = "語言";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "iCloud 同步";
+"icloud_sync_status" = "同步狀態";
+"icloud_sync_active" = "活躍";
+"icloud_checking_status" = "檢查中…";
+"icloud_not_signed_in" = "登錄 iCloud";
+"icloud_restricted" = "iCloud 受限制";
+"icloud_how_sync_works" = "同步如何運作";
+"icloud_automatic_backup" = "自動備份";
+"icloud_automatic_backup_desc" = "所有習慣會自動儲存到你的 iCloud";
+"icloud_cross_device_sync" = "跨設備同步";
+"icloud_cross_device_sync_desc" = "在 iPhone、iPad 和其他設備上訪問你的習慣";
+"icloud_private_secure" = "隱私與安全";
+"icloud_private_secure_desc" = "數據僅儲存在你的個人 iCloud 中";
+"icloud_troubleshooting" = "故障排除";
+"icloud_signin_required" = "同步需要登錄 iCloud";
+"icloud_signin_steps" = "設定 → [你的名字] → iCloud → 登錄";
+"icloud_status_unknown" = "狀態未知";
+"icloud_temporarily_unavailable" = "暫時不可用";
+"icloud_unknown_error" = "未知錯誤";
+"icloud_check_failed" = "檢查失敗";
+"icloud_force_sync" = "強制同步";
+"icloud_force_sync_desc" = "手動啟動 iCloud 同步";
+"icloud_last_sync" = "最後同步";
+"icloud_manual_sync" = "手動同步";
+"icloud_manual_sync_footer" = "如果數據未自動顯示在其他設備上，請使用手動同步";
+"icloud_today_at" = "今天在 %@";
+"icloud_yesterday_at" = "昨天在 %@";
+"icloud_database_error" = "iCloud 數據庫訪問錯誤";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "歸檔";
+"archived_habits" = "已歸檔的習慣";
+"unarchive" = "取消歸檔";
+"archived_habits_footer" = "向左滑動以取消歸檔或刪除";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "密碼與 Face ID";
+"enter_passcode" = "輸入密碼";
+"create_passcode" = "創建密碼";
+"enter_current_passcode" = "輸入當前密碼";
+"confirm_passcode" = "確認密碼";
+"enter_new_passcode" = "輸入新密碼";
+"request_passcode" = "要求密碼";
+"disable_passcode" = "停用密碼";
+"change_passcode" = "更改密碼";
+"turn_passcode_on" = "啟用密碼";
+"passcode_faceid" = "密碼與 Face ID";
+"immediately" = "立即";
+"1_minute" = "1 分鐘";
+"5_minutes" = "5 分鐘";
+"15_minutes" = "15 分鐘";
+"30_minutes" = "30 分鐘";
+"1_hour" = "1 小時";
+"not_now" = "暫不";
+"enable" = "啟用";
+"biometric_unlock_description" = "使用 %@ 快速且安全地解鎖應用程式，無需輸入密碼。";
+"on" = "開啟";
+"off" = "關閉";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "通知";
+"haptics" = "觸覺反饋";
+"sounds" = "聲音";
+"completion_sounds" = "完成聲音";
+"default_sound" = "預設";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "評價應用程式";
+"share_app" = "分享應用程式";
+"contact_developer" = "聯繫開發者";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "服務條款";
+"privacy_policy" = "隱私政策";
+"licenses" = "許可證";
+"licenses_section_attributions" = "歸屬";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "解鎖高級功能";
+"paywall_purchase_result_title" = "購買結果";
+"paywall_ok_button" = "確定";
+"paywall_processing_button" = "處理中…";
+"paywall_restore_purchases_button" = "恢復購買";
+"paywall_family_sharing_button" = "支持家庭共享";
+"paywall_legal_text" = "確認購買時，將從你的 Apple ID 帳戶扣款。除非在當前期間結束前至少 24 小時關閉自動續訂，否則訂閱將自動續訂。";
+"paywall_purchase_failed_message" = "購買失敗。請重試。";
+"paywall_restore_success_message" = "購買已成功恢復！";
+"paywall_no_purchases_to_restore_message" = "沒有可恢復的購買。";
+// Pro Features
+"paywall_unlimited_habits_title" = "無限習慣";
+"paywall_unlimited_habits_description" = "創建任意數量的習慣";
+"paywall_detailed_statistics_title" = "詳細統計";
+"paywall_detailed_statistics_description" = "高級日曆視圖和進度圖表";
+"paywall_multiple_reminders_title" = "多重提醒";
+"paywall_multiple_reminders_description" = "為你的習慣設置無限提醒";
+"paywall_completion_sounds_title" = "完成聲音";
+"paywall_completion_sounds_description" = "完成習慣時的高級音效";
+"paywall_premium_icons_title" = "高級 3D 圖標";
+"paywall_premium_icons_description" = "突顯你的習慣的美麗 3D 圖標";
+"paywall_custom_colors_icons_title" = "自訂顏色與圖標";
+"paywall_custom_colors_icons_description" = "使用主題和應用程式圖標進行個性化";
+"paywall_upcoming_features_title" = "搶先體驗";
+"paywall_upcoming_features_description" = "比其他人更早獲得新功能";
+"paywall_support_creator_title" = "支持開發者";
+"paywall_support_creator_description" = "單人開發，無團隊 — 你的支持意義重大";
+
+"paywall_yearly_plan" = "年度";
+"paywall_monthly_plan" = "月度";
+"paywall_7_days_free_trial" = "7 天免費試用";
+"paywall_lifetime_plan" = "終身";
+"paywall_get_lifetime" = "獲取終身訪問";
+"paywall_subscribe" = "訂閱";
+"paywall_start_trial_monthly" = "開始 7 天免費試用 %@/月";
+"paywall_continue" = "繼續";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "版本";
+"made_with" = "製作";
+"in_kyrgyzstan" = "在吉爾吉斯斯坦";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "今日開始，明日成長";
+"empty_view_title3" = "一步一腳印";
+"empty_view_tap" = "點擊";
+"empty_view_to_create_habit" = "創建你的第一個習慣";
+
+/* ===================== Statistics  ===================== */
+"average" = "平均";
+"tap_dates" = "點擊日期以編輯進度";
+"press_hold_bars" = "長按圖表以查看詳情";
+
+// Overview Stats Cards
+"active_habits" = "活躍習慣";
+"completed_total" = "已完成";
+"active_days_total" = "活躍天數";
+"overall_completion" = "整體完成率";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "顯示內容：";
+"how_its_calculated" = "計算方式：";
+"example" = "示例：";
+
+// Completed Total Card
+"completed_total_description" = "在所有時間內完成的習慣次數。每次你達成某個習慣的每日目標，都會計入此總數。";
+"completed_total_calculation" = "我們計算從你開始追蹤習慣以來，每個達成或超過每日目標的日子。";
+"completed_total_example" = "如果你完成了「鍛煉」30 次、「閱讀」45 次、「冥想」60 次，你的總數將是 135 次完成。";
+
+// Active Days Total Card
+"active_days_total_description" = "在整個追蹤記錄中，至少在一個習慣上取得進展的天數。";
+"active_days_total_calculation" = "我們計算從你第一次追蹤到今天，任何習慣取得進展的獨特日子。";
+"active_days_total_example" = "如果你追蹤習慣 100 天，並在其中 85 天取得進展，你的活躍天數為 85 天。";
+
+// Overall Completion Card
+"overall_completion_description" = "所有習慣在整個時間內的平均完成率。這顯示了你的整體一致性和表現。";
+"overall_completion_calculation" = "我們計算每個完成習慣的完成百分比，然後取你整個追蹤記錄的平均值。";
+"overall_completion_example" = "如果你的所有習慣平均完成率為 78%，這表明你持續表現良好。";
+
+// Active Habits Card
+"active_habits_description" = "你當前追蹤的習慣數量（不包括已歸檔的習慣）。這為你的當前習慣負擔提供概覽。";
+"active_habits_calculation" = "我們計算所有未歸檔的習慣，包括那些可能不是每週每天都活躍但仍是你日常的一部分。";
+"active_habits_example" = "如果你正在追蹤「早晨鍛煉」、「閱讀書籍」和「喝水」，但已歸檔「學習西班牙語」，你的活躍習慣數量為 3。";

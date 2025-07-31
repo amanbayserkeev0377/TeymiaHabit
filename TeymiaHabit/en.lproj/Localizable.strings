@@ -4,9 +4,6 @@
 "alert_delete_habit" = "Delete Habit";
 "alert_delete_habit_message" = "Are you sure you want to delete «%@»?";
 
-"alert_delete_multiple_habits" = "Delete Selected Habits";
-"alert_delete_multiple_habits_message" = "Are you sure you want to delete %d selected habits?";
-
 // History Reset Alert
 "alert_reset_history" = "Reset History";
 "alert_reset_history_message" = "This will permanently delete all habit completion data. This action cannot be undone.";
@@ -21,10 +18,8 @@
 "button_done" = "Done";
 "button_delete" = "Delete";
 "button_cancel" = "Cancel";
-"button_close" = "Close";
 "button_edit" = "Edit";
 "button_save" = "Save";
-"button_ok" = "OK";
 "button_reset" = "Reset";
 "button_reset_progress" = "Reset progress";
 "complete" = "Complete";
@@ -33,16 +28,12 @@
 /* ===================== General ===================== */
 "today" = "Today";
 "yesterday" = "Yesterday";
-"items_selected" = "%d Selected";
 "count" = "Count";
 "time" = "Time";
-"hours" = "Hours";
 "goal" = "Goal: %@";
-"minutes" = "Minutes";
 "streak" = "Streak";
 "best" = "Best";
 "total" = "Total";
-"version" = "version";
 "week" = "Week";
 "month" = "Month";
 "year" = "Year";
@@ -94,12 +85,10 @@
 "add_progress" = "Add progress";
 "add_reminder" = "Add";
 "add_time" = "Add Time";
-"choose_icon" = "Choose Icon";
 "create_habit" = "Create Habit";
 "daily_goal" = "Goal";
 "delete_habit" = "Delete habit";
 "edit_habit" = "Edit Habit";
-"habits" = "Habits";
 "health" = "Health";
 "hobbies" = "Hobbies";
 "lifestyle" = "Lifestyle";
@@ -155,7 +144,6 @@
 "icloud_temporarily_unavailable" = "Temporarily Unavailable";
 "icloud_unknown_error" = "Unknown Error";
 "icloud_check_failed" = "Check Failed";
-
 "icloud_force_sync" = "Force Sync";
 "icloud_force_sync_desc" = "Manually trigger iCloud synchronization";
 "icloud_last_sync" = "Last Sync";
@@ -170,7 +158,6 @@
 "archived_habits" = "Archived Habits";
 "unarchive" = "Unarchive";
 "archived_habits_footer" = "Swipe left to unarchive or delete";
-"archived_date_format" = "Archived %@";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
 
@@ -209,7 +196,6 @@
 "rate_app" = "Rate App";
 "share_app" = "Share App";
 "contact_developer" = "Contact Developer";
-"report_bug" = "Report a Bug";
 
 
 /* ===================== Settings: LEGAL ===================== */
@@ -217,11 +203,6 @@
 "privacy_policy" = "Privacy Policy";
 "licenses" = "Licenses";
 "licenses_section_attributions" = "Attributions";
-
-/* ===================== Settings - Purchases ===================== */
-"restore_purchases" = "Restore Purchases";
-"restore_purchases_success" = "Purchases restored successfully!";
-"restore_purchases_no_purchases" = "No purchases to restore.";
 
 /* ===================== PayWall ===================== */
 
@@ -264,7 +245,7 @@
 
 
 /* ===================== Settings: Teymia Habit - version===================== */
-"Teymia Habit – %@ %@" = "Teymia Habit – %1$@ %2$@";
+"version" = "version";
 "made_with" = "Made with";
 "in_kyrgyzstan" = "in Kyrgyzstan";
 
@@ -280,8 +261,6 @@
 "average" = "Average";
 "tap_dates" = "Tap dates to edit progress";
 "press_hold_bars" = "Press and hold bars for details";
-"bar_chart_header" = "View your progress over different weeks, months, years";
-"line_chart_header" = "Your progress from the last week, month, year";
 
 // Overview Stats Cards
 "active_habits" = "Active Habits";

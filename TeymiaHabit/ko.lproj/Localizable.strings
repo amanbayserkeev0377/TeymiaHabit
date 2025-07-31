@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "습관 삭제";
+"alert_delete_habit_message" = "«%@»을(를) 정말로 삭제하시겠습니까?";
+
+// History Reset Alert
+"alert_reset_history" = "기록 초기화";
+"alert_reset_history_message" = "이 작업은 모든 습관 완료 데이터를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "알림 권한 필요";
+"alert_notifications_permission_message" = "습관 알림을 받으려면 설정에서 알림을 활성화하세요.";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "추가";
+"button_done" = "완료";
+"button_delete" = "삭제";
+"button_cancel" = "취소";
+"button_edit" = "편집";
+"button_save" = "저장";
+"button_reset" = "초기화";
+"button_reset_progress" = "진행 상황 초기화";
+"complete" = "완료";
+"completed" = "완료됨";
+
+/* ===================== General ===================== */
+"today" = "오늘";
+"yesterday" = "어제";
+"count" = "횟수";
+"time" = "시간";
+"goal" = "목표: %@";
+"streak" = "연속 기록";
+"best" = "최고 기록";
+"total" = "총계";
+"week" = "주";
+"month" = "월";
+"year" = "년";
+"widget_no_active_habits_today" = "오늘 활성 습관이 없습니다";
+"widget_title" = "습관";
+"widget_description" = "습관 진행 상황을 추적하세요";
+
+/* ===================== Main Tab View ===================== */
+"home" = "홈";
+"statistics" = "통계";
+"settings" = "설정";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "습관 이름";
+"icon_and_color" = "아이콘 및 색상";
+"goalsection_choose_time" = "시간 선택 (시:분)";
+"goalsection_enter_count" = "횟수 입력";
+"active_days" = "활성 요일";
+"everyday" = "매일";
+"every_week" = "매주";
+"select_days" = "요일 선택";
+"reminders" = "알림";
+"reminder" = "알림";
+"create_custom_habit" = "사용자 지정 습관 생성";
+// Habit Templates
+"reading" = "독서";
+"meditation" = "명상";
+"drink_water" = "물 마시기";
+"practice_yoga" = "요가 연습";
+"running" = "러닝";
+"learn_language" = "언어 학습";
+"focus" = "집중";
+"cold_shower" = "찬물 샤워";
+"workout" = "운동";
+"swimming" = "수영";
+"cycling" = "사이클링";
+"take_vitamins" = "비타민 섭취";
+"eat_vegetables" = "채소 먹기";
+"practice_coding" = "코딩 연습";
+"plan_my_day" = "하루 계획";
+"journaling" = "일기 쓰기";
+"call_parents" = "부모님께 전화";
+"play_piano" = "피아노 연주";
+"wakeup_early" = "일찍 일어나기";
+"take_a_walk" = "산책하기";
+
+/* ===================== Other ===================== */
+"add_count" = "횟수 추가";
+"add_progress" = "진행 상황 추가";
+"add_reminder" = "알림 추가";
+"add_time" = "시간 추가";
+"create_habit" = "습관 생성";
+"daily_goal" = "일일 목표";
+"delete_habit" = "습관 삭제";
+"edit_habit" = "습관 편집";
+"health" = "건강";
+"hobbies" = "취미";
+"lifestyle" = "라이프스타일";
+"loading_calendar" = "캘린더 로드 중…";
+"productivity" = "생산성";
+"reset_all_history" = "모든 기록 초기화";
+"start_date" = "시작 날짜";
+"reorder" = "재정렬";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "습관을 실행할 시간입니다!";
+"notifications_dont_forget" = "잊지 마세요: %@";
+"goal_achieved_title" = "🎉 목표 달성!";
+"goal_achieved_body" = "%@을(를) 완료했습니다!";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "외관";
+"appearance_mode" = "외관 모드";
+"appearance_dark" = "다크";
+"appearance_light" = "라이트";
+"appearance_system" = "시스템";
+"app_color" = "앱 색상";
+"app_icon" = "앱 아이콘";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "주 시작";
+"week_start_system" = "시스템";
+
+/* ===================== Settings: Language ===================== */
+"language" = "언어";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "iCloud 동기화";
+"icloud_sync_status" = "동기화 상태";
+"icloud_sync_active" = "활성";
+"icloud_checking_status" = "확인 중…";
+"icloud_not_signed_in" = "iCloud에 로그인";
+"icloud_restricted" = "iCloud가 제한됨";
+"icloud_how_sync_works" = "동기화 작동 방식";
+"icloud_automatic_backup" = "자동 백업";
+"icloud_automatic_backup_desc" = "모든 습관은 iCloud에 자동으로 저장됩니다";
+"icloud_cross_device_sync" = "다중 디바이스 동기화";
+"icloud_cross_device_sync_desc" = "iPhone, iPad 및 기타 디바이스에서 습관에 액세스";
+"icloud_private_secure" = "개인 정보 및 보안";
+"icloud_private_secure_desc" = "데이터는 개인 iCloud에만 저장됩니다";
+"icloud_troubleshooting" = "문제 해결";
+"icloud_signin_required" = "동기화하려면 iCloud 로그인이 필요합니다";
+"icloud_signin_steps" = "설정 → [사용자 이름] → iCloud → 로그인";
+"icloud_status_unknown" = "상태 알 수 없음";
+"icloud_temporarily_unavailable" = "일시적으로 사용 불가";
+"icloud_unknown_error" = "알 수 없는 오류";
+"icloud_check_failed" = "확인 실패";
+"icloud_force_sync" = "강제 동기화";
+"icloud_force_sync_desc" = "iCloud 동기화를 수동으로 실행";
+"icloud_last_sync" = "마지막 동기화";
+"icloud_manual_sync" = "수동 동기화";
+"icloud_manual_sync_footer" = "데이터가 다른 디바이스에 자동으로 표시되지 않을 경우 수동 동기화를 사용하세요";
+"icloud_today_at" = "오늘 %@";
+"icloud_yesterday_at" = "어제 %@";
+"icloud_database_error" = "iCloud 데이터베이스 액세스 오류";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "보관";
+"archived_habits" = "보관된 습관";
+"unarchive" = "보관 해제";
+"archived_habits_footer" = "왼쪽으로 스와이프하여 보관 해제 또는 삭제";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "암호 및 Face ID";
+"enter_passcode" = "암호 입력";
+"create_passcode" = "암호 생성";
+"enter_current_passcode" = "현재 암호 입력";
+"confirm_passcode" = "암호 확인";
+"enter_new_passcode" = "새 암호 입력";
+"request_passcode" = "암호 요청";
+"disable_passcode" = "암호 비활성화";
+"change_passcode" = "암호 변경";
+"turn_passcode_on" = "암호 활성화";
+"passcode_faceid" = "암호 및 Face ID";
+"immediately" = "즉시";
+"1_minute" = "1분";
+"5_minutes" = "5분";
+"15_minutes" = "15분";
+"30_minutes" = "30분";
+"1_hour" = "1시간";
+"not_now" = "지금 아님";
+"enable" = "활성화";
+"biometric_unlock_description" = "%@을(를) 사용하여 암호 입력 없이 앱을 빠르고 안전하게 잠금 해제하세요.";
+"on" = "켜짐";
+"off" = "꺼짐";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "알림";
+"haptics" = "햅틱 피드백";
+"sounds" = "소리";
+"completion_sounds" = "완료 소리";
+"default_sound" = "기본값";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "앱 평가";
+"share_app" = "앱 공유";
+"contact_developer" = "개발자에게 연락";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "서비스 약관";
+"privacy_policy" = "개인정보 처리방침";
+"licenses" = "라이선스";
+"licenses_section_attributions" = "기여 표시";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "프리미엄 기능 잠금 해제";
+"paywall_purchase_result_title" = "구매 결과";
+"paywall_ok_button" = "확인";
+"paywall_processing_button" = "처리 중…";
+"paywall_restore_purchases_button" = "구매 복원";
+"paywall_family_sharing_button" = "가족 공유 지원";
+"paywall_legal_text" = "구매 확인 시 Apple ID 계정으로 결제가 청구됩니다. 자동 갱신은 현재 기간 종료 최소 24시간 전에 자동 갱신이 꺼지지 않으면 자동으로 갱신됩니다.";
+"paywall_purchase_failed_message" = "구매에 실패했습니다. 다시 시도하세요.";
+"paywall_restore_success_message" = "구매가 성공적으로 복원되었습니다!";
+"paywall_no_purchases_to_restore_message" = "복원할 구매가 없습니다.";
+// Pro Features
+"paywall_unlimited_habits_title" = "무제한 습관";
+"paywall_unlimited_habits_description" = "필요한 만큼 습관을 생성하세요";
+"paywall_detailed_statistics_title" = "상세 통계";
+"paywall_detailed_statistics_description" = "고급 캘린더 뷰와 진행 그래프";
+"paywall_multiple_reminders_title" = "다중 알림";
+"paywall_multiple_reminders_description" = "하루 동안 무제한 습관 알림 설정";
+"paywall_completion_sounds_title" = "완료 소리";
+"paywall_completion_sounds_description" = "습관 완료 시 프리미엄 사운드 효과";
+"paywall_premium_icons_title" = "프리미엄 3D 아이콘";
+"paywall_premium_icons_description" = "습관을 돋보이게 하는 아름다운 3D 아이콘";
+"paywall_custom_colors_icons_title" = "사용자 지정 색상 및 아이콘";
+"paywall_custom_colors_icons_description" = "테마와 앱 아이콘으로 개인화";
+"paywall_upcoming_features_title" = "조기 액세스";
+"paywall_upcoming_features_description" = "모두보다 먼저 새 기능에 액세스";
+"paywall_support_creator_title" = "개발자 지원";
+"paywall_support_creator_description" = "1인 개발자, 팀 없음 — 당신의 지원이 큰 의미를 가집니다";
+
+"paywall_yearly_plan" = "연간";
+"paywall_monthly_plan" = "월간";
+"paywall_7_days_free_trial" = "7일 무료";
+"paywall_lifetime_plan" = "평생";
+"paywall_get_lifetime" = "평생 액세스 얻기";
+"paywall_subscribe" = "구독";
+"paywall_start_trial_monthly" = "7일 무료 체험 시작 %@/월";
+"paywall_continue" = "계속하기";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "버전";
+"made_with" = "제작";
+"in_kyrgyzstan" = "키르기스스탄에서";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "오늘 시작, 내일 성장";
+"empty_view_title3" = "한 걸음씩";
+"empty_view_tap" = "탭";
+"empty_view_to_create_habit" = "첫 번째 습관을 생성하려면";
+
+/* ===================== Statistics  ===================== */
+"average" = "평균";
+"tap_dates" = "날짜를 탭하여 진행 상황 편집";
+"press_hold_bars" = "막대를 길게 눌러 세부 정보 보기";
+
+// Overview Stats Cards
+"active_habits" = "활성 습관";
+"completed_total" = "완료";
+"active_days_total" = "활성 일수";
+"overall_completion" = "전체 완료율";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "표시 내용:";
+"how_its_calculated" = "계산 방식:";
+"example" = "예시:";
+
+// Completed Total Card
+"completed_total_description" = "전체 기간 동안 완료한 습관의 횟수. 매일 목표를 달성한 습관은 이 총계에 포함됩니다.";
+"completed_total_calculation" = "습관 추적 시작 이후, 매일 목표를 달성하거나 초과한 날을 계산합니다.";
+"completed_total_example" = "‘운동’을 30번, ‘독서’를 45번, ‘명상’을 60번 완료했다면, 총계는 135번입니다.";
+
+// Active Days Total Card
+"active_days_total_description" = "전체 추적 기록 동안 최소 한 가지 습관에서 진행 상황을 이룬 날의 수.";
+"active_days_total_calculation" = "첫 추적 날부터 오늘까지, 어떤 습관에서든 진행 상황을 이룬 고유한 날을 계산합니다.";
+"active_days_total_example" = "100일 동안 습관을 추적하고 85일 동안 진행 상황을 이루었다면, 활성 일수는 85일입니다.";
+
+// Overall Completion Card
+"overall_completion_description" = "모든 습관과 전체 기간 동안의 평균 완료율. 이는 전반적인 일관성과 성과를 보여줍니다.";
+"overall_completion_calculation" = "각 습관 완료에 대한 완료율을 계산한 후, 전체 추적 기록에 대한 평균을 구합니다.";
+"overall_completion_example" = "모든 습관에서 평균 78%의 완료율을 기록했다면, 이는 지속적으로 좋은 성과를 내고 있음을 보여줍니다.";
+
+// Active Habits Card
+"active_habits_description" = "현재 추적 중인 습관의 수(보관된 습관 제외). 이는 현재 습관 부하를 개괄적으로 보여줍니다.";
+"active_habits_calculation" = "보관되지 않은 모든 습관을 계산합니다. 주중 매일 활성화되지 않은 습관도 루틴의 일부로 포함됩니다.";
+"active_habits_example" = "‘아침 운동’, ‘책 읽기’, ‘물 마시기’를 추적하고, ‘스페인어 배우기’를 보관했다면, 활성 습관 수는 3입니다.";

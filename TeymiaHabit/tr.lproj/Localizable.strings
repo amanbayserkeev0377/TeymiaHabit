@@ -1,0 +1,289 @@
+/* ===================== Alerts ===================== */
+
+// Delete Habit Alerts
+"alert_delete_habit" = "Alışkanlığı Sil";
+"alert_delete_habit_message" = "«%@» alışkanlığını gerçekten silmek istiyor musunuz?";
+
+// History Reset Alert
+"alert_reset_history" = "Geçmişi Sıfırla";
+"alert_reset_history_message" = "Bu, tüm alışkanlık tamamlama verilerini kalıcı olarak siler. Bu işlem geri alınamaz.";
+
+// Notifications Permission Alert
+"alert_notifications_permission" = "Bildirim İzni Gerekli";
+"alert_notifications_permission_message" = "Alışkanlık hatırlatıcıları almak için lütfen Ayarlar'dan bildirimleri etkinleştirin.";
+
+
+/* ===================== Buttons ===================== */
+"button_add" = "Ekle";
+"button_done" = "Tamam";
+"button_delete" = "Sil";
+"button_cancel" = "İptal";
+"button_edit" = "Düzenle";
+"button_save" = "Kaydet";
+"button_reset" = "Sıfırla";
+"button_reset_progress" = "İlerlemeyi Sıfırla";
+"complete" = "Tamamla";
+"completed" = "Tamamlandı";
+
+/* ===================== General ===================== */
+"today" = "Bugün";
+"yesterday" = "Dün";
+"count" = "Sayı";
+"time" = "Zaman";
+"goal" = "Hedef: %@";
+"streak" = "Seri";
+"best" = "En İyi";
+"total" = "Toplam";
+"week" = "Hafta";
+"month" = "Ay";
+"year" = "Yıl";
+"widget_no_active_habits_today" = "Bugün için aktif alışkanlık yok";
+"widget_title" = "Alışkanlıklar";
+"widget_description" = "Alışkanlık ilerlemenizi takip edin";
+
+/* ===================== Main Tab View ===================== */
+"home" = "Ana Sayfa";
+"statistics" = "İstatistikler";
+"settings" = "Ayarlar";
+
+/* ===================== Create/New Habit View ===================== */
+"habit_name" = "Alışkanlık Adı";
+"icon_and_color" = "Simge ve Renk";
+"goalsection_choose_time" = "Zaman Seç (saat:dakika)";
+"goalsection_enter_count" = "Sayı Gir";
+"active_days" = "Aktif Günler";
+"everyday" = "Her Gün";
+"every_week" = "Her Hafta";
+"select_days" = "Günleri Seç";
+"reminders" = "Hatırlatıcılar";
+"reminder" = "Hatırlatıcı";
+"create_custom_habit" = "Özel Alışkanlık Oluştur";
+// Habit Templates
+"reading" = "Okuma";
+"meditation" = "Meditasyon";
+"drink_water" = "Su İçme";
+"practice_yoga" = "Yoga Yapma";
+"running" = "Koşu";
+"learn_language" = "Dil Öğrenme";
+"focus" = "Odaklanma";
+"cold_shower" = "Soğuk Duş";
+"workout" = "Egzersiz";
+"swimming" = "Yüzme";
+"cycling" = "Bisiklet Sürme";
+"take_vitamins" = "Vitamin Alma";
+"eat_vegetables" = "Sebze Yeme";
+"practice_coding" = "Kodlama Çalışma";
+"plan_my_day" = "Günü Planlama";
+"journaling" = "Günlük Yazma";
+"call_parents" = "Aileyle Görüşme";
+"play_piano" = "Piyano Çalma";
+"wakeup_early" = "Erken Uyanma";
+"take_a_walk" = "Yürüyüş Yapma";
+
+/* ===================== Other ===================== */
+"add_count" = "Sayı Ekle";
+"add_progress" = "İlerleme Ekle";
+"add_reminder" = "Hatırlatıcı Ekle";
+"add_time" = "Zaman Ekle";
+"create_habit" = "Alışkanlık Oluştur";
+"daily_goal" = "Günlük Hedef";
+"delete_habit" = "Alışkanlık Sil";
+"edit_habit" = "Alışkanlık Düzenle";
+"health" = "Sağlık";
+"hobbies" = "Hobiler";
+"lifestyle" = "Yaşam Tarzı";
+"loading_calendar" = "Takvim yükleniyor…";
+"productivity" = "Verimlilik";
+"reset_all_history" = "Tüm Geçmişi Sıfırla";
+"start_date" = "Başlangıç Tarihi";
+"reorder" = "Yeniden Sırala";
+
+/* ===================== Notifications ===================== */
+"notifications_habit_time" = "Alışkanlık zamanı geldi!";
+"notifications_dont_forget" = "Unutmayın: %@";
+"goal_achieved_title" = "🎉 Hedef Başarıldı!";
+"goal_achieved_body" = "%@ tamamlandı!";
+
+
+/* ===================== Settings: Appearance ===================== */
+"appearance" = "Görünüm";
+"appearance_mode" = "Görünüm Modu";
+"appearance_dark" = "Koyu";
+"appearance_light" = "Açık";
+"appearance_system" = "Sistem";
+"app_color" = "Uygulama Rengi";
+"app_icon" = "Uygulama Simgesi";
+
+
+/* ===================== Settings: Week Start ===================== */
+"week_start_day" = "Haftanın Başlangıcı";
+"week_start_system" = "Sistem";
+
+/* ===================== Settings: Language ===================== */
+"language" = "Dil";
+
+/* ===================== Settings: iCloud Sync ===================== */
+"icloud_sync" = "iCloud Senkronizasyonu";
+"icloud_sync_status" = "Senkronizasyon Durumu";
+"icloud_sync_active" = "Aktif";
+"icloud_checking_status" = "Kontrol ediliyor…";
+"icloud_not_signed_in" = "iCloud'a Giriş Yap";
+"icloud_restricted" = "iCloud Kısıtlı";
+"icloud_how_sync_works" = "Senkronizasyon Nasıl Çalışır";
+"icloud_automatic_backup" = "Otomatik Yedekleme";
+"icloud_automatic_backup_desc" = "Tüm alışkanlıklarınız iCloud'unuza otomatik olarak kaydedilir";
+"icloud_cross_device_sync" = "Cihazlar Arası Senkronizasyon";
+"icloud_cross_device_sync_desc" = "iPhone, iPad ve diğer cihazlarda alışkanlıklarınıza erişin";
+"icloud_private_secure" = "Gizlilik ve Güvenlik";
+"icloud_private_secure_desc" = "Veriler yalnızca kişisel iCloud'unuzda saklanır";
+"icloud_troubleshooting" = "Sorun Giderme";
+"icloud_signin_required" = "Senkronizasyon için iCloud girişi gerekli";
+"icloud_signin_steps" = "Ayarlar → [Adınız] → iCloud → Giriş Yap";
+"icloud_status_unknown" = "Durum Bilinmiyor";
+"icloud_temporarily_unavailable" = "Geçici Olarak Kullanılamıyor";
+"icloud_unknown_error" = "Bilinmeyen Hata";
+"icloud_check_failed" = "Kontrol Başarısız";
+"icloud_force_sync" = "Zorla Senkronize Et";
+"icloud_force_sync_desc" = "iCloud senkronizasyonunu manuel olarak başlat";
+"icloud_last_sync" = "Son Senkronizasyon";
+"icloud_manual_sync" = "Manuel Senkronizasyon";
+"icloud_manual_sync_footer" = "Veriler diğer cihazlarda otomatik olarak görünmezse manuel senkronizasyonu kullanın";
+"icloud_today_at" = "Bugün %@ tarihinde";
+"icloud_yesterday_at" = "Dün %@ tarihinde";
+"icloud_database_error" = "iCloud veritabanına erişim hatası";
+
+/* ===================== Settings: Archived Habits ===================== */
+"archive" = "Arşivle";
+"archived_habits" = "Arşivlenmiş Alışkanlıklar";
+"unarchive" = "Arşivden Çıkar";
+"archived_habits_footer" = "Arşivden çıkarmak veya silmek için sola kaydırın";
+
+/* ===================== Settings: Passcode & Face ID ===================== */
+"passcode_faceid" = "Parola ve Face ID";
+"enter_passcode" = "Parola Gir";
+"create_passcode" = "Parola Oluştur";
+"enter_current_passcode" = "Mevcut Parolayı Gir";
+"confirm_passcode" = "Parolayı Onayla";
+"enter_new_passcode" = "Yeni Parola Gir";
+"request_passcode" = "Parola Gerektir";
+"disable_passcode" = "Parolayı Devre Dışı Bırak";
+"change_passcode" = "Parolayı Değiştir";
+"turn_passcode_on" = "Parolayı Etkinleştir";
+"passcode_faceid" = "Parola ve Face ID";
+"immediately" = "Hemen";
+"1_minute" = "1 Dakika";
+"5_minutes" = "5 Dakika";
+"15_minutes" = "15 Dakika";
+"30_minutes" = "30 Dakika";
+"1_hour" = "1 Saat";
+"not_now" = "Şimdi Değil";
+"enable" = "Etkinleştir";
+"biometric_unlock_description" = "%@ kullanarak uygulamayı parola girmeden hızlı ve güvenli bir şekilde kilidini açın.";
+"on" = "Açık";
+"off" = "Kapalı";
+
+
+/* ===================== Settings: Sounds & Feedback ===================== */
+"notifications" = "Bildirimler";
+"haptics" = "Dokunsal Geri Bildirim";
+"sounds" = "Sesler";
+"completion_sounds" = "Tamamlama Sesleri";
+"default_sound" = "Varsayılan";
+
+/* ===================== Settings: Support & Feedback ===================== */
+"rate_app" = "Uygulamayı Değerlendir";
+"share_app" = "Uygulamayı Paylaş";
+"contact_developer" = "Geliştiriciyle İletişime Geç";
+
+
+/* ===================== Settings: LEGAL ===================== */
+"terms_of_service" = "Hizmet Şartları";
+"privacy_policy" = "Gizlilik Politikası";
+"licenses" = "Lisanslar";
+"licenses_section_attributions" = "Atıflar";
+
+/* ===================== PayWall ===================== */
+"paywall_unlock_premium" = "Premium Özellikleri Aç";
+"paywall_purchase_result_title" = "Satın Alma Sonucu";
+"paywall_ok_button" = "Tamam";
+"paywall_processing_button" = "İşleniyor…";
+"paywall_restore_purchases_button" = "Satın Almaları Geri Yükle";
+"paywall_family_sharing_button" = "Aile Paylaşımını Destekler";
+"paywall_legal_text" = "Satın alma onaylandığında Apple ID hesabınızdan ödeme alınır. Otomatik yenileme, mevcut dönemin bitiminden en az 24 saat önce kapatılmadıkça otomatik olarak yenilenir.";
+"paywall_purchase_failed_message" = "Satın alma başarısız oldu. Lütfen tekrar deneyin.";
+"paywall_restore_success_message" = "Satın almalar başarıyla geri yüklendi!";
+"paywall_no_purchases_to_restore_message" = "Geri yüklenecek satın alma yok.";
+// Pro Features
+"paywall_unlimited_habits_title" = "Sınırsız Alışkanlıklar";
+"paywall_unlimited_habits_description" = "İhtiyacınız olduğu kadar alışkanlık oluşturun";
+"paywall_detailed_statistics_title" = "Ayrıntılı İstatistikler";
+"paywall_detailed_statistics_description" = "Gelişmiş takvim görünümü ve ilerleme grafikleri";
+"paywall_multiple_reminders_title" = "Çoklu Hatırlatıcılar";
+"paywall_multiple_reminders_description" = "Alışkanlıklarınız için gün boyunca sınırsız hatırlatıcı ayarlayın";
+"paywall_completion_sounds_title" = "Tamamlama Sesleri";
+"paywall_completion_sounds_description" = "Alışkanlıkları tamamlarken premium ses efektleri";
+"paywall_premium_icons_title" = "Premium 3D Simgeler";
+"paywall_premium_icons_description" = "Alışkanlıklarınızı öne çıkaran harika 3D simgeler";
+"paywall_custom_colors_icons_title" = "Özel Renkler ve Simgeler";
+"paywall_custom_colors_icons_description" = "Temalar ve uygulama simgeleriyle kişiselleştirin";
+"paywall_upcoming_features_title" = "Erken Erişim";
+"paywall_upcoming_features_description" = "Yeni özelliklere herkesten önce erişin";
+"paywall_support_creator_title" = "Geliştiriciyi Destekle";
+"paywall_support_creator_description" = "Tek kişilik bir geliştirici, ekip yok — desteğiniz büyük fark yaratır";
+
+"paywall_yearly_plan" = "Yıllık";
+"paywall_monthly_plan" = "Aylık";
+"paywall_7_days_free_trial" = "7 Gün Ücretsiz";
+"paywall_lifetime_plan" = "Ömür Boyu";
+"paywall_get_lifetime" = "Ömür Boyu Erişim Al";
+"paywall_subscribe" = "Abone Ol";
+"paywall_start_trial_monthly" = "7 Gün Ücretsiz Deneme Başlat %@/ay";
+"paywall_continue" = "Devam Et";
+
+
+/* ===================== Settings: Teymia Habit - version===================== */
+"version" = "Sürüm";
+"made_with" = "İle Yapıldı";
+"in_kyrgyzstan" = "Kırgızistan'da";
+
+/* ===================== Empty State View===================== */
+"empty_view_largetitle" = "Bugün Başla, Yarın Büyü";
+"empty_view_title3" = "Adım Adım";
+"empty_view_tap" = "Dokun";
+"empty_view_to_create_habit" = "İlk alışkanlığını oluşturmak için";
+
+/* ===================== Statistics  ===================== */
+"average" = "Ortalama";
+"tap_dates" = "İlerlemeyi düzenlemek için tarihlere dokunun";
+"press_hold_bars" = "Detaylar için çubuklara basılı tutun";
+
+// Overview Stats Cards
+"active_habits" = "Aktif Alışkanlıklar";
+"completed_total" = "Tamamlanan";
+"active_days_total" = "Aktif Günler";
+"overall_completion" = "Genel Tamamlama Oranı";
+
+/* ===================== Card Info Modal ===================== */
+"what_it_shows" = "Ne gösterir:";
+"how_its_calculated" = "Nasıl hesaplanır:";
+"example" = "Örnek:";
+
+// Completed Total Card
+"completed_total_description" = "Zaman içinde tamamlanan alışkanlıkların sayısı. Herhangi bir alışkanlığın günlük hedefini her tamamladığınızda bu toplama eklenir.";
+"completed_total_calculation" = "Alışkanlık takibine başladığınızdan beri, herhangi bir alışkanlık için günlük hedefi başardığınız veya aştığınız her günü sayarız.";
+"completed_total_example" = "Eğer 'Egzersiz'i 30 kez, 'Okuma'yı 45 kez ve 'Meditasyon'u 60 kez tamamladıysanız, toplamınız 135 tamamlama olur.";
+
+// Active Days Total Card
+"active_days_total_description" = "Tüm takip geçmişiniz boyunca en az bir alışkanlıkta ilerleme kaydettiğiniz günlerin sayısı.";
+"active_days_total_calculation" = "İlk takip gününüzden bugüne kadar, herhangi bir alışkanlıkta ilerleme kaydettiğiniz benzersiz günleri sayarız.";
+"active_days_total_example" = "Eğer 100 gün boyunca alışkanlıkları takip ettiyseniz ve bunların 85'inde ilerleme kaydettiyseniz, aktif gün sayınız 85 olur.";
+
+// Overall Completion Card
+"overall_completion_description" = "Tüm alışkanlıklarınız için zaman içindeki ortalama tamamlama oranı. Bu, genel tutarlılığınızı ve performansınızı gösterir.";
+"overall_completion_calculation" = "Her tamamlanan alışkanlık için tamamlama yüzdesini hesaplarız ve ardından tüm takip geçmişiniz boyunca bu yüzdelerin ortalamasını alırız.";
+"overall_completion_example" = "Eğer tüm alışkanlıklarınızda ortalama tamamlama oranı %78 ise, bu sürekli olarak iyi performans gösterdiğinizi gösterir.";
+
+// Active Habits Card
+"active_habits_description" = "Şu anda takip ettiğiniz alışkanlıkların sayısı (arşivlenmiş alışkanlıklar hariç). Bu, mevcut alışkanlık yükünüzü genel olarak gösterir.";
+"active_habits_calculation" = "Arşivlenmemiş tüm alışkanlıkları sayarız, bu alışkanlıklar haftanın her günü aktif olmasa bile rutininizin bir parçasıdır.";
+"active_habits_example" = "Eğer 'Sabah Egzersizi', 'Kitap Okuma' ve 'Su İçme'yi takip ediyorsanız, ancak 'İspanyolca Öğrenme'yi arşivlediyseniz, aktif alışkanlık sayınız 3 olur.";

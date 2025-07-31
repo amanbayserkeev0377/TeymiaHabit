@@ -10,12 +10,28 @@ struct EmptyStateView: View {
     @State private var hintOffset: CGFloat = 30
     @ObservedObject private var colorManager = AppColorManager.shared
     
+    private var isCompactHeight: Bool {
+        UIScreen.main.bounds.height <= 667
+    }
+    
+    private var imageSize: CGFloat {
+        isCompactHeight ? 120 : 160
+    }
+    
+    private var topPadding: CGFloat {
+        isCompactHeight ? 20 : 60
+    }
+    
+    private var verticalSpacing: CGFloat {
+        isCompactHeight ? 24 : 40
+    }
+    
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: verticalSpacing) {
             Image("TeymiaHabitBlank")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 160, height: 160)
+                .frame(width: imageSize, height: imageSize)
                 .scaleEffect(isAnimating ? 1.15 : 0.9)
                 .animation(
                     .easeInOut(duration: 1.5)
@@ -26,19 +42,23 @@ struct EmptyStateView: View {
                     isAnimating = true
                 }
             
-            VStack(spacing: 16) {
+            VStack(spacing: isCompactHeight ? 12 : 16) {
                 Text("empty_view_largetitle".localized)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(2)
                     .opacity(titleOpacity)
                     .offset(y: titleOffset)
                 
                 Text("empty_view_title3".localized)
                     .font(.title3)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 30)
-                    .lineLimit(nil)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 20)
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(3)
                     .opacity(subtitleOpacity)
                     .offset(y: subtitleOffset)
             }
@@ -54,14 +74,20 @@ struct EmptyStateView: View {
                 Text("empty_view_to_create_habit".localized)
                     .foregroundStyle(.secondary)
             }
-            .padding(.top, 20)
+            .font(.subheadline)
+            .minimumScaleFactor(0.8)
+            .lineLimit(1)
+            .padding(.top, isCompactHeight ? 12 : 20)
             .opacity(hintOpacity)
             .offset(y: hintOffset)
             
-            Spacer()
+            if !isCompactHeight {
+                Spacer()
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 60)
+        .padding(.top, topPadding)
+        .padding(.horizontal, 16)
         .onAppear {
             withAnimation(.easeOut(duration: 1.5).delay(0.8)) {
                 titleOpacity = 1.0
