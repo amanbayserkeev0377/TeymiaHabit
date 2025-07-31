@@ -164,6 +164,19 @@ Currently supports:
 - 🇺🇸 English
 - 🇷🇺 Russian  
 - 🇰🇬 Kyrgyz
+- 🇰🇿 Kazakh
+- 🇨🇳 Chinese (Simplified, Traditional, Hong Kong)
+- 🇪🇸 Spanish
+- 🇫🇷 French
+- 🇩🇪 German
+- 🇧🇷 Portuguese (Brazil)
+- 🇯🇵 Japanese
+- 🇰🇷 Korean
+- 🇮🇳 Hindi
+- 🇹🇷 Turkish
+- 🇻🇳 Vietnamese
+- 🇮🇹 Italian
+- 🇮🇩 Indonesian
 
 All strings are externalized and ready for additional languages.
 
