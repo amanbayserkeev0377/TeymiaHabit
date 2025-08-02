@@ -158,6 +158,11 @@
 "unarchive" = "संग्रह से हटाएँ";
 "archived_habits_footer" = "बाएँ स्वाइप करें संग्रह से हटाने या हटाने के लिए";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "डेटा निर्यात करें";
+"export_button" = "निर्यात";
+"export_error_title" = "निर्यात विफल";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "अपने डेटा तक पहुँचने के लिए Teymia Habit को अनलॉक करें";
 "passcode_faceid" = "पासकोड और Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "पुनर्स्थापित करने के लिए कोई खरीदारी नहीं।";
 // Pro Features
 "paywall_unlimited_habits_title" = "असीमित आदतें";
-"paywall_unlimited_habits_description" = "जितनी चाहें उतनी आदतें बनाएँ";
-"paywall_detailed_statistics_title" = "विस्तृत आँकड़े";
-"paywall_detailed_statistics_description" = "उन्नत कैलेंडर दृश्य और प्रगति ग्राफ";
-"paywall_multiple_reminders_title" = "एकाधिक रिमाइंडर";
-"paywall_multiple_reminders_description" = "दिन भर में अपनी आदतों के लिए असीमित रिमाइंडर सेट करें";
-"paywall_completion_sounds_title" = "पूर्णता ध्वनियाँ";
-"paywall_completion_sounds_description" = "आदतें पूरी करने पर प्रीमियम ध्वनि प्रभाव";
-"paywall_premium_icons_title" = "प्रीमियम 3D आइकन";
-"paywall_premium_icons_description" = "आपकी आदतों को उजागर करने के लिए शानदार 3D आइकन";
-"paywall_custom_colors_icons_title" = "कस्टम रंग और आइकन";
-"paywall_custom_colors_icons_description" = "थीम और ऐप आइकन के साथ व्यक्तिगत बनाएँ";
-"paywall_upcoming_features_title" = "शीघ्र पहुँच";
-"paywall_upcoming_features_description" = "सबसे पहले नई सुविधाओं तक पहुँचें";
+"paywall_unlimited_habits_description" = "जितनी चाहें आदतें बनाएं।";
+"paywall_detailed_statistics_title" = "विस्तृत आंकड़े";
+"paywall_detailed_statistics_description" = "कैलेंडर और चार्ट के साथ अपनी प्रगति देखें।";
+"paywall_multiple_reminders_title" = "कई अनुस्मारक";
+"paywall_multiple_reminders_description" = "दिन भर जितने चाहें उतने दैनिक अनुस्मारक सेट करें।";
+"paywall_completion_sounds_title" = "पूरा होने की ध्वनियाँ";
+"paywall_completion_sounds_description" = "आदत पूरी करने पर संतोषजनक साउंड इफेक्ट्स प्राप्त करें।";
+"paywall_premium_icons_title" = "3D हैबिट आइकन्स";
+"paywall_premium_icons_description" = "अपने आदतों को अलग दिखाने के लिए स्टाइलिश 3D आइकन्स का उपयोग करें।";
+"paywall_custom_colors_icons_title" = "थीम्स और ऐप आइकन्स";
+"paywall_custom_colors_icons_description" = "कस्टम थीम्स और आइकन्स के साथ ऐप को पर्सनलाइज़ करें।";
+"paywall_export_title" = "डेटा निर्यात";
+"paywall_export_description" = "अपनी आदतों का डेटा PDF या JSON फ़ाइल के रूप में निर्यात करें।";
 "paywall_support_creator_title" = "निर्माता का समर्थन करें";
-"paywall_support_creator_description" = "एक व्यक्ति, कोई टीम नहीं — आपका समर्थन बड़ा बदलाव लाता है";
+"paywall_support_creator_description" = "यह ऐप एक व्यक्ति द्वारा निर्मित है। आपका समर्थन इसे आगे बढ़ाता है।";
 
 "paywall_yearly_plan" = "वार्षिक";
 "paywall_monthly_plan" = "मासिक";

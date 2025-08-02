@@ -3,21 +3,20 @@ import SwiftData
 import UniformTypeIdentifiers
 
 struct ExportDataView: View {
-    // MARK: - Environment
-    
+
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    
-    // MARK: - State
+    @Environment(ProManager.self) private var proManager
     
     @State private var exportService: HabitExportService?
     @State private var selectedFormat: ExportFormat = .csv
+    @State private var exportedData: Data?
+    @State private var exportedFileName: String?
     @State private var showErrorAlert = false
-    @State private var exportedFileURL: URL?
+    @State private var showShareSheet = false
+    @State private var showProPaywall = false
     @State private var isExporting = false
-    
-    // MARK: - Data
     
     @Query(sort: \Habit.createdAt) private var allHabits: [Habit]
     
@@ -34,7 +33,6 @@ struct ExportDataView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Header Section with 3D Icon
                 Section {
                     HStack {
                         Spacer()
@@ -50,58 +48,7 @@ struct ExportDataView: View {
                 .listRowBackground(Color.clear)
                 .listSectionSeparator(.hidden)
                 
-                // Format Selection Section
                 formatSection
-                
-                // Export Button Section
-                Section {
-                    Button(action: performExportAndShare) {
-                        buttonContent
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!isExportReady)
-                    .animation(.easeInOut(duration: 0.25), value: isExporting)
-                    .padding(.horizontal, 20)
-                    .background(
-                        // Скрытый ShareLink, который активируется программно
-                        ShareLink(item: exportedFileURL ?? URL(string: "about:blank")!) {
-                            EmptyView()
-                        }
-                        .opacity(0)
-                        .allowsHitTesting(false)
-                        .onChange(of: exportedFileURL) { _, newValue in
-                            if newValue != nil {
-                                // Программно "нажимаем" на ShareLink
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    // Находим ShareLink и симулируем нажатие
-                                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                       let window = windowScene.windows.first {
-                                        
-                                        // Создаем и показываем UIActivityViewController
-                                        let activityVC = UIActivityViewController(
-                                            activityItems: [newValue!],
-                                            applicationActivities: nil
-                                        )
-                                        
-                                        // Настройка для iPad
-                                        if let popover = activityVC.popoverPresentationController {
-                                            popover.sourceView = window
-                                            popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
-                                            popover.permittedArrowDirections = []
-                                        }
-                                        
-                                        window.rootViewController?.present(activityVC, animated: true)
-                                    }
-                                    
-                                    // Сбрасываем файл после показа
-                                    exportedFileURL = nil
-                                }
-                            }
-                        }
-                    )
-                }
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
             }
             .navigationTitle("export_data".localized)
             .navigationBarTitleDisplayMode(.inline)
@@ -109,26 +56,41 @@ struct ExportDataView: View {
                 setupExportService()
             }
             .alert("export_error_title".localized, isPresented: $showErrorAlert) {
-                Button("ok".localized) { }
+                Button("paywall_ok_button".localized) { }
             } message: {
                 if let error = exportService?.exportError {
                     Text(error.localizedDescription)
                 }
             }
+            .overlay(alignment: .bottom) {
+                exportButton
+            }
+            .sheet(isPresented: $showShareSheet) {
+                if let data = exportedData, let fileName = exportedFileName {
+                    ActivityViewController(data: data, fileName: fileName)
+                }
+            }
+            .sheet(isPresented: $showProPaywall) {
+                PaywallView()
+            }
         }
     }
-    
-    // MARK: - Sections
     
     private var formatSection: some View {
         Section {
             ForEach(ExportFormat.allCases, id: \.self) { format in
                 Button(action: {
+                    if format.requiresPro && !proManager.isPro {
+                        showProPaywall = true
+                        return
+                    }
+                    
                     selectedFormat = format
-                    exportedFileURL = nil // Сбрасываем файл при смене формата
+                    exportedData = nil
+                    exportedFileName = nil
                 }) {
                     HStack {
-                        Image(systemName: "document.badge.arrow.up")
+                        Image(systemName: format.iconName)
                             .foregroundStyle(format.iconGradient)
                             .frame(width: 30, height: 30)
                         
@@ -143,6 +105,10 @@ struct ExportDataView: View {
                             .withAppGradient()
                             .opacity(selectedFormat == format ? 1 : 0)
                             .animation(.easeInOut, value: selectedFormat == format)
+                        
+                        if format.requiresPro && !proManager.isPro {
+                            ProLockBadge()
+                        }
                     }
                     .contentShape(Rectangle())
                 }
@@ -152,6 +118,16 @@ struct ExportDataView: View {
     
     // MARK: - Methods
     
+    private var exportButton: some View {
+        Button(action: performExportAndShare) {
+            buttonContent
+        }
+        .buttonStyle(.plain)
+        .disabled(!isExportReady)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 20)
+    }
+    
     private var buttonContent: some View {
         HStack(spacing: 8) {
             Text("export_button".localized)
@@ -160,20 +136,16 @@ struct ExportDataView: View {
                 ProgressView()
                     .scaleEffect(0.8)
             } else {
-                Image(systemName: "square.and.arrow.up")
+                Image(systemName: "arrow.up.circle.fill")
             }
         }
         .font(.system(size: 17, weight: .semibold))
-        .foregroundStyle(isExportReady ? Color.white : Color.secondary)
+        .foregroundStyle(Color.white)
         .frame(maxWidth: .infinity)
         .frame(height: 52)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(
-                    isExportReady
-                    ? AnyShapeStyle(AppColorManager.shared.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.9))
-                    : AnyShapeStyle(LinearGradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.5)], startPoint: .top, endPoint: .bottom))
-                )
+                .fill(AppColorManager.shared.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.9))
         )
     }
     
@@ -184,8 +156,8 @@ struct ExportDataView: View {
     private func performExportAndShare() {
         guard let exportService = exportService else { return }
         
-        // Обнуляем предыдущие данные
-        exportedFileURL = nil
+        exportedData = nil
+        exportedFileName = nil
         isExporting = true
         
         Task {
@@ -210,20 +182,10 @@ struct ExportDataView: View {
     private func handleExportResult(_ result: ExportResult) {
         switch result {
         case .success(let content, let fileName, _):
-            saveFileAndShare(content: content, fileName: fileName)
+            exportedData = content
+            exportedFileName = fileName
+            showShareSheet = true
         case .failure:
-            showErrorAlert = true
-        }
-    }
-    
-    private func saveFileAndShare(content: Data, fileName: String) {
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let fileURL = tempDirectory.appendingPathComponent(fileName)
-        
-        do {
-            try content.write(to: fileURL)
-            exportedFileURL = fileURL
-        } catch {
             showErrorAlert = true
         }
     }
@@ -231,10 +193,46 @@ struct ExportDataView: View {
 
 // MARK: - Supporting Types
 
+struct ActivityViewController: UIViewControllerRepresentable {
+    let data: Data
+    let fileName: String
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        do {
+            try data.write(to: tempURL)
+        } catch {
+            print("Failed to write temp file: \(error)")
+        }
+        
+        let controller = UIActivityViewController(activityItems: [tempURL], applicationActivities: nil)
+
+        if let popover = controller.popoverPresentationController {
+            popover.sourceView = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first?.windows.first
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
 enum ExportFormat: CaseIterable {
     case csv
     case json
     case pdf
+    
+    var requiresPro: Bool {
+        switch self {
+        case .csv: return false
+        case .json: return true
+        case .pdf: return true
+        }
+    }
     
     var fileExtension: String {
         switch self {
@@ -249,6 +247,14 @@ enum ExportFormat: CaseIterable {
         case .csv: return "CSV"
         case .json: return "JSON"
         case .pdf: return "PDF"
+        }
+    }
+    
+    var iconName: String {
+        switch self {
+        case .csv: return "tablecells"
+        case .json: return "curlybraces"
+        case .pdf: return "doc.richtext"
         }
     }
     

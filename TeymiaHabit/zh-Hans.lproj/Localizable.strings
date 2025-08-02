@@ -158,6 +158,11 @@
 "unarchive" = "取消归档";
 "archived_habits_footer" = "向左滑动以取消归档或删除";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "导出数据";
+"export_button" = "导出";
+"export_error_title" = "导出失败";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "解锁Teymia Habit以访问您的数据";
 "passcode_faceid" = "密码与面容 ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "没有可恢复的购买。";
 // Pro Features
 "paywall_unlimited_habits_title" = "无限习惯";
-"paywall_unlimited_habits_description" = "创建任意数量的习惯";
+"paywall_unlimited_habits_description" = "创建任意数量的习惯。";
 "paywall_detailed_statistics_title" = "详细统计";
-"paywall_detailed_statistics_description" = "高级日历视图和进度图表";
+"paywall_detailed_statistics_description" = "通过日历和图表跟踪进展。";
 "paywall_multiple_reminders_title" = "多重提醒";
-"paywall_multiple_reminders_description" = "全天设置无限习惯提醒";
-"paywall_completion_sounds_title" = "完成音效";
-"paywall_completion_sounds_description" = "完成习惯时的优质音效";
-"paywall_premium_icons_title" = "高级 3D 图标";
-"paywall_premium_icons_description" = "精美的 3D 图标让你的习惯更突出";
-"paywall_custom_colors_icons_title" = "自定义颜色与图标";
-"paywall_custom_colors_icons_description" = "使用主题和应用图标个性化";
-"paywall_upcoming_features_title" = "抢先体验";
-"paywall_upcoming_features_description" = "提前体验新功能";
+"paywall_multiple_reminders_description" = "按需设置多个每日提醒。";
+"paywall_completion_sounds_title" = "完成声音";
+"paywall_completion_sounds_description" = "完成习惯时播放令人满意的提示音。";
+"paywall_premium_icons_title" = "3D 习惯图标";
+"paywall_premium_icons_description" = "使用时尚 3D 图标让习惯更醒目。";
+"paywall_custom_colors_icons_title" = "主题 & 应用图标";
+"paywall_custom_colors_icons_description" = "用自定义主题和图标个性化应用。";
+"paywall_export_title" = "数据导出";
+"paywall_export_description" = "将您的习惯数据导出为 PDF 或 JSON 文件。";
 "paywall_support_creator_title" = "支持开发者";
-"paywall_support_creator_description" = "一个人的项目，你的帮助意义重大";
+"paywall_support_creator_description" = "此应用由一个人独立开发。您的支持能帮助它成长。";
 
 "paywall_yearly_plan" = "年付";
 "paywall_monthly_plan" = "月付";

@@ -158,6 +158,11 @@
 "unarchive" = "アーカイブ解除";
 "archived_habits_footer" = "左にスワイプしてアーカイブ解除または削除";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "データをエクスポート";
+"export_button" = "エクスポート";
+"export_error_title" = "エクスポートに失敗しました";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "データにアクセスするためにTeymia Habitをアンロックしてください";
 "passcode_faceid" = "パスコードとFace ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "復元する購入はありません。";
 // Pro Features
 "paywall_unlimited_habits_title" = "無制限の習慣";
-"paywall_unlimited_habits_description" = "必要なだけ習慣を作成";
+"paywall_unlimited_habits_description" = "必要なだけ習慣を作成できます。";
 "paywall_detailed_statistics_title" = "詳細な統計";
-"paywall_detailed_statistics_description" = "高度なカレンダービューと進捗グラフ";
+"paywall_detailed_statistics_description" = "カレンダーとグラフで進捗を確認します。";
 "paywall_multiple_reminders_title" = "複数のリマインダー";
-"paywall_multiple_reminders_description" = "1日を通して無制限のリマインダーを設定";
-"paywall_completion_sounds_title" = "完了サウンド";
-"paywall_completion_sounds_description" = "習慣完了時のプレミアムサウンドエフェクト";
-"paywall_premium_icons_title" = "プレミアム3Dアイコン";
-"paywall_premium_icons_description" = "習慣を際立たせる美しい3Dアイコン";
-"paywall_custom_colors_icons_title" = "カスタムカラーとアイコン";
-"paywall_custom_colors_icons_description" = "テーマとアプリのアイコンでパーソナライズ";
-"paywall_upcoming_features_title" = "早期アクセス";
-"paywall_upcoming_features_description" = "誰よりも早く新機能にアクセス";
-"paywall_support_creator_title" = "開発者をサポート";
-"paywall_support_creator_description" = "1人の開発者、チームなし — あなたのサポートが大きな意味を持ちます";
+"paywall_multiple_reminders_description" = "好きなだけ毎日のリマインダーを設定できます。";
+"paywall_completion_sounds_title" = "完了時のサウンド";
+"paywall_completion_sounds_description" = "習慣完了時に満足のいく効果音を再生します。";
+"paywall_premium_icons_title" = "3D 習慣アイコン";
+"paywall_premium_icons_description" = "スタイリッシュな3Dアイコンで習慣を目立たせましょう。";
+"paywall_custom_colors_icons_title" = "テーマ＆アプリアイコン";
+"paywall_custom_colors_icons_description" = "カスタムテーマとアイコンでアプリをパーソナライズ。";
+"paywall_export_title" = "データのエクスポート";
+"paywall_export_description" = "習慣データを PDF や JSON ファイルとしてエクスポート。";
+"paywall_support_creator_title" = "開発者を支援";
+"paywall_support_creator_description" = "このアプリは一人で作られています。あなたの支援が開発を助けます。";
 
 "paywall_yearly_plan" = "年間";
 "paywall_monthly_plan" = "月間";

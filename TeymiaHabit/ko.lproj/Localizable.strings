@@ -158,6 +158,11 @@
 "unarchive" = "보관 해제";
 "archived_habits_footer" = "왼쪽으로 스와이프하여 보관 해제 또는 삭제";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "데이터 내보내기";
+"export_button" = "내보내기";
+"export_error_title" = "내보내기 실패";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "데이터에 접근하려면 Teymia Habit을 잠금 해제하세요";
 "passcode_faceid" = "암호 및 Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "복원할 구매가 없습니다.";
 // Pro Features
 "paywall_unlimited_habits_title" = "무제한 습관";
-"paywall_unlimited_habits_description" = "필요한 만큼 습관을 생성하세요";
+"paywall_unlimited_habits_description" = "원하는 만큼 습관을 만드세요.";
 "paywall_detailed_statistics_title" = "상세 통계";
-"paywall_detailed_statistics_description" = "고급 캘린더 뷰와 진행 그래프";
+"paywall_detailed_statistics_description" = "캘린더와 차트로 진행 상황을 추적하세요.";
 "paywall_multiple_reminders_title" = "다중 알림";
-"paywall_multiple_reminders_description" = "하루 동안 무제한 습관 알림 설정";
-"paywall_completion_sounds_title" = "완료 소리";
-"paywall_completion_sounds_description" = "습관 완료 시 프리미엄 사운드 효과";
-"paywall_premium_icons_title" = "프리미엄 3D 아이콘";
-"paywall_premium_icons_description" = "습관을 돋보이게 하는 아름다운 3D 아이콘";
-"paywall_custom_colors_icons_title" = "사용자 지정 색상 및 아이콘";
-"paywall_custom_colors_icons_description" = "테마와 앱 아이콘으로 개인화";
-"paywall_upcoming_features_title" = "조기 액세스";
-"paywall_upcoming_features_description" = "모두보다 먼저 새 기능에 액세스";
-"paywall_support_creator_title" = "개발자 지원";
-"paywall_support_creator_description" = "1인 개발자, 팀 없음 — 당신의 지원이 큰 의미를 가집니다";
+"paywall_multiple_reminders_description" = "하루에 원하는 만큼 알림을 설정하세요.";
+"paywall_completion_sounds_title" = "완료 사운드";
+"paywall_completion_sounds_description" = "습관을 완료할 때 만족스러운 효과음을 들어보세요.";
+"paywall_premium_icons_title" = "3D 습관 아이콘";
+"paywall_premium_icons_description" = "스타일리시한 3D 아이콘으로 습관을 돋보이게 하세요.";
+"paywall_custom_colors_icons_title" = "테마 & 앱 아이콘";
+"paywall_custom_colors_icons_description" = "테마 및 커스텀 아이콘으로 앱을 personalization.";
+"paywall_export_title" = "데이터 내보내기";
+"paywall_export_description" = "습관 데이터를 PDF 또는 JSON 파일로 내보내세요.";
+"paywall_support_creator_title" = "개발자 지원하기";
+"paywall_support_creator_description" = "이 앱은 한 사람이 만들었습니다. 당신의 지원이 성장에 도움이 됩니다.";
 
 "paywall_yearly_plan" = "연간";
 "paywall_monthly_plan" = "월간";

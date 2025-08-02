@@ -244,7 +244,7 @@ final class HabitExportService {
         let statsBoxHeight: CGFloat = 80
         let statsBoxRect = CGRect(x: margin, y: yPosition, width: contentWidth, height: statsBoxHeight)
         
-        UIColor.systemGray6.setFill()
+        UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0).setFill()
         let path = UIBezierPath(roundedRect: statsBoxRect, cornerRadius: 8)
         path.fill()
         
@@ -293,7 +293,7 @@ final class HabitExportService {
         let cardHeight: CGFloat = 100
         let cardRect = CGRect(x: margin, y: yPosition, width: contentWidth, height: cardHeight)
         
-        UIColor.systemGray6.setFill()
+        UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0).setFill()
         let cardPath = UIBezierPath(roundedRect: cardRect, cornerRadius: 8)
         cardPath.fill()
         
@@ -323,7 +323,7 @@ final class HabitExportService {
         let progressBarHeight: CGFloat = 8
         let progressBarRect = CGRect(x: margin + 15, y: yPosition, width: progressBarWidth, height: progressBarHeight)
         
-        UIColor.systemGray4.setFill()
+        UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0).setFill()
         let progressBackground = UIBezierPath(roundedRect: progressBarRect, cornerRadius: 4)
         progressBackground.fill()
         

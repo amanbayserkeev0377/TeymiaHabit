@@ -156,6 +156,11 @@
 "unarchive" = "Разархивировать";
 "archived_habits_footer" = "Смахните влево, чтобы восстановить из архива или удалить";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Экспорт данных";
+"export_button" = "Экспорт";
+"export_error_title" = "Ошибка экспорта";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 
 "privacy_auth_reason" = "Разблокируйте Teymia Habit для доступа к данным";
@@ -214,21 +219,21 @@
 "paywall_no_purchases_to_restore_message" = "Нет покупок для восстановления.";
 // Pro Features
 "paywall_unlimited_habits_title" = "Неограниченные привычки";
-"paywall_unlimited_habits_description" = "Создавайте столько привычек, сколько нужно";
-"paywall_detailed_statistics_title" = "Детальная статистика";
-"paywall_detailed_statistics_description" = "Расширенный календарь и графики прогресса";
+"paywall_unlimited_habits_description" = "Создавайте столько привычек, сколько хотите.";
+"paywall_detailed_statistics_title" = "Подробная статистика";
+"paywall_detailed_statistics_description" = "Отслеживайте прогресс с помощью календаря и графиков.";
 "paywall_multiple_reminders_title" = "Множественные напоминания";
-"paywall_multiple_reminders_description" = "Настройте неограниченное количество напоминаний";
-"paywall_completion_sounds_title" = "Звуки выполнения";
-"paywall_completion_sounds_description" = "Премиум звуки для ваших достижений";
-"paywall_premium_icons_title" = "Премиум 3D иконки";
-"paywall_premium_icons_description" = "Красивые объемные иконки для ваших привычек";
-"paywall_custom_colors_icons_title" = "Цвета и иконки";
-"paywall_custom_colors_icons_description" = "Настраивайте темы и иконки приложения";
-"paywall_upcoming_features_title" = "Ранний доступ";
-"paywall_upcoming_features_description" = "Получайте новые функции раньше всех";
-"paywall_support_creator_title" = "Поддержите автора";
-"paywall_support_creator_description" = "Один разработчик, без команды — ваша поддержка важна";
+"paywall_multiple_reminders_description" = "Настраивайте неограниченное количество напоминаний.";
+"paywall_completion_sounds_title" = "Звуки при завершении";
+"paywall_completion_sounds_description" = "Слушайте приятные звуки при выполнении привычек.";
+"paywall_premium_icons_title" = "3D‑иконки привычек";
+"paywall_premium_icons_description" = "Используйте стильные 3D‑иконки, чтобы привычки выделялись.";
+"paywall_custom_colors_icons_title" = "Темы и иконки приложения";
+"paywall_custom_colors_icons_description" = "Персонализируйте приложение с темами и иконками.";
+"paywall_export_title" = "Экспорт данных";
+"paywall_export_description" = "Экспортируйте данные о привычках в формате PDF или JSON.";
+"paywall_support_creator_title" = "Поддержите разработчика";
+"paywall_support_creator_description" = "Это приложение создано одним человеком. Ваша поддержка помогает развитию.";
 
 "paywall_yearly_plan" = "Годовая";
 "paywall_monthly_plan" = "Месячная";

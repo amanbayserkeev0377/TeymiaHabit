@@ -158,6 +158,11 @@
 "unarchive" = "Dearchivieren";
 "archived_habits_footer" = "Nach links wischen, um zu dearchivieren oder zu löschen";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Daten exportieren";
+"export_button" = "Exportieren";
+"export_error_title" = "Export fehlgeschlagen";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Entsperren Sie Teymia Habit, um auf Ihre Daten zuzugreifen";
 "passcode_faceid" = "Code und Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "Keine Käufe zum Wiederherstellen.";
 // Pro Features
 "paywall_unlimited_habits_title" = "Unbegrenzte Gewohnheiten";
-"paywall_unlimited_habits_description" = "Erstelle so viele Gewohnheiten, wie du möchtest";
+"paywall_unlimited_habits_description" = "Erstelle so viele Gewohnheiten, wie du willst.";
 "paywall_detailed_statistics_title" = "Detaillierte Statistiken";
-"paywall_detailed_statistics_description" = "Erweiterte Kalenderansicht und Fortschrittsdiagramme";
+"paywall_detailed_statistics_description" = "Verfolge deinen Fortschritt mit Kalender und Diagrammen.";
 "paywall_multiple_reminders_title" = "Mehrere Erinnerungen";
-"paywall_multiple_reminders_description" = "Lege unbegrenzt viele Erinnerungen für deine Gewohnheiten über den Tag verteilt fest";
-"paywall_completion_sounds_title" = "Abschlusstöne";
-"paywall_completion_sounds_description" = "Premium-Soundeffekte beim Abschließen von Gewohnheiten";
-"paywall_premium_icons_title" = "Premium-3D-Symbole";
-"paywall_premium_icons_description" = "Schöne 3D-Symbole, um deine Gewohnheiten hervorzuheben";
-"paywall_custom_colors_icons_title" = "Benutzerdefinierte Farben und Symbole";
-"paywall_custom_colors_icons_description" = "Passe die App mit Themes und Symbolen an";
-"paywall_upcoming_features_title" = "Frühzeitiger Zugriff";
-"paywall_upcoming_features_description" = "Erhalte Zugriff auf neue Funktionen vor allen anderen";
-"paywall_support_creator_title" = "Den Entwickler unterstützen";
-"paywall_support_creator_description" = "Eine Person, kein Team – deine Unterstützung macht einen Unterschied";
+"paywall_multiple_reminders_description" = "Stelle so viele tägliche Erinnerungen ein, wie du möchtest.";
+"paywall_completion_sounds_title" = "Abschluss‑Sounds";
+"paywall_completion_sounds_description" = "Erhalte befriedigende Soundeffekte beim Abschließen von Gewohnheiten.";
+"paywall_premium_icons_title" = "3D Gewohnheits‑Symbole";
+"paywall_premium_icons_description" = "Nutze stilvolle 3D‑Symbole, damit deine Gewohnheiten auffallen.";
+"paywall_custom_colors_icons_title" = "Designs & App‑Symbole";
+"paywall_custom_colors_icons_description" = "Personalisiere die App mit Themes und Symbolen.";
+"paywall_export_title" = "Datenexport";
+"paywall_export_description" = "Exportiere deine Gewohnheitsdaten als PDF‑ oder JSON‑Datei.";
+"paywall_support_creator_title" = "Unterstütze den Entwickler";
+"paywall_support_creator_description" = "Diese App wurde von einer Person entwickelt. Deine Unterstützung hilft ihr weiter.";
 
 "paywall_yearly_plan" = "Jährlich";
 "paywall_monthly_plan" = "Monatlich";

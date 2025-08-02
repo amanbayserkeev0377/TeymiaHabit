@@ -158,6 +158,11 @@
 "unarchive" = "Desarchivar";
 "archived_habits_footer" = "Desliza a la izquierda para desarchivar o eliminar";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Exportar datos";
+"export_button" = "Exportar";
+"export_error_title" = "Error de exportación";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Desbloquea Teymia Habit para acceder a tus datos";
 "passcode_faceid" = "Código y Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "No hay compras para restaurar.";
 // Pro Features
 "paywall_unlimited_habits_title" = "Hábitos ilimitados";
-"paywall_unlimited_habits_description" = "Crea todos los hábitos que necesites";
+"paywall_unlimited_habits_description" = "Crea todos los hábitos que necesites.";
 "paywall_detailed_statistics_title" = "Estadísticas detalladas";
-"paywall_detailed_statistics_description" = "Vista de calendario avanzada y gráficos de progreso";
-"paywall_multiple_reminders_title" = "Múltiples recordatorios";
-"paywall_multiple_reminders_description" = "Establece recordatorios ilimitados para tus hábitos durante el día";
+"paywall_detailed_statistics_description" = "Sigue tu progreso con un calendario y gráficos.";
+"paywall_multiple_reminders_title" = "Recordatorios múltiples";
+"paywall_multiple_reminders_description" = "Programa tantos recordatorios diarios como quieras.";
 "paywall_completion_sounds_title" = "Sonidos de finalización";
-"paywall_completion_sounds_description" = "Efectos de sonido premium al completar hábitos";
-"paywall_premium_icons_title" = "Iconos 3D premium";
-"paywall_premium_icons_description" = "Hermosos iconos 3D para destacar tus hábitos";
-"paywall_custom_colors_icons_title" = "Colores e iconos personalizados";
-"paywall_custom_colors_icons_description" = "Personaliza con temas e iconos de la app";
-"paywall_upcoming_features_title" = "Acceso anticipado";
-"paywall_upcoming_features_description" = "Obtén acceso a nuevas funciones antes que nadie";
+"paywall_completion_sounds_description" = "Recibe efectos de sonido satisfactorios al completar hábitos.";
+"paywall_premium_icons_title" = "Iconos 3D para hábitos";
+"paywall_premium_icons_description" = "Usa iconos 3D elegantes para destacar tus hábitos.";
+"paywall_custom_colors_icons_title" = "Temas e iconos de app";
+"paywall_custom_colors_icons_description" = "Personaliza la app con temas e iconos.";
+"paywall_export_title" = "Exportación de datos";
+"paywall_export_description" = "Exporta tus datos de hábitos en formato PDF o JSON.";
 "paywall_support_creator_title" = "Apoya al creador";
-"paywall_support_creator_description" = "Una sola persona, sin equipo: tu apoyo marca la diferencia";
+"paywall_support_creator_description" = "Esta app fue creada por una persona. Tu apoyo la hace crecer.";
 
 "paywall_yearly_plan" = "Anual";
 "paywall_monthly_plan" = "Mensual";

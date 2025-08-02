@@ -158,6 +158,11 @@
 "unarchive" = "Мұрағаттан шығару";
 "archived_habits_footer" = "Мұрағаттан шығару немесе жою үшін солға сырғытыңыз";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Деректерді экспорттау";
+"export_button" = "Экспорт";
+"export_error_title" = "Экспорттау сәтсіз аяқталды";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Деректерге қол жеткізу үшін Teymia Habit құлпын ашыңыз";
 "passcode_faceid" = "Құпия сөз және Face ID";
@@ -215,22 +220,22 @@
 "paywall_restore_success_message" = "Сатып алулар сәтті қалпына келтірілді!";
 "paywall_no_purchases_to_restore_message" = "Қалпына келтіруге болатын сатып алулар жоқ.";
 // Pro Features
-"paywall_unlimited_habits_title" = "Шексіз дәстүрлер";
-"paywall_unlimited_habits_description" = "Қажет болғанша көп дәстүр құрыңыз";
+"paywall_unlimited_habits_title" = "Шексіз әдеттер";
+"paywall_unlimited_habits_description" = "Қалағаныңызша әдеттер жасаңыз.";
 "paywall_detailed_statistics_title" = "Толық статистика";
-"paywall_detailed_statistics_description" = "Кеңейтілген күнтізбе көрінісі және жетістік графиктері";
-"paywall_multiple_reminders_title" = "Бірнеше ескертпелер";
-"paywall_multiple_reminders_description" = "Дәстүрлеріңіз үшін күн бойы шексіз ескертпелер орнатыңыз";
-"paywall_completion_sounds_title" = "Аяқтау дыбыстары";
-"paywall_completion_sounds_description" = "Дәстүрлерді аяқтағанда премиум дыбыс эффектілері";
-"paywall_premium_icons_title" = "Премиум 3D белгішелер";
-"paywall_premium_icons_description" = "Дәстүрлеріңізді ерекшелейтін керемет 3D белгішелер";
-"paywall_custom_colors_icons_title" = "Реттелетін түстер мен белгішелер";
-"paywall_custom_colors_icons_description" = "Тақырыптар мен қолданба белгішелерімен жекелендіріңіз";
-"paywall_upcoming_features_title" = "Ерте қолжетімділік";
-"paywall_upcoming_features_description" = "Жаңа мүмкіндіктерге басқалардан бұрын қол жеткізіңіз";
-"paywall_support_creator_title" = "Әзірлеушіні қолдау";
-"paywall_support_creator_description" = "Жалғыз әзірлеуші, команда жоқ — сіздің қолдауыңыз үлкен өзгеріс әкеледі";
+"paywall_detailed_statistics_description" = "Күнтізбе және диаграммалар арқылы прогресті бақылаңыз.";
+"paywall_multiple_reminders_title" = "Бірнеше ескертпе";
+"paywall_multiple_reminders_description" = "Күнделікті қалағанынша ескертпелер орнатыңыз.";
+"paywall_completion_sounds_title" = "Аяқталу дыбыстары";
+"paywall_completion_sounds_description" = "Әдетті аяқтағанда қанағаттанарлық дыбыстарды тыңдаңыз.";
+"paywall_premium_icons_title" = "3D әдеттік белгішелер";
+"paywall_premium_icons_description" = "Стильді 3D белгішелерді пайдаланып әдеттеріңізді ерекшелендіріңіз.";
+"paywall_custom_colors_icons_title" = "Тақырыптар & App белгішелері";
+"paywall_custom_colors_icons_description" = "Арнайы тақырыптар мен белгішелермен қолданбаны бейімдеңіз.";
+"paywall_export_title" = "Деректерді экспорттау";
+"paywall_export_description" = "Әдет деректерін PDF немесе JSON форматында экспорттаңыз.";
+"paywall_support_creator_title" = "Құраушыны қолдаңыз";
+"paywall_support_creator_description" = "Бұл қолданба бір адам тарапынан жасалған. Сіздің қолдауыңыз оның дамуына көмектеседі.";
 
 "paywall_yearly_plan" = "Жылдық";
 "paywall_monthly_plan" = "Айлық";

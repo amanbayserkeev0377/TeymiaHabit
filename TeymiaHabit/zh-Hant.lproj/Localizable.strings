@@ -158,6 +158,11 @@
 "unarchive" = "取消歸檔";
 "archived_habits_footer" = "向左滑動以取消歸檔或刪除";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "匯出資料";
+"export_button" = "匯出";
+"export_error_title" = "匯出失敗";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "解鎖Teymia Habit以存取您的資料";
 "passcode_faceid" = "密碼與 Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "沒有可恢復的購買。";
 // Pro Features
 "paywall_unlimited_habits_title" = "無限習慣";
-"paywall_unlimited_habits_description" = "建立任意數量的習慣";
+"paywall_unlimited_habits_description" = "創建任意數量的習慣。";
 "paywall_detailed_statistics_title" = "詳細統計";
-"paywall_detailed_statistics_description" = "進階日曆視圖與進度圖表";
+"paywall_detailed_statistics_description" = "透過日曆和圖表追蹤進度。";
 "paywall_multiple_reminders_title" = "多重提醒";
-"paywall_multiple_reminders_description" = "為你的習慣設定無限提醒";
-"paywall_completion_sounds_title" = "完成聲音";
-"paywall_completion_sounds_description" = "完成習慣時的高級音效";
-"paywall_premium_icons_title" = "高級 3D 圖示";
-"paywall_premium_icons_description" = "突顯你的習慣的美麗 3D 圖示";
-"paywall_custom_colors_icons_title" = "自訂顏色與圖示";
-"paywall_custom_colors_icons_description" = "使用主題與應用程式圖示進行個人化";
-"paywall_upcoming_features_title" = "搶先體驗";
-"paywall_upcoming_features_description" = "比其他人更早獲得新功能";
+"paywall_multiple_reminders_description" = "按需設置多個每日提醒。";
+"paywall_completion_sounds_title" = "完成音效";
+"paywall_completion_sounds_description" = "完成習慣時播放令人滿意的提示音。";
+"paywall_premium_icons_title" = "3D 習慣圖標";
+"paywall_premium_icons_description" = "使用時尚 3D 圖標讓習慣更醒目。";
+"paywall_custom_colors_icons_title" = "主題 & 應用圖標";
+"paywall_custom_colors_icons_description" = "使用自訂主題與圖標個性化應用程式。";
+"paywall_export_title" = "資料匯出";
+"paywall_export_description" = "將您的習慣資料匯出為 PDF 或 JSON 檔案。";
 "paywall_support_creator_title" = "支持開發者";
-"paywall_support_creator_description" = "單人開發，無團隊 — 你的支持意義重大";
+"paywall_support_creator_description" = "此應用由一人獨立開發。您的支持可助其成長。";
 
 "paywall_yearly_plan" = "年度";
 "paywall_monthly_plan" = "月度";

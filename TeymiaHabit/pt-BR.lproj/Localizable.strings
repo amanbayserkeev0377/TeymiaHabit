@@ -158,6 +158,11 @@
 "unarchive" = "Desarquivar";
 "archived_habits_footer" = "Deslize para a esquerda para desarquivar ou excluir";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Exportar dados";
+"export_button" = "Exportar";
+"export_error_title" = "Falha na exportação";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Desbloqueie o Teymia Habit para acessar seus dados";
 "passcode_faceid" = "Código e Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "Nenhuma compra para restaurar.";
 // Pro Features
 "paywall_unlimited_habits_title" = "Hábitos Ilimitados";
-"paywall_unlimited_habits_description" = "Crie quantos hábitos você precisar";
+"paywall_unlimited_habits_description" = "Crie todos os hábitos que quiser.";
 "paywall_detailed_statistics_title" = "Estatísticas Detalhadas";
-"paywall_detailed_statistics_description" = "Visualização avançada de calendário e gráficos de progresso";
-"paywall_multiple_reminders_title" = "Múltiplos Lembretes";
-"paywall_multiple_reminders_description" = "Defina lembretes ilimitados para seus hábitos ao longo do dia";
+"paywall_detailed_statistics_description" = "Acompanhe seu progresso com calendário e gráficos.";
+"paywall_multiple_reminders_title" = "Lembretes Múltiplos";
+"paywall_multiple_reminders_description" = "Defina quantos lembretes diários quiser.";
 "paywall_completion_sounds_title" = "Sons de Conclusão";
-"paywall_completion_sounds_description" = "Efeitos sonoros premium ao completar hábitos";
-"paywall_premium_icons_title" = "Ícones 3D Premium";
-"paywall_premium_icons_description" = "Ícones 3D incríveis para destacar seus hábitos";
-"paywall_custom_colors_icons_title" = "Cores e Ícones Personalizados";
-"paywall_custom_colors_icons_description" = "Personalize com temas e ícones do app";
-"paywall_upcoming_features_title" = "Acesso Antecipado";
-"paywall_upcoming_features_description" = "Tenha acesso a novos recursos antes de todos";
-"paywall_support_creator_title" = "Apoiar o Criador";
-"paywall_support_creator_description" = "Uma pessoa, sem equipe – seu apoio faz a diferença";
+"paywall_completion_sounds_description" = "Ouça sons satisfatórios ao concluir hábitos.";
+"paywall_premium_icons_title" = "Ícones 3D de Hábitos";
+"paywall_premium_icons_description" = "Use ícones 3D elegantes para destacar seus hábitos.";
+"paywall_custom_colors_icons_title" = "Temas & Ícones do App";
+"paywall_custom_colors_icons_description" = "Personalize o app com temas e ícones.";
+"paywall_export_title" = "Exportação de Dados";
+"paywall_export_description" = "Exporte seus dados de hábitos em PDF ou JSON.";
+"paywall_support_creator_title" = "Apoie o Criador";
+"paywall_support_creator_description" = "Este app foi desenvolvido por uma pessoa. Seu apoio ajuda a continuar.";
 
 "paywall_yearly_plan" = "Anual";
 "paywall_monthly_plan" = "Mensal";

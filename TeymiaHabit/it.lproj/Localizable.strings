@@ -158,6 +158,11 @@
 "unarchive" = "Rimuovi dall'Archivio";
 "archived_habits_footer" = "Scorri a sinistra per rimuovere dall'archivio o eliminare";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Esporta dati";
+"export_button" = "Esporta";
+"export_error_title" = "Esportazione non riuscita";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Sblocca Teymia Habit per accedere ai tuoi dati";
 "passcode_faceid" = "Codice e Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "Nessun acquisto da ripristinare.";
 // Pro Features
 "paywall_unlimited_habits_title" = "Abitudini Illimitate";
-"paywall_unlimited_habits_description" = "Crea tutte le abitudini di cui hai bisogno";
+"paywall_unlimited_habits_description" = "Crea tutte le abitudini che vuoi.";
 "paywall_detailed_statistics_title" = "Statistiche Dettagliate";
-"paywall_detailed_statistics_description" = "Visualizzazione avanzata del calendario e grafici dei progressi";
+"paywall_detailed_statistics_description" = "Monitora i tuoi progressi con calendario e grafici.";
 "paywall_multiple_reminders_title" = "Promemoria Multipli";
-"paywall_multiple_reminders_description" = "Imposta promemoria illimitati per le tue abitudini durante la giornata";
-"paywall_completion_sounds_title" = "Suoni di Completamento";
-"paywall_completion_sounds_description" = "Effetti sonori premium per il completamento delle abitudini";
-"paywall_premium_icons_title" = "Icone 3D Premium";
-"paywall_premium_icons_description" = "Splendide icone 3D per evidenziare le tue abitudini";
-"paywall_custom_colors_icons_title" = "Colori e Icone Personalizzate";
-"paywall_custom_colors_icons_description" = "Personalizza con temi e icone dell'app";
-"paywall_upcoming_features_title" = "Accesso Anticipato";
-"paywall_upcoming_features_description" = "Accedi alle nuove funzionalità prima degli altri";
-"paywall_support_creator_title" = "Supporta lo Sviluppatore";
-"paywall_support_creator_description" = "Un singolo sviluppatore, senza team — il tuo supporto fa la differenza";
+"paywall_multiple_reminders_description" = "Imposta quanti promemoria giornalieri desideri.";
+"paywall_completion_sounds_title" = "Suoni di completamento";
+"paywall_completion_sounds_description" = "Ricevi effetti sonori soddisfacenti al completamento delle abitudini.";
+"paywall_premium_icons_title" = "Icone 3D per abitudini";
+"paywall_premium_icons_description" = "Usa icone 3D eleganti per far risaltare le tue abitudini.";
+"paywall_custom_colors_icons_title" = "Temi e icone app";
+"paywall_custom_colors_icons_description" = "Personalizza l'app con temi e icone su misura.";
+"paywall_export_title" = "Esporta dati";
+"paywall_export_description" = "Esporta i dati delle tue abitudini come file PDF o JSON.";
+"paywall_support_creator_title" = "Sostieni lo sviluppatore";
+"paywall_support_creator_description" = "Questa app è creata da una persona sola. Il tuo supporto fa la differenza.";
 
 "paywall_yearly_plan" = "Annuale";
 "paywall_monthly_plan" = "Mensile";

@@ -158,6 +158,11 @@
 "unarchive" = "Arşivden Çıkar";
 "archived_habits_footer" = "Arşivden çıkarmak veya silmek için sola kaydırın";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Verileri Dışa Aktar";
+"export_button" = "Dışa Aktar";
+"export_error_title" = "Dışa Aktarma Başarısız";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Verilerinize erişmek için Teymia Habit'in kilidini açın";
 "passcode_faceid" = "Parola ve Face ID";
@@ -215,22 +220,22 @@
 "paywall_restore_success_message" = "Satın almalar başarıyla geri yüklendi!";
 "paywall_no_purchases_to_restore_message" = "Geri yüklenecek satın alma yok.";
 // Pro Features
-"paywall_unlimited_habits_title" = "Sınırsız Alışkanlıklar";
-"paywall_unlimited_habits_description" = "İhtiyacınız olduğu kadar alışkanlık oluşturun";
-"paywall_detailed_statistics_title" = "Ayrıntılı İstatistikler";
-"paywall_detailed_statistics_description" = "Gelişmiş takvim görünümü ve ilerleme grafikleri";
-"paywall_multiple_reminders_title" = "Çoklu Hatırlatıcılar";
-"paywall_multiple_reminders_description" = "Alışkanlıklarınız için gün boyunca sınırsız hatırlatıcı ayarlayın";
+"paywall_unlimited_habits_title" = "Sınırsız Alışkanlık";
+"paywall_unlimited_habits_description" = "İstediğiniz kadar alışkanlık oluşturun.";
+"paywall_detailed_statistics_title" = "Detaylı İstatistikler";
+"paywall_detailed_statistics_description" = "Takvim ve grafiklerle ilerlemeyi takip edin.";
+"paywall_multiple_reminders_title" = "Birden Fazla Hatırlatıcı";
+"paywall_multiple_reminders_description" = "Günde istediğiniz kadar hatırlatıcı ayarlayın.";
 "paywall_completion_sounds_title" = "Tamamlama Sesleri";
-"paywall_completion_sounds_description" = "Alışkanlıkları tamamlarken premium ses efektleri";
-"paywall_premium_icons_title" = "Premium 3D Simgeler";
-"paywall_premium_icons_description" = "Alışkanlıklarınızı öne çıkaran harika 3D simgeler";
-"paywall_custom_colors_icons_title" = "Özel Renkler ve Simgeler";
-"paywall_custom_colors_icons_description" = "Temalar ve uygulama simgeleriyle kişiselleştirin";
-"paywall_upcoming_features_title" = "Erken Erişim";
-"paywall_upcoming_features_description" = "Yeni özelliklere herkesten önce erişin";
-"paywall_support_creator_title" = "Geliştiriciyi Destekle";
-"paywall_support_creator_description" = "Tek kişilik bir geliştirici, ekip yok — desteğiniz büyük fark yaratır";
+"paywall_completion_sounds_description" = "Alışkanlıkları tamamladığınızda tatmin edici ses efektleri alın.";
+"paywall_premium_icons_title" = "3D Alışkanlık İkonları";
+"paywall_premium_icons_description" = "Alışkanlıklarınızı öne çıkaracak şık 3D ikonlar kullanın.";
+"paywall_custom_colors_icons_title" = "Temalar & Uygulama İkonları";
+"paywall_custom_colors_icons_description" = "Özel temalar ve ikonlarla uygulamayı kişiselleştirin.";
+"paywall_export_title" = "Veri Dışa Aktarımı";
+"paywall_export_description" = "Alışkanlık verilerinizi PDF veya JSON dosyası olarak dışa aktarın.";
+"paywall_support_creator_title" = "Yaratıcıyı Destekle";
+"paywall_support_creator_description" = "Bu uygulama tek bir kişi tarafından geliştirildi. Desteğiniz büyümesine yardımcı olur.";
 
 "paywall_yearly_plan" = "Yıllık";
 "paywall_monthly_plan" = "Aylık";

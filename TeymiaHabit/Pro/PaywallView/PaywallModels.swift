@@ -68,10 +68,10 @@ struct ProFeature {
             colors: [Color.purple, Color.pink]
         ),
         ProFeature(
-            icon: "sparkles",
-            title: "paywall_upcoming_features_title".localized,
-            description: "paywall_upcoming_features_description".localized,
-            colors: [Color(#colorLiteral(red: 1, green: 0.6, blue: 0.4, alpha: 1)), Color(#colorLiteral(red: 1, green: 0.368627451, blue: 0.3843137255, alpha: 1))]
+            icon: "arrow.up.document.fill",
+            title: "paywall_export_title".localized,
+            description: "paywall_export_description".localized,
+            colors: [Color(#colorLiteral(red: 0.75, green: 0.77, blue: 0.9, alpha: 1)), Color(#colorLiteral(red: 0.4, green: 0.42, blue: 0.65, alpha: 1))]
         ),
         ProFeature(
             icon: "heart.fill",
@@ -138,7 +138,7 @@ struct FeatureRow: View {
                 Text(feature.description)
                     .font(.subheadline)
                     .foregroundStyle(.primary)
-                    .lineLimit(2)
+                    .lineLimit(3)
             }
             
             Spacer()

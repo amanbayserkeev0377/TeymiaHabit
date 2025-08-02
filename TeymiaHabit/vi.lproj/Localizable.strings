@@ -158,6 +158,11 @@
 "unarchive" = "Bỏ lưu trữ";
 "archived_habits_footer" = "Vuốt sang trái để bỏ lưu trữ hoặc xóa";
 
+/* ===================== Settings: Export Data ===================== */
+"export_data" = "Xuất dữ liệu";
+"export_button" = "Xuất";
+"export_error_title" = "Xuất thất bại";
+
 /* ===================== Settings: Passcode & Face ID ===================== */
 "privacy_auth_reason" = "Mở khóa Teymia Habit để truy cập dữ liệu của bạn";
 "passcode_faceid" = "Mật mã và Face ID";
@@ -216,21 +221,21 @@
 "paywall_no_purchases_to_restore_message" = "Không có mua hàng nào để khôi phục.";
 // Pro Features
 "paywall_unlimited_habits_title" = "Thói quen không giới hạn";
-"paywall_unlimited_habits_description" = "Tạo bao nhiêu thói quen tùy ý";
+"paywall_unlimited_habits_description" = "Tạo bao nhiêu thói quen cũng được.";
 "paywall_detailed_statistics_title" = "Thống kê chi tiết";
-"paywall_detailed_statistics_description" = "Chế độ xem lịch nâng cao và biểu đồ tiến độ";
+"paywall_detailed_statistics_description" = "Theo dõi tiến trình bằng lịch và biểu đồ.";
 "paywall_multiple_reminders_title" = "Nhiều nhắc nhở";
-"paywall_multiple_reminders_description" = "Thiết lập nhắc nhở không giới hạn cho thói quen của bạn suốt cả ngày";
+"paywall_multiple_reminders_description" = "Đặt bao nhiêu nhắc nhở trong ngày cũng được.";
 "paywall_completion_sounds_title" = "Âm thanh hoàn thành";
-"paywall_completion_sounds_description" = "Hiệu ứng âm thanh cao cấp khi hoàn thành thói quen";
-"paywall_premium_icons_title" = "Biểu tượng 3D cao cấp";
-"paywall_premium_icons_description" = "Biểu tượng 3D tuyệt đẹp để làm nổi bật thói quen của bạn";
-"paywall_custom_colors_icons_title" = "Màu sắc và biểu tượng tùy chỉnh";
-"paywall_custom_colors_icons_description" = "Cá nhân hóa ứng dụng với các chủ đề và biểu tượng ứng dụng";
-"paywall_upcoming_features_title" = "Truy cập sớm";
-"paywall_upcoming_features_description" = "Nhận các tính năng mới trước mọi người";
+"paywall_completion_sounds_description" = "Nghe âm thanh thú vị khi hoàn thành thói quen.";
+"paywall_premium_icons_title" = "Biểu tượng 3D cho thói quen";
+"paywall_premium_icons_description" = "Dùng biểu tượng 3D phong cách để thói quen nổi bật.";
+"paywall_custom_colors_icons_title" = "Chủ đề & biểu tượng ứng dụng";
+"paywall_custom_colors_icons_description" = "Tuỳ chỉnh ứng dụng bằng chủ đề và biểu tượng riêng.";
+"paywall_export_title" = "Xuất dữ liệu";
+"paywall_export_description" = "Xuất dữ liệu thói quen của bạn dưới dạng file PDF hoặc JSON.";
 "paywall_support_creator_title" = "Hỗ trợ nhà phát triển";
-"paywall_support_creator_description" = "Một người phát triển, không có đội ngũ — sự hỗ trợ của bạn tạo nên sự khác biệt";
+"paywall_support_creator_description" = "Ứng dụng này do một người phát triển. Sự hỗ trợ của bạn giúp nó phát triển.";
 
 "paywall_yearly_plan" = "Hàng năm";
 "paywall_monthly_plan" = "Hàng tháng";
