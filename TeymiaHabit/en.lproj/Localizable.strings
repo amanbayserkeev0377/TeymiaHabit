@@ -161,6 +161,7 @@
 
 /* ===================== Settings: Passcode & Face ID ===================== */
 
+"privacy_auth_reason" = "Unlock Teymia Habit to access your data";
 "passcode_faceid" = "Passcode & Face ID";
 "enter_passcode" = "Enter Passcode";
 "create_passcode" = "Create Passcode";

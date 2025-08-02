@@ -161,6 +161,7 @@ struct HomeView: View {
                                     HabitCardView(
                                         habit: habit,
                                         date: selectedDate,
+                                        viewModel: nil,
                                         onTap: {
                                             selectedHabit = habit
                                         },

@@ -159,6 +159,7 @@
 "archived_habits_footer" = "Deslize para a esquerda para desarquivar ou excluir";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "Desbloqueie o Teymia Habit para acessar seus dados";
 "passcode_faceid" = "Código e Face ID";
 "enter_passcode" = "Inserir Código";
 "create_passcode" = "Criar Código";

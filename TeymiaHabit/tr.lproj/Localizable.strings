@@ -159,6 +159,7 @@
 "archived_habits_footer" = "Arşivden çıkarmak veya silmek için sola kaydırın";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "Verilerinize erişmek için Teymia Habit'in kilidini açın";
 "passcode_faceid" = "Parola ve Face ID";
 "enter_passcode" = "Parola Gir";
 "create_passcode" = "Parola Oluştur";

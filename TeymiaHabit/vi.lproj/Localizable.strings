@@ -159,6 +159,7 @@
 "archived_habits_footer" = "Vuốt sang trái để bỏ lưu trữ hoặc xóa";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "Mở khóa Teymia Habit để truy cập dữ liệu của bạn";
 "passcode_faceid" = "Mật mã và Face ID";
 "enter_passcode" = "Nhập mật mã";
 "create_passcode" = "Tạo mật mã";

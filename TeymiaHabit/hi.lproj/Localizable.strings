@@ -159,6 +159,7 @@
 "archived_habits_footer" = "बाएँ स्वाइप करें संग्रह से हटाने या हटाने के लिए";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "अपने डेटा तक पहुँचने के लिए Teymia Habit को अनलॉक करें";
 "passcode_faceid" = "पासकोड और Face ID";
 "enter_passcode" = "पासकोड दर्ज करें";
 "create_passcode" = "पासकोड बनाएँ";

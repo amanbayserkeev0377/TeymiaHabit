@@ -158,6 +158,7 @@
 
 /* ===================== Settings: Passcode & Face ID ===================== */
 
+"privacy_auth_reason" = "Разблокируйте Teymia Habit для доступа к данным";
 "passcode_faceid" = "Пароль и Face ID";
 "enter_passcode" = "Введите пароль";
 "create_passcode" = "Создайте пароль";

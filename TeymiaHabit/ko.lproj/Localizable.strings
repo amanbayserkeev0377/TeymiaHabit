@@ -159,6 +159,7 @@
 "archived_habits_footer" = "왼쪽으로 스와이프하여 보관 해제 또는 삭제";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "데이터에 접근하려면 Teymia Habit을 잠금 해제하세요";
 "passcode_faceid" = "암호 및 Face ID";
 "enter_passcode" = "암호 입력";
 "create_passcode" = "암호 생성";

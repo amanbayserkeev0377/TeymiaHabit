@@ -159,6 +159,7 @@
 "archived_habits_footer" = "向左滑動以取消歸檔或刪除";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "解鎖Teymia Habit以存取你的資料";
 "passcode_faceid" = "密碼與 Face ID";
 "enter_passcode" = "輸入密碼";
 "create_passcode" = "創建密碼";

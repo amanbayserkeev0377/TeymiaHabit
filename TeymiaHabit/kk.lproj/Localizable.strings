@@ -159,6 +159,7 @@
 "archived_habits_footer" = "Мұрағаттан шығару немесе жою үшін солға сырғытыңыз";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "Деректерге қол жеткізу үшін Teymia Habit құлпын ашыңыз";
 "passcode_faceid" = "Құпия сөз және Face ID";
 "enter_passcode" = "Құпия сөзді енгізу";
 "create_passcode" = "Құпия сөз құру";

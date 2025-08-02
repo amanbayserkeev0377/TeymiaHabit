@@ -4,6 +4,7 @@ import SwiftData
 struct HabitCardView: View {
     let habit: Habit
     let date: Date
+    let viewModel: HabitDetailViewModel?
     let onTap: () -> Void
     let onEdit: () -> Void
     let onArchive: () -> Void
@@ -39,6 +40,10 @@ struct HabitCardView: View {
             if let liveProgress = TimerService.shared.getLiveProgress(for: habit.uuid.uuidString) {
                 return liveProgress
             }
+        }
+        
+        if let viewModel = viewModel {
+            return viewModel.currentProgress
         }
         
         return habit.progressForDate(date)
@@ -153,17 +158,16 @@ struct HabitCardView: View {
                     hapticFeedback: false
                 )
                 .scaleEffect(isProgressRingPressed ? 1.2 : 1.0)
-                .animation(.smooth(duration: 0.6), value: isProgressRingPressed)
+                .animation(.smooth(duration: 0.4), value: isProgressRingPressed)
                 .onTapGesture {
                     HapticManager.shared.playImpact(.medium)
                     
                     isProgressRingPressed = true
+                    toggleHabitCompletion()
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         isProgressRingPressed = false
                     }
-                    
-                    toggleHabitCompletion()
                 }
             }
             .padding(.horizontal, 16)
@@ -256,36 +260,23 @@ struct HabitCardView: View {
     // MARK: - Habit Completion
     
     private func toggleHabitCompletion() {
-        do {
-            let viewModel = try HabitManager.shared.getViewModel(for: habit, date: date, modelContext: modelContext)
-            
-            if cardIsCompleted {
-                viewModel.resetProgress()
-            } else {
-                let wasCompleted = cardIsCompleted
-                viewModel.completeHabit()
-                SoundManager.shared.playCompletionSound()
-                
-                if !wasCompleted {
-                    confettiTrigger += 1
-                }
-            }
-            HapticManager.shared.play(.success)
-            WidgetUpdateService.shared.reloadWidgets()
-        } catch {
-            if cardIsCompleted {
-                habit.resetProgress(for: date, modelContext: modelContext)
-            } else {
-                let wasCompleted = cardIsCompleted
-                habit.complete(for: date, modelContext: modelContext)
-                SoundManager.shared.playCompletionSound()
-                
-                if !wasCompleted {
-                    confettiTrigger += 1
-                }
-            }
-            HapticManager.shared.play(.success)
-            WidgetUpdateService.shared.reloadWidgets()
-        }
+       guard let viewModel = try? HabitManager.shared.getViewModel(for: habit, date: date, modelContext: modelContext) else {
+           return
+       }
+       
+       if cardIsCompleted {
+           viewModel.resetProgress()
+       } else {
+           let wasCompleted = cardIsCompleted
+           viewModel.completeHabit()
+           SoundManager.shared.playCompletionSound()
+           
+           if !wasCompleted {
+               confettiTrigger += 1
+           }
+       }
+       
+       HapticManager.shared.play(.success)
+       WidgetUpdateService.shared.reloadWidgets()
     }
 }

@@ -159,6 +159,7 @@
 "archived_habits_footer" = "Geser ke kiri untuk membatalkan arsip atau menghapus";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "Buka kunci Teymia Habit untuk mengakses data Anda";
 "passcode_faceid" = "Kode Sandi dan Face ID";
 "enter_passcode" = "Masukkan Kode Sandi";
 "create_passcode" = "Buat Kode Sandi";

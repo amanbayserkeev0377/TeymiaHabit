@@ -24,11 +24,19 @@ final class HabitDetailViewModel {
     
     private var currentDisplayedDate: Date
     private var updateTimer: Timer?
+    private var hasPendingChanges: Bool = false
+    private var lastSavedProgress: Int = 0
+    private(set) var uiProgress: Int = 0
     private(set) var localUpdateTrigger: Int = 0
     private var progressCache: [String: Int] = [:]
     private var baseProgressWhenTimerStarted: Int?
     private var hasPlayedTimerCompletionSound = false
     private var hasShownGoalNotification = false
+    private var saveWorkItem: DispatchWorkItem?
+    private let backgroundQueue = DispatchQueue(label: "habit.save.background", qos: .userInitiated)
+    private var isCloudKitEnabled: Bool {
+        return !modelContext.container.configurations.isEmpty
+    }
     
     // MARK: - Static Properties
     
@@ -50,8 +58,6 @@ final class HabitDetailViewModel {
     }
     
     var currentProgress: Int {
-        let dateKey = dateToKey(currentDisplayedDate)
-        
         if isTimeHabitToday && timerService.isTimerRunning(for: cachedHabitId) {
             _ = localUpdateTrigger
             
@@ -73,13 +79,7 @@ final class HabitDetailViewModel {
             }
         }
         
-        if let cached = progressCache[dateKey] {
-            return cached
-        }
-        
-        let progress = habit.progressForDate(currentDisplayedDate)
-        progressCache[dateKey] = progress
-        return progress
+        return uiProgress
     }
     
     var completionPercentage: Double {
@@ -128,6 +128,10 @@ final class HabitDetailViewModel {
         
         let initialProgress = habit.progressForDate(initialDate)
         progressCache[dateToKey(initialDate)] = initialProgress
+        
+        self.uiProgress = initialProgress
+        self.lastSavedProgress = initialProgress
+        
         setupStableSubscriptions()
         
         if isTimeHabitToday && timerService.isTimerRunning(for: cachedHabitId) {
@@ -148,6 +152,10 @@ final class HabitDetailViewModel {
             progressCache[dateKey] = progress
         }
         
+        let newProgress = habit.progressForDate(newDate)
+        uiProgress = newProgress
+        lastSavedProgress = newProgress
+        
         if Calendar.current.isDateInToday(newDate) && habit.type == .time {
             if timerService.isTimerRunning(for: cachedHabitId) && updateTimer == nil {
                 startLocalUpdates()
@@ -165,9 +173,9 @@ final class HabitDetailViewModel {
         let wasCompleted = isAlreadyCompleted
         let incrementValue = habit.type == .count ? 1 : Constants.incrementTimeValue
         stopTimerAndSaveLiveProgressIfNeeded()
-        
-        let newProgress = currentProgress + incrementValue
-        updateProgressInCacheAndDB(newProgress)
+        uiProgress = min(uiProgress + incrementValue, habit.type == .count ? 999999 : 86400)
+        hasPendingChanges = true
+        scheduleBackgroundSave()
         updateLiveActivityAfterManualChange()
         
         if !wasCompleted && isAlreadyCompleted {
@@ -176,22 +184,24 @@ final class HabitDetailViewModel {
     }
     
     func decrementProgress() {
-        guard currentProgress > 0 else {
+        guard uiProgress > 0 else {
             alertState.errorFeedbackTrigger.toggle()
             return
         }
         
-        let decrementValue = habit.type == .count ? -1 : Constants.decrementTimeValue
+        let decrementValue = habit.type == .count ? 1 : Constants.incrementTimeValue
         stopTimerAndSaveLiveProgressIfNeeded()
-        
-        let newProgress = max(0, currentProgress + decrementValue)
-        updateProgressInCacheAndDB(newProgress)
+        uiProgress = max(uiProgress - decrementValue, 0)
+        hasPendingChanges = true
+        scheduleBackgroundSave()
         updateLiveActivityAfterManualChange()
     }
     
     func handleCustomCountInput(count: Int) {
         stopTimerAndSaveLiveProgressIfNeeded()
-        updateProgressInCacheAndDB(currentProgress + count)
+        uiProgress = min(uiProgress + count, 999999)
+        hasPendingChanges = true
+        scheduleBackgroundSave()
         alertState.successFeedbackTrigger.toggle()
         updateLiveActivityAfterManualChange()
     }
@@ -205,7 +215,9 @@ final class HabitDetailViewModel {
         }
         
         stopTimerAndSaveLiveProgressIfNeeded()
-        updateProgressInCacheAndDB(currentProgress + totalSeconds)
+        uiProgress = min(uiProgress + totalSeconds, 86400)
+        hasPendingChanges = true
+        scheduleBackgroundSave()
         alertState.successFeedbackTrigger.toggle()
         updateLiveActivityAfterManualChange()
     }
@@ -217,7 +229,9 @@ final class HabitDetailViewModel {
             stopTimerAndEndActivity()
         }
         
-        updateProgressInCacheAndDB(habit.goal)
+        uiProgress = habit.goal
+        hasPendingChanges = false
+        performImmediateSave()
         alertState.successFeedbackTrigger.toggle()
         SoundManager.shared.playCompletionSound()
         endLiveActivityIfNeeded()
@@ -228,7 +242,10 @@ final class HabitDetailViewModel {
             stopTimerAndEndActivity()
         }
         
-        updateProgressInCacheAndDB(0)
+        uiProgress = 0
+        hasPendingChanges = false
+        performImmediateSave()
+        
         updateLiveActivityIfActive(progress: 0, isTimerRunning: false)
     }
     
@@ -280,7 +297,9 @@ final class HabitDetailViewModel {
         stopLocalUpdates()
         
         if let finalProgress = timerService.stopTimer(for: cachedHabitId) {
-            updateProgressInCacheAndDB(finalProgress)
+            uiProgress = finalProgress
+            hasPendingChanges = true
+            scheduleBackgroundSave()
             
             Task {
                 await liveActivityManager.updateActivity(
@@ -445,10 +464,15 @@ final class HabitDetailViewModel {
         let freshProgress = habit.progressForDate(currentDisplayedDate)
         progressCache[dateKey] = freshProgress
         
+        uiProgress = freshProgress
+        lastSavedProgress = freshProgress
+        
         if isTimeHabitToday && timerService.isTimerRunning(for: cachedHabitId) {
             if !hasActiveLiveActivity {
                 if let finalProgress = timerService.stopTimer(for: cachedHabitId) {
-                    updateProgressInCacheAndDB(finalProgress)
+                    uiProgress = finalProgress
+                    hasPendingChanges = true
+                    scheduleBackgroundSave()
                 }
                 stopLocalUpdates()
                 baseProgressWhenTimerStarted = nil
@@ -464,28 +488,70 @@ final class HabitDetailViewModel {
         Self.dateFormatter.string(from: date)
     }
     
-    private func updateProgressInCacheAndDB(_ newProgress: Int) {
-        let dateKey = dateToKey(currentDisplayedDate)
-        progressCache[dateKey] = newProgress
-        habit.updateProgress(to: newProgress, for: currentDisplayedDate, modelContext: modelContext)
+    private func scheduleBackgroundSave() {
+        saveWorkItem?.cancel()
         
-        do {
-            try modelContext.save()
-            WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
-        } catch {
-            alertState.errorFeedbackTrigger.toggle()
+        let progressToSave = uiProgress
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.performBackgroundSave(progress: progressToSave)
         }
         
-        localUpdateTrigger += 1
+        saveWorkItem = workItem
+        let delay = isCloudKitEnabled ? 1.2 : 0.5
+        backgroundQueue.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
     
+    private func performBackgroundSave(progress: Int) {
+        guard progress != lastSavedProgress else { return }
+        
+        let container = modelContext.container
+        let habitUUID = habit.uuid
+        let dateToSave = currentDisplayedDate
+        
+        Task.detached { [weak self] in
+            guard let self = self else { return }
+            
+            let backgroundContext = ModelContext(container)
+            
+            let descriptor = FetchDescriptor<Habit>(
+                predicate: #Predicate<Habit> { h in h.uuid == habitUUID }
+            )
+            
+            guard let bgHabit = try? backgroundContext.fetch(descriptor).first else { return }
+            
+            bgHabit.updateProgress(to: progress, for: dateToSave, modelContext: backgroundContext)
+            
+            await MainActor.run {
+                self.lastSavedProgress = progress
+                self.hasPendingChanges = false
+                
+                WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
+            }
+        }
+    }
+    
+    private func performImmediateSave() {
+        saveWorkItem?.cancel()
+        
+        let progress = uiProgress
+        
+        Task {
+            habit.updateProgress(to: progress, for: currentDisplayedDate, modelContext: modelContext)
+            lastSavedProgress = progress
+            hasPendingChanges = false
+            WidgetUpdateService.shared.reloadWidgetsAfterDataChange()
+        }
+    }
+        
     private func stopTimerAndSaveLiveProgressIfNeeded() {
         guard isTimeHabitToday && isTimerRunning else { return }
         
         let liveProgress = timerService.getLiveProgress(for: cachedHabitId) ?? currentProgress
         stopLocalUpdates()
         _ = timerService.stopTimer(for: cachedHabitId)
-        updateProgressInCacheAndDB(liveProgress)
+        uiProgress = liveProgress
+        hasPendingChanges = true
+        scheduleBackgroundSave()
         baseProgressWhenTimerStarted = nil
     }
     
@@ -508,11 +574,18 @@ final class HabitDetailViewModel {
     func syncWithTimerService() {
         guard isTimeHabitToday, timerService.isTimerRunning(for: cachedHabitId) else { return }
         if let liveProgress = timerService.getLiveProgress(for: cachedHabitId) {
-            updateProgressInCacheAndDB(liveProgress)
+            uiProgress = liveProgress
+            hasPendingChanges = true
+            scheduleBackgroundSave()
         }
     }
     
     func cleanup() {
+        saveWorkItem?.cancel()
+        if hasPendingChanges && uiProgress != lastSavedProgress {
+            performImmediateSave()
+        }
+        
         stopLocalUpdates()
         NotificationCenter.default.removeObserver(self)
         onHabitDeleted = nil

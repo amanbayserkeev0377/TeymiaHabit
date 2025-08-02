@@ -159,6 +159,7 @@
 "archived_habits_footer" = "左にスワイプしてアーカイブ解除または削除";
 
 /* ===================== Settings: Passcode & Face ID ===================== */
+"privacy_auth_reason" = "データにアクセスするためにTeymia Habitをアンロックしてください";
 "passcode_faceid" = "パスコードとFace ID";
 "enter_passcode" = "パスコードを入力";
 "create_passcode" = "パスコードを作成";
