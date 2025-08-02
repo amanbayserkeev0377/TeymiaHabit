@@ -250,7 +250,7 @@ extension HabitIconColor {
     var lightColor: Color {
         switch self {
         case .primary:
-            return Color(#colorLiteral(red: 0.8374180198, green: 0.8374378085, blue: 0.8374271393, alpha: 1))
+            return Color(#colorLiteral(red: 0.7540688515, green: 0.7540867925, blue: 0.7540771365, alpha: 1))
         case .red:
             return Color(#colorLiteral(red: 0.95, green: 0.5, blue: 0.45, alpha: 1))
         case .orange:

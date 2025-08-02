@@ -93,7 +93,7 @@ struct CloudKitSyncView: View {
                                 
                                 Text("icloud_force_sync_desc".localized)
                                     .font(.footnote)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color(UIColor.secondaryLabel))
                             }
                             
                             Spacer()

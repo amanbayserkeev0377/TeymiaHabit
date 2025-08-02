@@ -154,6 +154,8 @@ struct LicensesView: View {
                 
                 LicenseRow(iconName: "3d_soc_google", attribution: "3d Google by Vecteezy", url: "https://www.vecteezy.com/png/9428333-3d-social-media-icons-google")
                 
+                LicenseRow(iconName: "3d_soc_github", attribution: "3d Github by IconScout", url: "https://iconscout.com/free-3d-illustration/github-6903961_5640285")
+                
                 LicenseRow(iconName: "app_icon_clock_dark", attribution: "3d Dark Clock by Vecteezy", url: "https://www.vecteezy.com/png/55079132-modern-dark-blue-clock-with-gold-accents")
                 
                 LicenseRow(iconName: "app_icon_clock_light", attribution: "3d Light Clock by Vecteezy", url: "https://www.vecteezy.com/png/57178682-stylish-desk-clock-with-vibrant-neon-lighting-in-an-elegant-design-perfect-for-modern-office-fashionable-desk-clock-with-neon-lighting-file-of-isolated-object-with-shadow-on-transparent-background")
@@ -180,7 +182,7 @@ struct LicensesView: View {
                 
                 LicenseRow(iconName: "3d_speaker_red", attribution: "3d Speaker Red by Vecteezy", url: "https://www.vecteezy.com/png/57876772-vibrant-artistic-speaker-wire-red-and-black-strands-isolated-element-transparent-background-authentic")
                 
-                LicenseRow(iconName: "3d_soc_github", attribution: "3d Github by IconScout", url: "https://iconscout.com/free-3d-illustration/github-6903961_5640285")
+                LicenseRow(iconName: "3d_export_document", attribution: "3d Document by Vecteezy", url: "https://www.vecteezy.com/png/57409263-magnificent-vintage-contract-document-with-seal-cutout-high-quality")
             }
         }
         .navigationTitle("licenses".localized)

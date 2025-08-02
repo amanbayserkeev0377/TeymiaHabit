@@ -8,7 +8,6 @@ struct SoundSettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                
                 Section {
                     HStack {
                         Spacer()

@@ -31,6 +31,25 @@ struct SettingsView: View {
             
             Section {
                 NavigationLink {
+                    SoundSettingsView()
+                } label: {
+                    Label(
+                        title: { Text("sounds".localized) },
+                        icon: {
+                            Image(systemName: "speaker.wave.2.fill")
+                                .withIOSSettingsIcon(lightColors: [
+                                    Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
+                                    Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
+                                ])
+                        }
+                    )
+                }
+                NotificationsSection()
+                HapticsSection()
+            }
+            
+            Section {
+                NavigationLink {
                     CloudKitSyncView()
                 } label: {
                     Label(
@@ -69,6 +88,21 @@ struct SettingsView: View {
                 }
                 
                 NavigationLink {
+                    ExportDataView()
+                } label: {
+                    Label(
+                        title: { Text("export_data".localized) },
+                        icon: {
+                            Image(systemName: "arrow.up.document.fill")
+                                .withIOSSettingsIcon(lightColors: [
+                                    Color(#colorLiteral(red: 0.7333333333, green: 0.7333333333, blue: 0.7607843137, alpha: 1)),
+                                    Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3254901961, alpha: 1))
+                                ])
+                        }
+                    )
+                }
+                
+                NavigationLink {
                     PrivacySettingsView()
                 } label: {
                     HStack {
@@ -87,25 +121,6 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-            }
-            
-            Section {
-                NavigationLink {
-                    SoundSettingsView()
-                } label: {
-                    Label(
-                        title: { Text("sounds".localized) },
-                        icon: {
-                            Image(systemName: "speaker.wave.2.fill")
-                                .withIOSSettingsIcon(lightColors: [
-                                    Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
-                                    Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
-                                ])
-                        }
-                    )
-                }
-                NotificationsSection()
-                HapticsSection()
             }
             
             AboutSection()
