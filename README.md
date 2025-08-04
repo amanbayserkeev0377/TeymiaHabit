@@ -37,6 +37,7 @@ A modern, feature-rich habit tracking app built with the latest iOS technologies
 - **Smart scheduling**: Configure active days per habit
 - **Progress visualization**: Beautiful charts and calendar views
 - **Streak tracking**: Monitor consistency over time
+- **Data export**: Export habits data in CSV, JSON or PDF formats
 - **Completion sounds**: Audio feedback for achievements
 - **Archive system**: Organize completed habits
 
@@ -55,6 +56,7 @@ A modern, feature-rich habit tracking app built with the latest iOS technologies
 ### Pro Features
 - **Unlimited habits** (Free: 3 habits)
 - **Advanced statistics** with detailed charts
+- **Data export** in JSON,PDF formats
 - **Multiple reminders** per habit
 - **Premium 3D icons** for habits
 - **Custom app themes** and colors
@@ -205,6 +207,7 @@ This codebase demonstrates:
 ### Production App Development
 - In-app purchases with RevenueCat
 - Push notifications setup
+- Data export and file sharing
 - Haptic feedback integration
 - Accessibility implementation
 - Performance optimization
