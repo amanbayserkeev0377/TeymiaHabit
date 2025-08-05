@@ -1,6 +1,6 @@
 # Teymia Habit - iOS Habit Tracker
 
-A modern, feature-rich habit tracking app built with the latest iOS technologies. Published on the App Store and now open-sourced to help developers learn modern iOS development patterns.
+A personal iOS project exploring modern Apple technologies. Full-cycle development from prototype to App Store publication.
 
 ## 📱 Screenshots
 
@@ -18,6 +18,12 @@ A modern, feature-rich habit tracking app built with the latest iOS technologies
   <img src="Screenshots/screenshot8.png" alt="Widgets" width="200"/>
 </div>
 
+<p align="center">
+  <a href="https://apps.apple.com/app/teymia-habit/id6746747903">
+    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on App Store" height="60">
+  </a>
+</p>
+
 ## 🚀 Download
 
 <p align="center">
@@ -31,49 +37,50 @@ A modern, feature-rich habit tracking app built with the latest iOS technologies
 ## ✨ Features
 
 ### Core Features
-- **Multiple habit types**: Counter-based and timer-based tracking
-- **Concurrent timers**: Run multiple habit timers simultaneously
-- **Background persistence**: Timers continue when app is closed
+- **Multiple habit types**: Counters and timers with concurrent execution
 - **Smart scheduling**: Configure active days per habit
-- **Progress visualization**: Beautiful charts and calendar views
-- **Streak tracking**: Monitor consistency over time
-- **Data export**: Export habits data in CSV, JSON or PDF formats
-- **Completion sounds**: Audio feedback for achievements
-- **Archive system**: Organize completed habits
+- **Cloud sync**: CloudKit integration for seamless multi-device experience
+- **Analytics**: Detailed statistics with charts and calendar views
+- **Security**: Biometric protection with Face ID/Touch ID
+- **Data export**: Export habit data in CSV, JSON, or PDF formats
+- **Archive system**: Organize completed/inactive habits  
+- **Completion sounds**: Audio feedback with custom sound selection
+- **Haptic feedback**: Enhanced tactile user experience
 
-### Security & Privacy
-- **Biometric lock**: Face ID/Touch ID app protection
-- **Custom passcode**: 4-digit PIN security
-- **Auto-lock**: Configurable timeout settings
-- **Privacy-first**: Data stays on your devices only
-
-### iOS 18+ Integration
-- **Live Activities**: Interactive timer widgets on Lock Screen
-- **Dynamic Island**: Real-time progress updates
-- **Home Screen Widgets**: Quick habit overview
-- **CloudKit Sync**: Seamless sync across all your devices
-
-### Pro Features
+### Pro Features  
 - **Unlimited habits** (Free: 3 habits)
 - **Advanced statistics** with detailed charts
-- **Data export** in JSON,PDF formats
 - **Multiple reminders** per habit
 - **Premium 3D icons** for habits
 - **Custom app themes** and colors
+- **Data export** in multiple formats
 - **Lifetime purchase** option
+
+## 🎯 About Project
+
+Personal project for practicing iOS development with modern Apple stack. Complete development cycle from concept to App Store - UI/UX design, architecture implementation, and monetization.
+
+**Inspiration**: Based on popular habit tracking apps but built from scratch to explore architectural patterns and modern iOS APIs.
 
 ## 🛠 Tech Stack
 
-This app demonstrates modern iOS development with:
+### Core Technologies
+- **SwiftUI** + **@Observable** - modern reactive architecture
+- **SwiftData** - local persistence with automatic migrations
+- **CloudKit** - data synchronization with conflict resolution
+- **ActivityKit** - Live Activities for Lock Screen and Dynamic Island
+- **WidgetKit** - Home Screen widgets
 
-- **SwiftUI** - Declarative UI framework
-- **SwiftData** - Core Data successor for data persistence
-- **CloudKit** - Apple's cloud database solution
-- **ActivityKit** - Live Activities and Dynamic Island
-- **WidgetKit** - Home Screen and Lock Screen widgets
-- **RevenueCat** - In-app purchase management
-- **Push Notifications** - Smart reminder system
-- **Haptic Feedback** - Enhanced user experience
+### Architecture & Patterns
+- **MVVM** with clear separation of concerns
+- **Dependency Injection** via SwiftUI Environment
+- **Protocol-Oriented Design** for testability
+- **Service Layer** for business logic
+
+### Business Logic
+- **RevenueCat** - subscription and purchase management
+- **UNUserNotificationCenter** - smart notification scheduling
+- **HapticManager** - contextual haptic feedback
 
 ## 📱 Requirements
 
@@ -86,7 +93,7 @@ This app demonstrates modern iOS development with:
 ### Quick Setup
 
 ```bash
-# Clone the repository
+# Clone repository  
 git clone https://github.com/amanbayserkeev0377/Teymia-Habit.git
 cd Teymia-Habit
 
@@ -98,31 +105,16 @@ open TeymiaHabit.xcodeproj
 
 ### Configuration
 
-The app works out of the box, but you can customize:
-
-#### 1. Bundle Identifier
-Change the Bundle ID in Xcode project settings to your own.
-
-#### 2. RevenueCat Setup (Optional)
-For in-app purchases, update `RevenueCatConfig.swift`:
+#### 1. RevenueCat (Optional)
+Update `RevenueCatConfig.swift` for in-app purchases:
 ```swift
 static let apiKey = "YOUR_REVENUECAT_API_KEY"
 ```
 
-#### 3. CloudKit (Optional)
-CloudKit works with any Apple ID, but for production:
-1. Update CloudKit container identifier
-2. Configure your own iCloud container
+#### 2. CloudKit (Optional)
+Works with any Apple ID, but for production update the CloudKit container identifier.
 
-## 🏗 Architecture
-
-### Design Patterns
-- **MVVM** - Clean separation of concerns
-- **Observable** - Modern SwiftUI state management
-- **Dependency Injection** - Through SwiftUI Environment
-- **Protocol-Oriented Design** - Flexible and testable code
-
-### Project Structure
+## 🏗 Project Structure
 
 ```
 TeymiaHabit/
@@ -135,116 +127,86 @@ TeymiaHabit/
 ├── UI Components/          # Reusable components
 ├── Extensions/             # Swift extensions
 ├── Pro/                    # Premium features
-├── Sounds/                 # Audio assets
 ├── LiveActivity/           # Live Activities
-└── TeymiaHabitWidgets/     # Widgets
+└── TeymiaHabitWidgets/     # Widget extensions
 ```
 
-### Modern iOS Features Implementation
+## 🚀 Technical Highlights
 
-- **SwiftData Migration** - Proper schema evolution
-- **CloudKit Integration** - Private database with conflict resolution
-- **Live Activities** - Real-time timer updates
-- **App Intents** - Deep linking and Shortcuts support
-- **Widget Extensions** - Shared data with App Groups
+### Modern iOS Implementation
+- **SwiftData with CloudKit** - seamless sync with conflict resolution
+- **Live Activities + Dynamic Island** - iOS 18 integration with real-time updates
+- **Concurrent timer execution** - multiple habits running simultaneously
+- **Background persistence** - state maintained across app lifecycle
+- **Memory-optimized calendar** - efficient rendering for large date ranges
 
-## 💰 Monetization
+### Key Technical Decisions
+- **@Observable over Combine** - simpler state management without reactive complexity
+- **Protocol-first architecture** - testable and flexible component design
+- **Single dependency principle** - only RevenueCat for subscription handling
+- **SwiftData migrations** - smooth schema evolution without data loss
 
-This project includes a complete in-app purchase system:
-
-- **Freemium model** with 3 free habits
-- **Subscription tiers** (monthly/yearly)
-- **Lifetime purchase** option
-- **Feature gating** throughout the app
-- **RevenueCat integration** for purchase management
-
-Perfect for learning how to implement and manage in-app purchases in a real app.
+### Production Ready Features
+- **Complete freemium implementation** with feature gating
+- **RevenueCat integration** - subscriptions, lifetime purchases, trial handling
+- **Biometric security** - Face ID/Touch ID with custom passcode fallback
+- **16-language localization** - including RTL support considerations
+- **Accessibility compliance** - VoiceOver and Dynamic Type support
 
 ## 🌍 Localization
 
-Currently supports:
-- 🇺🇸 English
-- 🇷🇺 Russian  
-- 🇰🇬 Kyrgyz
-- 🇰🇿 Kazakh
+Currently supports 16 languages including:
+- 🇺🇸 English • 🇷🇺 Russian • 🇰🇬 Kyrgyz • 🇰🇿 Kazakh
 - 🇨🇳 Chinese (Simplified, Traditional, Hong Kong)
-- 🇪🇸 Spanish
-- 🇫🇷 French
-- 🇩🇪 German
-- 🇧🇷 Portuguese (Brazil)
-- 🇯🇵 Japanese
-- 🇰🇷 Korean
-- 🇮🇳 Hindi
-- 🇹🇷 Turkish
-- 🇻🇳 Vietnamese
-- 🇮🇹 Italian
-- 🇮🇩 Indonesian
+- 🇪🇸 Spanish • 🇫🇷 French • 🇩🇪 German • 🇧🇷 Portuguese
+- 🇯🇵 Japanese • 🇰🇷 Korean • 🇮🇳 Hindi • 🇹🇷 Turkish
+- 🇻🇳 Vietnamese • 🇮🇹 Italian • 🇮🇩 Indonesian
 
-All strings are externalized and ready for additional languages.
+## 💰 Business Model
 
-## 🎯 What You'll Learn
+Implemented complete freemium monetization:
+- **Free tier**: 3 habits with basic features
+- **Subscription**: Monthly/yearly plans with 7-day trial
+- **Lifetime**: One-time purchase option
+- **Feature gating**: Throughout the app with upgrade prompts
 
-This codebase demonstrates:
+## 🎨 Design Approach
 
-### SwiftUI Mastery
-- Complex navigation patterns
-- Custom animations and transitions
-- Advanced layout techniques
-- State management best practices
+- **Apple HIG compliance** with native iOS patterns
+- **Adaptive design** supporting all iPhone screen sizes
+- **Dark/Light theme** with custom color schemes
+- **Accessibility first** with VoiceOver support
+- **Smooth animations** enhancing user experience
 
-### Data & Persistence
-- SwiftData schema design
-- CloudKit private database integration
-- Data migration strategies
-- Efficient Core Data relationships
+## 📊 Development Insights
 
-### iOS Extensions
-- Widget development with WidgetKit
-- Live Activities implementation
-- App Intents for deep linking
-- Shared data between main app and extensions
+### Challenges Solved
+- **CloudKit + SwiftData synchronization** - reliable conflict resolution across devices
+- **Live Activities state consistency** - maintaining timer accuracy across app states  
+- **Widget data synchronization** - App Groups with real-time updates
+- **Background timer precision** - iOS background execution limitations
+- **Memory optimization** - efficient calendar rendering for years of data
 
-### Production App Development
-- In-app purchases with RevenueCat
-- Push notifications setup
-- Data export and file sharing
-- Haptic feedback integration
-- Accessibility implementation
-- Performance optimization
+### Performance Considerations
+- **Lazy loading** for historical data views
+- **Smart caching** for frequently accessed statistics
+- **Efficient Core Data predicates** for large datasets
+- **Background task optimization** for timer persistence
 
-## 🚀 Getting Started
-
-1. **Download from App Store** to see the final product
-2. **Clone and build** to explore the implementation
-3. **Read the code** - heavily commented for learning
-4. **Experiment** - modify features and see the results
-
-## 📖 Learning Resources
-
-- [SwiftUI Documentation](https://developer.apple.com/documentation/swiftui)
-- [SwiftData Guide](https://developer.apple.com/documentation/swiftdata)
-- [CloudKit Documentation](https://developer.apple.com/documentation/cloudkit)
-- [ActivityKit Guide](https://developer.apple.com/documentation/activitykit)
-
-## 🤝 Contributing
-
-This is primarily an educational resource, but contributions are welcome:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+### Current Limitations
+- iOS-only implementation (Apple ecosystem focus)
+- Zero third-party dependencies except RevenueCat for subscriptions
+- Prioritized simplicity over complex optimizations
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+## 📧 Contact
 
 - **App Store**: [Teymia Habit](https://apps.apple.com/app/teymia-habit/id6746747903)
-- **GitHub Issues**: For technical questions about the code
-- **App Store Reviews**: For feedback about the published app
+- **Issues**: Use GitHub Issues for technical questions
 
 ---
 
-**⭐ If this project helped you learn iOS development, please give it a star!**
+*Pet project showcasing modern iOS development practices and full app lifecycle management.*
