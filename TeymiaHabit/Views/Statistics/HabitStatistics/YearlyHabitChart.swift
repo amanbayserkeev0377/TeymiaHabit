@@ -141,7 +141,7 @@ struct YearlyHabitChart: View {
                     y: .value("Progress", dataPoint.value)
                 )
                 .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(3)
+                .cornerRadius(30)
                 .opacity(selectedDate == nil ? 1.0 : 
                         (calendar.component(.month, from: dataPoint.date) == calendar.component(.month, from: selectedDate!) &&
                          calendar.component(.year, from: dataPoint.date) == calendar.component(.year, from: selectedDate!) ? 1.0 : 0.4))

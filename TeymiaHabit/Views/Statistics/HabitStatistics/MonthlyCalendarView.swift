@@ -48,6 +48,7 @@ struct MonthlyCalendarView: View {
     var body: some View {
         VStack(spacing: 10) {
             monthNavigationHeader
+                .padding(.bottom)
             weekdayHeader
             
             if isLoading {
@@ -73,7 +74,8 @@ struct MonthlyCalendarView: View {
             generateCalendarDays()
         }
         .confirmationDialog(
-            Text(dialogTitle),
+            Text(dialogTitle)
+                .fontDesign(.rounded),
             isPresented: $showingActionSheet,
             titleVisibility: .visible
         ) {
@@ -85,32 +87,33 @@ struct MonthlyCalendarView: View {
     private var monthNavigationHeader: some View {
         HStack {
             Button(action: showPreviousMonth) {
-                Image(systemName: "chevron.left")
-                    .font(.headline)
+                Image("chevron.left")
+                    .resizable()
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(canNavigateToPreviousMonth ? .primary : Color.gray.opacity(0.5))
                     .contentShape(Rectangle())
-                    .frame(width: 44, height: 44)
             }
             .disabled(!canNavigateToPreviousMonth)
-            .buttonStyle(BorderlessButtonStyle())
+            .buttonStyle(.plain)
             
             Spacer()
             
             Text(DateFormatter.capitalizedNominativeMonthYear(from: currentMonth))
                 .font(.headline)
+                .fontDesign(.rounded)
                 .fontWeight(.medium)
             
             Spacer()
             
             Button(action: showNextMonth) {
-                Image(systemName: "chevron.right")
-                    .font(.headline)
+                Image("chevron.right")
+                    .resizable()
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(canNavigateToNextMonth ? .primary : Color.gray.opacity(0.5))
                     .contentShape(Rectangle())
-                    .frame(width: 44, height: 44)
             }
             .disabled(!canNavigateToNextMonth)
-            .buttonStyle(BorderlessButtonStyle())
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 8)
         .zIndex(1)
@@ -122,6 +125,7 @@ struct MonthlyCalendarView: View {
                 Text(calendar.orderedWeekdayInitials[index])
                     .font(.caption)
                     .fontWeight(.medium)
+                    .fontDesign(.rounded)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
             }
@@ -179,8 +183,6 @@ struct MonthlyCalendarView: View {
             } label: {
                 Text("button_reset_progress".localized)
             }
-            
-            Button("button_cancel".localized, role: .cancel) {}
         }
     }
     

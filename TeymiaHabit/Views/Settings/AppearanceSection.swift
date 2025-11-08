@@ -49,12 +49,15 @@ struct AppearanceSection: View {
 
 struct AppColorPickerView: View {
     @ObservedObject private var colorManager = AppColorManager.shared
-    @ObservedObject private var iconManager = AppIconManager.shared
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @Environment(ProManager.self) private var proManager
     @State private var showingPaywall = false
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
+    
+    // Direct access to AppIconManager without @ObservedObject
+    private let iconManager = AppIconManager.shared
+    @State private var currentIcon: AppIcon = .main
     
     var body: some View {
         NavigationStack {
@@ -107,13 +110,14 @@ struct AppColorPickerView: View {
                 
                 Section {
                     AppIconGridView(
-                        selectedIcon: iconManager.currentIcon,
+                        selectedIcon: currentIcon,
                         onIconSelected: { icon in
                             let isLocked = !proManager.isPro && icon.requiresPro
                             if isLocked {
                                 showingPaywall = true
                             } else {
                                 iconManager.setAppIcon(icon)
+                                currentIcon = icon
                             }
                         },
                         onProRequired: {
@@ -126,6 +130,9 @@ struct AppColorPickerView: View {
             }
             .navigationTitle("appearance".localized)
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                currentIcon = iconManager.currentIcon
+            }
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }
@@ -173,18 +180,19 @@ struct AppIconButton: View {
         Button(action: onTap) {
             VStack(spacing: 8) {
                 ZStack {
-                    Image(icon.preview)
+                    Image(icon.previewImageName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)
-                        .cornerRadius(12)
-                        .opacity(isLocked ? 0.6 : 1.0)
-                    
-                    if isSelected && !isLocked {
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(colorManager.selectedColor.color, lineWidth: 2)
-                            .frame(width: 60, height: 60)
-                    }
+                        .opacity(isLocked ? 0.7 : 1.0)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(
+                                    isSelected && !isLocked ? colorManager.selectedColor.color : Color.gray.opacity(0.3),
+                                    lineWidth: isSelected ? 2.5 : 0.5
+                                )
+                                .frame(width: 60, height: 60)
+                        )
                     
                     if isLocked {
                         VStack {

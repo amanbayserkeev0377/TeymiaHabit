@@ -24,22 +24,28 @@ struct MainTabView: View {
                 HomeView()
             }
             .tabItem {
-                Label("home".localized, systemImage: "house.fill")
+                Image("home.fill")
+                Text("home".localized)
             }
+            .fontDesign(.rounded)
             
             NavigationStack {
                 StatisticsView()
             }
             .tabItem {
-                Label("statistics".localized, systemImage: "chart.line.text.clipboard.fill")
+                Image("stats.fill")
+                Text("statistics".localized)
             }
+            .fontDesign(.rounded)
             
             NavigationStack {
                 SettingsView()
             }
             .tabItem {
-                Label("settings".localized, systemImage: "gearshape.fill")
+                Image("settings.fill")
+                Text("settings".localized)
             }
+            .fontDesign(.rounded)
         }
         .preferredColorScheme(themeMode.colorScheme)
         .withAppColor()

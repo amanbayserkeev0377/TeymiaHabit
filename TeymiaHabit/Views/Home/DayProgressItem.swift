@@ -135,6 +135,7 @@ struct DayProgressItem: View, Equatable {
                     
                     Text(dayNumber)
                         .font(.system(size: fontSize, weight: fontWeight))
+                        .fontDesign(.rounded)
                         .foregroundColor(dayTextColor)
                 }
                 .frame(width: circleSize, height: circleSize)

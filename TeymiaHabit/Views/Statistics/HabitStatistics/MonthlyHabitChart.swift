@@ -143,7 +143,7 @@ struct MonthlyHabitChart: View {
                     y: .value("Progress", dataPoint.value)
                 )
                 .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(3)
+                .cornerRadius(30)
                 .opacity(selectedDate == nil ? 1.0 : 
                         (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.4))
             }

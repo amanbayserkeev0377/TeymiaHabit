@@ -85,20 +85,18 @@ struct HabitCardView: View {
     }
     
     private var cardBackground: some View {
-        RoundedRectangle(cornerRadius: 20, style: .continuous)
+        RoundedRectangle(cornerRadius: 30, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground))
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: 30, style: .continuous)
                     .strokeBorder(
                         Color(.separator).opacity(0.5),
                         lineWidth: 0.5
                     )
             )
             .shadow(
-                color: Color(.systemGray4).opacity(0.6),
-                radius: 4,
-                x: 0,
-                y: 2
+                color: .black.opacity(0.15),
+                radius: 10
             )
     }
     

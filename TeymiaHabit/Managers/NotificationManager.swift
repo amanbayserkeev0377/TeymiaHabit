@@ -141,29 +141,3 @@ class NotificationManager {
         }
     }
 }
-
-// MARK: - Free Tier Limitations
-
-extension NotificationManager {
-    /// Limit reminders to free tier when losing Pro access
-    func limitRemindersForFreeTier(modelContext: ModelContext) async {
-        let descriptor = FetchDescriptor<Habit>()
-        guard let allHabits = try? modelContext.fetch(descriptor) else { return }
-        
-        var changedHabitsCount = 0
-        
-        for habit in allHabits {
-            if let reminderTimes = habit.reminderTimes, reminderTimes.count > 2 {
-                // Keep only first 2 reminders (but user can effectively use only 1 due to UI restrictions)
-                let limitedReminders = Array(reminderTimes.prefix(2))
-                habit.reminderTimes = limitedReminders
-                changedHabitsCount += 1
-            }
-        }
-        
-        if changedHabitsCount > 0 {
-            try? modelContext.save()
-            await updateAllNotifications(modelContext: modelContext)
-        }
-    }
-}

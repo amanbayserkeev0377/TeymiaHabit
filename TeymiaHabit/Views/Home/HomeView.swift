@@ -111,6 +111,7 @@ struct HomeView: View {
                 )
             }
             .presentationDragIndicator(.visible)
+            .presentationDetents([.fraction(0.98)])
         }
         .sheet(isPresented: $showingReorderHabits) {
             ReorderHabitsView()

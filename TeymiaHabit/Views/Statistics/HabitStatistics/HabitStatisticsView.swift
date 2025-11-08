@@ -58,6 +58,7 @@ struct HabitStatisticsView: View {
                             .withHabitGradient(habit, colorScheme: colorScheme)
                         Text("tap_dates".localized)
                             .font(.footnote)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
                         
                         Spacer()
@@ -88,6 +89,7 @@ struct HabitStatisticsView: View {
                             .withHabitGradient(habit, colorScheme: colorScheme)
                         Text("press_hold_bars".localized)
                             .font(.footnote)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
                         
                         Spacer()
@@ -157,13 +159,6 @@ struct HabitStatisticsView: View {
             }
             .navigationTitle(habit.title)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    XmarkView(action: {
-                        dismiss()
-                    })
-                }
-            }
             .sheet(isPresented: $showingPaywall) {
                 PaywallView()
             }

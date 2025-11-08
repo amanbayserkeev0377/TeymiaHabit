@@ -37,10 +37,6 @@ final class AppColorManager: ObservableObject {
         availableColors
     }
     
-    func resetToDefault() {
-        setAppColor(.primary)
-    }
-    
     // MARK: - Ring Colors
     
     /// Get ring colors for progress rings

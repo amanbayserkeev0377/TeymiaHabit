@@ -144,8 +144,8 @@ struct WeeklyHabitChart: View {
                     y: .value("Progress", dataPoint.value)
                 )
                 .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(4)
-                .opacity(selectedDate == nil ? 1.0 : 
+                .cornerRadius(30)
+                .opacity(selectedDate == nil ? 1.0 :
                         (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.4))
             }
             .frame(height: 200)

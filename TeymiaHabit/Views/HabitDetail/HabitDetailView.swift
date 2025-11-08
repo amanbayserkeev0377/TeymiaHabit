@@ -48,25 +48,14 @@ struct HabitDetailView: View {
         .scrollIndicators(.hidden)
         .scrollDismissesKeyboard(.immediately)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Text(formattedDateForToolbar())
-                    .foregroundStyle(.secondary)
-            }
-            
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showingStatistics = true
                 } label: {
-                    Image(systemName: "chart.bar.xaxis")
-                        .font(.system(size: 14))
+                    Image("stats.fill")
+                        .resizable()
+                        .frame(width: 16, height: 16)
                         .withHabitGradient(habit, colorScheme: colorScheme)
-                        .frame(width: 30, height: 30)
-                        .background(
-                            Circle()
-                                .fill(
-                                    habit.iconColor.color.opacity(0.1)
-                                )
-                        )
                 }
             }
             
@@ -75,34 +64,26 @@ struct HabitDetailView: View {
                     Button {
                         isEditPresented = true
                     } label: {
-                        Label("button_edit".localized, systemImage: "pencil")
+                        Label("button_edit".localized, image: "pencil.small")
                     }
                     .withHabitTint(habit)
                     
                     Button {
                         archiveHabit()
                     } label: {
-                        Label("archive".localized, systemImage: "archivebox")
+                        Label("archive".localized, image: "archive.small")
                     }
                     .withHabitTint(habit)
                     
                     Button(role: .destructive) {
                         viewModel?.alertState.isDeleteAlertPresented = true
                     } label: {
-                        Label("button_delete".localized, systemImage: "trash")
+                        Label("button_delete".localized, image: "trash.small")
                     }
                     .tint(.red)
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 16))
                         .withHabitGradient(habit, colorScheme: colorScheme)
-                        .frame(width: 30, height: 30)
-                        .background(
-                            Circle()
-                                .fill(
-                                    habit.iconColor.color.opacity(0.1)
-                                )
-                        )
                 }
             }
         }
@@ -139,7 +120,6 @@ struct HabitDetailView: View {
         }
         .sheet(isPresented: $showingStatistics) {
             HabitStatisticsView(habit: habit)
-                .presentationSizing(.page)
         }
         .deleteSingleHabitAlert(
             isPresented: Binding(
@@ -321,7 +301,7 @@ struct HabitDetailView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: isCompactDevice ? 48 : 52)
                 .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: 30, style: .continuous)
                         .fill(
                             viewModel.isAlreadyCompleted
                             ? AnyShapeStyle(LinearGradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.5)], startPoint: .top, endPoint: .bottom))
