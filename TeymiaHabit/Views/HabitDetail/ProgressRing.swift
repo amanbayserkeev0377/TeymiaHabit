@@ -214,3 +214,68 @@ extension ProgressRing {
         )
     }
 }
+
+// MARK: - Interactive Compact Ring
+
+extension ProgressRing {
+    /// Interactive compact ring with play/pause or plus icon inside
+    static func compactInteractive(
+        progress: Double,
+        isCompleted: Bool,
+        isExceeded: Bool,
+        habit: Habit?,
+        isTimerRunning: Bool = false,
+        size: CGFloat = 52,
+        lineWidth: CGFloat? = nil
+    ) -> some View {
+        ZStack {
+            // Background circle
+            Circle()
+                .stroke(Color.secondary.opacity(0.1), lineWidth: lineWidth ?? (size * 0.11))
+            
+            // Progress circle
+            Circle()
+                .trim(from: 0, to: min(progress, 1.0))
+                .stroke(
+                    LinearGradient(
+                        colors: AppColorManager.shared.getRingColors(
+                            for: habit,
+                            isCompleted: isCompleted,
+                            isExceeded: isExceeded,
+                            colorScheme: .light
+                        ),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    style: StrokeStyle(
+                        lineWidth: lineWidth ?? (size * 0.11),
+                        lineCap: .round
+                    )
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 0.5), value: progress)
+            
+            // Interactive icon inside
+            Group {
+                if let habitType = habit?.type {
+                    switch habitType {
+                    case .count:
+                        // Plus icon for count habits
+                        Image(systemName: "plus")
+                            .font(.system(size: size * 0.35, weight: .semibold))
+                            .foregroundStyle(Color.primary)
+                        
+                    case .time:
+                        // Play/Pause for time habits (from Assets)
+                        Image(isTimerRunning ? "pause.fill" : "play.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size * 0.3, height: size * 0.3)
+                            .foregroundStyle(Color.primary)
+                    }
+                }
+            }
+        }
+        .frame(width: size, height: size)
+    }
+}

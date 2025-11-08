@@ -8,7 +8,7 @@ final class TimerService {
     private var activeTimers: [String: TimerData] = [:]
     private var uiTimer: Timer?
     private(set) var updateTrigger: Int = 0
-    private let maxTimers = 5
+    private let maxTimers = 10
     
     private struct TimerData {
         let habitId: String
