@@ -237,6 +237,14 @@ final class HabitDetailViewModel {
         endLiveActivityIfNeeded()
     }
     
+    func setProgress(_ value: Int) {
+        stopTimerAndSaveLiveProgressIfNeeded()
+        uiProgress = value
+        hasPendingChanges = true
+        scheduleBackgroundSave()
+        updateLiveActivityAfterManualChange()
+    }
+    
     func resetProgress() {
         if isTimeHabitToday && isTimerRunning {
             stopTimerAndEndActivity()

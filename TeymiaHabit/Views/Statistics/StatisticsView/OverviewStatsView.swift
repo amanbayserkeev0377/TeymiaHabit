@@ -226,6 +226,7 @@ struct StatCardInteractive: View {
             VStack(spacing: 0) {
                 Text(title)
                     .font(.headline)
+                    .fontDesign(.rounded)
                     .fontWeight(.semibold)
                     .foregroundStyle(cardColor)
                     .multilineTextAlignment(.center)
@@ -250,6 +251,7 @@ struct StatCardInteractive: View {
                     Text(value)
                         .font(.title2)
                         .fontWeight(.bold)
+                        .fontDesign(.rounded)
                         .foregroundStyle(cardColor)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
@@ -259,11 +261,11 @@ struct StatCardInteractive: View {
             }
             .frame(height: 120)
             .background {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 30)
                     .fill(cardColor.opacity(0.15))
             }
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 30)
                     .strokeBorder(
                         Color.primary.opacity(0.1),
                         lineWidth: 0.3
@@ -344,15 +346,6 @@ struct CardInfoView: View {
             }
             .navigationTitle(cardTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("button_done".localized) {
-                        dismiss()
-                    }
-                    .foregroundStyle(cardColor)
-                    .fontWeight(.semibold)
-                }
-            }
         }
     }
     

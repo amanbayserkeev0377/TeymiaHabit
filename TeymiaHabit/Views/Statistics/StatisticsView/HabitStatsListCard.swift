@@ -24,24 +24,26 @@ struct HabitStatsListCard: View {
                 HStack(spacing: 16) {
                     universalIcon(
                         iconId: habit.iconName,
-                        baseSize: 26,
+                        baseSize: 22,
                         color: habit.iconColor,
                         colorScheme: colorScheme
                     )
-                    .frame(width: 54, height: 54)
+                    .frame(width: 46, height: 46)
                     .background(
                         Circle()
-                            .fill(habit.iconColor.color.gradient.opacity(0.15))
+                            .fill(habit.iconColor.color.gradient.opacity(0.1))
                     )
                     
                     VStack(alignment: .leading, spacing: 3) {
                         Text(habit.title)
-                            .font(.body.weight(.medium))
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
                             .lineLimit(2)
                             .foregroundStyle(.primary)
                         
                         Text("goal".localized(with: habit.formattedGoal))
                             .font(.caption)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
@@ -51,18 +53,11 @@ struct HabitStatsListCard: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: 40, style: .continuous)
                     .fill(Color(UIColor.secondarySystemGroupedBackground))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .strokeBorder(
-                                Color(.separator).opacity(0.5),
-                                lineWidth: 0.5
-                            )
-                    )
                     .shadow(
-                        color: Color(.systemGray4).opacity(0.6),
-                        radius: 4,
+                        color: .black.opacity(0.15),
+                        radius: 8,
                         x: 0,
                         y: 2
                     )

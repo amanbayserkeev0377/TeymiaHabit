@@ -26,9 +26,9 @@ struct CreateHabitView: View {
                 
                 customHabitButton
             }
-            .navigationTitle("create_habit".localized)
-            .navigationBarTitleDisplayMode(.large)
         }
+        .navigationTitle("create_habit".localized)
+        .navigationBarTitleDisplayMode(.large)
         .presentationDragIndicator(.visible)
         .sheet(isPresented: $showingNewHabitView) {
             if let template = selectedTemplate {

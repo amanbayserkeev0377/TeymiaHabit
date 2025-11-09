@@ -159,7 +159,7 @@ struct HomeView: View {
                 )
             }
             .presentationDragIndicator(.visible)
-            .presentationDetents([.fraction(0.98)])
+            .presentationDetents([.fraction(0.6)])
         }
         .sheet(isPresented: $showingNewHabit) {
             NavigationStack {

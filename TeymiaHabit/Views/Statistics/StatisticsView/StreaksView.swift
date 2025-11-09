@@ -50,12 +50,14 @@ struct StatColumn: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 22, weight: .bold))
+                .fontDesign(.rounded)
                 .foregroundColor(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             
             Text(label)
                 .font(.footnote)
+                .fontDesign(.rounded)
                 .foregroundColor(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)

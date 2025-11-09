@@ -36,7 +36,7 @@ struct StatisticsView: View {
                         .padding(.horizontal, 8)
                         .padding(.top, 16)
 
-                        LazyVStack(spacing: 12) {
+                        LazyVStack(spacing: 16) {
                             ForEach(habits) { habit in
                                 HabitStatsListCard(habit: habit) {
                                     selectedHabitForStats = habit
@@ -65,11 +65,11 @@ struct StatisticsEmptyStateView: View {
         VStack {
             Spacer()
             
-            Image("3d_bar_chart")
+            Image("stats.fill.big")
                 .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: UIScreen.main.bounds.width * 0.45,
-                       height: UIScreen.main.bounds.width * 0.45)
+                .frame(width: UIScreen.main.bounds.width * 0.5,
+                       height: UIScreen.main.bounds.width * 0.5)
+                .foregroundStyle(.gray.gradient)
             
             Spacer()
         }

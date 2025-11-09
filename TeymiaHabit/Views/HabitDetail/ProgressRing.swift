@@ -32,7 +32,7 @@ struct ProgressRing: View {
         if let customFontSize = fontSize {
             return customFontSize
         }
-        return size * 0.4
+        return size * 0.25
     }
     
     private var adaptedIconSize: CGFloat {
@@ -45,7 +45,6 @@ struct ProgressRing: View {
             Circle()
                 .stroke(Color.secondary.opacity(0.1), lineWidth: adaptiveLineWidth)
             
-            // Progress circle with gradient
             Circle()
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(
@@ -179,18 +178,20 @@ extension ProgressRing {
             }
         }()
         
+        let effectiveLineWidth = lineWidth ?? (size * 0.11)
+        
         return ZStack {
             // Background circle
             Circle()
-                .stroke(Color.secondary.opacity(0.1), lineWidth: lineWidth ?? (size * 0.11))
+                .stroke(Color.secondary.opacity(0.1), lineWidth: effectiveLineWidth)
             
-            // Progress circle
+            // Progress circle - simple and clean
             Circle()
                 .trim(from: 0, to: min(progress, 1.0))
                 .stroke(
                     ringColor.gradient,
                     style: StrokeStyle(
-                        lineWidth: lineWidth ?? (size * 0.11),
+                        lineWidth: effectiveLineWidth,
                         lineCap: .round
                     )
                 )
@@ -202,13 +203,11 @@ extension ProgressRing {
                 if let habitType = habit?.type {
                     switch habitType {
                     case .count:
-                        // Plus icon for count habits
                         Image(systemName: "plus")
                             .font(.system(size: size * 0.35))
                             .foregroundStyle(Color.primary)
                         
                     case .time:
-                        // Play/Pause for time habits
                         Image(isTimerRunning ? "pause.fill" : "play.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
