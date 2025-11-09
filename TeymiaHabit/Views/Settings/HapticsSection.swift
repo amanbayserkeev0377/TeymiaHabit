@@ -9,12 +9,10 @@ struct HapticsSection: View {
             Label(
                 title: { Text("haptics".localized) },
                 icon: {
-                    Image(systemName: "waveform")
-                        .withIOSSettingsIcon(lightColors: [
-                            Color(#colorLiteral(red: 1, green: 0.706, blue: 0, alpha: 1)),
-                            Color(#colorLiteral(red: 0.7843, green: 0.3922, blue: 0, alpha: 1))
-                        ])
-                        .symbolEffect(.bounce, options: .repeat(1), value: hapticsEnabled)
+                    Image("waveform")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(.red.gradient)
                 }
             )
         }

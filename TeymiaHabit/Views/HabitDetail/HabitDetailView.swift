@@ -71,7 +71,7 @@ struct HabitDetailView: View {
                     Button {
                         archiveHabit()
                     } label: {
-                        Label("archive".localized, image: "archive.small")
+                        Label("archive".localized, image: "archive")
                     }
                     .withHabitTint(habit)
                     

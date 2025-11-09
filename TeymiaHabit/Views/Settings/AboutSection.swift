@@ -1,36 +1,5 @@
 import SwiftUI
 
-// MARK: - External Link Modifier
-
-struct ExternalLinkModifier: ViewModifier {
-    var trailingText: String? = nil
-    
-    func body(content: Content) -> some View {
-        HStack {
-            content
-            Spacer()
-            
-            if let text = trailingText {
-                Text(text)
-                    .foregroundStyle(.secondary)
-            }
-            
-            Image(systemName: "arrow.up.right")
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundStyle(.tertiary)
-        }
-    }
-}
-
-
-
-extension View {
-    func withExternalLinkIcon(trailingText: String? = nil) -> some View {
-        self.modifier(ExternalLinkModifier(trailingText: trailingText))
-    }
-}
-
 // MARK: - About Section
 
 struct AboutSection: View {
@@ -44,14 +13,12 @@ struct AboutSection: View {
                 Label(
                     title: { Text("rate_app".localized) },
                     icon: {
-                        Image(systemName: "star.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.95, green: 0.85, blue: 0.15, alpha: 1)),
-                                Color(#colorLiteral(red: 0.75, green: 0.55, blue: 0.05, alpha: 1))
-                            ])
+                        Image("star")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.yellow.gradient)
                     }
                 )
-                .withExternalLinkIcon()
             }
             .tint(.primary)
             
@@ -61,33 +28,12 @@ struct AboutSection: View {
                 Label(
                     title: { Text("share_app".localized) },
                     icon: {
-                        Image(systemName: "square.and.arrow.up.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.55, green: 0.6, blue: 0.9, alpha: 1)),
-                                Color(#colorLiteral(red: 0.15, green: 0.2, blue: 0.45, alpha: 1))
-                            ])
+                        Image("share")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.orange.gradient)
                     }
                 )
-                .withExternalLinkIcon()
-            }
-            .tint(.primary)
-            
-            Button {
-                if let url = URL(string: "https://t.me/amanbayserkeev0377") {
-                    UIApplication.shared.open(url)
-                }
-            } label: {
-                Label(
-                    title: { Text("contact_developer".localized) },
-                    icon: {
-                        Image(systemName: "paperplane.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.45, green: 0.85, blue: 0.95, alpha: 1)),
-                                Color(#colorLiteral(red: 0.15, green: 0.5, blue: 0.75, alpha: 1))
-                            ])
-                    }
-                )
-                .withExternalLinkIcon()
             }
             .tint(.primary)
         }
@@ -101,14 +47,12 @@ struct AboutSection: View {
                 Label(
                     title: { Text("privacy_policy".localized) },
                     icon: {
-                        Image(systemName: "lock.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.7333333333, green: 0.7333333333, blue: 0.7607843137, alpha: 1)),
-                                Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3254901961, alpha: 1))
-                            ])
+                        Image("lock")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.gray.gradient)
                     }
                 )
-                .withExternalLinkIcon()
             }
             .tint(.primary)
             
@@ -120,28 +64,25 @@ struct AboutSection: View {
                 Label(
                     title: { Text("terms_of_service".localized) },
                     icon: {
-                        Image(systemName: "text.document.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.7333333333, green: 0.7333333333, blue: 0.7607843137, alpha: 1)),
-                                Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3254901961, alpha: 1))
-                            ])
+                        Image("document")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.gray.gradient)
                     }
                 )
-                .withExternalLinkIcon()
             }
             .tint(.primary)
             
             NavigationLink {
-                LicensesView()
+                AttributionsView()
             } label: {
                 Label(
-                    title: { Text("licenses".localized) },
+                    title: { Text("licenses_section_attributions".localized) },
                     icon: {
-                        Image(systemName: "scroll.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.7333333333, green: 0.7333333333, blue: 0.7607843137, alpha: 1)),
-                                Color(#colorLiteral(red: 0.3019607843, green: 0.3019607843, blue: 0.3254901961, alpha: 1))
-                            ])
+                        Image("link")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.gray.gradient)
                     }
                 )
             }

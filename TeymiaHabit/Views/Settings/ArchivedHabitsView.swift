@@ -50,11 +50,12 @@ struct ArchivedHabitsView: View {
             VStack {
                 Spacer()
                 
-                Image("3d_archive")
+                Image("archive.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: UIScreen.main.bounds.width * 0.45,
-                           height: UIScreen.main.bounds.width * 0.45)
+                    .foregroundStyle(Color(UIColor.tertiarySystemBackground))
+                    .frame(width: UIScreen.main.bounds.width * 0.3,
+                           height: UIScreen.main.bounds.width * 0.3)
                 
                 Spacer()
             }
@@ -65,6 +66,7 @@ struct ArchivedHabitsView: View {
             Section(
                 footer: Text("archived_habits_footer".localized)
                     .font(.footnote)
+                    .fontDesign(.rounded)
                     .foregroundStyle(.secondary)
             ) {
                 ForEach(archivedHabits) { habit in
@@ -74,16 +76,16 @@ struct ArchivedHabitsView: View {
                                 habitToDelete = habit
                                 isDeleteSingleAlertPresented = true
                             } label: {
-                                Label("button_delete".localized, systemImage: "trash")
+                                Image("trash.swipe")
                             }
                             .tint(.red)
                             
                             Button {
                                 unarchiveHabit(habit)
                             } label: {
-                                Label("unarchive".localized, systemImage: "tray.and.arrow.up")
+                                Image("unarchive.swipe")
                             }
-                            .tint(.cyan)
+                            .tint(.gray)
                         }
                 }
             }
@@ -98,31 +100,29 @@ struct ArchivedHabitsView: View {
             HStack(spacing: 12) {
                 universalIcon(
                     iconId: habit.iconName,
-                    baseSize: 24,
+                    baseSize: 22,
                     color: habit.iconColor,
                     colorScheme: colorScheme
                 )
-                .frame(width: 36, height: 36)
+                .frame(width: 46, height: 46)
+                .background(
+                    Circle()
+                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.1))
+                )
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(habit.title)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Color(UIColor.label))
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .lineLimit(1)
+                        .foregroundStyle(Color(UIColor.label))
                     
                     Text("goal".localized(with: habit.formattedGoal))
                         .font(.caption)
+                        .fontDesign(.rounded)
                         .foregroundStyle(Color(UIColor.secondaryLabel))
                 }
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(Color(uiColor: .systemGray3))
-                    .font(.footnote)
-                    .fontWeight(.bold)
             }
-            .padding(.vertical, 2)
         }
     }
     
@@ -154,6 +154,7 @@ struct ArchivedHabitsCountBadge: View {
         if !archivedHabits.isEmpty {
             Text("\(archivedHabits.count)")
                 .foregroundStyle(.secondary)
+                .fontDesign(.rounded)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
         }

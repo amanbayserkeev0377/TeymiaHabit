@@ -74,8 +74,7 @@ struct MonthlyCalendarView: View {
             generateCalendarDays()
         }
         .confirmationDialog(
-            Text(dialogTitle)
-                .fontDesign(.rounded),
+            dialogTitle,
             isPresented: $showingActionSheet,
             titleVisibility: .visible
         ) {

@@ -21,12 +21,10 @@ struct NotificationsSection: View {
             Label(
                 title: { Text("notifications".localized) },
                 icon: {
-                    Image(systemName: "bell.badge.fill")
-                        .withIOSSettingsIcon(lightColors: [
-                            Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
-                            Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
-                        ])
-                        .symbolEffect(.bounce, options: .repeat(1), value: notificationManager.notificationsEnabled)
+                    Image("bell")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(.red.gradient)
                 }
             )
         }

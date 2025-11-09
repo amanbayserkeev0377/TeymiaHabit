@@ -91,8 +91,8 @@ struct HabitListRow: View {
                     .lineLimit(1)
                     .foregroundStyle(.primary)
                 
-                Text(formattedProgress)
-                    .font(.system(.subheadline, design: .rounded))
+                Text("\(formattedProgress) / \(habit.formattedGoal)")
+                    .fontDesign(.rounded)
                     .fontWeight(.medium)
                     .foregroundStyle(progressTextColor)
                     .monospacedDigit()

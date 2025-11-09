@@ -262,7 +262,7 @@ extension ProgressRing {
                     case .count:
                         // Plus icon for count habits
                         Image(systemName: "plus")
-                            .font(.system(size: size * 0.35, weight: .semibold))
+                            .font(.system(size: size * 0.35))
                             .foregroundStyle(Color.primary)
                         
                     case .time:

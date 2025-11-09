@@ -22,11 +22,10 @@ struct LanguageSection: View {
                 Label(
                     title: { Text("language".localized) },
                     icon: {
-                        Image(systemName: "globe.americas.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 0.4, green: 0.7, blue: 0.95, alpha: 1)),
-                                Color(#colorLiteral(red: 0.12, green: 0.35, blue: 0.6, alpha: 1))
-                            ])
+                        Image("globe")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.blue.gradient)
                     }
                 )
                 
@@ -34,11 +33,7 @@ struct LanguageSection: View {
                 
                 Text(currentLanguage)
                     .foregroundStyle(.secondary)
-                
-                Image(systemName: "arrow.up.right")
-                    .font(.footnote)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.tertiary)
+                    .fontDesign(.rounded)
             }
         }
         .tint(.primary)

@@ -4,9 +4,9 @@ struct ThemeOption {
     let name: String
     let iconName: String
     
-    static let system = ThemeOption(name: "appearance_system".localized, iconName: "iphone")
-    static let light = ThemeOption(name: "appearance_light".localized, iconName: "sun.max")
-    static let dark = ThemeOption(name: "appearance_dark".localized, iconName: "moon.stars")
+    static let system = ThemeOption(name: "appearance_system".localized, iconName: "circle.half")
+    static let light = ThemeOption(name: "appearance_light".localized, iconName: "sun")
+    static let dark = ThemeOption(name: "appearance_dark".localized, iconName: "moon")
     
     static let allOptions = [system, light, dark]
 }
@@ -24,11 +24,10 @@ struct AppearanceSection: View {
                 Label(
                     title: { Text("appearance".localized) },
                     icon: {
-                        Image(systemName: "paintbrush.pointed.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(.purple),
-                                Color(.pink)
-                            ])
+                        Image("paintbrush")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.indigo.gradient)
                     }
                 )
                 
@@ -37,11 +36,6 @@ struct AppearanceSection: View {
                 Circle()
                     .fill(colorManager.selectedColor.adaptiveGradient(for: colorScheme))
                     .frame(width: 24, height: 24)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    )
-                    .animation(.easeInOut(duration: 0.3), value: colorManager.selectedColor)
             }
         }
     }
@@ -71,17 +65,20 @@ struct AppColorPickerView: View {
                             HapticManager.shared.playSelection()
                         } label: {
                             HStack {
-                                Image(systemName: ThemeOption.allOptions[mode.rawValue].iconName)
+                                Image(ThemeOption.allOptions[mode.rawValue].iconName)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
                                     .withAppGradient()
-                                    .frame(width: 24)
                                 
                                 Text(ThemeOption.allOptions[mode.rawValue].name)
                                     .foregroundStyle(.primary)
+                                    .fontDesign(.rounded)
                                 
                                 Spacer()
                                 
-                                Image(systemName: "checkmark")
-                                    .fontWeight(.semibold)
+                                Image("check")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
                                     .withAppGradient()
                                     .opacity(themeMode == mode ? 1 : 0)
                                     .animation(.easeInOut, value: themeMode == mode)
