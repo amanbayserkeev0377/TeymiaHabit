@@ -34,7 +34,7 @@ struct AppearanceSection: View {
                 Spacer()
                 
                 Circle()
-                    .fill(colorManager.selectedColor.adaptiveGradient(for: colorScheme))
+                    .fill(colorManager.selectedColor.color.gradient)
                     .frame(width: 24, height: 24)
             }
         }
@@ -65,17 +65,16 @@ struct AppColorPickerView: View {
                             HapticManager.shared.playSelection()
                         } label: {
                             HStack {
-                                Image(ThemeOption.allOptions[mode.rawValue].iconName)
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .withAppGradient()
-                                
-                                Text(ThemeOption.allOptions[mode.rawValue].name)
-                                    .foregroundStyle(.primary)
-                                    .fontDesign(.rounded)
-                                
+                                Label(
+                                    title: { Text(ThemeOption.allOptions[mode.rawValue].name) },
+                                    icon: {
+                                        Image(ThemeOption.allOptions[mode.rawValue].iconName)
+                                            .resizable()
+                                            .frame(width: 20, height: 20)
+                                            .withAppGradient()
+                                    }
+                                )
                                 Spacer()
-                                
                                 Image("check")
                                     .resizable()
                                     .frame(width: 24, height: 24)

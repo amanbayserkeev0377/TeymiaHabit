@@ -100,9 +100,9 @@ struct SettingsView: View {
                         Label(
                             title: { Text("passcode_faceid".localized) },
                             icon: {
-                                Image(systemName: "faceid")
-                                    .fontWeight(.semibold)
-                                    .frame(width: 20, height: 20)
+                                Image("faceid")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
                                     .foregroundStyle(.green.gradient)
                             }
                         )
@@ -124,45 +124,54 @@ struct SettingsView: View {
                                 UIApplication.shared.open(url)
                             }
                         } label: {
-                            Image("3d_soc_github")
+                            Image("github")
                                 .resizable()
-                                .scaledToFit()
-                                .frame(width: 60, height: 60)
+                                .frame(width: 30, height: 30)
+                                .foregroundStyle(.secondary)
                         }
-                        .buttonStyle(BorderlessButtonStyle())
-                        
+                        .buttonStyle(.plain)
+
                         Button {
-                            if let url = URL(string: "https://instagram.com/teymia.habit") {
+                            if let url = URL(string: "https://instagram.com/teymiapps") {
                                 UIApplication.shared.open(url)
                             }
                         } label: {
-                            Image("3d_soc_instagram")
+                            Image("instagram")
                                 .resizable()
-                                .scaledToFit()
-                                .frame(width: 60, height: 60)
+                                .frame(width: 30, height: 30)
+                                .foregroundStyle(.secondary)
                         }
-                        .buttonStyle(BorderlessButtonStyle())
+                        .buttonStyle(.plain)
                     }
                     VStack(spacing: 4) {
                         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.5"
                         
                         Text("Teymia Habit – \("version".localized) \(version)")
-                            .font(.footnote)
+                            .font(.subheadline)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                         
                         HStack(spacing: 4) {
                             Text("made_with".localized)
-                            Image(systemName: "heart.fill")
+                            
+                            Image("heart.fill")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.red.gradient)
+                            
                             Text("in_kyrgyzstan".localized)
-                            Text("🇰🇬")
+                            
+                            Image("kyrgyzstan")
+                                .resizable()
+                                .frame(width: 24, height: 24)
                         }
-                        .font(.footnote)
+                        .font(.subheadline)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, -16)
             }
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)

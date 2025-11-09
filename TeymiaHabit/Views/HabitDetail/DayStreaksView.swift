@@ -9,7 +9,7 @@ struct DayStreaksView: View {
         HStack(spacing: 0) {
             Image(systemName: "laurel.leading")
                 .font(.system(size: 38))
-                .foregroundStyle(laurelGradient)
+                .foregroundStyle(laurelGradient.gradient)
             
             Group {
                 StatColumn(
@@ -30,7 +30,7 @@ struct DayStreaksView: View {
             
             Image(systemName: "laurel.trailing")
                 .font(.system(size: 38))
-                .foregroundStyle(laurelGradient)
+                .foregroundStyle(laurelGradient.gradient)
         }
         .padding(.vertical, 8)
     }
@@ -73,8 +73,8 @@ struct DayStreaksView: View {
         return Set(completedDays).count
     }
     
-    private var laurelGradient: LinearGradient {
-        habit.iconColor.adaptiveGradient(for: colorScheme)
+    private var laurelGradient: Color {
+        habit.iconColor.color
     }
     
     // MARK: - Helper Methods

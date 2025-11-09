@@ -31,7 +31,7 @@ struct HabitStatsListCard: View {
                     .frame(width: 54, height: 54)
                     .background(
                         Circle()
-                            .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
+                            .fill(habit.iconColor.color.gradient.opacity(0.15))
                     )
                     
                     VStack(alignment: .leading, spacing: 3) {

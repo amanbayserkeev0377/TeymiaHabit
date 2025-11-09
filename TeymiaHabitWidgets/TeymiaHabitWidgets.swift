@@ -269,7 +269,7 @@ struct HabitRingCell: View {
                 .trim(from: 0, to: habit.progress)
                 .stroke(
                     LinearGradient(
-                        colors: ringColors,
+                        colors: [ringColor],
                         startPoint: .leading,
                         endPoint: .trailing
                     ),
@@ -291,12 +291,11 @@ struct HabitRingCell: View {
         .frame(width: size, height: size)
     }
     
-    private var ringColors: [Color] {
-        AppColorManager.getRingColors(
+    private var ringColor: Color {
+        AppColorManager.getRingColor(
             habitColor: habit.iconColor,
             isCompleted: habit.isCompleted,
-            isExceeded: habit.isExceeded,
-            colorScheme: colorScheme
+            isExceeded: habit.isExceeded
         )
     }
 }

@@ -28,13 +28,6 @@ struct CreateHabitView: View {
             }
             .navigationTitle("create_habit".localized)
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    XmarkView(action: {
-                        dismiss()
-                    })
-                }
-            }
         }
         .presentationDragIndicator(.visible)
         .sheet(isPresented: $showingNewHabitView) {
@@ -69,7 +62,7 @@ struct CreateHabitView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(
-                            AppColorManager.shared.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.9)
+                            AppColorManager.shared.selectedColor.color.gradient.opacity(0.9)
                         )
                 )
             }
@@ -95,7 +88,7 @@ struct CreateHabitView: View {
             VStack(spacing: 12) {
                 Image(systemName: template.icon)
                     .font(.system(size: 26, weight: .medium))
-                    .foregroundStyle(template.iconColor.adaptiveGradient(for: colorScheme))
+                    .foregroundStyle(template.iconColor.color.gradient)
                     .frame(width: 64, height: 64)
                     .background(
                         Circle()

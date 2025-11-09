@@ -56,7 +56,7 @@ struct TimeInputView: View {
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(habit.iconColor.adaptiveGradient(for: colorScheme))
+                                .fill(habit.iconColor.color.gradient)
                         )
                 }
             }

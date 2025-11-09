@@ -204,11 +204,7 @@ struct PricingCard: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                                     .fill(
-                                        LinearGradient(
-                                            colors: [HabitIconColor.green.lightColor, HabitIconColor.green.darkColor],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
+                                        HabitIconColor.green.color.gradient
                                     )
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 16, style: .continuous)

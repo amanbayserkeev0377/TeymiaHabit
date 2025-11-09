@@ -207,14 +207,8 @@ struct IconPickerView: View {
                 .font(.system(size: iconSize * 0.68, weight: .medium))
                 .foregroundStyle(
                     isSelected
-                    ? AnyShapeStyle(selectedColor.adaptiveGradient(for: colorScheme))
-                    : AnyShapeStyle(
-                        LinearGradient(
-                            colors: [.gray.opacity(0.6), .gray],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
+                    ? AnyShapeStyle(selectedColor.color.gradient)
+                    : AnyShapeStyle(Color.gray.gradient)
                 )
             
         case .image(let name):
@@ -246,7 +240,7 @@ struct IconPickerView: View {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(
                             isSelected
-                            ? AnyShapeStyle(selectedColor.adaptiveGradient(for: colorScheme).opacity(0.1))
+                            ? AnyShapeStyle(selectedColor.color.gradient.opacity(0.1))
                             : AnyShapeStyle(Color(UIColor.secondarySystemGroupedBackground))
                         )
                 )

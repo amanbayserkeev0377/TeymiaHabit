@@ -33,7 +33,7 @@ struct DayProgressItem: View, Equatable {
         date <= Date().addingTimeInterval(86400 * 365)
     }
     
-    private var progressColors: [Color] {
+    private var progressColor: Color {
         if progress > 0 {
             let isCompleted = progress >= 1.0
             let isExceeded: Bool
@@ -44,14 +44,13 @@ struct DayProgressItem: View, Equatable {
                 isExceeded = habit?.isExceededForDate(date) ?? false
             }
             
-            return AppColorManager.shared.getRingColors(
+            return AppColorManager.shared.getRingColor(
                 for: habit,
                 isCompleted: isCompleted,
-                isExceeded: isExceeded,
-                colorScheme: colorScheme
+                isExceeded: isExceeded
             )
         } else {
-            return [Color.gray.opacity(0.3), Color.gray.opacity(0.2)]
+            return .gray.opacity(0.3)
         }
     }
     
@@ -119,11 +118,7 @@ struct DayProgressItem: View, Equatable {
                         Circle()
                             .trim(from: 0, to: progress)
                             .stroke(
-                                LinearGradient(
-                                    colors: progressColors,
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
+                                progressColor.gradient,
                                 style: StrokeStyle(
                                     lineWidth: lineWidth,
                                     lineCap: .round

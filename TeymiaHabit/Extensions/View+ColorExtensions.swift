@@ -17,7 +17,7 @@ struct AppGradientModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .foregroundStyle(colorManager.selectedColor.adaptiveGradient(for: colorScheme))
+            .foregroundStyle(colorManager.selectedColor.color.gradient)
     }
 }
 
@@ -33,11 +33,11 @@ extension View {
     }
     
     func withHabitGradient(_ habit: Habit, colorScheme: ColorScheme) -> some View {
-        self.foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+        self.foregroundStyle(habit.iconColor.color.gradient)
     }
     
     func withHabitGradientTint(_ habit: Habit, colorScheme: ColorScheme) -> some View {
-        self.foregroundStyle(habit.iconColor.adaptiveGradient(for: colorScheme))
+        self.foregroundStyle(habit.iconColor.color.gradient)
     }
     
     func withHabitTint(_ habit: Habit) -> some View {

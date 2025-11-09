@@ -78,8 +78,8 @@ struct CountInputView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(
                                     isValidInput ?
-                                    habit.iconColor.adaptiveGradient(for: colorScheme) :
-                                        LinearGradient(colors: [Color.gray, Color.gray], startPoint: .leading, endPoint: .trailing)
+                                    habit.iconColor.color.gradient :
+                                        Color.gray.gradient
                                 )
                         )
                 }

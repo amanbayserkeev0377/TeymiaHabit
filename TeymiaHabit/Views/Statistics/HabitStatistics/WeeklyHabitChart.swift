@@ -358,8 +358,7 @@ struct WeeklyHabitChart: View {
         return AppColorManager.getChartBarStyle(
             isCompleted: dataPoint.isCompleted,
             isExceeded: dataPoint.isOverAchieved,
-            habit: habit,
-            colorScheme: colorScheme
+            habit: habit
         )
     }
     

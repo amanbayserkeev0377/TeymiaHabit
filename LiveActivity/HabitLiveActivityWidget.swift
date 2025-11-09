@@ -119,7 +119,7 @@ struct CompactLiveActivityContent: View {
                 .frame(width: 54, height: 54)
                 .background(
                     Circle()
-                        .fill(context.attributes.habitIconColor.adaptiveGradient(for: colorScheme).opacity(0.15))
+                        .fill(context.attributes.habitIconColor.color.gradient.opacity(0.15))
                 )
             
             VStack(alignment: .leading, spacing: 3) {
@@ -188,12 +188,11 @@ struct LiveActivityProgressRing: View {
         currentProgress > context.attributes.habitGoal
     }
     
-    private var ringColors: [Color] {
-        LiveActivityColorManager.getRingColors(
+    private var ringColor: Color {
+        LiveActivityColorManager.getRingColor(
             habitColor: context.attributes.habitIconColor,
             isCompleted: isCompleted,
-            isExceeded: isExceeded,
-            colorScheme: colorScheme
+            isExceeded: isExceeded
         )
     }
     
@@ -209,11 +208,7 @@ struct LiveActivityProgressRing: View {
             Circle()
                 .trim(from: 0, to: min(completionPercentage, 1.0))
                 .stroke(
-                    LinearGradient(
-                        colors: ringColors,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
+                    ringColor.gradient,
                     style: StrokeStyle(
                         lineWidth: lineWidth,
                         lineCap: .round
@@ -225,8 +220,6 @@ struct LiveActivityProgressRing: View {
             Image(systemName: "checkmark")
                 .font(.system(size: adaptedIconSize, weight: .bold))
                 .foregroundStyle(
-                    isExceeded ? LiveActivityColorManager.getExceededBarStyle(for: colorScheme) :
-                    isCompleted ? LiveActivityColorManager.getCompletedBarStyle(for: colorScheme) :
                     AnyShapeStyle(Color.secondary.opacity(0.3))
                 )
         }

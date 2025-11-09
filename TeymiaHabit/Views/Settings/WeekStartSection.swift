@@ -39,7 +39,11 @@ struct WeekStartSection: View {
     }
     
     var body: some View {
-        HStack {
+        Picker(selection: $selection) {
+            ForEach(localizedWeekdays, id: \.value) { weekday in
+                Text(weekday.name).tag(weekday.value)
+            }
+        } label: {
             Label(
                 title: { Text("week_start_day".localized) },
                 icon: {
@@ -49,24 +53,11 @@ struct WeekStartSection: View {
                         .foregroundStyle(.brown.gradient)
                 }
             )
-            
-            Spacer()
-            
-            Menu {
-                ForEach(localizedWeekdays, id: \.value) { weekday in
-                    Button {
-                        selection = weekday.value
-                        weekdayPrefs.updateFirstDayOfWeek(weekday.value)
-                    } label: {
-                        Text(weekday.name)
-                    }
-                }
-            } label: {
-                    Text(localizedWeekdays.first(where: { $0.value == selection })?.name ?? "")
-                        .foregroundStyle(.secondary)
-            }
-            .tint(.primary)
         }
-        .contentShape(Rectangle())
+        .pickerStyle(.menu)
+        .tint(.secondary)
+        .onChange(of: selection) { _, newValue in
+            weekdayPrefs.updateFirstDayOfWeek(newValue)
+        }
     }
 }

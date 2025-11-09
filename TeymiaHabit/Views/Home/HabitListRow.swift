@@ -58,16 +58,6 @@ struct HabitListRow: View {
         cardProgress > habit.goal
     }
     
-    private var progressTextColor: AnyShapeStyle {
-        if cardIsExceeded {
-            return AppColorManager.getExceededBarStyle(for: colorScheme)
-        } else if cardIsCompleted {
-            return AppColorManager.getCompletedBarStyle(for: colorScheme)
-        } else {
-            return AnyShapeStyle(Color.secondary)
-        }
-    }
-    
     var body: some View {
         HStack(spacing: 12) {
             // Icon
@@ -80,7 +70,7 @@ struct HabitListRow: View {
             .frame(width: 46, height: 46)
             .background(
                 Circle()
-                    .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.1))
+                    .fill(habit.iconColor.color.gradient.opacity(0.1))
             )
             
             // Title + Progress
@@ -94,7 +84,7 @@ struct HabitListRow: View {
                 Text("\(formattedProgress) / \(habit.formattedGoal)")
                     .fontDesign(.rounded)
                     .fontWeight(.medium)
-                    .foregroundStyle(progressTextColor)
+                    .foregroundStyle(.secondary)
                     .monospacedDigit()
             }
             

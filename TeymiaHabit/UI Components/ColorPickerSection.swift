@@ -59,7 +59,7 @@ struct ColorPickerSection: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(color.adaptiveGradient(for: colorScheme))
+                    .fill(color.color.gradient)
                     .frame(width: buttonSize, height: buttonSize)
                     .opacity(isLocked ? DesignConstants.lockedOpacity : 1.0)
                     .overlay(

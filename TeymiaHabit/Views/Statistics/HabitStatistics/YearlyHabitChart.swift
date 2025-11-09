@@ -347,7 +347,7 @@ struct YearlyHabitChart: View {
             return AppColorManager.getNoProgressBarStyle()
         }
         
-        return AppColorManager.getPartialProgressBarStyle(for: habit, colorScheme: colorScheme)
+        return AnyShapeStyle(habit.iconColor.color.gradient.opacity(0.9))
     }
     
     // MARK: - Helper Methods

@@ -56,13 +56,6 @@ struct PaywallView: View {
                     .padding(.vertical, 32)
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    XmarkView(action: {
-                        dismiss()
-                    })
-                }
-            }
         }
         .presentationDragIndicator(.visible)
         .onAppear {

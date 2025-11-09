@@ -22,7 +22,7 @@ struct PrivacySettingsView: View {
     var body: some View {
         settingsContent
             .navigationTitle("passcode_faceid".localized)
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
     }
     
     // MARK: - Private Methods
@@ -34,14 +34,16 @@ struct PrivacySettingsView: View {
                 HStack {
                     Spacer()
                     
-                    Image("3d_shield_green")
+                    Image("lock.password")
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 150, height: 150)
+                        .frame(
+                            width: UIScreen.main.bounds.width * 0.25,
+                            height: UIScreen.main.bounds.width * 0.25
+                        )
+                        .foregroundStyle(.gray.gradient)
                     
                     Spacer()
                 }
-                .padding(.top, -20)
             }
             .listRowBackground(Color.clear)
             .listSectionSeparator(.hidden)

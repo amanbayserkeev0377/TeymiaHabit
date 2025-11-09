@@ -25,7 +25,7 @@ struct ArchivedHabitsView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("archived_habits".localized)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .deleteSingleHabitAlert(
             isPresented: $isDeleteSingleAlertPresented,
             habitName: habitToDelete?.title ?? "",
@@ -47,19 +47,21 @@ struct ArchivedHabitsView: View {
     @ViewBuilder
     private var listContent: some View {
         if archivedHabits.isEmpty {
-            VStack {
-                Spacer()
-                
-                Image("archive.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundStyle(Color(UIColor.tertiarySystemBackground))
-                    .frame(width: UIScreen.main.bounds.width * 0.3,
-                           height: UIScreen.main.bounds.width * 0.3)
-                
-                Spacer()
+            Section {
+                HStack {
+                    Spacer()
+                    
+                    Image("archive.fill")
+                        .resizable()
+                        .foregroundStyle(.gray.gradient)
+                        .frame(
+                            width: UIScreen.main.bounds.width * 0.25,
+                            height: UIScreen.main.bounds.width * 0.25
+                        )
+                    
+                    Spacer()
+                }
             }
-            .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
         } else {
@@ -107,7 +109,7 @@ struct ArchivedHabitsView: View {
                 .frame(width: 46, height: 46)
                 .background(
                     Circle()
-                        .fill(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.1))
+                        .fill(habit.iconColor.color.gradient.opacity(0.1))
                 )
                 
                 VStack(alignment: .leading, spacing: 2) {

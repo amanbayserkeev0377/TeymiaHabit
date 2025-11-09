@@ -15,7 +15,7 @@ extension View {
             let symbolName = String(safeIconId.dropFirst(3))
             Image(systemName: symbolName)
                 .font(.system(size: baseSize, weight: .medium))
-                .foregroundStyle(color.adaptiveGradient(for: colorScheme))
+                .foregroundStyle(color.color.gradient)
         } else if safeIconId.hasPrefix("img_") {
             // 3D Image
             let imageName = String(safeIconId.dropFirst(4))
@@ -27,7 +27,7 @@ extension View {
             // Fallback: treat as SF Symbol
             Image(systemName: safeIconId)
                 .font(.system(size: baseSize, weight: .medium))
-                .foregroundStyle(color.adaptiveGradient(for: colorScheme))
+                .foregroundStyle(color.color.gradient)
         }
     }
 }

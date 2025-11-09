@@ -142,12 +142,6 @@ struct NewHabitView: View {
                 PaywallView()
             }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    XmarkView(action: {
-                        dismiss()
-                    })
-                }
-                
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button {
@@ -175,7 +169,7 @@ struct NewHabitView: View {
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
                             .fill(
                                 isFormValid
-                                ? AnyShapeStyle(AppColorManager.shared.selectedColor.adaptiveGradient(for: colorScheme).opacity(0.9))
+                                ? AnyShapeStyle(AppColorManager.shared.selectedColor.color.gradient.opacity(0.9))
                                 : AnyShapeStyle(LinearGradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.5)], startPoint: .top, endPoint: .bottom))
                             )
                     )

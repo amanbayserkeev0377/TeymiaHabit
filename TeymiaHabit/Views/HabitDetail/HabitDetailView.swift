@@ -305,7 +305,7 @@ struct HabitDetailView: View {
                         .fill(
                             viewModel.isAlreadyCompleted
                             ? AnyShapeStyle(LinearGradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.5)], startPoint: .top, endPoint: .bottom))
-                            : AnyShapeStyle(habit.iconColor.adaptiveGradient(for: colorScheme).opacity(0.9))
+                            : AnyShapeStyle(habit.iconColor.color.gradient.opacity(0.9))
                         )
                 )
         }

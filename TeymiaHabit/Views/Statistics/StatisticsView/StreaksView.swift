@@ -8,7 +8,7 @@ struct StreaksView: View {
         HStack(spacing: 0) {
             Image(systemName: "laurel.leading")
                 .font(.system(size: 38))
-                .foregroundStyle(laurelGradient)
+                .foregroundStyle(laurelGradient.gradient)
             
             Group {
                 StatColumn(
@@ -29,17 +29,16 @@ struct StreaksView: View {
             
             Image(systemName: "laurel.trailing")
                 .font(.system(size: 38))
-                .foregroundStyle(laurelGradient)
+                .foregroundStyle(laurelGradient.gradient)
         }
         .padding(.vertical, 8)
     }
     
     // MARK: - Gradient for Laurel Branches
     
-    private var laurelGradient: LinearGradient {
+    private var laurelGradient: Color {
         let habitColor = viewModel.habit.iconColor
-        return habitColor.adaptiveGradient(
-            for: colorScheme)
+        return habitColor.color
     }
 }
 

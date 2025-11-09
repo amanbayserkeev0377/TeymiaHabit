@@ -32,10 +32,12 @@ struct CloudKitSyncView: View {
                 HStack {
                     Spacer()
                     
-                    Image("3d_cloud_progradient")
+                    Image("icloud.logo")
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 150, height: 150)
+                        .frame(
+                            width: UIScreen.main.bounds.width * 0.35,
+                            height: UIScreen.main.bounds.width * 0.35
+                        )
                     
                     Spacer()
                 }
@@ -176,7 +178,7 @@ struct CloudKitSyncView: View {
             }
         }
         .navigationTitle("icloud_sync".localized)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .onAppear {
             loadLastSyncTime()
             checkCloudKitStatus()
