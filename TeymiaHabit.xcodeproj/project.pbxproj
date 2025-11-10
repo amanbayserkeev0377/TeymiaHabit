@@ -80,9 +80,9 @@
 				"Extensions/Color+Hex.swift",
 				"Extensions/Foundation+Extensions.swift",
 				Extensions/TimeFormatting.swift,
-				Extensions/UniversalIconExtension.swift,
 				"Managers/AppColorManager+LiveActivity.swift",
 				Models/HabitIconColor.swift,
+				"UI Components/HabitIconView.swift",
 				Utilities/LiveActivityTypes.swift,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
@@ -103,7 +103,6 @@
 				"Extensions/Color+Hex.swift",
 				"Extensions/Foundation+Extensions.swift",
 				Extensions/TimeFormatting.swift,
-				Extensions/UniversalIconExtension.swift,
 				Managers/AppColorManager.swift,
 				Models/AppIcon.swift,
 				Models/Habit.swift,
@@ -111,6 +110,7 @@
 				Models/HabitIconColor.swift,
 				Models/HabitType.swift,
 				Models/Weekday.swift,
+				"UI Components/HabitIconView.swift",
 			);
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
 		};

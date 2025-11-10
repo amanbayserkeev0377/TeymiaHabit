@@ -58,27 +58,6 @@
 "reminders" = "リマインダー";
 "reminder" = "リマインダー";
 "create_custom_habit" = "カスタム習慣を作成";
-// Habit Templates
-"reading" = "読書";
-"meditation" = "瞑想";
-"drink_water" = "水を飲む";
-"practice_yoga" = "ヨガをする";
-"running" = "ランニング";
-"learn_language" = "言語を学ぶ";
-"focus" = "集中";
-"cold_shower" = "冷水シャワー";
-"workout" = "ワークアウト";
-"swimming" = "水泳";
-"cycling" = "サイクリング";
-"take_vitamins" = "ビタミンを摂る";
-"eat_vegetables" = "野菜を食べる";
-"practice_coding" = "プログラミングを練習";
-"plan_my_day" = "1日を計画";
-"journaling" = "日記を書く";
-"call_parents" = "親に電話";
-"play_piano" = "ピアノを弾く";
-"wakeup_early" = "早起き";
-"take_a_walk" = "散歩する";
 
 /* ===================== Other ===================== */
 "add_count" = "回数を追加";

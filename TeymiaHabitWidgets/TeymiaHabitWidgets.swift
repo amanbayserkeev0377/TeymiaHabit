@@ -280,13 +280,12 @@ struct HabitRingCell: View {
                 )
                 .rotationEffect(.degrees(-90))
             
-            EmptyView()
-                .universalIcon(
-                    iconId: habit.iconName,
-                    baseSize: size * 0.40,
-                    color: habit.iconColor,
-                    colorScheme: colorScheme
-                )
+            HabitIconView(
+                iconName: habit.iconName,
+                color: habit.iconColor,
+                size: size * 0.20,  // Icon size = 20% of ring
+                showBackground: false
+            )
         }
         .frame(width: size, height: size)
     }

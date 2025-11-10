@@ -27,7 +27,10 @@ struct HabitDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Text("goal".localized(with: habit.formattedGoal))
+                        .font(.callout)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: true, vertical: false)
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
@@ -209,7 +212,6 @@ struct HabitDetailView: View {
             .disabled(viewModel.isAlreadyCompleted)
             .scaleEffect(viewModel.isAlreadyCompleted ? 0.97 : 1.0)
             .animation(.smooth(duration: 1.0), value: viewModel.isAlreadyCompleted)
-//            .padding(.horizontal, 16)
         }
     
     // MARK: - Helper Methods

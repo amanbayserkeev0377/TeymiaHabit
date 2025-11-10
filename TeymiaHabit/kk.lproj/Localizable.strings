@@ -58,27 +58,6 @@
 "reminders" = "Ескертпелер";
 "reminder" = "Ескертпе";
 "create_custom_habit" = "Реттелетін дәстүр құру";
-// Habit Templates
-"reading" = "Оқу";
-"meditation" = "Медитация";
-"drink_water" = "Су ішу";
-"practice_yoga" = "Йога жаттығулары";
-"running" = "Жүгіру";
-"learn_language" = "Тіл үйрену";
-"focus" = "Зейін қою";
-"cold_shower" = "Салқын душ";
-"workout" = "Жаттығу";
-"swimming" = "Жүзу";
-"cycling" = "Велосипед тебу";
-"take_vitamins" = "Витаминдер қабылдау";
-"eat_vegetables" = "Көкөністер жеу";
-"practice_coding" = "Кодтау жаттығулары";
-"plan_my_day" = "Күнімді жоспарлау";
-"journaling" = "Күнделік жазу";
-"call_parents" = "Ата-анамен байланысу";
-"play_piano" = "Пианино ойнау";
-"wakeup_early" = "Ерте ояну";
-"take_a_walk" = "Сергу";
 
 /* ===================== Other ===================== */
 "add_count" = "Санын қосу";

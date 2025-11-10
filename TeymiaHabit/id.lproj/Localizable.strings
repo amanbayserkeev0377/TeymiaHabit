@@ -58,27 +58,6 @@
 "reminders" = "Pengingat";
 "reminder" = "Pengingat";
 "create_custom_habit" = "Buat Kebiasaan Kustom";
-// Habit Templates
-"reading" = "Membaca";
-"meditation" = "Meditasi";
-"drink_water" = "Minum Air";
-"practice_yoga" = "Latihan Yoga";
-"running" = "Lari";
-"learn_language" = "Belajar Bahasa";
-"focus" = "Fokus";
-"cold_shower" = "Mandi Air Dingin";
-"workout" = "Olahraga";
-"swimming" = "Berenang";
-"cycling" = "Bersepeda";
-"take_vitamins" = "Minum Vitamin";
-"eat_vegetables" = "Makan Sayuran";
-"practice_coding" = "Latihan Pemrograman";
-"plan_my_day" = "Rencanakan Hari Saya";
-"journaling" = "Menulis Jurnal";
-"call_parents" = "Menghubungi Orang Tua";
-"play_piano" = "Bermain Piano";
-"wakeup_early" = "Bangun Pagi";
-"take_a_walk" = "Jalan-jalan";
 
 /* ===================== Other ===================== */
 "add_count" = "Tambah Jumlah";

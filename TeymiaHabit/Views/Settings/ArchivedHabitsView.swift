@@ -100,16 +100,9 @@ struct ArchivedHabitsView: View {
             selectedHabitForStats = habit
         } label: {
             HStack(spacing: 12) {
-                universalIcon(
-                    iconId: habit.iconName,
-                    baseSize: 22,
-                    color: habit.iconColor,
-                    colorScheme: colorScheme
-                )
-                .frame(width: 46, height: 46)
-                .background(
-                    Circle()
-                        .fill(habit.iconColor.color.gradient.opacity(0.1))
+                HabitIconView(
+                    iconName: habit.iconName,
+                    color: habit.iconColor
                 )
                 
                 VStack(alignment: .leading, spacing: 2) {

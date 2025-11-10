@@ -26,13 +26,12 @@ struct IconSection: View {
                 Spacer()
                 
                 if let selectedIcon = selectedIcon {
-                    universalIcon(
-                        iconId: selectedIcon,
-                        baseSize: 24,
+                    HabitIconView(
+                        iconName: selectedIcon,
                         color: selectedColor,
-                        colorScheme: colorScheme
+                        size: 20,
+                        showBackground: false
                     )
-                    .frame(width: 36, height: 36)
                 }
             }
         }

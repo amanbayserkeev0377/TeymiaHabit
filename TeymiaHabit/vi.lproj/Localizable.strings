@@ -58,27 +58,6 @@
 "reminders" = "Nhắc nhở";
 "reminder" = "Nhắc nhở";
 "create_custom_habit" = "Tạo thói quen tùy chỉnh";
-// Habit Templates
-"reading" = "Đọc sách";
-"meditation" = "Thiền";
-"drink_water" = "Uống nước";
-"practice_yoga" = "Tập yoga";
-"running" = "Chạy bộ";
-"learn_language" = "Học ngôn ngữ";
-"focus" = "Tập trung";
-"cold_shower" = "Tắm nước lạnh";
-"workout" = "Tập thể dục";
-"swimming" = "Bơi lội";
-"cycling" = "Đạp xe";
-"take_vitamins" = "Uống vitamin";
-"eat_vegetables" = "Ăn rau củ";
-"practice_coding" = "Luyện lập trình";
-"plan_my_day" = "Lập kế hoạch ngày";
-"journaling" = "Viết nhật ký";
-"call_parents" = "Gọi điện cho bố mẹ";
-"play_piano" = "Chơi piano";
-"wakeup_early" = "Thức dậy sớm";
-"take_a_walk" = "Đi bộ";
 
 /* ===================== Other ===================== */
 "add_count" = "Thêm số lần";

@@ -58,27 +58,6 @@
 "reminders" = "提醒";
 "reminder" = "提醒";
 "create_custom_habit" = "创建自定义习惯";
-// Habit Templates
-"reading" = "阅读";
-"meditation" = "冥想";
-"drink_water" = "喝水";
-"practice_yoga" = "练习瑜伽";
-"running" = "跑步";
-"learn_language" = "学习语言";
-"focus" = "专注";
-"cold_shower" = "冷水澡";
-"workout" = "锻炼";
-"swimming" = "游泳";
-"cycling" = "骑行";
-"take_vitamins" = "服用维生素";
-"eat_vegetables" = "吃蔬菜";
-"practice_coding" = "练习编程";
-"plan_my_day" = "计划一天";
-"journaling" = "写日记";
-"call_parents" = "给父母打电话";
-"play_piano" = "弹钢琴";
-"wakeup_early" = "早起";
-"take_a_walk" = "散步";
 
 /* ===================== Other ===================== */
 "add_count" = "增加次数";

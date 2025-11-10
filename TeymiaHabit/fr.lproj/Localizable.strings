@@ -58,27 +58,6 @@
 "reminders" = "Rappels";
 "reminder" = "Rappel";
 "create_custom_habit" = "Créer une habitude personnalisée";
-// Habit Templates
-"reading" = "Lecture";
-"meditation" = "Méditation";
-"drink_water" = "Boire de l'eau";
-"practice_yoga" = "Pratiquer le yoga";
-"running" = "Course";
-"learn_language" = "Apprendre une langue";
-"focus" = "Concentration";
-"cold_shower" = "Douche froide";
-"workout" = "Entraînement";
-"swimming" = "Natation";
-"cycling" = "Cyclisme";
-"take_vitamins" = "Prendre des vitamines";
-"eat_vegetables" = "Manger des légumes";
-"practice_coding" = "Pratiquer le codage";
-"plan_my_day" = "Planifier ma journée";
-"journaling" = "Tenir un journal";
-"call_parents" = "Appeler les parents";
-"play_piano" = "Jouer du piano";
-"wakeup_early" = "Se réveiller tôt";
-"take_a_walk" = "Se promener";
 
 /* ===================== Other ===================== */
 "add_count" = "Ajouter un compte";

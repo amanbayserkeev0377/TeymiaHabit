@@ -91,15 +91,11 @@ struct LiveActivityHabitIcon: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     let size: CGFloat
     
-    @Environment(\.colorScheme) private var colorScheme
-    
     var body: some View {
-        EmptyView()
-            .universalIcon(
-                iconId: context.attributes.habitIcon,
-                baseSize: size,
-                color: context.attributes.habitIconColor,
-                colorScheme: colorScheme
-            )
+        HabitIconView(
+            iconName: context.attributes.habitIcon,
+            color: context.attributes.habitIconColor,
+            size: size
+        )
     }
 }

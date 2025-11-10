@@ -7,7 +7,6 @@ struct NewHabitView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     private let habit: Habit?
-    private let template: HabitTemplate?
     private let onSaveCompletion: (() -> Void)?
     
     @State private var title = ""
@@ -19,7 +18,7 @@ struct NewHabitView: View {
     @State private var isReminderEnabled = false
     @State private var reminderTimes: [Date] = [Date()]
     @State private var startDate = Date()
-    @State private var selectedIcon: String? = "checkmark"
+    @State private var selectedIcon: String? = "check"
     @State private var selectedIconColor: HabitIconColor = .primary
     @State private var showPaywall = false
     
@@ -27,12 +26,11 @@ struct NewHabitView: View {
     @FocusState private var isCountFocused: Bool
     
     // MARK: - Initialization
-    
-    init(habit: Habit? = nil, template: HabitTemplate? = nil, onSaveCompletion: (() -> Void)? = nil) {
+     
+    init(habit: Habit? = nil, onSaveCompletion: (() -> Void)? = nil) {
         self.habit = habit
-        self.template = template
         self.onSaveCompletion = onSaveCompletion
-        
+         
         if let habit = habit {
             _title = State(initialValue: habit.title)
             _selectedType = State(initialValue: habit.type)
@@ -43,23 +41,8 @@ struct NewHabitView: View {
             _isReminderEnabled = State(initialValue: habit.reminderTimes != nil && !habit.reminderTimes!.isEmpty)
             _reminderTimes = State(initialValue: habit.reminderTimes ?? [Date()])
             _startDate = State(initialValue: habit.startDate)
-            _selectedIcon = State(initialValue: habit.iconName ?? "checkmark")
+            _selectedIcon = State(initialValue: habit.iconName ?? "check")
             _selectedIconColor = State(initialValue: habit.iconColor)
-        } else if let template = template {
-            _title = State(initialValue: template.name.localized)
-            _selectedType = State(initialValue: template.habitType)
-            _selectedIcon = State(initialValue: template.icon)
-            _selectedIconColor = State(initialValue: template.iconColor)
-            
-            if template.habitType == .count {
-                _countGoal = State(initialValue: template.defaultGoal)
-                _hours = State(initialValue: 1)
-                _minutes = State(initialValue: 0)
-            } else {
-                _countGoal = State(initialValue: 1)
-                _hours = State(initialValue: template.defaultGoal / 60)
-                _minutes = State(initialValue: template.defaultGoal % 60)
-            }
         }
     }
     

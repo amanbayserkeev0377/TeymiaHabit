@@ -58,27 +58,6 @@
 "reminders" = "रिमाइंडर";
 "reminder" = "रिमाइंडर";
 "create_custom_habit" = "कस्टम आदत बनाएँ";
-// Habit Templates
-"reading" = "पढ़ाई";
-"meditation" = "ध्यान";
-"drink_water" = "पानी पीना";
-"practice_yoga" = "योग अभ्यास";
-"running" = "दौड़ना";
-"learn_language" = "भाषा सीखना";
-"focus" = "ध्यान केंद्रित करना";
-"cold_shower" = "ठंडा स्नान";
-"workout" = "व्यायाम";
-"swimming" = "तैराकी";
-"cycling" = "साइकिलिंग";
-"take_vitamins" = "विटामिन लेना";
-"eat_vegetables" = "सब्जियाँ खाना";
-"practice_coding" = "कोडिंग अभ्यास";
-"plan_my_day" = "मेरा दिन योजना बनाएँ";
-"journaling" = "जर्नलिंग";
-"call_parents" = "माता-पिता को फोन करें";
-"play_piano" = "पियानो बजाना";
-"wakeup_early" = "जल्दी उठना";
-"take_a_walk" = "टहलना";
 
 /* ===================== Other ===================== */
 "add_count" = "गिनती जोड़ें";

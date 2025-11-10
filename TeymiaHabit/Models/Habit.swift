@@ -15,7 +15,7 @@ final class Habit {
     var title: String = ""
     var type: HabitType = HabitType.count
     var goal: Int = 1
-    var iconName: String? = "checkmark"
+    var iconName: String? = "check"
     var iconColor: HabitIconColor = HabitIconColor.primary
     
     // MARK: - Status
@@ -85,7 +85,7 @@ final class Habit {
         title: String = "",
         type: HabitType = .count,
         goal: Int = 1,
-        iconName: String? = "checkmark",
+        iconName: String? = "check",
         iconColor: HabitIconColor = .primary,
         createdAt: Date = Date(),
         activeDays: [Bool]? = nil,

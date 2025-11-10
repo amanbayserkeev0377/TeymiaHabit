@@ -126,7 +126,7 @@ struct SettingsView: View {
                         } label: {
                             Image("github")
                                 .resizable()
-                                .frame(width: 30, height: 30)
+                                .frame(width: 24, height: 24)
                                 .foregroundStyle(.secondary)
                         }
                         .buttonStyle(.plain)
@@ -138,7 +138,7 @@ struct SettingsView: View {
                         } label: {
                             Image("instagram")
                                 .resizable()
-                                .frame(width: 30, height: 30)
+                                .frame(width: 24, height: 24)
                                 .foregroundStyle(.secondary)
                         }
                         .buttonStyle(.plain)

@@ -58,27 +58,6 @@
 "reminders" = "提醒";
 "reminder" = "提醒";
 "create_custom_habit" = "創建自訂習慣";
-// Habit Templates
-"reading" = "閱讀";
-"meditation" = "冥想";
-"drink_water" = "喝水";
-"practice_yoga" = "練習瑜伽";
-"running" = "跑步";
-"learn_language" = "學習語言";
-"focus" = "專注";
-"cold_shower" = "冷水浴";
-"workout" = "鍛煉";
-"swimming" = "游泳";
-"cycling" = "騎自行車";
-"take_vitamins" = "服用維他命";
-"eat_vegetables" = "吃蔬菜";
-"practice_coding" = "練習編程";
-"plan_my_day" = "計劃我的日子";
-"journaling" = "寫日記";
-"call_parents" = "聯繫父母";
-"play_piano" = "彈鋼琴";
-"wakeup_early" = "早起";
-"take_a_walk" = "散步";
 
 /* ===================== Other ===================== */
 "add_count" = "添加次數";

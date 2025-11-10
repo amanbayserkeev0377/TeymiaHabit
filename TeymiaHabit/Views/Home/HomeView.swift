@@ -100,7 +100,6 @@ struct HomeView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Text(navigationTitle)
-                    .fontWeight(.medium)
                     .fontDesign(.rounded)
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: true, vertical: false)
@@ -163,7 +162,7 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingNewHabit) {
             NavigationStack {
-                CreateHabitView()
+                NewHabitView()
             }
         }
         .sheet(isPresented: $showingPaywall) {

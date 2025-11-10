@@ -58,27 +58,6 @@
 "reminders" = "Напоминания";
 "reminder" = "Напоминание";
 "create_custom_habit" = "Создать свою привычку";
-// Habit Templates
-"reading" = "Чтение";
-"meditation" = "Медитация";
-"drink_water" = "Пить воду";
-"practice_yoga" = "Заниматься йогой";
-"running" = "Бег";
-"learn_language" = "Изучение языка";
-"focus" = "Концентрация";
-"cold_shower" = "Контрастный душ";
-"workout" = "Тренировка";
-"swimming" = "Плавание";
-"cycling" = "Велоспорт";
-"take_vitamins" = "Принимать витамины";
-"eat_vegetables" = "Есть овощи";
-"practice_coding" = "Программирование";
-"plan_my_day" = "Планировать день";
-"journaling" = "Дневник";
-"call_parents" = "Позвонить родителям";
-"play_piano" = "Играть на фортепиано";
-"wakeup_early" = "Ранний подъем";
-"take_a_walk" = "Прогулка";
 
 /* ===================== Other ===================== */
 "add_count" = "Добавить количество";

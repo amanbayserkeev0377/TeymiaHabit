@@ -22,17 +22,7 @@ struct HabitStatsListCard: View {
         }) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 16) {
-                    universalIcon(
-                        iconId: habit.iconName,
-                        baseSize: 22,
-                        color: habit.iconColor,
-                        colorScheme: colorScheme
-                    )
-                    .frame(width: 46, height: 46)
-                    .background(
-                        Circle()
-                            .fill(habit.iconColor.color.gradient.opacity(0.1))
-                    )
+                    HabitIconView(iconName: habit.iconName, color: habit.iconColor)
                     
                     VStack(alignment: .leading, spacing: 3) {
                         Text(habit.title)

@@ -58,27 +58,6 @@
 "reminders" = "Hatırlatıcılar";
 "reminder" = "Hatırlatıcı";
 "create_custom_habit" = "Özel Alışkanlık Oluştur";
-// Habit Templates
-"reading" = "Okuma";
-"meditation" = "Meditasyon";
-"drink_water" = "Su İçme";
-"practice_yoga" = "Yoga Yapma";
-"running" = "Koşu";
-"learn_language" = "Dil Öğrenme";
-"focus" = "Odaklanma";
-"cold_shower" = "Soğuk Duş";
-"workout" = "Egzersiz";
-"swimming" = "Yüzme";
-"cycling" = "Bisiklet Sürme";
-"take_vitamins" = "Vitamin Alma";
-"eat_vegetables" = "Sebze Yeme";
-"practice_coding" = "Kodlama Çalışma";
-"plan_my_day" = "Günü Planlama";
-"journaling" = "Günlük Yazma";
-"call_parents" = "Aileyle Görüşme";
-"play_piano" = "Piyano Çalma";
-"wakeup_early" = "Erken Uyanma";
-"take_a_walk" = "Yürüyüş Yapma";
 
 /* ===================== Other ===================== */
 "add_count" = "Sayı Ekle";

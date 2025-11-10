@@ -58,27 +58,6 @@
 "reminders" = "알림";
 "reminder" = "알림";
 "create_custom_habit" = "사용자 지정 습관 생성";
-// Habit Templates
-"reading" = "독서";
-"meditation" = "명상";
-"drink_water" = "물 마시기";
-"practice_yoga" = "요가 연습";
-"running" = "러닝";
-"learn_language" = "언어 학습";
-"focus" = "집중";
-"cold_shower" = "찬물 샤워";
-"workout" = "운동";
-"swimming" = "수영";
-"cycling" = "사이클링";
-"take_vitamins" = "비타민 섭취";
-"eat_vegetables" = "채소 먹기";
-"practice_coding" = "코딩 연습";
-"plan_my_day" = "하루 계획";
-"journaling" = "일기 쓰기";
-"call_parents" = "부모님께 전화";
-"play_piano" = "피아노 연주";
-"wakeup_early" = "일찍 일어나기";
-"take_a_walk" = "산책하기";
 
 /* ===================== Other ===================== */
 "add_count" = "횟수 추가";
