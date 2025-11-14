@@ -178,7 +178,7 @@ extension ProgressRing {
             }
         }()
         
-        let effectiveLineWidth = lineWidth ?? (size * 0.11)
+        let effectiveLineWidth = lineWidth ?? (size * 0.1)
         
         return ZStack {
             // Background circle
@@ -208,10 +208,9 @@ extension ProgressRing {
                             .foregroundStyle(Color.primary)
                         
                     case .time:
-                        Image(isTimerRunning ? "pause.fill" : "play.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
+                        Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
                             .frame(width: size * 0.3, height: size * 0.3)
+                            .contentTransition(.symbolEffect(.replace, options: .speed(1.0)))
                             .foregroundStyle(Color.primary)
                     }
                 }

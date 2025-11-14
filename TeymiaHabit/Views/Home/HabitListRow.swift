@@ -9,7 +9,7 @@ struct HabitListRow: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     
-    private let ringSize: CGFloat = 52
+    private let ringSize: CGFloat = 48
     private let lineWidth: CGFloat = 6
     
     @State private var timerUpdateTrigger = 0
@@ -72,8 +72,8 @@ struct HabitListRow: View {
                     .foregroundStyle(.primary)
                 
                 Text("\(formattedProgress) / \(habit.formattedGoal)")
+                    .font(.footnote)
                     .fontDesign(.rounded)
-                    .fontWeight(.medium)
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
             }

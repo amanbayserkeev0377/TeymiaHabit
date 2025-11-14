@@ -8,9 +8,9 @@ final class AppColorManager: ObservableObject {
     @AppStorage("selectedAppColor") private var selectedColorId: String?
     
     private let availableColors: [HabitIconColor] = [
-        .primary, .celestial, .brown, .red, .orange, .yellow, .mint, .green,
-        .blue, .sky, .gray, .softLavender, .purple, .pink, .cloudBurst, .lusciousLime,
-        .antarctica, .oceanBlue, .bluePink, .sweetMorning, .yellowOrange, .coral, .candy, .colorPicker,
+        .primary, .red, .orange, .yellow, .green, .mint, .sky, .blue,
+        .gray, .softLavender, .purple, .pink, .cloudBurst, .lusciousLime, .celestial,
+        .antarctica, .oceanBlue, .bluePink, .sweetMorning, .yellowOrange, .coral, .candy, .brown, .colorPicker,
     ]
     
     // MARK: - Initialization

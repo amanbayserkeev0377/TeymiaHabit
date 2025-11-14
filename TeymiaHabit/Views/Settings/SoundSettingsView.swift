@@ -12,10 +12,13 @@ struct SoundSettingsView: View {
                     HStack {
                         Spacer()
                         
-                        Image("3d_speaker_red")
+                        Image("sounds.fill")
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 150, height: 150)
+                            .foregroundStyle(.red.gradient)
+                            .frame(
+                                width: UIScreen.main.bounds.width * 0.25,
+                                height: UIScreen.main.bounds.width * 0.25
+                            )
                         
                         Spacer()
                     }

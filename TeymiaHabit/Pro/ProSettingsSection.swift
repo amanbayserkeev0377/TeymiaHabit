@@ -25,7 +25,7 @@ struct ProSettingsSection: View {
         } label: {
             VStack(spacing: 16) {
                 HStack(spacing: 12) {
-                    Image("3d_star_progradient")
+                    Image("diamond.pro")
                         .resizable()
                         .frame(width: 60, height: 60)
                     
@@ -33,20 +33,24 @@ struct ProSettingsSection: View {
                         Text("Teymia Habit Pro")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundStyle(.white)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.white.gradient)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                         
                         Text("paywall_unlock_premium".localized)
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.85))
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.white.gradient.opacity(0.85))
                             .lineLimit(2)
                     }
                     
                     Spacer()
                     
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(.white.opacity(0.5))
+                    Image("chevron.right")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.white.gradient.opacity(0.4))
                 }
                 
                 FreeTrialButton(
@@ -58,13 +62,13 @@ struct ProSettingsSection: View {
             .padding(.vertical, 24)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 30)
                         .fill(ProGradientColors.proGradient)
                     
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.secondary.opacity(0.3), lineWidth: 0.7)
+                    RoundedRectangle(cornerRadius: 30)
+                        .strokeBorder(Color.secondary.opacity(0.5), lineWidth: 0.8)
                     
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 30)
                         .fill(
                             LinearGradient(
                                 colors: [.white.opacity(0.4), .clear],
@@ -140,8 +144,9 @@ struct FreeTrialButton: View {
                             .scaleEffect(0.8)
                             .tint(.white)
                     } else {
-                        Image(systemName: "gift.fill")
-                            .font(.system(size: 16, weight: .semibold))
+                        Image("gift.fill")
+                            .resizable()
+                            .frame(width: 20, height: 20)
                     }
                 }
                 .frame(width: 20, height: 20)
@@ -149,19 +154,20 @@ struct FreeTrialButton: View {
                 Text(isLoading ? "paywall_processing_button".localized : "paywall_7_days_free_trial".localized)
                     .font(.title3)
                     .fontWeight(.bold)
+                    .fontDesign(.rounded)
                     .animation(.easeInOut(duration: 0.2), value: isLoading)
                 
                 Spacer()
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(.white.gradient)
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 40)
                     .fill(.white.opacity(isPressed ? 0.15 : 0.25))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.white.opacity(0.4), lineWidth: 0.7)
+                        RoundedRectangle(cornerRadius: 40)
+                            .stroke(.white.opacity(0.4), lineWidth: 0.8)
                     )
             )
         }

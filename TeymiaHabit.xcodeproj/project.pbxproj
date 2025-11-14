@@ -82,8 +82,8 @@
 				Extensions/TimeFormatting.swift,
 				"Managers/AppColorManager+LiveActivity.swift",
 				Models/HabitIconColor.swift,
-				"UI Components/HabitIconView.swift",
 				Utilities/LiveActivityTypes.swift,
+				"Views/Shared/UI Components/HabitIconView.swift",
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 		};
@@ -110,7 +110,7 @@
 				Models/HabitIconColor.swift,
 				Models/HabitType.swift,
 				Models/Weekday.swift,
-				"UI Components/HabitIconView.swift",
+				"Views/Shared/UI Components/HabitIconView.swift",
 			);
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
 		};
@@ -392,7 +392,7 @@
 				INFOPLIST_FILE = liveactivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LiveActivityExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -425,7 +425,7 @@
 				INFOPLIST_FILE = liveactivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LiveActivityExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -604,7 +604,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
-				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -646,7 +646,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
-				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -677,7 +677,7 @@
 				INFOPLIST_FILE = TeymiaHabitWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TeymiaHabitWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -710,7 +710,7 @@
 				INFOPLIST_FILE = TeymiaHabitWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TeymiaHabitWidgets;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

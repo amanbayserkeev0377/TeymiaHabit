@@ -21,11 +21,10 @@ struct ActiveDaysSection: View {
                 Label(
                     title: { Text("active_days".localized) },
                     icon: {
-                        Image(systemName: "cloud.sun.fill")
-                            .withIOSSettingsIcon(lightColors: [
-                                Color(#colorLiteral(red: 1, green: 0.8, blue: 0.2, alpha: 1)),
-                                Color(#colorLiteral(red: 0.9, green: 0.6, blue: 0.1, alpha: 1))
-                            ], fontSize: 13)
+                        Image("calendar.wed")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.gray.gradient)
                     }
                 )
                 

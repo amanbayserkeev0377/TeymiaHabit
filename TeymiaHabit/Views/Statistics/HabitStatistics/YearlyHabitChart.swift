@@ -2,9 +2,6 @@ import SwiftUI
 import Charts
 
 struct YearlyHabitChart: View {
-    
-    @Environment(\.colorScheme) private var colorScheme
-    
     let habit: Habit
     let updateCounter: Int
     
@@ -94,7 +91,7 @@ struct YearlyHabitChart: View {
                     Text(averageValueFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .withHabitGradient(habit, colorScheme: colorScheme)
+                        .withHabitGradient(habit)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -111,7 +108,7 @@ struct YearlyHabitChart: View {
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .withHabitGradient(habit)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -125,7 +122,7 @@ struct YearlyHabitChart: View {
                     Text(yearlyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .withHabitGradient(habit, colorScheme: colorScheme)
+                        .withHabitGradient(habit)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }

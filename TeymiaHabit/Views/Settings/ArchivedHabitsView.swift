@@ -134,24 +134,3 @@ struct ArchivedHabitsView: View {
         HapticManager.shared.play(.error)
     }
 }
-
-// MARK: - Badge Component
-
-struct ArchivedHabitsCountBadge: View {
-    @Query(
-        filter: #Predicate<Habit> { habit in
-            habit.isArchived
-        }
-    )
-    private var archivedHabits: [Habit]
-    
-    var body: some View {
-        if !archivedHabits.isEmpty {
-            Text("\(archivedHabits.count)")
-                .foregroundStyle(.secondary)
-                .fontDesign(.rounded)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-        }
-    }
-}

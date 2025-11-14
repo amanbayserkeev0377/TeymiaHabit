@@ -1,18 +1,8 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "face-id@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "face-id@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "face-viewfinder.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

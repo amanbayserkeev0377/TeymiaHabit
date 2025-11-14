@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "logo-2.png",
+      "filename" : "cloud-2.png",
       "idiom" : "universal"
     }
   ],
@@ -10,6 +10,6 @@
     "version" : 1
   },
   "properties" : {
-    "template-rendering-intent" : "original"
+    "template-rendering-intent" : "template"
   }
 }

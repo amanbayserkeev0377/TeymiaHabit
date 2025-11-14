@@ -9,8 +9,6 @@ struct ActionButtonsSection: View {
     var onTimerToggle: () -> Void
     var onManualEntry: () -> Void
     
-    @Environment(\.colorScheme) private var colorScheme
-    
     private var isToday: Bool {
         Calendar.current.isDateInToday(date)
     }
@@ -20,11 +18,11 @@ struct ActionButtonsSection: View {
             if habit.type == .time && isToday {
                 resetButton
                 playPauseButton
-                manualEntryButton(icon: "clock")
+                manualEntryButton(icon: "clock.forward")
             } else {
                 Spacer()
                 resetButton
-                manualEntryButton(icon: "keyboard")
+                manualEntryButton(icon: "keyboard.finger")
                 Spacer()
             }
         }
@@ -39,11 +37,13 @@ struct ActionButtonsSection: View {
             HapticManager.shared.play(.error)
             onReset()
         } label: {
-            Image(systemName: "arrow.counterclockwise")
-                .font(.system(size: 24, weight: .semibold))
-                .withHabitGradient(habit, colorScheme: colorScheme)
-                .frame(minWidth: 52, minHeight: 52)
+            Image("undo")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .frame(minWidth: 44, minHeight: 44)
+                .foregroundStyle(.primary)
         }
+        .buttonStyle(.plain)
     }
     
     @ViewBuilder
@@ -53,11 +53,13 @@ struct ActionButtonsSection: View {
             onTimerToggle()
         } label: {
             Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
-                .font(.system(size: 46))
+                .font(.system(size: 44))
                 .contentTransition(.symbolEffect(.replace, options: .speed(1.0)))
-                .withHabitGradient(habit, colorScheme: colorScheme)
+                .foregroundStyle(.primary)
                 .frame(minWidth: 52, minHeight: 52)
+                .foregroundStyle(.primary)
         }
+        .buttonStyle(.plain)
     }
     
     @ViewBuilder
@@ -66,10 +68,12 @@ struct ActionButtonsSection: View {
             HapticManager.shared.playImpact(.medium)
             onManualEntry()
         } label: {
-            Image(systemName: icon)
-                .font(.system(size: 24, weight: .semibold))
-                .withHabitGradient(habit, colorScheme: colorScheme)
-                .frame(minWidth: 52, minHeight: 52)
+            Image(icon)
+                .resizable()
+                .frame(width: 24, height: 24)
+                .frame(minWidth: 44, minHeight: 44)
+                .foregroundStyle(.primary)
         }
+        .buttonStyle(.plain)
     }
 }

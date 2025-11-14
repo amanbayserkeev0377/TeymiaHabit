@@ -27,7 +27,7 @@ struct AppearanceSection: View {
                         Image("paintbrush")
                             .resizable()
                             .frame(width: 20, height: 20)
-                            .foregroundStyle(.indigo.gradient)
+                            .foregroundStyle(.purple.gradient)
                     }
                 )
                 

@@ -32,11 +32,11 @@ extension View {
         modifier(AppGradientModifier())
     }
     
-    func withHabitGradient(_ habit: Habit, colorScheme: ColorScheme) -> some View {
+    func withHabitGradient(_ habit: Habit) -> some View {
         self.foregroundStyle(habit.iconColor.color.gradient)
     }
     
-    func withHabitGradientTint(_ habit: Habit, colorScheme: ColorScheme) -> some View {
+    func withHabitGradientTint(_ habit: Habit) -> some View {
         self.foregroundStyle(habit.iconColor.color.gradient)
     }
     

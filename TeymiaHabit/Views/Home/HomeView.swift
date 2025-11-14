@@ -22,6 +22,8 @@ struct HomeView: View {
     @State private var alertState = AlertState()
     @State private var habitForProgress: Habit? = nil
     
+    @Namespace private var namespace
+    
     private var baseHabits: [Habit] {
         allBaseHabits.sorted { first, second in
             if first.displayOrder != second.displayOrder {
@@ -62,7 +64,7 @@ struct HomeView: View {
                     }
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
+                    .listRowBackground(Color.mainBackground)
                     
                     // Habits section
                     if hasHabitsForDate {
@@ -90,8 +92,12 @@ struct HomeView: View {
                             }
                             .onMove(perform: moveHabits)
                         }
+                        .listRowBackground(Color.mainBackground)
+                        .listRowSeparatorTint(.secondary.opacity(0.05))
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color.mainBackground)
                 .listStyle(.plain)
                 .environment(\.defaultMinListRowHeight, 56)
             }
@@ -158,12 +164,11 @@ struct HomeView: View {
                 )
             }
             .presentationDragIndicator(.visible)
+            .presentationCornerRadius(30)
             .presentationDetents([.fraction(0.6)])
         }
         .sheet(isPresented: $showingNewHabit) {
-            NavigationStack {
                 NewHabitView()
-            }
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()

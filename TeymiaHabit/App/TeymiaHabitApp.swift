@@ -209,6 +209,9 @@ struct TeymiaHabitApp: App {
         WidgetUpdateService.shared.reloadWidgets()
         TimerService.shared.handleAppWillEnterForeground()
         
+        // Check for pending habit from widget
+        checkPendingHabitFromWidget()
+        
         Task {
             await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
         }
@@ -221,6 +224,25 @@ struct TeymiaHabitApp: App {
     
     private func saveDataContext() {
         try? container.mainContext.save()
+    }
+    
+    // MARK: - Widget Deep Link Handling
+
+    private func checkPendingHabitFromWidget() {
+        guard let sharedDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit"),
+              let habitIdString = sharedDefaults.string(forKey: "pendingHabitIdFromWidget"),
+              UUID(uuidString: habitIdString) != nil else {
+            return
+        }
+        
+        // Clear the flag immediately
+        sharedDefaults.removeObject(forKey: "pendingHabitIdFromWidget")
+        sharedDefaults.synchronize()
+        
+        // Create deep link URL and handle it
+        if let url = URL(string: "teymiahabit://habit/\(habitIdString)") {
+            handleDeepLink(url)
+        }
     }
     
     // MARK: - Global PIN Environment

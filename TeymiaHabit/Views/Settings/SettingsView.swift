@@ -28,6 +28,8 @@ struct SettingsView: View {
                 WeekStartSection()
                 LanguageSection()
             }
+            .listRowBackground(Color.mainRowBackground)
+
             
             Section {
                 NavigationLink {
@@ -46,6 +48,8 @@ struct SettingsView: View {
                 NotificationsSection()
                 HapticsSection()
             }
+            .listRowBackground(Color.mainRowBackground)
+
             
             Section {
                 NavigationLink {
@@ -56,7 +60,8 @@ struct SettingsView: View {
                         icon: {
                             Image("icloud")
                                 .resizable()
-                                .frame(width: 24, height: 24)
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.blue.gradient)
                         }
                     )
                 }
@@ -74,8 +79,6 @@ struct SettingsView: View {
                                     .foregroundStyle(.gray.gradient)
                             }
                         )
-                        Spacer()
-                        ArchivedHabitsCountBadge()
                     }
                 }
                 
@@ -103,7 +106,16 @@ struct SettingsView: View {
                                 Image("faceid")
                                     .resizable()
                                     .frame(width: 24, height: 24)
-                                    .foregroundStyle(.green.gradient)
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [
+                                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
+                                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
                             }
                         )
                         Spacer()
@@ -113,6 +125,7 @@ struct SettingsView: View {
                     }
                 }
             }
+            .listRowBackground(Color.mainRowBackground)
             
             AboutSection()
             
@@ -178,6 +191,8 @@ struct SettingsView: View {
             .listSectionSeparator(.hidden)
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Color.mainGroupBackground)
         .navigationTitle("settings".localized)
         .sheet(isPresented: $showingPaywall) {
             PaywallView()

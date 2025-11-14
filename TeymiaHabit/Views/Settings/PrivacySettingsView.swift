@@ -40,7 +40,16 @@ struct PrivacySettingsView: View {
                             width: UIScreen.main.bounds.width * 0.25,
                             height: UIScreen.main.bounds.width * 0.25
                         )
-                        .foregroundStyle(.gray.gradient)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [
+                                    Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
+                                    Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                     
                     Spacer()
                 }

@@ -2,9 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct HabitStatisticsView: View {
-    
-    @Environment(\.colorScheme) private var colorScheme
-    
     // MARK: - Properties
     
     let habit: Habit
@@ -55,7 +52,7 @@ struct HabitStatisticsView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "hand.tap")
                             .font(.footnote)
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .foregroundStyle(.secondary)
                         Text("tap_dates".localized)
                             .font(.footnote)
                             .fontDesign(.rounded)
@@ -86,7 +83,7 @@ struct HabitStatisticsView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "hand.rays")
                             .font(.footnote)
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .foregroundStyle(.secondary)
                         Text("press_hold_bars".localized)
                             .font(.footnote)
                             .fontDesign(.rounded)
@@ -102,7 +99,7 @@ struct HabitStatisticsView: View {
                     // Start date
                     HStack {
                         Image(systemName: "calendar.badge.clock")
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .withHabitGradient(habit)
                         Text("start_date".localized)
                         
                         Spacer()
@@ -113,7 +110,7 @@ struct HabitStatisticsView: View {
                     
                     HStack {
                         Image(systemName: "trophy")
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .withHabitGradient(habit)
                         Text("daily_goal".localized)
                         
                         Spacer()
@@ -124,7 +121,7 @@ struct HabitStatisticsView: View {
                     
                     HStack {
                         Image(systemName: "cloud.sun")
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .withHabitGradient(habit)
                         Text("active_days".localized)
                         
                         Spacer()
@@ -140,7 +137,7 @@ struct HabitStatisticsView: View {
                     } label: {
                         HStack {
                             Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                                .withHabitGradient(habit, colorScheme: colorScheme)
+                                .withHabitGradient(habit)
                             Text("reset_all_history".localized)
                         }
                     }

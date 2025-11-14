@@ -4,6 +4,7 @@ import Foundation
 struct OpenHabitIntent: AppIntent {
     static var title: LocalizedStringResource = "Open Habit"
     static var description = IntentDescription("Opens a specific habit in Teymia Habit app")
+    static var openAppWhenRun: Bool = true // System will open the app
     
     @Parameter(title: "Habit ID")
     var habitId: String
@@ -15,15 +16,10 @@ struct OpenHabitIntent: AppIntent {
     }
     
     func perform() async throws -> some IntentResult {
-        let urlString = "teymiahabit://habit/\(habitId)"
-        guard let url = URL(string: urlString) else {
-            throw AppIntentError.failed
-        }
-        
-        do {
-            _ = try await OpenURLIntent(url).perform()
-        } catch {
-            // Expected behavior when switching between apps
+        // Store the habit ID that the main app will read when it opens
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.amanbayserkeev.teymiahabit") {
+            sharedDefaults.set(habitId, forKey: "pendingHabitIdFromWidget")
+            sharedDefaults.synchronize()
         }
         
         return .result()

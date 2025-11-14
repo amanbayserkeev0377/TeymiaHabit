@@ -2,9 +2,6 @@ import SwiftUI
 import Charts
 
 struct WeeklyHabitChart: View {
-    
-    @Environment(\.colorScheme) private var colorScheme
-    
     let habit: Habit
     let updateCounter: Int
     
@@ -95,7 +92,7 @@ struct WeeklyHabitChart: View {
                         Text(averageValueFormatted)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .withHabitGradient(habit)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -112,7 +109,7 @@ struct WeeklyHabitChart: View {
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
                             .font(.title2)
                             .fontWeight(.medium)
-                            .withHabitGradient(habit, colorScheme: colorScheme)
+                            .withHabitGradient(habit)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -126,7 +123,7 @@ struct WeeklyHabitChart: View {
                     Text(weeklyTotalFormatted)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .withHabitGradient(habit, colorScheme: colorScheme)
+                        .withHabitGradient(habit)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }

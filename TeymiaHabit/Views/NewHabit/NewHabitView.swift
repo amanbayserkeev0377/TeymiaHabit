@@ -22,9 +22,6 @@ struct NewHabitView: View {
     @State private var selectedIconColor: HabitIconColor = .primary
     @State private var showPaywall = false
     
-    @FocusState private var isTitleFocused: Bool
-    @FocusState private var isCountFocused: Bool
-    
     // MARK: - Initialization
      
     init(habit: Habit? = nil, onSaveCompletion: (() -> Void)? = nil) {
@@ -69,37 +66,29 @@ struct NewHabitView: View {
         }
     }
     
-    private var isKeyboardActive: Bool {
-        isTitleFocused || isCountFocused
-    }
-    
     // MARK: - Body
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    NameFieldSection(
-                        title: $title,
-                        isFocused: $isTitleFocused
-                    )
-                    
-                    IconSection(
+                    HabitIdentitySection(
                         selectedIcon: $selectedIcon,
                         selectedColor: $selectedIconColor,
+                        title: $title,
                         onShowPaywall: {
-                            showPaywall = true
-                        }
-                    )
+                        showPaywall = true
+                    })
                 }
                 
-                GoalSection(
-                    selectedType: $selectedType,
-                    countGoal: $countGoal,
-                    hours: $hours,
-                    minutes: $minutes,
-                    isFocused: $isCountFocused
-                )
+                Section {
+                    GoalSection(
+                        selectedType: $selectedType,
+                        countGoal: $countGoal,
+                        hours: $hours,
+                        minutes: $minutes
+                    )
+                }
                 
                 Section {
                     StartDateSection(startDate: $startDate)
@@ -123,17 +112,6 @@ struct NewHabitView: View {
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button {
-                        isTitleFocused = false
-                        isCountFocused = false
-                    } label: {
-                        Image(systemName: "keyboard.chevron.compact.down")
-                    }
-                }
             }
             .overlay(alignment: .bottom) {
                 Button {
