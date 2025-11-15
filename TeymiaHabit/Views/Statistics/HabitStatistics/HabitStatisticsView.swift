@@ -18,7 +18,8 @@ struct HabitStatisticsView: View {
     @State private var alertState = AlertState()
     @State private var updateCounter = 0
     @State private var showingPaywall = false
-    @State private var inputManager = InputOverlayManager()
+    @State private var showingCountInput = false
+    @State private var showingTimeInput = false
     @State private var barChartTimeRange: ChartTimeRange = .week
     
     // MARK: - Initialization
@@ -37,7 +38,17 @@ struct HabitStatisticsView: View {
                             habit: habit,
                             selectedDate: $selectedDate,
                             updateCounter: updateCounter,
-                            onActionRequested: handleCalendarAction
+                            onActionRequested: handleCalendarAction,
+                            showingCountInput: $showingCountInput,
+                            showingTimeInput: $showingTimeInput,
+                            onCountInput: { count, date in
+                                alertState.date = date
+                                handleCustomCountInput(count: count)
+                            },
+                            onTimeInput: { hours, minutes, date in
+                                alertState.date = date
+                                handleCustomTimeInput(hours: hours, minutes: minutes)
+                            }
                         )
                         
                         if !proManager.isPro {
@@ -187,19 +198,6 @@ struct HabitStatisticsView: View {
                 Text("alert_reset_history_message".localized)
             }
             .withHabitTint(habit)
-            .inputOverlay(
-                habit: habit,
-                inputType: inputManager.activeInputType,
-                onCountInput: { count in
-                    handleCustomCountInput(count: count)
-                },
-                onTimeInput: { hours, minutes in
-                    handleCustomTimeInput(hours: hours, minutes: minutes)
-                },
-                onDismiss: {
-                    inputManager.dismiss()
-                }
-            )
         }
         .presentationDragIndicator(.visible)
     }
@@ -236,9 +234,9 @@ struct HabitStatisticsView: View {
             alertState.date = date
             
             if habit.type == .count {
-                inputManager.showCountInput()
+                showingCountInput = true
             } else {
-                inputManager.showTimeInput()
+                showingTimeInput = true
             }
         case .resetProgress:
             resetProgressDirectly(for: date)

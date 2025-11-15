@@ -6,9 +6,11 @@ struct EmptyStateView: View {
     @State private var titleOffset: CGFloat = 30
     @State private var subtitleOpacity: Double = 0
     @State private var subtitleOffset: CGFloat = 30
-    @State private var hintOpacity: Double = 0
-    @State private var hintOffset: CGFloat = 30
+    @State private var buttonOpacity: Double = 0
+    @State private var buttonScale: CGFloat = 0.8
     @ObservedObject private var colorManager = AppColorManager.shared
+    
+    let onCreateHabit: () -> Void
     
     private var isCompactHeight: Bool {
         UIScreen.main.bounds.height <= 667
@@ -33,19 +35,12 @@ struct EmptyStateView: View {
                 .scaledToFit()
                 .frame(width: imageSize, height: imageSize)
                 .scaleEffect(isAnimating ? 1.15 : 0.9)
-                .animation(
-                    .easeInOut(duration: 1.5)
-                    .repeatForever(autoreverses: true),
-                    value: isAnimating
-                )
-                .onAppear {
-                    isAnimating = true
-                }
             
             VStack(spacing: isCompactHeight ? 12 : 16) {
                 Text("empty_view_largetitle".localized)
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .fontDesign(.rounded)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.6)
                     .lineLimit(2)
@@ -54,6 +49,7 @@ struct EmptyStateView: View {
                 
                 Text("empty_view_title3".localized)
                     .font(.title3)
+                    .fontDesign(.rounded)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 20)
@@ -63,29 +59,31 @@ struct EmptyStateView: View {
                     .offset(y: subtitleOffset)
             }
             
-            HStack(spacing: 8) {
-                Text("empty_view_tap".localized)
-                    .foregroundStyle(.secondary)
-                
+            Button(action: {
+                HapticManager.shared.playSelection()
+                onCreateHabit()
+            }) {
                 Image(systemName: "plus")
-                    .foregroundStyle(colorManager.selectedColor.color)
-                    .frame(width: 26, height: 26)
-                
-                Text("empty_view_to_create_habit".localized)
-                    .foregroundStyle(.secondary)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color(UIColor.systemBackground))
+                    .frame(width: 56, height: 56)
+                    .background(
+                        Circle()
+                            .fill(colorManager.selectedColor.color.gradient)
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
             }
-            .font(.subheadline)
-            .minimumScaleFactor(0.8)
-            .lineLimit(1)
-            .padding(.top, isCompactHeight ? 12 : 20)
-            .opacity(hintOpacity)
-            .offset(y: hintOffset)
+            .buttonStyle(.plain)
+            .padding(.top, isCompactHeight ? 12 : 24)
+            .opacity(buttonOpacity)
+            .scaleEffect(buttonScale)
             
             if !isCompactHeight {
                 Spacer()
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.top, topPadding)
         .padding(.horizontal, 16)
         .onAppear {
@@ -99,9 +97,16 @@ struct EmptyStateView: View {
                 subtitleOffset = 0
             }
             
-            withAnimation(.easeOut(duration: 1.2).delay(2.4)) {
-                hintOpacity = 1.0
-                hintOffset = 0
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(2.4)) {
+                buttonOpacity = 1.0
+                buttonScale = 1.0
+            }
+
+            withAnimation(
+                .easeInOut(duration: 1.5)
+                .repeatForever(autoreverses: true)
+            ) {
+                isAnimating = true
             }
         }
     }

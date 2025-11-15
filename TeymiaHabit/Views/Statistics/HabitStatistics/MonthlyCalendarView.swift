@@ -8,10 +8,16 @@ enum CalendarAction {
 struct MonthlyCalendarView: View {
     // MARK: - Properties
     let habit: Habit
-    @Binding var selectedDate: Date
     
     var updateCounter: Int = 0
     var onActionRequested: (CalendarAction, Date) -> Void = { _, _ in }
+    var onCountInput: ((Int, Date) -> Void)?
+    var onTimeInput: ((Int, Int, Date) -> Void)?
+    
+    
+    @Binding var selectedDate: Date
+    @Binding var showingCountInput: Bool
+    @Binding var showingTimeInput: Bool
     
     @Environment(\.modelContext) private var modelContext
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
@@ -31,11 +37,24 @@ struct MonthlyCalendarView: View {
     }
     
     // MARK: - Initialization
-    init(habit: Habit, selectedDate: Binding<Date>, updateCounter: Int = 0, onActionRequested: @escaping (CalendarAction, Date) -> Void = { _, _ in }) {
+    init(
+        habit: Habit,
+        selectedDate: Binding<Date>,
+        updateCounter: Int = 0,
+        onActionRequested: @escaping (CalendarAction, Date) -> Void = { _, _ in },
+        showingCountInput: Binding<Bool>,
+        showingTimeInput: Binding<Bool>,
+        onCountInput: ((Int, Date) -> Void)? = nil,
+        onTimeInput: ((Int, Int, Date) -> Void)? = nil
+    ) {
         self.habit = habit
         self._selectedDate = selectedDate
         self.updateCounter = updateCounter
         self.onActionRequested = onActionRequested
+        self._showingCountInput = showingCountInput
+        self._showingTimeInput = showingTimeInput
+        self.onCountInput = onCountInput
+        self.onTimeInput = onTimeInput
         
         let habitId = habit.id
         let habitPredicate = #Predicate<HabitCompletion> { completion in
@@ -171,6 +190,11 @@ struct MonthlyCalendarView: View {
             
             Button("add_progress".localized) {
                 if let date = selectedActionDate {
+                    if habit.type == .count {
+                        showingCountInput = true
+                    } else {
+                        showingTimeInput = true
+                    }
                     onActionRequested(.addProgress, date)
                 }
             }
@@ -210,6 +234,22 @@ struct MonthlyCalendarView: View {
                         .frame(width: 40, height: 40)
                         .id("\(row)-\(column)-\(date.timeIntervalSince1970)-\(progress)-\(updateCounter)")
                         .buttonStyle(BorderlessButtonStyle())
+                        .popover(isPresented: Binding(
+                            get: { showingCountInput && calendar.isDate(date, inSameDayAs: selectedActionDate ?? Date.distantPast) },
+                            set: { if !$0 { showingCountInput = false } }
+                        )) {
+                            CountInputPopover(habit: habit) { count in
+                                onCountInput?(count, date)
+                            }
+                        }
+                        .popover(isPresented: Binding(
+                            get: { showingTimeInput && calendar.isDate(date, inSameDayAs: selectedActionDate ?? Date.distantPast) },
+                            set: { if !$0 { showingTimeInput = false } }
+                        )) {
+                            TimeInputPopover(habit: habit) { hours, minutes in
+                                onTimeInput?(hours, minutes, date)
+                            }
+                        }
                     } else {
                         Color.clear
                             .frame(width: 40, height: 40)

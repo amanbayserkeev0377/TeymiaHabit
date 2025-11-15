@@ -64,7 +64,7 @@ struct HabitListRow: View {
             HabitIconView(iconName: habit.iconName, color: habit.iconColor)
             
             // Title + Progress
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(habit.title)
                     .fontWeight(.medium)
                     .fontDesign(.rounded)
@@ -93,6 +93,7 @@ struct HabitListRow: View {
                     size: ringSize,
                     lineWidth: lineWidth
                 )
+                .opacity(0.8)
             }
             .buttonStyle(.plain)
         }

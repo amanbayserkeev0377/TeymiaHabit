@@ -14,6 +14,7 @@ struct GoalSection: View {
             Label {
                 HStack {
                     Text("daily_goal".localized)
+                        .fontDesign(.rounded)
                     
                     Spacer()
                     
@@ -23,10 +24,22 @@ struct GoalSection: View {
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()
-                    .frame(maxWidth: 180)
+                    .frame(maxWidth: 200)
                 }
             } icon: {
-                Image(systemName: "trophy.fill")
+                Image("trophy.star")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
+                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             }
             
             if selectedType == .count {
@@ -35,6 +48,7 @@ struct GoalSection: View {
                         TextField("goalsection_enter_count".localized, text: $countText)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.leading)
+                            .fontWeight(.medium)
                             .fontDesign(.rounded)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -42,9 +56,10 @@ struct GoalSection: View {
                             .labelsHidden()
                     }
                 } icon: {
-                    Image(systemName: "number")
-                        .foregroundStyle(.gray.gradient)
+                    Image("count")
+                        .resizable()
                         .frame(width: 20, height: 20)
+                        .foregroundStyle(.gray.gradient)
                 }
                 .onChange(of: countText) { _, newValue in
                     if let number = Int(newValue), number > 0 {
@@ -63,6 +78,8 @@ struct GoalSection: View {
                     HStack {
                         Text("goalsection_choose_time".localized)
                             .foregroundStyle(.secondary)
+                            .fontDesign(.rounded)
+                            .minimumScaleFactor(0.8)
                         
                         Spacer()
                         
@@ -74,9 +91,10 @@ struct GoalSection: View {
                             }
                     }
                 } icon : {
-                    Image(systemName: "clock.fill")
-                        .foregroundStyle(.gray.gradient)
+                    Image("clock")
+                        .resizable()
                         .frame(width: 20, height: 20)
+                        .foregroundStyle(.gray.gradient)
                 }
             }
         }

@@ -55,7 +55,6 @@ struct ActionButtonsSection: View {
             Image(systemName: isTimerRunning ? "pause.fill" : "play.fill")
                 .font(.system(size: 44))
                 .contentTransition(.symbolEffect(.replace, options: .speed(1.0)))
-                .foregroundStyle(.primary)
                 .frame(minWidth: 52, minHeight: 52)
                 .foregroundStyle(.primary)
         }

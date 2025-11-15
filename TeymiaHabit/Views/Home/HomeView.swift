@@ -52,90 +52,82 @@ struct HomeView: View {
     }
     
     var body: some View {
-        Group {
-            if allBaseHabits.isEmpty {
-                EmptyStateView()
-            } else {
-                List {
-                    // Calendar section
-                    Section {
-                        WeeklyCalendarView(selectedDate: $selectedDate)
-                            .padding(.vertical, 8)
-                    }
-                    .listRowInsets(EdgeInsets())
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.mainBackground)
-                    
-                    // Habits section
-                    if hasHabitsForDate {
-                        Section {
-                            ForEach(activeHabitsForDate) { habit in
-                                Button(action: {
-                                    HapticManager.shared.playSelection()
-                                    selectedHabit = habit
-                                }) {
-                                    HabitListRow(
-                                        habit: habit,
-                                        date: selectedDate,
-                                        viewModel: nil
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button {
-                                        toggleHabitCompletion(habit)
-                                    } label: {
-                                        Image(systemName: habit.progressForDate(selectedDate) >= habit.goal ? "xmark" : "checkmark")
+        ZStack {
+            Color.mainBackground
+                .ignoresSafeArea()
+            
+            Group {
+                if allBaseHabits.isEmpty {
+                    EmptyStateView(onCreateHabit: {
+                        showingNewHabit = true
+                    })
+                } else {
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            // Calendar section
+                            WeeklyCalendarView(selectedDate: $selectedDate)
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 16)
+                            
+                            // Habits section
+                            if hasHabitsForDate {
+                                LazyVStack(spacing: 12) {
+                                    ForEach(activeHabitsForDate) { habit in
+                                        HabitCard(
+                                            habit: habit,
+                                            date: selectedDate,
+                                            onTap: {
+                                                HapticManager.shared.playSelection()
+                                                selectedHabit = habit
+                                            },
+                                            onToggleCompletion: {
+                                                toggleHabitCompletion(habit)
+                                            }
+                                        )
                                     }
-                                    .tint(habit.progressForDate(selectedDate) >= habit.goal ? .orange : .green)
                                 }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
                             }
-                            .onMove(perform: moveHabits)
                         }
-                        .listRowBackground(Color.mainBackground)
-                        .listRowSeparatorTint(.secondary.opacity(0.05))
                     }
                 }
-                .scrollContentBackground(.hidden)
-                .background(Color.mainBackground)
-                .listStyle(.plain)
-                .environment(\.defaultMinListRowHeight, 56)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Text(navigationTitle)
-                    .fontDesign(.rounded)
-                    .foregroundStyle(.primary)
-                    .fixedSize(horizontal: true, vertical: false)
-            }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 12) {
-                    // Back to today button
-                    if !Calendar.current.isDateInToday(selectedDate) {
+            if !allBaseHabits.isEmpty {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text(navigationTitle)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 12) {
+                        if !Calendar.current.isDateInToday(selectedDate) {
+                            Button(action: {
+                                selectedDate = Date()
+                            }) {
+                                Image(systemName: "arrowshape.turn.up.left")
+                                    .font(.body.weight(.medium))
+                                    .foregroundStyle(colorManager.selectedColor.color)
+                            }
+                        }
+                        
                         Button(action: {
-                            selectedDate = Date()
+                            HapticManager.shared.playSelection()
+                            if !ProManager.shared.isPro && allBaseHabits.count >= 3 {
+                                showingPaywall = true
+                            } else {
+                                showingNewHabit = true
+                            }
                         }) {
-                            Image(systemName: "arrowshape.turn.up.left")
-                                .font(.body.weight(.medium))
+                            Image(systemName: "plus")
+                                .font(.body.weight(.semibold))
                                 .foregroundStyle(colorManager.selectedColor.color)
                         }
-                    }
-                    
-                    // Add button
-                    Button(action: {
-                        HapticManager.shared.playSelection()
-                        if !ProManager.shared.isPro && allBaseHabits.count >= 3 {
-                            showingPaywall = true
-                        } else {
-                            showingNewHabit = true
-                        }
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(colorManager.selectedColor.color)
                     }
                 }
             }
@@ -165,10 +157,10 @@ struct HomeView: View {
             }
             .presentationDragIndicator(.visible)
             .presentationCornerRadius(30)
-            .presentationDetents([.fraction(0.6)])
+            .presentationDetents([detendForCurrentDevice])
         }
         .sheet(isPresented: $showingNewHabit) {
-                NewHabitView()
+            NewHabitView()
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
@@ -212,19 +204,6 @@ struct HomeView: View {
         WidgetUpdateService.shared.reloadWidgets()
     }
     
-    private func moveHabits(from source: IndexSet, to destination: Int) {
-        var updatedHabits = activeHabitsForDate
-        updatedHabits.move(fromOffsets: source, toOffset: destination)
-        
-        // Update display order
-        for (index, habit) in updatedHabits.enumerated() {
-            habit.displayOrder = index
-        }
-        
-        try? modelContext.save()
-        HapticManager.shared.playSelection()
-    }
-    
     // MARK: - Helper Methods
     
     private func formattedNavigationTitle(for date: Date) -> String {
@@ -265,5 +244,57 @@ struct HomeView: View {
         try? modelContext.save()
         HapticManager.shared.play(.success)
         WidgetUpdateService.shared.reloadWidgets()
+    }
+}
+
+// MARK: - Helper Properties
+
+private var detendForCurrentDevice: PresentationDetent {
+    let screenHeight = UIScreen.main.bounds.height
+    
+    if screenHeight <= 667 {
+        return .fraction(0.8)
+    }
+    
+    else if screenHeight <= 812 {
+        return .fraction(0.7)
+    }
+    
+    else {
+        return .fraction(0.6)
+    }
+}
+
+// MARK: - Habit Card Component
+
+struct HabitCard: View {
+    let habit: Habit
+    let date: Date
+    let onTap: () -> Void
+    let onToggleCompletion: () -> Void
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    private var isCompleted: Bool {
+        habit.progressForDate(date) >= habit.goal
+    }
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack {
+                HabitListRow(
+                    habit: habit,
+                    date: date,
+                    viewModel: nil
+                )
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 30, style: .continuous)
+                    .fill(Color.mainRowBackground)
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }

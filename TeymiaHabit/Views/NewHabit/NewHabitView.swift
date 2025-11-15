@@ -21,6 +21,7 @@ struct NewHabitView: View {
     @State private var selectedIcon: String? = "check"
     @State private var selectedIconColor: HabitIconColor = .primary
     @State private var showPaywall = false
+    @State private var showingIconPicker = false
     
     // MARK: - Initialization
      
@@ -75,11 +76,28 @@ struct NewHabitView: View {
                     HabitIdentitySection(
                         selectedIcon: $selectedIcon,
                         selectedColor: $selectedIconColor,
-                        title: $title,
-                        onShowPaywall: {
-                        showPaywall = true
-                    })
+                        title: $title
+                    )
                 }
+                .listRowBackground(Color.mainRowBackground)
+                .listSectionSpacing(14)
+                
+                Section {
+                    ColorPickerSection.forIconPicker(selectedColor: $selectedIconColor)
+                }
+                .listRowBackground(Color.mainRowBackground)
+                .listSectionSpacing(14)
+
+                Section {
+                    IconSection(
+                        selectedIcon: $selectedIcon,
+                        selectedColor: $selectedIconColor,
+                        onShowFullPicker: {
+                            showingIconPicker = true
+                        }
+                    )
+                }
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     GoalSection(
@@ -89,13 +107,11 @@ struct NewHabitView: View {
                         minutes: $minutes
                     )
                 }
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     StartDateSection(startDate: $startDate)
                     ActiveDaysSection(activeDays: $activeDays)
-                }
-                
-                Section {
                     ReminderSection(
                         isReminderEnabled: $isReminderEnabled,
                         reminderTimes: $reminderTimes,
@@ -104,46 +120,45 @@ struct NewHabitView: View {
                         }
                     )
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 80)
-            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Color.mainGroupBackground)
             .navigationTitle(habit == nil ? "create_habit".localized : "edit_habit".localized)
             .navigationBarTitleDisplayMode(.inline)
+            .scrollDismissesKeyboard(.immediately)
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
-            .overlay(alignment: .bottom) {
-                Button {
-                    guard isFormValid else { return }
-                    saveHabit()
-                } label: {
-                    HStack(spacing: 8) {
-                        Text(habit == nil ? "button_save".localized : "button_save".localized)
-                        Image(systemName: "checkmark.circle.fill")
-                    }
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(isFormValid ? Color.white : Color.secondary)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(
-                                isFormValid
-                                ? AnyShapeStyle(AppColorManager.shared.selectedColor.color.gradient.opacity(0.9))
-                                : AnyShapeStyle(LinearGradient(colors: [Color.gray.opacity(0.1), Color.gray.opacity(0.5)], startPoint: .top, endPoint: .bottom))
-                            )
+            .sheet(isPresented: $showingIconPicker) {
+                NavigationStack {
+                    IconPickerView(
+                        selectedIcon: $selectedIcon,
+                        selectedColor: $selectedIconColor,
+                        onShowPaywall: {
+                            showingIconPicker = false
+                            showPaywall = true
+                        }
                     )
                 }
-                .buttonStyle(.plain)
-                .disabled(!isFormValid)
-                .animation(.easeInOut(duration: 0.25), value: isFormValid)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(30)
+            }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        guard isFormValid else { return }
+                        saveHabit()
+                    } label: {
+                        Text("button_save".localized)
+                    }
+                    .disabled(!isFormValid)
+                }
             }
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(30)
     }
     
     // MARK: - Private Methods

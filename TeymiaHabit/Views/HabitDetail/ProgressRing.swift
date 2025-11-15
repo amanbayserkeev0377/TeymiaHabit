@@ -205,6 +205,7 @@ extension ProgressRing {
                     case .count:
                         Image(systemName: "plus")
                             .font(.system(size: size * 0.35))
+                            .fontWeight(.medium)
                             .foregroundStyle(Color.primary)
                         
                     case .time:

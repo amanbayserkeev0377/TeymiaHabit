@@ -24,34 +24,39 @@ struct StatisticsView: View {
     @State private var selectedHabitForStats: Habit? = nil
     
     var body: some View {
-        Group {
-            if habits.isEmpty {
-                StatisticsEmptyStateView()
-            } else {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        VStack(spacing: 16) {
-                            OverviewStatsView(habits: habits)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.top, 16)
+        ZStack {
+            Color.mainBackground
+                .ignoresSafeArea()
+            
+            Group {
+                if habits.isEmpty {
+                    StatisticsEmptyStateView()
+                } else {
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            VStack(spacing: 16) {
+                                OverviewStatsView(habits: habits)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.top, 16)
 
-                        LazyVStack(spacing: 16) {
-                            ForEach(habits) { habit in
-                                HabitStatsListCard(habit: habit) {
-                                    selectedHabitForStats = habit
+                            LazyVStack(spacing: 16) {
+                                ForEach(habits) { habit in
+                                    HabitStatsListCard(habit: habit) {
+                                        selectedHabitForStats = habit
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 16)
+                            
+                            Spacer(minLength: 20)
                         }
-                        .padding(.horizontal, 16)
-                        
-                        Spacer(minLength: 20)
                     }
                 }
             }
         }
         .navigationTitle("statistics".localized)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedHabitForStats) { habit in
             HabitStatisticsView(habit: habit)
         }
@@ -62,16 +67,22 @@ struct StatisticsView: View {
 
 struct StatisticsEmptyStateView: View {
     var body: some View {
-        VStack {
-            Spacer()
-            
-            Image("stats.fill.big")
-                .resizable()
-                .frame(width: UIScreen.main.bounds.width * 0.5,
-                       height: UIScreen.main.bounds.width * 0.5)
-                .foregroundStyle(.gray.gradient)
-            
-            Spacer()
+        Section {
+            HStack {
+                Spacer()
+                
+                Image("stats.fill.big")
+                    .resizable()
+                    .foregroundStyle(.gray.gradient)
+                    .frame(
+                        width: UIScreen.main.bounds.width * 0.3,
+                        height: UIScreen.main.bounds.width * 0.3
+                    )
+                
+                Spacer()
+            }
         }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
     }
 }

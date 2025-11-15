@@ -43,13 +43,13 @@ struct HabitStatsListCard: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 40, style: .continuous)
-                    .fill(Color(UIColor.secondarySystemGroupedBackground))
+                RoundedRectangle(cornerRadius: 30, style: .continuous)
+                    .fill(Color.mainRowBackground)
                     .shadow(
-                        color: .black.opacity(0.15),
-                        radius: 8,
+                        color: .black.opacity(0.1),
+                        radius: 10,
                         x: 0,
-                        y: 2
+                        y: 4
                     )
             )
         }

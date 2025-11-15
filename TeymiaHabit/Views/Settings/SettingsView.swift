@@ -105,7 +105,7 @@ struct SettingsView: View {
                             icon: {
                                 Image("faceid")
                                     .resizable()
-                                    .frame(width: 24, height: 24)
+                                    .frame(width: 20, height: 20)
                                     .foregroundStyle(
                                         LinearGradient(
                                             colors: [
@@ -194,6 +194,7 @@ struct SettingsView: View {
         .scrollContentBackground(.hidden)
         .background(Color.mainGroupBackground)
         .navigationTitle("settings".localized)
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }

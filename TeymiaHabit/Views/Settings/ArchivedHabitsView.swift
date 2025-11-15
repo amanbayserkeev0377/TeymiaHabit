@@ -24,6 +24,8 @@ struct ArchivedHabitsView: View {
             listContent
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Color.mainBackground)
         .navigationTitle("archived_habits".localized)
         .navigationBarTitleDisplayMode(.large)
         .deleteSingleHabitAlert(

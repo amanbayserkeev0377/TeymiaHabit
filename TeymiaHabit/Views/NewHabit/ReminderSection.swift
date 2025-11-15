@@ -59,7 +59,7 @@ struct ReminderSection: View {
                             .labelsHidden()
                             .datePickerStyle(.compact)
                             
-                            if reminderTimes.count > 2 && (proManager.isPro || index > 0) {
+                            if reminderTimes.count > 1 && (proManager.isPro || index > 0) {
                                 Button {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         if reminderTimes.indices.contains(index) {

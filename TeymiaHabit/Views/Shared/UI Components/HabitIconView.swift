@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Reusable habit icon view component
+/// Supports both Asset images and emoji characters
 /// Default: 24pt icon with 48pt circle background (HIG compliant touch target)
 struct HabitIconView: View {
     let iconName: String?
@@ -39,19 +40,30 @@ struct HabitIconView: View {
         return cleaned
     }
     
+    private var isEmoji: Bool {
+        cleanIconName.count == 1
+    }
+    
     var body: some View {
-        Image(cleanIconName)
-            .resizable()
-            .frame(width: size, height: size)
-            .frame(width: size * 2, height: size * 2)
-            .foregroundStyle(color.color.gradient)
-            .background(
-                Group {
-                    if showBackground {
-                        Circle()
-                            .fill(color.color.gradient.opacity(0.1))
-                    }
+        Group {
+            if isEmoji {
+                Text(cleanIconName)
+                    .font(.system(size: size * 0.9))
+            } else {
+                Image(cleanIconName)
+                    .resizable()
+                    .frame(width: size, height: size)
+                    .foregroundStyle(color.color.gradient)
+            }
+        }
+        .frame(width: size * 2, height: size * 2)
+        .background(
+            Group {
+                if showBackground {
+                    Circle()
+                        .fill(color.color.gradient.opacity(0.1))
                 }
-            )
+            }
+        )
     }
 }
