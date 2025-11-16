@@ -70,9 +70,12 @@ struct ExportDataView: View {
                         }
                     }
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.mainGroupBackground)
             .navigationTitle("export_data".localized)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 setupExportService()
             }

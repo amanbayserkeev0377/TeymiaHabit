@@ -40,7 +40,6 @@ struct PrivacyLockView: View {
                 numberPad
                 
                 Spacer()
-                Spacer()
             }
         }
         .onAppear {
@@ -68,6 +67,7 @@ struct PrivacyLockView: View {
             
             Text("enter_passcode".localized)
                 .font(.title3)
+                .fontDesign(.rounded)
                 .foregroundStyle(.primary)
             
             PinDotsView(pin: enteredPin)
@@ -82,6 +82,7 @@ struct PrivacyLockView: View {
             onBiometricTap: shouldShowBiometricButton ? authenticateWithBiometrics : nil
         )
         .padding(.horizontal, DesignConstants.horizontalPadding)
+        .safeAreaPadding(.bottom, 20)
     }
     
     // MARK: - Computed Properties

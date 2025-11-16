@@ -12,6 +12,7 @@ struct AttributionsView: View {
                 Text("vecteezy.com")
                     .foregroundStyle(.primary)
             }
+            .listRowBackground(Color.mainRowBackground)
             
             // Flaticon link
             Button {
@@ -22,7 +23,10 @@ struct AttributionsView: View {
                 Text("flaticon.com")
                     .foregroundStyle(.primary)
             }
+            .listRowBackground(Color.mainRowBackground)
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.mainGroupBackground)
         .navigationTitle("licenses_section_attributions".localized)
         .navigationBarTitleDisplayMode(.inline)
     }

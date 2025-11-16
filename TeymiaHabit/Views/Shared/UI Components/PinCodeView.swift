@@ -139,7 +139,6 @@ struct CustomNumberPad: View {
             onBiometricTap?()
         } label: {
             biometricIcon
-                .font(.title)
                 .foregroundStyle(.primary)
                 .frame(width: DesignConstants.buttonSize, height: DesignConstants.buttonSize)
         }
@@ -153,16 +152,24 @@ struct CustomNumberPad: View {
     
     @ViewBuilder
     private var biometricIcon: some View {
-        switch privacyManager.biometricType {
-        case .faceID:
-            Image(systemName: "faceid")
-        case .touchID:
-            Image(systemName: "touchid")
-        case .opticID:
-            Image(systemName: "opticid")
-        default:
-            Image(systemName: "lock.fill")
-        }
+        let size: CGFloat = 38
+        
+        let baseImage: Image = {
+            switch privacyManager.biometricType {
+            case .faceID:
+                Image("faceid")
+            case .touchID:
+                Image("touchid")
+            case .opticID:
+                Image("opticid")
+            default:
+                Image("key")
+            }
+        }()
+        
+        baseImage
+            .resizable()
+            .frame(width: size, height: size)
     }
 }
 
@@ -208,8 +215,9 @@ struct NumberPadButton: View {
     }
     
     private var deleteButtonContent: some View {
-        Image(systemName: "delete.left")
-            .font(.title)
+        Image("delete.left")
+            .resizable()
+            .frame(width: 38, height: 38)
             .foregroundStyle(.primary)
             .frame(width: size, height: size)
     }
@@ -221,6 +229,7 @@ struct NumberPadButton: View {
                 .frame(width: size, height: size)
             Text(item)
                 .font(.title)
+                .fontDesign(.rounded)
                 .fontWeight(.medium)
                 .foregroundStyle(.primary)
         }

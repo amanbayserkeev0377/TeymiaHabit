@@ -13,46 +13,49 @@ struct GlobalPinView: View {
                 .ignoresSafeArea(.all)
             
             VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    Button { onDismiss() } label: {
-                        Image(systemName: "xmark")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                            .frame(width: 30, height: 30)
-                            .background(Circle().fill(.regularMaterial))
-                    }
-                }
-                .padding(.top, 40)
-                .padding(.horizontal, 40)
-                
                 Spacer()
                 
                 VStack(spacing: 30) {
-                    Image("TeymiaHabitBlank")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 80, height: 80)
+                    // Icon with close button overlay
+                    ZStack {
+                        Image("TeymiaHabitBlank")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 80, height: 80)
+                        
+                        HStack {
+                            Spacer()
+                            Button { onDismiss() } label: {
+                                Image(systemName: "xmark")
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 40, height: 40)
+                                    .background(Circle().fill(.regularMaterial))
+                            }
+                            .padding(.trailing, 16)
+                            .offset(y: -20)
+                        }
+                    }
                     
                     Text(title)
                         .font(.title3)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.primary)
                     
                     PinDotsView(pin: pin)
                 }
                 
-                Spacer(minLength: 50)
+                Spacer(minLength: 40)
                 
                 CustomNumberPad(
                     onNumberTap: addDigit,
                     onDeleteTap: removeDigit,
                     showBiometricButton: false
                 )
-                .padding(.horizontal, 40)
                 
                 Spacer()
-                Spacer()
             }
+            .padding(16)
         }
     }
     

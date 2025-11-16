@@ -67,6 +67,7 @@ struct CloudKitSyncView: View {
                     }
                 }
             }
+            .listRowBackground(Color.mainRowBackground)
             
             if case .available = cloudKitStatus {
                 Section {
@@ -132,6 +133,7 @@ struct CloudKitSyncView: View {
                 } footer: {
                     Text("icloud_manual_sync_footer".localized)
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
             
             Section("icloud_how_sync_works".localized) {
@@ -153,6 +155,7 @@ struct CloudKitSyncView: View {
                     description: "icloud_private_secure_desc".localized
                 )
             }
+            .listRowBackground(Color.mainRowBackground)
             
             if case .unavailable = cloudKitStatus {
                 Section {
@@ -175,10 +178,13 @@ struct CloudKitSyncView: View {
                 } header: {
                     Text("icloud_troubleshooting".localized)
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.mainGroupBackground)
         .navigationTitle("icloud_sync".localized)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             loadLastSyncTime()
             checkCloudKitStatus()

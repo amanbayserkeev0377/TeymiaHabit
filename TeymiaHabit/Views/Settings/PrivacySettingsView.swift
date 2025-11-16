@@ -21,8 +21,10 @@ struct PrivacySettingsView: View {
     
     var body: some View {
         settingsContent
+            .scrollContentBackground(.hidden)
+            .background(Color.mainGroupBackground)
             .navigationTitle("passcode_faceid".localized)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
     }
     
     // MARK: - Private Methods
@@ -62,24 +64,24 @@ struct PrivacySettingsView: View {
                     Button {
                         startPinSetup()
                     } label: {
-                        Label {
-                            Text("turn_passcode_on")
-                                .font(.body)
-                                .foregroundStyle(Color(UIColor.label))
-                        } icon: {
-                            Image(systemName: "checkmark.shield")
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
-                                        ],
-                                        startPoint: .topTrailing,
-                                        endPoint: .bottomLeading
+                            Label {
+                                Text("turn_passcode_on")
+                                    .foregroundStyle(Color.primary)
+                            } icon: {
+                                Image("shield.check")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [
+                                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
+                                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
                                     )
-                                )
-                                .frame(width: 30, height: 30)
-                        }
+                            }
                     }
                 } else {
                     Button {
@@ -87,21 +89,12 @@ struct PrivacySettingsView: View {
                     } label: {
                         Label {
                             Text("change_passcode".localized)
-                                .font(.body)
-                                .foregroundStyle(Color(UIColor.label))
+                                .foregroundStyle(Color.primary)
                         } icon: {
-                            Image(systemName: "key")
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(#colorLiteral(red: 0.95, green: 0.85, blue: 0.15, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.75, green: 0.55, blue: 0.05, alpha: 1))
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .frame(width: 30, height: 30)
+                            Image("key")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.orange.gradient)
                         }
                     }
                     
@@ -110,25 +103,17 @@ struct PrivacySettingsView: View {
                     } label: {
                         Label {
                             Text("disable_passcode".localized)
-                                .font(.body)
-                                .foregroundStyle(.red)
+                                .foregroundStyle(.red.gradient)
                         } icon: {
-                            Image(systemName: "xmark.shield")
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(#colorLiteral(red: 1, green: 0.3, blue: 0.3, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .frame(width: 30, height: 30)
+                            Image("shield.exclamation")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.red.gradient)
                         }
                     }
                 }
             }
+            .listRowBackground(Color.mainRowBackground)
             
             if privacyManager.isPrivacyEnabled && privacyManager.hasPinSet {
                 Section {
@@ -140,18 +125,10 @@ struct PrivacySettingsView: View {
                                 Text("request_passcode".localized)
                                     .font(.body)
                             } icon: {
-                                Image(systemName: "timer")
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [
-                                                Color(#colorLiteral(red: 0.4, green: 0.7, blue: 0.95, alpha: 1)),
-                                                Color(#colorLiteral(red: 0.12, green: 0.35, blue: 0.6, alpha: 1))
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                                    .frame(width: 30, height: 30)
+                                Image("clock")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundStyle(.blue.gradient)
                             }
                             
                             Spacer()
@@ -161,6 +138,7 @@ struct PrivacySettingsView: View {
                         }
                     }
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
             
             if privacyManager.isPrivacyEnabled && privacyManager.hasPinSet && privacyManager.biometricType != .none {
@@ -168,7 +146,6 @@ struct PrivacySettingsView: View {
                     HStack {
                         Label {
                             Text(privacyManager.biometricDisplayName)
-                                .font(.body)
                         } icon: {
                             biometricIcon
                                 .foregroundStyle(
@@ -177,11 +154,10 @@ struct PrivacySettingsView: View {
                                             Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
                                             Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
                                         ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
                                     )
                                 )
-                                .frame(width: 30, height: 30)
                         }
                         
                         Spacer()
@@ -199,6 +175,7 @@ struct PrivacySettingsView: View {
                         .withToggleColor()
                     }
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
         }
     }
@@ -210,16 +187,24 @@ struct PrivacySettingsView: View {
     
     @ViewBuilder
     private var biometricIcon: some View {
-        switch privacyManager.biometricType {
-        case .faceID:
-            Image(systemName: "faceid")
-        case .touchID:
-            Image(systemName: "touchid")
-        case .opticID:
-            Image(systemName: "opticid")
-        default:
-            Image(systemName: "key.fill")
-        }
+        let size: CGFloat = 20
+        
+        let baseImage: Image = {
+            switch privacyManager.biometricType {
+            case .faceID:
+                Image("faceid")
+            case .touchID:
+                Image("touchid")
+            case .opticID:
+                Image("opticid")
+            default:
+                Image("key")
+            }
+        }()
+        
+        baseImage
+            .resizable()
+            .frame(width: size, height: size)
     }
     
     private func startPinSetup() {
@@ -401,15 +386,19 @@ struct RequestPasscodeSettingsView: View {
                         
                         Spacer()
                         
-                        Image(systemName: "checkmark")
-                            .fontWeight(.semibold)
+                        Image("check")
+                            .resizable()
+                            .frame(width: 24, height: 24)
                             .withAppGradient()
                             .opacity(selectedDuration == duration ? 1 : 0)
                             .animation(.easeInOut, value: selectedDuration == duration)
                     }
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.mainGroupBackground)
         .navigationTitle("request_passcode".localized)
         .navigationBarTitleDisplayMode(.inline)
     }

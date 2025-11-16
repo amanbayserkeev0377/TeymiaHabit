@@ -33,6 +33,7 @@ struct SoundSettingsView: View {
                     ))
                     .withToggleColor()
                 }
+                .listRowBackground(Color.mainRowBackground)
                 
                 if soundManager.isSoundEnabled {
                     Section {
@@ -46,8 +47,11 @@ struct SoundSettingsView: View {
                             }
                         }
                     }
+                    .listRowBackground(Color.mainRowBackground)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.mainGroupBackground)
             .navigationTitle("sounds".localized)
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showProPaywall) {
@@ -85,8 +89,9 @@ struct SoundRowView: View {
                 
                 Spacer()
                 
-                Image(systemName: "checkmark")
-                    .fontWeight(.semibold)
+                Image("check")
+                    .resizable()
+                    .frame(width: 24, height: 24)
                     .withAppGradient()
                     .opacity(isSelected ? 1 : 0)
                     .animation(.easeInOut, value: isSelected)

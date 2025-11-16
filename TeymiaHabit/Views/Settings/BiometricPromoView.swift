@@ -16,7 +16,6 @@ struct BiometricPromoView: View {
                 Spacer()
                 
                 biometricIcon
-                    .font(.system(size: 80))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
@@ -33,10 +32,12 @@ struct BiometricPromoView: View {
                     Text("enable".localized + " \(privacyManager.biometricDisplayName)")
                         .font(.title2)
                         .fontWeight(.semibold)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.primary)
                     
                     Text("biometric_unlock_description".localized(with: privacyManager.biometricDisplayName))
                         .font(.body)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(nil)
@@ -53,6 +54,8 @@ struct BiometricPromoView: View {
                     } label: {
                         Text("enable".localized + " \(privacyManager.biometricDisplayName)")
                             .font(.headline)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
@@ -65,7 +68,7 @@ struct BiometricPromoView: View {
                                     startPoint: .top,
                                     endPoint: .bottom
                                 ),
-                                in: RoundedRectangle(cornerRadius: 12)
+                                in: RoundedRectangle(cornerRadius: 30)
                             )
                     }
                     .buttonStyle(.plain)
@@ -76,11 +79,12 @@ struct BiometricPromoView: View {
                     } label: {
                         Text("not_now".localized)
                             .font(.body)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.primary)
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 30)
                                     .fill(Color.secondary.opacity(0.1))
                             )
                     }
@@ -94,15 +98,23 @@ struct BiometricPromoView: View {
     
     @ViewBuilder
     private var biometricIcon: some View {
-        switch privacyManager.biometricType {
-        case .faceID:
-            Image(systemName: "faceid")
-        case .touchID:
-            Image(systemName: "touchid")
-        case .opticID:
-            Image(systemName: "opticid")
-        default:
-            Image(systemName: "key.fill")
-        }
+        let size: CGFloat = 80
+        
+        let baseImage: Image = {
+            switch privacyManager.biometricType {
+            case .faceID:
+                Image("faceid")
+            case .touchID:
+                Image("touchid")
+            case .opticID:
+                Image("opticid")
+            default:
+                Image("key")
+            }
+        }()
+        
+        baseImage
+            .resizable()
+            .frame(width: size, height: size)
     }
 }

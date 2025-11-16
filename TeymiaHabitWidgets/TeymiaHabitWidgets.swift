@@ -178,41 +178,41 @@ struct HabitMiniWidgetView: View {
         if entry.habits.isEmpty {
             EmptyWidgetView(message: "widget_no_active_habits_today".localized)
         } else {
-            VStack(spacing: 16) {
-                HStack(spacing: 16) {
+            VStack(spacing: 20) {
+                HStack(spacing: 20) {
                     if entry.habits.count > 0 {
-                        HabitRingCell(habit: entry.habits[0], size: 60)
+                        HabitRingCell(habit: entry.habits[0], size: 50)
                     } else {
                         Color.clear
-                            .frame(width: 60, height: 60)
+                            .frame(width: 50, height: 50)
                     }
                     
                     if entry.habits.count > 1 {
-                        HabitRingCell(habit: entry.habits[1], size: 60)
+                        HabitRingCell(habit: entry.habits[1], size: 50)
                     } else {
                         Color.clear
-                            .frame(width: 60, height: 60)
+                            .frame(width: 50, height: 50)
                     }
                 }
                 
-                HStack(spacing: 16) {
+                HStack(spacing: 20) {
                     if entry.habits.count > 2 {
-                        HabitRingCell(habit: entry.habits[2], size: 60)
+                        HabitRingCell(habit: entry.habits[2], size: 50)
                     } else {
                         Color.clear
-                            .frame(width: 60, height: 60)
+                            .frame(width: 50, height: 50)
                     }
                     
                     if entry.habits.count > 3 {
-                        HabitRingCell(habit: entry.habits[3], size: 60)
+                        HabitRingCell(habit: entry.habits[3], size: 50)
                     } else {
                         Color.clear
-                            .frame(width: 60, height: 60)
+                            .frame(width: 50, height: 50)
                     }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(12)
+            .padding(8)
         }
     }
 }
@@ -227,29 +227,29 @@ struct HabitGridWidgetView: View {
             EmptyWidgetView(message: "widget_no_active_habits_today".localized)
         } else {
             VStack(spacing: 20) {
-                HStack(spacing: 24) {
+                HStack(spacing: 26) {
                     ForEach(0..<4, id: \.self) { index in
                         if index < entry.habits.count {
-                            HabitRingCell(habit: entry.habits[index], size: 60)
+                            HabitRingCell(habit: entry.habits[index], size: 50)
                         } else {
                             Color.clear
-                                .frame(width: 60, height: 60)
+                                .frame(width: 50, height: 50)
                         }
                     }
                 }
-                HStack(spacing: 24) {
+                HStack(spacing: 26) {
                     ForEach(4..<8, id: \.self) { index in
                         if index < entry.habits.count {
-                            HabitRingCell(habit: entry.habits[index], size: 60)
+                            HabitRingCell(habit: entry.habits[index], size: 50)
                         } else {
                             Color.clear
-                                .frame(width: 60, height: 60)
+                                .frame(width: 50, height: 50)
                         }
                     }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(12)
+            .padding(8)
         }
     }
 }
@@ -263,7 +263,7 @@ struct HabitRingCell: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.secondary.opacity(0.15), lineWidth: 6.0)
+                .stroke(Color.secondary.opacity(0.1), lineWidth: 6.0)
             
             Circle()
                 .trim(from: 0, to: habit.progress)
@@ -283,7 +283,7 @@ struct HabitRingCell: View {
             HabitIconView(
                 iconName: habit.iconName,
                 color: habit.iconColor,
-                size: size * 0.20,  // Icon size = 20% of ring
+                size: size * 0.4,
                 showBackground: false
             )
         }

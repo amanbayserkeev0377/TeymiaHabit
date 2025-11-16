@@ -25,9 +25,9 @@ struct ArchivedHabitsView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .background(Color.mainBackground)
+        .background(Color.mainGroupBackground)
         .navigationTitle("archived_habits".localized)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .deleteSingleHabitAlert(
             isPresented: $isDeleteSingleAlertPresented,
             habitName: habitToDelete?.title ?? "",
@@ -93,6 +93,7 @@ struct ArchivedHabitsView: View {
                         }
                 }
             }
+            .listRowBackground(Color.mainRowBackground)
         }
     }
     

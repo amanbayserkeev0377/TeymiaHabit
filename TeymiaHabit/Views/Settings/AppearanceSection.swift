@@ -89,6 +89,7 @@ struct AppColorPickerView: View {
                 } header: {
                     Text("appearance_mode".localized)
                 }
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     ColorPickerSection.forAppColorPicker(
@@ -103,6 +104,7 @@ struct AppColorPickerView: View {
                 } header: {
                     Text("app_color".localized)
                 }
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     AppIconGridView(
@@ -123,7 +125,10 @@ struct AppColorPickerView: View {
                 } header: {
                     Text("app_icon".localized)
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.mainGroupBackground)
             .navigationTitle("appearance".localized)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {

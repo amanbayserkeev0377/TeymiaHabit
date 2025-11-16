@@ -43,7 +43,7 @@ final class HabitLiveActivityManager {
             habitName: habit.title,
             habitGoal: habit.goal,
             habitType: habit.type == .time ? .time : .count,
-            habitIcon: habit.iconName ?? "checkmark",
+            habitIcon: habit.iconName ?? "check",
             habitIconColor: habit.iconColor
         )
         

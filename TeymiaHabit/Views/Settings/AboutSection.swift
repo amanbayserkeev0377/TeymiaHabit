@@ -5,6 +5,7 @@ import SwiftUI
 struct AboutSection: View {
     var body: some View {
         Section {
+            // Rate App
             Button {
                 if let url = URL(string: "https://apps.apple.com/app/id6746747903") {
                     UIApplication.shared.open(url)
@@ -22,6 +23,7 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
+            // Share App
             ShareLink(
                 item: URL(string: "https://apps.apple.com/app/id6746747903")!
             ) {
@@ -36,9 +38,8 @@ struct AboutSection: View {
                 )
             }
             .tint(.primary)
-        }
-        
-        Section {
+            
+            // Privacy Policy
             Button {
                 if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
                     UIApplication.shared.open(url)
@@ -56,6 +57,7 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
+            // Terms of Service
             Button {
                 if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {
                     UIApplication.shared.open(url)
@@ -73,6 +75,7 @@ struct AboutSection: View {
             }
             .tint(.primary)
             
+            // Attributions
             NavigationLink {
                 AttributionsView()
             } label: {
@@ -87,5 +90,6 @@ struct AboutSection: View {
                 )
             }
         }
+        .listRowBackground(Color.mainRowBackground)
     }
 }
