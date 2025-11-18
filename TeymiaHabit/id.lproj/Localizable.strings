@@ -68,6 +68,11 @@
 "daily_goal" = "Tujuan Harian";
 "delete_habit" = "Hapus Kebiasaan";
 "edit_habit" = "Edit Kebiasaan";
+"sport" = "Olahraga";
+"self-care" = "Perawatan diri";
+"finance" = "Keuangan";
+"brands" = "Merek";
+"other" = "Lainnya";
 "health" = "Kesehatan";
 "hobbies" = "Hobi";
 "lifestyle" = "Gaya Hidup";

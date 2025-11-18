@@ -288,7 +288,7 @@ struct HabitCard: View {
                     viewModel: nil
                 )
             }
-            .padding(16)
+            .padding(14)
             .background(
                 RoundedRectangle(cornerRadius: 30, style: .continuous)
                     .fill(Color.mainRowBackground)

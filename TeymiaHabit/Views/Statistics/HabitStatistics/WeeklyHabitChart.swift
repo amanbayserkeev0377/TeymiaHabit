@@ -53,8 +53,9 @@ struct WeeklyHabitChart: View {
         VStack(spacing: 12) {
             HStack {
                 Button(action: showPreviousWeek) {
-                    Image(systemName: "chevron.left")
-                        .font(.headline)
+                    Image("chevron.left")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToPreviousWeek ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
                         .frame(width: 44, height: 44)
@@ -71,8 +72,9 @@ struct WeeklyHabitChart: View {
                 Spacer()
                 
                 Button(action: showNextWeek) {
-                    Image(systemName: "chevron.right")
-                        .font(.headline)
+                    Image("chevron.right")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToNextWeek ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
                         .frame(width: 44, height: 44)

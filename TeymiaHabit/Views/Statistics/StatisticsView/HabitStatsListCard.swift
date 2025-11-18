@@ -26,13 +26,14 @@ struct HabitStatsListCard: View {
                     
                     VStack(alignment: .leading, spacing: 3) {
                         Text(habit.title)
-                            .fontWeight(.medium)
+                            .font(.headline)
+                            .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .lineLimit(2)
                             .foregroundStyle(.primary)
                         
                         Text("goal".localized(with: habit.formattedGoal))
-                            .font(.caption)
+                            .font(.subheadline)
                             .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
                     }

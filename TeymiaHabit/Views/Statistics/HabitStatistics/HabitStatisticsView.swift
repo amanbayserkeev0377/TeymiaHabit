@@ -61,8 +61,9 @@ struct HabitStatisticsView: View {
                     .frame(maxWidth: .infinity)
                 } footer: {
                     HStack(spacing: 8) {
-                        Image(systemName: "hand.tap")
-                            .font(.footnote)
+                        Image("cursor")
+                            .resizable()
+                            .frame(width: 16, height: 16)
                             .foregroundStyle(.secondary)
                         Text("tap_dates".localized)
                             .font(.footnote)
@@ -73,7 +74,7 @@ struct HabitStatisticsView: View {
                     }
                     .padding(.top, 8)
                 }
-                .listSectionSeparator(.hidden)
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     ZStack {
@@ -92,8 +93,9 @@ struct HabitStatisticsView: View {
                     }
                 } footer: {
                     HStack(spacing: 8) {
-                        Image(systemName: "hand.rays")
-                            .font(.footnote)
+                        Image("cursor")
+                            .resizable()
+                            .frame(width: 16, height: 16)
                             .foregroundStyle(.secondary)
                         Text("press_hold_bars".localized)
                             .font(.footnote)
@@ -104,12 +106,14 @@ struct HabitStatisticsView: View {
                     }
                     .padding(.top, 8)
                 }
-                .listSectionSeparator(.hidden)
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     // Start date
                     HStack {
-                        Image(systemName: "calendar.badge.clock")
+                        Image("calendar")
+                            .resizable()
+                            .frame(width: 20, height: 20)
                             .withHabitGradient(habit)
                         Text("start_date".localized)
                         
@@ -120,7 +124,9 @@ struct HabitStatisticsView: View {
                     }
                     
                     HStack {
-                        Image(systemName: "trophy")
+                        Image("trophy.star")
+                            .resizable()
+                            .frame(width: 20, height: 20)
                             .withHabitGradient(habit)
                         Text("daily_goal".localized)
                         
@@ -131,7 +137,9 @@ struct HabitStatisticsView: View {
                     }
                     
                     HStack {
-                        Image(systemName: "cloud.sun")
+                        Image("calendar.wed")
+                            .resizable()
+                            .frame(width: 20, height: 20)
                             .withHabitGradient(habit)
                         Text("active_days".localized)
                         
@@ -141,13 +149,16 @@ struct HabitStatisticsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                .listRowBackground(Color.mainRowBackground)
                 
                 Section {
                     Button {
                         showingResetAlert = true
                     } label: {
                         HStack {
-                            Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                            Image("home.maintenance")
+                                .resizable()
+                                .frame(width: 20, height: 20)
                                 .withHabitGradient(habit)
                             Text("reset_all_history".localized)
                         }
@@ -158,13 +169,18 @@ struct HabitStatisticsView: View {
                         alertState.isDeleteAlertPresented = true
                     } label: {
                         HStack {
-                            Image(systemName: "trash")
-                                .foregroundStyle(.red)
+                            Image("trash")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.red.gradient)
                             Text("delete_habit".localized)
                         }
                     }
                 }
+                .listRowBackground(Color.mainRowBackground)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.mainGroupBackground)
             .navigationTitle(habit.title)
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingPaywall) {
@@ -200,6 +216,7 @@ struct HabitStatisticsView: View {
             .withHabitTint(habit)
         }
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(30)
     }
     
     // MARK: - Bar Chart Content

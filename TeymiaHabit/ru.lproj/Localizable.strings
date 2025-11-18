@@ -68,6 +68,11 @@
 "daily_goal" = "Цель";
 "delete_habit" = "Удалить привычку";
 "edit_habit" = "Редактировать";
+"sport" = "Спорт";
+"self-care" = "Забота о себе";
+"finance" = "Финансы";
+"brands" = "Бренды";
+"other" = "Разное";
 "health" = "Здоровье";
 "hobbies" = "Хобби";
 "lifestyle" = "Образ жизни";

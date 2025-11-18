@@ -142,7 +142,7 @@ extension ProgressRing {
         isCompleted: Bool,
         isExceeded: Bool,
         habit: Habit?,
-        size: CGFloat = 180,
+        size: CGFloat = 170,
         lineWidth: CGFloat? = nil,
         fontSize: CGFloat? = nil,
         iconSize: CGFloat? = nil
@@ -167,7 +167,7 @@ extension ProgressRing {
         isExceeded: Bool,
         habit: Habit?,
         isTimerRunning: Bool = false,
-        size: CGFloat = 52,
+        size: CGFloat = 58,
         lineWidth: CGFloat? = nil
     ) -> some View {
         let ringColor: Color = {

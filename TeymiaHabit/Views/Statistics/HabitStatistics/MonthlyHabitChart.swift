@@ -52,8 +52,9 @@ struct MonthlyHabitChart: View {
         VStack(spacing: 12) {
             HStack {
                 Button(action: showPreviousMonth) {
-                    Image(systemName: "chevron.left")
-                        .font(.headline)
+                    Image("chevron.left")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToPreviousMonth ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
                         .frame(width: 44, height: 44)
@@ -70,8 +71,9 @@ struct MonthlyHabitChart: View {
                 Spacer()
                 
                 Button(action: showNextMonth) {
-                    Image(systemName: "chevron.right")
-                        .font(.headline)
+                    Image("chevron.right")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToNextMonth ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
                         .frame(width: 44, height: 44)

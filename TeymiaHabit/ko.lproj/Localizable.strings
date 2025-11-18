@@ -68,6 +68,11 @@
 "daily_goal" = "일일 목표";
 "delete_habit" = "습관 삭제";
 "edit_habit" = "습관 편집";
+"sport" = "스포츠";
+"self-care" = "자기관리";
+"finance" = "금융";
+"brands" = "브랜드";
+"other" = "기타";
 "health" = "건강";
 "hobbies" = "취미";
 "lifestyle" = "라이프스타일";

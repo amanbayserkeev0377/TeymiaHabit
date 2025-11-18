@@ -68,6 +68,11 @@
 "daily_goal" = "毎日の目標";
 "delete_habit" = "習慣を削除";
 "edit_habit" = "習慣を編集";
+"sport" = "スポーツ";
+"self-care" = "セルフケア";
+"finance" = "金融";
+"brands" = "ブランド";
+"other" = "その他";
 "health" = "健康";
 "hobbies" = "趣味";
 "lifestyle" = "ライフスタイル";

@@ -68,6 +68,11 @@
 "daily_goal" = "Mục tiêu hàng ngày";
 "delete_habit" = "Xóa thói quen";
 "edit_habit" = "Chỉnh sửa thói quen";
+"sport" = "Thể thao";
+"self-care" = "Chăm sóc bản thân";
+"finance" = "Tài chính";
+"brands" = "Thương hiệu";
+"other" = "Khác";
 "health" = "Sức khỏe";
 "hobbies" = "Sở thích";
 "lifestyle" = "Lối sống";

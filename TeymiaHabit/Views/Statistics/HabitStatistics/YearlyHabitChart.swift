@@ -52,8 +52,9 @@ struct YearlyHabitChart: View {
         VStack(spacing: 12) {
             HStack {
                 Button(action: showPreviousYear) {
-                    Image(systemName: "chevron.left")
-                        .font(.headline)
+                    Image("chevron.left")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToPreviousYear ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
                         .frame(width: 44, height: 44)
@@ -70,8 +71,9 @@ struct YearlyHabitChart: View {
                 Spacer()
                 
                 Button(action: showNextYear) {
-                    Image(systemName: "chevron.right")
-                        .font(.headline)
+                    Image("chevron.right")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToNextYear ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
                         .frame(width: 44, height: 44)

@@ -68,6 +68,11 @@
 "daily_goal" = "Objectif quotidien";
 "delete_habit" = "Supprimer l'habitude";
 "edit_habit" = "Modifier l'habitude";
+"sport" = "Sport";
+"self-care" = "Soin de soi";
+"finance" = "Finance";
+"brands" = "Marques";
+"other" = "Autre";
 "health" = "Santé";
 "hobbies" = "Loisirs";
 "lifestyle" = "Style de vie";

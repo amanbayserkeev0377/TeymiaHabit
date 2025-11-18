@@ -68,6 +68,11 @@
 "daily_goal" = "每日目標";
 "delete_habit" = "刪除習慣";
 "edit_habit" = "編輯習慣";
+"sport" = "運動";
+"self-care" = "自我照護";
+"finance" = "財務";
+"brands" = "品牌";
+"other" = "其他";
 "health" = "健康";
 "hobbies" = "愛好";
 "lifestyle" = "生活方式";

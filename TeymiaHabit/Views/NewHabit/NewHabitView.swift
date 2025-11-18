@@ -136,10 +136,6 @@ struct NewHabitView: View {
                     IconPickerView(
                         selectedIcon: $selectedIcon,
                         selectedColor: $selectedIconColor,
-                        onShowPaywall: {
-                            showingIconPicker = false
-                            showPaywall = true
-                        }
                     )
                 }
                 .presentationDragIndicator(.visible)

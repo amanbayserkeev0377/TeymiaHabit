@@ -48,7 +48,7 @@ struct HabitIconView: View {
         Group {
             if isEmoji {
                 Text(cleanIconName)
-                    .font(.system(size: size * 0.9))
+                    .font(.system(size: size))
             } else {
                 Image(cleanIconName)
                     .resizable()

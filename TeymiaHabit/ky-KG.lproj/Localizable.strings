@@ -68,6 +68,11 @@
 "daily_goal" = "Максат";
 "delete_habit" = "Адатты өчүрүү";
 "edit_habit" = "Адатты оңдоо";
+"sport" = "Спорт";
+"self-care" = "Өзүн-өзү карауу";
+"finance" = "Каржы";
+"brands" = "Бренддер";
+"other" = "Башка";
 "health" = "Саламаттык";
 "hobbies" = "Кызыгуу";
 "lifestyle" = "Жашоо";

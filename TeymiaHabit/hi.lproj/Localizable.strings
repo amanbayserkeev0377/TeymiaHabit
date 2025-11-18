@@ -68,6 +68,11 @@
 "daily_goal" = "दैनिक लक्ष्य";
 "delete_habit" = "आदत हटाएँ";
 "edit_habit" = "आदत संपादन करें";
+"sport" = "खेल";
+"self-care" = "स्वयं-देखभाल";
+"finance" = "वित्त";
+"brands" = "ब्रांड्स";
+"other" = "अन्य";
 "health" = "स्वास्थ्य";
 "hobbies" = "शौक";
 "lifestyle" = "जीवनशैली";

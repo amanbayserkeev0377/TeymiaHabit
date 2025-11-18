@@ -68,6 +68,11 @@
 "daily_goal" = "Күнделікті мақсат";
 "delete_habit" = "Дәстүрді жою";
 "edit_habit" = "Дәстүрді өңдеу";
+"sport" = "Спорт";
+"self-care" = "Өзін-өзі күту";
+"finance" = "Қаржы";
+"brands" = "Брендтер";
+"other" = "Басқа";
 "health" = "Денсаулық";
 "hobbies" = "Хобби";
 "lifestyle" = "Өмір салты";

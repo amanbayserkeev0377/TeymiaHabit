@@ -68,6 +68,11 @@
 "daily_goal" = "Günlük Hedef";
 "delete_habit" = "Alışkanlık Sil";
 "edit_habit" = "Alışkanlık Düzenle";
+"sport" = "Spor";
+"self-care" = "Kendi bakımı";
+"finance" = "Finans";
+"brands" = "Markalar";
+"other" = "Diğer";
 "health" = "Sağlık";
 "hobbies" = "Hobiler";
 "lifestyle" = "Yaşam Tarzı";
