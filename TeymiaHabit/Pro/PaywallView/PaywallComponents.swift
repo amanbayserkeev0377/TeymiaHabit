@@ -12,6 +12,7 @@ struct PaywallHeaderSection: View {
                 
                 Text("Teymia Habit Pro")
                     .font(.largeTitle)
+                    .fontDesign(.rounded)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(ProGradientColors.proGradient)

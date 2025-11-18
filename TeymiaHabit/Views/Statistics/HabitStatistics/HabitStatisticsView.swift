@@ -58,7 +58,6 @@ struct HabitStatisticsView: View {
                         }
                     }
                     .listRowInsets(EdgeInsets())
-                    .frame(maxWidth: .infinity)
                 } footer: {
                     HStack(spacing: 8) {
                         Image("cursor")
@@ -91,6 +90,7 @@ struct HabitStatisticsView: View {
                             }
                         }
                     }
+                    .listRowInsets(EdgeInsets())
                 } footer: {
                     HStack(spacing: 8) {
                         Image("cursor")
@@ -227,16 +227,19 @@ struct HabitStatisticsView: View {
         case .week:
             WeeklyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
+                .padding(.horizontal, 16)
                 .transition(.opacity)
             
         case .month:
             MonthlyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
+                .padding(.horizontal, 16)
                 .transition(.opacity)
             
         case .year:
             YearlyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
+                .padding(.horizontal, 16)
                 .transition(.opacity)
         }
     }

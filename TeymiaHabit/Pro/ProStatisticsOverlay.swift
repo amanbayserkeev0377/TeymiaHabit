@@ -11,19 +11,24 @@ struct ProStatisticsOverlay: View {
                     onTap()
                 }
             VStack(spacing: 16) {
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 32, weight: .medium))
+                Image("lock")
+                    .resizable()
+                    .frame(width: 32, height: 32)
                     .foregroundStyle(.white)
                     .frame(width: 60, height: 60)
                     .background(
                         Circle()
                             .fill(ProGradientColors.gradient(startPoint: .topLeading, endPoint: .bottomTrailing))
                     )
-                    .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
             }
-            .padding(24)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+//            .padding(24)
             .allowsHitTesting(false)
         }
+        .background {
+            TransparentBlurView(removeAllFilters: true)
+                .blur(radius: 2, opaque: true)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

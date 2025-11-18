@@ -3,7 +3,7 @@ import SwiftUI
 struct ProLockBadge: View {
     var body: some View {
         HStack(spacing: 4) {
-            Image("lock.fill")
+            Image("lock")
                 .resizable()
                 .frame(width: 12, height: 12)
                 .foregroundStyle(.white)
@@ -11,7 +11,7 @@ struct ProLockBadge: View {
             Text("PRO")
                 .font(.caption2)
                 .fontDesign(.rounded)
-                .fontWeight(.bold)
+                .fontWeight(.semibold)
                 .foregroundStyle(.white)
         }
         .padding(.horizontal, 8)

@@ -34,30 +34,17 @@ struct PaywallBottomOverlay: View {
         .padding(.horizontal, 20)
         .padding(.top, 20)
         .padding(.bottom, 8)
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(colorScheme == .dark ? 0.05 : 0.4),
-                                Color.clear,
-                                Color.black.opacity(colorScheme == .dark ? 0.2 : 0.05)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-            }
-        )
+        .background {
+            TransparentBlurView(removeAllFilters: true)
+                .blur(radius: 4, opaque: true)
+                .background(Color.mainRowBackground.opacity(0.8))
+                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+        }
         .shadow(
-            color: Color.black.opacity(colorScheme == .dark ? 0.4 : 0.15),
-            radius: 24,
+            color: Color.black.opacity(0.15),
+            radius: 8,
             x: 0,
-            y: -8
+            y: 4
         )
         .padding(.horizontal, 16)
     }
@@ -131,28 +118,24 @@ struct PricingCard: View {
         return package.storeProduct.localizedPriceString
     }
     
-    private var badgeText: String? {
-        if cardType == .yearly {
-            return "-60%"
-        }
-        return nil
-    }
-    
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 8) {
-                Image(systemName: cardIcon)
-                    .font(.system(size: 24, weight: .medium))
+                Image(cardIcon)
+                    .resizable()
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(isSelected ? .white : .primary)
                 
                 Text(cardTitle)
                     .font(.caption)
                     .fontWeight(.semibold)
+                    .fontDesign(.rounded)
                     .foregroundStyle(isSelected ? .white : .primary)
                     .multilineTextAlignment(.center)
                 
                 Text(cardPrice)
                     .font(.headline)
+                    .fontDesign(.rounded)
                     .fontWeight(.bold)
                     .foregroundStyle(isSelected ? .white : .primary)
             }
@@ -162,63 +145,21 @@ struct PricingCard: View {
             .background(
                 Group {
                     if isSelected {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
                             .fill(
                                 cardType == .lifetime ?
                                 LinearGradient(colors: [Color(#colorLiteral(red: 1, green: 0.7647058824, blue: 0.4431372549, alpha: 1)), Color(#colorLiteral(red: 1, green: 0.3725490196, blue: 0.4274509804, alpha: 1))], startPoint: .topLeading, endPoint: .bottomTrailing) :
                                     ProGradientColors.gradient(startPoint: .topLeading, endPoint: .bottomTrailing)
                             )
                     } else {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        colorScheme == .dark ?
-                                        Color.white.opacity(0.08) :
-                                            Color.black.opacity(0.05)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            .fill(.secondary.opacity(0.08))
                     }
                 }
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(
-                        isSelected ? Color.clear :
-                            Color.primary.opacity(0.1),
-                        lineWidth: 1
-                    )
-            )
-            .overlay(
-                Group {
-                    if let badgeText = badgeText {
-                        Text(badgeText)
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(
-                                        HabitIconColor.green.color.gradient
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                            .stroke(Color.secondary.opacity(0.3), lineWidth: 0.5)
-                                    )
-                            )
-                            .padding(.top, -14)
-                    }
-                },
-                alignment: .topTrailing
-            )
         }
         .buttonStyle(.plain)
-        .scaleEffect(isSelected ? 1.08 : 1.0)
+        .scaleEffect(isSelected ? 1.06 : 1.0)
         .animation(hasAppeared ? .easeInOut(duration: 0.25) : .none, value: isSelected)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -234,7 +175,7 @@ struct PurchaseButton: View {
     let isPurchasing: Bool
     let colorScheme: ColorScheme
     let onTap: () -> Void
-        
+    
     private var buttonText: String {
         if isPurchasing {
             return "paywall_processing_button".localized
@@ -302,6 +243,7 @@ struct PurchaseButton: View {
                 
                 Text(buttonText)
                     .font(.headline)
+                    .fontDesign(.rounded)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)
             }
@@ -309,7 +251,7 @@ struct PurchaseButton: View {
             .frame(height: 52)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    RoundedRectangle(cornerRadius: 30, style: .continuous)
                         .fill(
                             selectedPackage?.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase ?
                             LinearGradient(
@@ -327,11 +269,11 @@ struct PurchaseButton: View {
             )
             .shadow(
                 color: selectedPackage?.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase ?
-                Color.red.opacity(0.2) :
-                    ProGradientColors.gradientColors[0].opacity(0.4),
-                radius: 12,
+                Color.orange.opacity(0.4) :
+                    Color.purple.opacity(0.4),
+                radius: 8,
                 x: 0,
-                y: 6
+                y: 4
             )
         }
         .buttonStyle(.plain)

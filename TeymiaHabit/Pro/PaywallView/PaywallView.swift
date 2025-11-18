@@ -26,7 +26,10 @@ struct PaywallView: View {
                             .frame(height: 200)
                     }
                     .padding(.horizontal, 24)
-                    .padding(.vertical, 20)
+                    .padding(.top, 40)
+                }
+                .background {
+                    LivelyFloatingBlobsBackground()
                 }
                 
                 if let offerings = proManager.offerings,
@@ -58,6 +61,7 @@ struct PaywallView: View {
             }
         }
         .presentationDragIndicator(.visible)
+        .presentationCornerRadius(30)
         .onAppear {
             selectDefaultPackage()
         }
@@ -173,7 +177,9 @@ struct PaywallScrollableFooter: View {
                 onRestorePurchases()
             }
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .fontWeight(.medium)
+            .fontDesign(.rounded)
+            .foregroundStyle(.primary)
             
             Button {
                 if let url = URL(string: "https://www.apple.com/family-sharing/") {
@@ -181,11 +187,12 @@ struct PaywallScrollableFooter: View {
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "person.3.fill")
-                        .font(.subheadline)
+                    Image("family.fill")
+                        .resizable()
+                        .frame(width: 16, height: 16)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color.purple, Color.blue, Color.mint],
+                                colors: [Color.blue, Color.mint, Color.purple],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -193,11 +200,13 @@ struct PaywallScrollableFooter: View {
                     
                     Text("paywall_family_sharing_button".localized)
                         .font(.subheadline)
-                        .foregroundStyle(.blue)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.blue.gradient)
                 }
             }
             Text("paywall_legal_text".localized)
                 .font(.caption)
+                .fontDesign(.rounded)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
@@ -209,6 +218,7 @@ struct PaywallScrollableFooter: View {
                     }
                 }
                 .font(.caption)
+                .fontDesign(.rounded)
                 .foregroundStyle(.secondary)
                 
                 Button("privacy_policy".localized) {
@@ -217,6 +227,7 @@ struct PaywallScrollableFooter: View {
                     }
                 }
                 .font(.caption)
+                .fontDesign(.rounded)
                 .foregroundStyle(.secondary)
             }
         }

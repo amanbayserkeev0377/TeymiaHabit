@@ -38,6 +38,7 @@ struct TimeRangePicker: View {
             }
         }
         .pickerStyle(.segmented)
-        .padding(.horizontal)
+        .padding(.horizontal, 16)
+        .padding(.top, 16)
     }
 }

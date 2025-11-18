@@ -14,7 +14,6 @@ struct MonthlyCalendarView: View {
     var onCountInput: ((Int, Date) -> Void)?
     var onTimeInput: ((Int, Int, Date) -> Void)?
     
-    
     @Binding var selectedDate: Date
     @Binding var showingCountInput: Bool
     @Binding var showingTimeInput: Bool
@@ -27,8 +26,7 @@ struct MonthlyCalendarView: View {
     @State private var showingActionSheet = false
     @State private var months: [Date] = []
     @State private var currentMonthIndex: Int = 0
-    @State private var calendarDays: [[Date?]] = []
-    @State private var isLoading: Bool = false
+    @State private var monthCalendarCache: [Int: [[Date?]]] = [:]
     
     @Query private var completions: [HabitCompletion]
     
@@ -65,32 +63,24 @@ struct MonthlyCalendarView: View {
     
     // MARK: - Body
     var body: some View {
-        VStack(spacing: 10) {
+        VStack {
             monthNavigationHeader
-                .padding(.bottom)
+            
             weekdayHeader
             
-            if isLoading {
-                ProgressView()
-                    .frame(height: 250)
-            } else if months.isEmpty || calendarDays.isEmpty {
-                Text("loading_calendar".localized)
-                    .frame(height: 250)
-            } else {
+            if !months.isEmpty {
                 monthGridContainer
             }
         }
-        .padding(.vertical)
-        .padding(.horizontal, 5)
         .onAppear(perform: setupCalendar)
         .onChange(of: selectedDate) { _, newDate in
             updateMonthIfNeeded(for: newDate)
         }
         .onChange(of: updateCounter) { _, _ in
-            generateCalendarDays()
+            regenerateAllCalendarDays()
         }
         .onChange(of: weekdayPrefs.firstDayOfWeek) { _, _ in
-            generateCalendarDays()
+            regenerateAllCalendarDays()
         }
         .confirmationDialog(
             dialogTitle,
@@ -118,8 +108,8 @@ struct MonthlyCalendarView: View {
             
             Text(DateFormatter.capitalizedNominativeMonthYear(from: currentMonth))
                 .font(.headline)
+                .fontWeight(.semibold)
                 .fontDesign(.rounded)
-                .fontWeight(.medium)
             
             Spacer()
             
@@ -133,7 +123,8 @@ struct MonthlyCalendarView: View {
             .disabled(!canNavigateToNextMonth)
             .buttonStyle(.plain)
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, 16)
+        .padding(.top, 18)
         .zIndex(1)
     }
     
@@ -141,43 +132,45 @@ struct MonthlyCalendarView: View {
         HStack(spacing: 0) {
             ForEach(0..<7, id: \.self) { index in
                 Text(calendar.orderedWeekdayInitials[index])
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                     .fontDesign(.rounded)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.bottom, 8)
+        .padding(.horizontal, 4)
+        .padding(.top, 16)
     }
     
     private var monthGridContainer: some View {
-        VStack {
-            monthGrid(forMonth: currentMonth)
-                .frame(height: min(CGFloat(calendarDays.count) * 55, 300))
-                .id("month-\(currentMonthIndex)-\(updateCounter)")
-                .gesture(swipeGesture)
-        }
-        .background(Color.clear)
-    }
-    
-    private var swipeGesture: some Gesture {
-        DragGesture(minimumDistance: 50)
-            .onEnded { value in
-                let horizontalDistance = value.translation.width
-                let verticalDistance = abs(value.translation.height)
-                
-                if abs(horizontalDistance) > verticalDistance * 2 {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        if horizontalDistance > 0 && canNavigateToPreviousMonth {
-                            showPreviousMonth()
-                        } else if horizontalDistance < 0 && canNavigateToNextMonth {
-                            showNextMonth()
-                        }
+        TabView(selection: $currentMonthIndex) {
+            ForEach(months.indices, id: \.self) { index in
+                monthGrid(forIndex: index)
+                    .frame(height: 280)
+                    .tag(index)
+                    .onAppear {
+                        // Cache when view appears (safe place to modify state)
+                        cacheCalendarDays(for: index)
                     }
-                }
             }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(height: 280)
+        .onAppear {
+            generateCalendarDaysIfNeeded(for: currentMonthIndex)
+        }
+        .onChange(of: currentMonthIndex) { oldValue, newValue in
+            generateCalendarDaysIfNeeded(for: newValue)
+            
+            // Preload adjacent months
+            if newValue > 0 {
+                generateCalendarDaysIfNeeded(for: newValue - 1)
+            }
+            if newValue < months.count - 1 {
+                generateCalendarDaysIfNeeded(for: newValue + 1)
+            }
+        }
     }
     
     private var actionSheetButtons: some View {
@@ -209,11 +202,14 @@ struct MonthlyCalendarView: View {
         }
     }
     
-    private func monthGrid(forMonth month: Date) -> some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 12) {
-            ForEach(0..<calendarDays.count, id: \.self) { row in
+    private func monthGrid(forIndex index: Int) -> some View {
+        // Get or generate calendar days for this month
+        let days = getCalendarDays(for: index)
+        
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 7) {
+            ForEach(0..<days.count, id: \.self) { row in
                 ForEach(0..<7, id: \.self) { column in
-                    if let date = calendarDays[row][column] {
+                    if let date = days[row][column] {
                         let isActiveDate = date <= Date() && date >= habit.startDate && habit.isActiveOnDate(date)
                         let progress = habit.completionPercentageForDate(date)
                         
@@ -232,7 +228,6 @@ struct MonthlyCalendarView: View {
                             habit: habit
                         )
                         .frame(width: 40, height: 40)
-                        .id("\(row)-\(column)-\(date.timeIntervalSince1970)-\(progress)-\(updateCounter)")
                         .buttonStyle(BorderlessButtonStyle())
                         .popover(isPresented: Binding(
                             get: { showingCountInput && calendar.isDate(date, inSameDayAs: selectedActionDate ?? Date.distantPast) },
@@ -272,7 +267,10 @@ struct MonthlyCalendarView: View {
     }
     
     private var currentMonth: Date {
-        months.isEmpty ? Date() : months[currentMonthIndex]
+        guard !months.isEmpty, currentMonthIndex >= 0, currentMonthIndex < months.count else {
+            return Date()
+        }
+        return months[currentMonthIndex]
     }
     
     private var canNavigateToPreviousMonth: Bool {
@@ -292,18 +290,16 @@ struct MonthlyCalendarView: View {
     
     // MARK: - Setup Methods
     private func setupCalendar() {
-        isLoading = true
         generateMonths()
         findCurrentMonthIndex()
-        generateCalendarDays()
-        isLoading = false
+        // Generate initial months
+        generateCalendarDaysIfNeeded(for: currentMonthIndex)
     }
     
     private func updateMonthIfNeeded(for newDate: Date) {
         if let monthIndex = findMonthIndex(for: newDate) {
             if monthIndex != currentMonthIndex {
                 currentMonthIndex = monthIndex
-                generateCalendarDays()
             }
         }
     }
@@ -341,23 +337,61 @@ struct MonthlyCalendarView: View {
         months = generatedMonths
     }
     
-    private func generateCalendarDays() {
-        guard !months.isEmpty && currentMonthIndex < months.count else {
-            calendarDays = []
+    // Get calendar days for a month, generating if needed
+    private func getCalendarDays(for index: Int) -> [[Date?]] {
+        if let cached = monthCalendarCache[index] {
+            return cached
+        }
+        
+        // Generate if not cached, but DON'T save during view render
+        guard index >= 0, index < months.count else {
+            return []
+        }
+        
+        return generateCalendarDays(for: months[index])
+    }
+
+    // Save to cache (call this in onChange/onAppear, not during render)
+    private func cacheCalendarDays(for index: Int) {
+        guard index >= 0, index < months.count, monthCalendarCache[index] == nil else {
             return
         }
         
-        let month = months[currentMonthIndex]
-        
-        guard let range = calendar.range(of: .day, in: .month, for: month) else {
-            calendarDays = []
+        let days = generateCalendarDays(for: months[index])
+        monthCalendarCache[index] = days
+    }
+
+    // Check if calendar days need generation
+    private func generateCalendarDaysIfNeeded(for index: Int) {
+        guard index >= 0, index < months.count, monthCalendarCache[index] == nil else {
             return
+        }
+        
+        let days = generateCalendarDays(for: months[index])
+        monthCalendarCache[index] = days
+    }
+    
+    // Regenerate all cached months (when updateCounter or weekday changes)
+    private func regenerateAllCalendarDays() {
+        monthCalendarCache.removeAll()
+        // Regenerate current and adjacent months
+        generateCalendarDaysIfNeeded(for: currentMonthIndex)
+        if currentMonthIndex > 0 {
+            generateCalendarDaysIfNeeded(for: currentMonthIndex - 1)
+        }
+        if currentMonthIndex < months.count - 1 {
+            generateCalendarDaysIfNeeded(for: currentMonthIndex + 1)
+        }
+    }
+    
+    private func generateCalendarDays(for month: Date) -> [[Date?]] {
+        guard let range = calendar.range(of: .day, in: .month, for: month) else {
+            return []
         }
         let numDays = range.count
         
         guard let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: month)) else {
-            calendarDays = []
-            return
+            return []
         }
         
         var firstWeekday = calendar.component(.weekday, from: firstDay) - calendar.firstWeekday
@@ -398,7 +432,7 @@ struct MonthlyCalendarView: View {
             days.append(week)
         }
         
-        calendarDays = days
+        return days
     }
     
     // MARK: - Helper Methods
@@ -426,14 +460,16 @@ struct MonthlyCalendarView: View {
     // MARK: - Navigation Actions
     private func showPreviousMonth() {
         guard canNavigateToPreviousMonth else { return }
-        currentMonthIndex -= 1
-        generateCalendarDays()
+        withAnimation(.easeInOut(duration: 0.3)) {
+            currentMonthIndex -= 1
+        }
     }
     
     private func showNextMonth() {
         guard canNavigateToNextMonth else { return }
-        currentMonthIndex += 1
-        generateCalendarDays()
+        withAnimation(.easeInOut(duration: 0.3)) {
+            currentMonthIndex += 1
+        }
     }
     
     // MARK: - Formatters

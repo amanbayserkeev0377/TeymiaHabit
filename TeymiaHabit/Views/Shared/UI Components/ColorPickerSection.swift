@@ -114,7 +114,7 @@ struct ColorPickerSection: View {
             .fill(.clear)
             .frame(width: buttonSize, height: buttonSize)
             .overlay(
-                Image("lock.fill")
+                Image("lock")
                     .resizable()
                     .frame(width: buttonSize * DesignConstants.lockIconScale, height: buttonSize * DesignConstants.lockIconScale)
                     .foregroundStyle(.white)
@@ -126,7 +126,7 @@ struct ColorPickerSection: View {
             .fill(.clear)
             .frame(width: buttonSize, height: buttonSize)
             .overlay(
-                Image("lock.fill")
+                Image("lock")
                     .resizable()
                     .frame(width: buttonSize * DesignConstants.customPickerLockScale, height: buttonSize * DesignConstants.customPickerLockScale)
                     .foregroundStyle(.white)
