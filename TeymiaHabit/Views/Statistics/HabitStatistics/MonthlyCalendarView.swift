@@ -27,6 +27,7 @@ struct MonthlyCalendarView: View {
     @State private var months: [Date] = []
     @State private var currentMonthIndex: Int = 0
     @State private var monthCalendarCache: [Int: [[Date?]]] = [:]
+    @State private var progressData: [Date: Double] = [:]
     
     @Query private var completions: [HabitCompletion]
     
@@ -150,7 +151,6 @@ struct MonthlyCalendarView: View {
                     .frame(height: 280)
                     .tag(index)
                     .onAppear {
-                        // Cache when view appears (safe place to modify state)
                         cacheCalendarDays(for: index)
                     }
             }
@@ -159,9 +159,11 @@ struct MonthlyCalendarView: View {
         .frame(height: 280)
         .onAppear {
             generateCalendarDaysIfNeeded(for: currentMonthIndex)
+            loadProgressData()
         }
         .onChange(of: currentMonthIndex) { oldValue, newValue in
             generateCalendarDaysIfNeeded(for: newValue)
+            loadProgressData() // Load progress for new month
             
             // Preload adjacent months
             if newValue > 0 {
@@ -203,7 +205,6 @@ struct MonthlyCalendarView: View {
     }
     
     private func monthGrid(forIndex index: Int) -> some View {
-        // Get or generate calendar days for this month
         let days = getCalendarDays(for: index)
         
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 7) {
@@ -211,7 +212,7 @@ struct MonthlyCalendarView: View {
                 ForEach(0..<7, id: \.self) { column in
                     if let date = days[row][column] {
                         let isActiveDate = date <= Date() && date >= habit.startDate && habit.isActiveOnDate(date)
-                        let progress = habit.completionPercentageForDate(date)
+                        let progress = progressData[date] ?? 0 // Get from cache like Weekly
                         
                         DayProgressItem(
                             date: date,
@@ -292,7 +293,6 @@ struct MonthlyCalendarView: View {
     private func setupCalendar() {
         generateMonths()
         findCurrentMonthIndex()
-        // Generate initial months
         generateCalendarDaysIfNeeded(for: currentMonthIndex)
     }
     
@@ -337,13 +337,12 @@ struct MonthlyCalendarView: View {
         months = generatedMonths
     }
     
-    // Get calendar days for a month, generating if needed
+    // Get calendar days for a month (read-only, no state modification)
     private func getCalendarDays(for index: Int) -> [[Date?]] {
         if let cached = monthCalendarCache[index] {
             return cached
         }
         
-        // Generate if not cached, but DON'T save during view render
         guard index >= 0, index < months.count else {
             return []
         }
@@ -351,7 +350,7 @@ struct MonthlyCalendarView: View {
         return generateCalendarDays(for: months[index])
     }
 
-    // Save to cache (call this in onChange/onAppear, not during render)
+    // Save to cache (safe place to modify state)
     private func cacheCalendarDays(for index: Int) {
         guard index >= 0, index < months.count, monthCalendarCache[index] == nil else {
             return
@@ -371,16 +370,43 @@ struct MonthlyCalendarView: View {
         monthCalendarCache[index] = days
     }
     
-    // Regenerate all cached months (when updateCounter or weekday changes)
+    // Regenerate all cached months
     private func regenerateAllCalendarDays() {
         monthCalendarCache.removeAll()
-        // Regenerate current and adjacent months
+        progressData.removeAll()
+        
         generateCalendarDaysIfNeeded(for: currentMonthIndex)
+        loadProgressData()
+        
         if currentMonthIndex > 0 {
             generateCalendarDaysIfNeeded(for: currentMonthIndex - 1)
         }
         if currentMonthIndex < months.count - 1 {
             generateCalendarDaysIfNeeded(for: currentMonthIndex + 1)
+        }
+    }
+    
+    // MARK: - Progress Loading
+    
+    private func loadProgressData() {
+        guard !months.isEmpty, currentMonthIndex < months.count else { return }
+        
+        let days = getCalendarDays(for: currentMonthIndex)
+        var newProgressData: [Date: Double] = [:]
+        
+        // Load progress for all dates in current month
+        for row in days {
+            for date in row.compactMap({ $0 }) {
+                let isActive = date <= Date() && date >= habit.startDate && habit.isActiveOnDate(date)
+                if isActive {
+                    newProgressData[date] = habit.completionPercentageForDate(date)
+                }
+            }
+        }
+        
+        // Update progressData (triggers view update with animation from DayProgressItem)
+        for (date, progress) in newProgressData {
+            progressData[date] = progress
         }
     }
     
