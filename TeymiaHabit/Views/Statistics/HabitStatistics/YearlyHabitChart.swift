@@ -15,12 +15,11 @@ struct YearlyHabitChart: View {
     }
     
     // MARK: - Body
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            
             headerView
-            chartView
-            
+            chartContainer
         }
         .onAppear {
             setupYears()
@@ -46,7 +45,6 @@ struct YearlyHabitChart: View {
         }
     }
     
-    // MARK: - Header View
     @ViewBuilder
     private var headerView: some View {
         VStack(spacing: 12) {
@@ -57,16 +55,16 @@ struct YearlyHabitChart: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToPreviousYear ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44)
                 }
                 .disabled(!canNavigateToPreviousYear)
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.borderless)
                 
                 Spacer()
                 
                 Text(yearRangeString)
                     .font(.headline)
-                    .fontWeight(.medium)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
                 
                 Spacer()
                 
@@ -76,24 +74,25 @@ struct YearlyHabitChart: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToNextYear ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44)
                 }
                 .disabled(!canNavigateToNextYear)
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.borderless)
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
             
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("average".localized)
-                        .font(.caption)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
-                        .textCase(.uppercase)
                     
                     Text(averageValueFormatted)
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .withHabitGradient(habit)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -103,113 +102,107 @@ struct YearlyHabitChart: View {
                    }) {
                     VStack(alignment: .center, spacing: 2) {
                         Text(monthYearFormatter.string(from: selectedDate).capitalized)
-                            .font(.caption)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
                         
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitGradient(habit)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.primary)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("total".localized)
-                        .font(.caption)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
-                        .textCase(.uppercase)
                     
                     Text(yearlyTotalFormatted)
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .withHabitGradient(habit)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .padding(.horizontal, 0)
+            .padding(.horizontal, 16)
         }
     }
     
+    // MARK: - Chart Container with TabView
+    
     @ViewBuilder
-    private var chartView: some View {
-            Chart(chartData) { dataPoint in
-                BarMark(
-                    x: .value("Month", dataPoint.date, unit: .month),
-                    y: .value("Progress", dataPoint.value)
-                )
-                .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(30)
-                .opacity(selectedDate == nil ? 1.0 : 
-                        (calendar.component(.month, from: dataPoint.date) == calendar.component(.month, from: selectedDate!) &&
-                         calendar.component(.year, from: dataPoint.date) == calendar.component(.year, from: selectedDate!) ? 1.0 : 0.4))
+    private var chartContainer: some View {
+        TabView(selection: $currentYearIndex) {
+            ForEach(years.indices, id: \.self) { index in
+                chartView(for: index)
+                    .tag(index)
+                    .padding(.horizontal, 16)
             }
-            .frame(height: 200)
-            .chartXAxis {
-                AxisMarks(values: xAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
-                        .foregroundStyle(.gray.opacity(0.3))
-                    AxisValueLabel {
-                        if let date = value.as(Date.self) {
-                            Text(firstLetterOfMonth(from: date))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(height: 180)
+        .onChange(of: currentYearIndex) { _, _ in
+            selectedDate = nil
+            generateChartData()
+        }
+    }
+    
+    // MARK: - Chart View
+    
+    @ViewBuilder
+    private func chartView(for index: Int) -> some View {
+        Chart(chartData) { dataPoint in
+            BarMark(
+                x: .value("Month", dataPoint.date, unit: .month),
+                y: .value("Progress", dataPoint.value)
+            )
+            .foregroundStyle(barColor(for: dataPoint))
+            .cornerRadius(8)
+            .opacity(selectedDate == nil ? 1.0 :
+                    (calendar.component(.month, from: dataPoint.date) == calendar.component(.month, from: selectedDate!) &&
+                     calendar.component(.year, from: dataPoint.date) == calendar.component(.year, from: selectedDate!) ? 1.0 : 0.3))
+        }
+        .chartXAxis {
+            AxisMarks(values: xAxisValues) { value in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2]))
+                    .foregroundStyle(Color.secondary.opacity(0.2))
+                AxisValueLabel {
+                    if let date = value.as(Date.self) {
+                        Text(firstLetterOfMonth(from: date))
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
-            .chartYAxis {
-                AxisMarks(position: .trailing, values: yAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
-                        .foregroundStyle(.gray.opacity(0.3))
-                    AxisValueLabel {
-                        if let intValue = value.as(Int.self) {
-                            if habit.type == .time {
-                                Text(formatTimeWithoutSeconds(intValue))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                Text("\(intValue)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
+        }
+        .chartYAxis {
+            AxisMarks(position: .trailing, values: yAxisValues) { value in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
+                    .foregroundStyle(Color.secondary.opacity(0.2))
+            }
+        }
+        .chartXSelection(value: $selectedDate)
+        .onTapGesture {
+            if selectedDate != nil {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    selectedDate = nil
                 }
             }
-            .chartXSelection(value: $selectedDate)
-            .gesture(dragGesture)
-            .onTapGesture {
-                if selectedDate != nil {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        selectedDate = nil
-                    }
-                }
-            }
-            .id("year-\(currentYearIndex)-\(updateCounter)")
+        }
+        .frame(height: 180)
     }
     
     // MARK: - Computed Properties
     
-    private var dragGesture: some Gesture {
-        DragGesture(minimumDistance: 50)
-            .onEnded { value in
-                let horizontalDistance = value.translation.width
-                let verticalDistance = abs(value.translation.height)
-                
-                if abs(horizontalDistance) > verticalDistance * 2 {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        if horizontalDistance > 0 && canNavigateToPreviousYear {
-                            showPreviousYear()
-                        } else if horizontalDistance < 0 && canNavigateToNextYear {
-                            showNextYear()
-                        }
-                    }
-                }
-            }
-    }
-        
     private var currentYear: Date {
         guard !years.isEmpty && currentYearIndex >= 0 && currentYearIndex < years.count else {
             return Date()
@@ -259,12 +252,6 @@ struct YearlyHabitChart: View {
         return formatter
     }
     
-    private var shortMonthFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
-        return formatter
-    }
-    
     private func firstLetterOfMonth(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM"
@@ -279,7 +266,7 @@ struct YearlyHabitChart: View {
         if hours > 0 {
             return String(format: "%d:%02d", hours, minutes)
         } else if minutes > 0 {
-            return String(format: "%0:%02d", minutes)
+            return String(format: "0:%02d", minutes)
         } else {
             return "0"
         }
@@ -323,8 +310,6 @@ struct YearlyHabitChart: View {
         guard canNavigateToPreviousYear else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentYearIndex -= 1
-            selectedDate = nil
-            generateChartData()
         }
     }
     
@@ -332,8 +317,6 @@ struct YearlyHabitChart: View {
         guard canNavigateToNextYear else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentYearIndex += 1
-            selectedDate = nil
-            generateChartData()
         }
     }
     
@@ -352,7 +335,6 @@ struct YearlyHabitChart: View {
     // MARK: - Helper Methods
     
     private func setupYears() {
-        
         let today = Date()
         let currentYearComponents = calendar.dateComponents([.year], from: today)
         let currentYear = calendar.date(from: currentYearComponents) ?? today

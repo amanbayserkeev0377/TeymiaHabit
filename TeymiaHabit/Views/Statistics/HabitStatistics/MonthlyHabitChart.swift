@@ -9,7 +9,6 @@ struct MonthlyHabitChart: View {
     @State private var currentMonthIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
-    @State private var animationProgress: CGFloat = 0 // Progress from 0 to 1
     
     private var calendar: Calendar {
         Calendar.userPreferred
@@ -26,7 +25,6 @@ struct MonthlyHabitChart: View {
             setupMonths()
             findCurrentMonthIndex()
             generateChartData()
-            triggerAnimation()
         }
         .onChange(of: habit.goal) { _, _ in
             generateChartData()
@@ -59,7 +57,7 @@ struct MonthlyHabitChart: View {
                         .contentShape(Rectangle())
                 }
                 .disabled(!canNavigateToPreviousMonth)
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.borderless)
                 
                 Spacer()
                 
@@ -78,7 +76,7 @@ struct MonthlyHabitChart: View {
                         .contentShape(Rectangle())
                 }
                 .disabled(!canNavigateToNextMonth)
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.borderless)
             }
             .padding(.horizontal, 16)
             
@@ -145,15 +143,14 @@ struct MonthlyHabitChart: View {
             ForEach(months.indices, id: \.self) { index in
                 chartView(for: index)
                     .tag(index)
+                    .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .frame(height: 180)
         .onChange(of: currentMonthIndex) { _, _ in
             selectedDate = nil
             generateChartData()
-            triggerAnimation()
         }
     }
     
@@ -161,20 +158,19 @@ struct MonthlyHabitChart: View {
     
     @ViewBuilder
     private func chartView(for index: Int) -> some View {
-        GeometryReader { geometry in
             Chart(chartData) { dataPoint in
                 BarMark(
                     x: .value("Day", dataPoint.date),
                     y: .value("Progress", dataPoint.value)
                 )
                 .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(30)
+                .cornerRadius(10)
                 .opacity(selectedDate == nil ? 1.0 :
                         (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.3))
             }
             .chartXAxis {
                 AxisMarks(values: xAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2]))
                         .foregroundStyle(Color.secondary.opacity(0.2))
                     AxisValueLabel {
                         if let date = value.as(Date.self) {
@@ -201,19 +197,6 @@ struct MonthlyHabitChart: View {
                     }
                 }
             }
-            .mask(
-                // Mask that reveals from bottom to top
-                VStack(spacing: 0) {
-                    // Empty space at top (hidden part)
-                    Color.clear
-                        .frame(height: geometry.size.height * (1 - animationProgress))
-                    
-                    // Visible part from bottom
-                    Color.black
-                        .frame(height: geometry.size.height * animationProgress)
-                }
-            )
-        }
         .frame(height: 180)
     }
     
@@ -328,20 +311,6 @@ struct MonthlyHabitChart: View {
         guard canNavigateToNextMonth else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentMonthIndex += 1
-        }
-    }
-    
-    // MARK: - Animation
-    
-    private func triggerAnimation() {
-        // Reset animation
-        animationProgress = 0
-        
-        // Animate from bottom to top
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                animationProgress = 1.0
-            }
         }
     }
     

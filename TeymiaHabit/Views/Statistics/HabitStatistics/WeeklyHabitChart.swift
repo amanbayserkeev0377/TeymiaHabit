@@ -10,7 +10,6 @@ struct WeeklyHabitChart: View {
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
     
-    
     private var calendar: Calendar {
         Calendar.userPreferred
     }
@@ -19,14 +18,12 @@ struct WeeklyHabitChart: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            
             headerView
-            chartView
-            
+            chartContainer
         }
         .onAppear {
             setupWeeks()
-            findCurrentWeekIndex()  
+            findCurrentWeekIndex()
             generateChartData()
         }
         .onChange(of: habit.goal) { _, _ in
@@ -58,16 +55,16 @@ struct WeeklyHabitChart: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToPreviousWeek ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44)
                 }
                 .disabled(!canNavigateToPreviousWeek)
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.borderless)
                 
                 Spacer()
                 
                 Text(weekRangeString)
                     .font(.headline)
-                    .fontWeight(.medium)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
                 
                 Spacer()
                 
@@ -77,24 +74,25 @@ struct WeeklyHabitChart: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToNextWeek ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44)
                 }
                 .disabled(!canNavigateToNextWeek)
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.borderless)
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
             
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("average".localized)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                        
-                        Text(averageValueFormatted)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitGradient(habit)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(averageValueFormatted)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -103,116 +101,108 @@ struct WeeklyHabitChart: View {
                        calendar.isDate($0.date, inSameDayAs: selectedDate)
                    }) {
                     VStack(alignment: .center, spacing: 2) {
-                        Text(shortDateFormatter.string(from: selectedDate))
-                            .font(.caption)
+                        Text(shortDateFormatter.string(from: selectedDate).capitalized)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
                         
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitGradient(habit)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.primary)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("total".localized)
-                        .font(.caption)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
-                        .textCase(.uppercase)
                     
                     Text(weeklyTotalFormatted)
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .withHabitGradient(habit)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .padding(.horizontal, 0)
+            .padding(.horizontal, 16)
+        }
+    }
+    
+    // MARK: - Chart Container with TabView
+    
+    @ViewBuilder
+    private var chartContainer: some View {
+        TabView(selection: $currentWeekIndex) {
+            ForEach(weeks.indices, id: \.self) { index in
+                chartView(for: index)
+                    .tag(index)
+                    .padding(.horizontal, 16)
+            }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(height: 180)
+        .onChange(of: currentWeekIndex) { _, _ in
+            selectedDate = nil
+            generateChartData()
         }
     }
     
     // MARK: - Chart View
     
     @ViewBuilder
-    private var chartView: some View {
-            Chart(chartData) { dataPoint in
-                BarMark(
-                    x: .value("Day", dataPoint.date, unit: .day),
-                    y: .value("Progress", dataPoint.value)
-                )
-                .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(30)
-                .opacity(selectedDate == nil ? 1.0 :
-                        (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.4))
-            }
-            .frame(height: 200)
-            .chartXAxis {
-                AxisMarks(values: chartData.map { $0.date }) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
-                        .foregroundStyle(.gray.opacity(0.3))
-                    AxisValueLabel {
-                        if let date = value.as(Date.self) {
-                            let weekdayIndex = calendar.component(.weekday, from: date) - 1
-                            let shortName = calendar.shortWeekdaySymbols[weekdayIndex]
-                            Text(shortName)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-            }
-            .chartYAxis {
-                AxisMarks(position: .trailing, values: yAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
-                        .foregroundStyle(.gray.opacity(0.3))
-                    AxisValueLabel {
-                        if let intValue = value.as(Int.self) {
-                            if habit.type == .time {
-                                Text(formatTimeWithoutSeconds(intValue))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                Text("\(intValue)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-            }
-            .chartXSelection(value: $selectedDate)
-            .gesture(dragGesture)
-            .onTapGesture {
-                if selectedDate != nil {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        selectedDate = nil
-                    }
-                }
-            }
-            .id("week-\(currentWeekIndex)-\(updateCounter)")
+    private func chartView(for index: Int) -> some View {
+        Chart(chartData) { dataPoint in
+            BarMark(
+                x: .value("Day", dataPoint.date, unit: .day),
+                y: .value("Progress", dataPoint.value)
+            )
+            .foregroundStyle(barColor(for: dataPoint))
+            .cornerRadius(10)
+            .opacity(selectedDate == nil ? 1.0 :
+                    (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.3))
         }
+        .chartXAxis {
+            AxisMarks(values: chartData.map { $0.date }) { value in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2]))
+                    .foregroundStyle(Color.secondary.opacity(0.2))
+                AxisValueLabel {
+                    if let date = value.as(Date.self) {
+                        let weekdayIndex = calendar.component(.weekday, from: date) - 1
+                        let shortName = calendar.shortWeekdaySymbols[weekdayIndex]
+                        Text(shortName)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .trailing, values: yAxisValues) { value in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
+                    .foregroundStyle(Color.secondary.opacity(0.2))
+            }
+        }
+        .chartXSelection(value: $selectedDate)
+        .onTapGesture {
+            if selectedDate != nil {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    selectedDate = nil
+                }
+            }
+        }
+        .frame(height: 180)
+    }
     
     // MARK: - Computed Properties
-    
-    private var dragGesture: some Gesture {
-        DragGesture(minimumDistance: 50)
-            .onEnded { value in
-                let horizontalDistance = value.translation.width
-                let verticalDistance = abs(value.translation.height)
-                
-                if abs(horizontalDistance) > verticalDistance * 2 {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        if horizontalDistance > 0 && canNavigateToPreviousWeek {
-                            showPreviousWeek()
-                        } else if horizontalDistance < 0 && canNavigateToNextWeek {
-                            showNextWeek()
-                        }
-                    }
-                }
-            }
-    }
     
     private var currentWeekStart: Date {
         guard !weeks.isEmpty && currentWeekIndex >= 0 && currentWeekIndex < weeks.count else {
@@ -287,7 +277,7 @@ struct WeeklyHabitChart: View {
         if hours > 0 {
             return String(format: "%d:%02d", hours, minutes)
         } else if minutes > 0 {
-            return String(format: "%0:%02d", minutes)
+            return String(format: "0:%02d", minutes)
         } else {
             return "0"
         }
@@ -326,8 +316,6 @@ struct WeeklyHabitChart: View {
         guard canNavigateToPreviousWeek else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentWeekIndex -= 1
-            selectedDate = nil
-            generateChartData()
         }
     }
     
@@ -335,8 +323,6 @@ struct WeeklyHabitChart: View {
         guard canNavigateToNextWeek else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentWeekIndex += 1
-            selectedDate = nil
-            generateChartData()
         }
     }
     
@@ -364,7 +350,6 @@ struct WeeklyHabitChart: View {
     // MARK: - Helper Methods
     
     private func setupWeeks() {
-        
         let today = Date()
         let todayWeekStart = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
         
@@ -405,8 +390,8 @@ struct WeeklyHabitChart: View {
         for dayOffset in 0...6 {
             guard let currentDate = calendar.date(byAdding: .day, value: dayOffset, to: weekStart) else { continue }
             
-            let progress = habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date() 
-                ? habit.progressForDate(currentDate) 
+            let progress = habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date()
+                ? habit.progressForDate(currentDate)
                 : 0
             
             let dataPoint = ChartDataPoint(
