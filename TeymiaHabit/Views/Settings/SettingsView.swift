@@ -39,9 +39,7 @@ struct SettingsView: View {
                         title: { Text("sounds".localized) },
                         icon: {
                             Image("sounds")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.red.gradient)
+                                .settingsIcon()
                         }
                     )
                 }
@@ -59,9 +57,7 @@ struct SettingsView: View {
                         title: { Text("icloud_sync".localized) },
                         icon: {
                             Image("icloud")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.blue.gradient)
+                                .settingsIcon()
                         }
                     )
                 }
@@ -74,9 +70,7 @@ struct SettingsView: View {
                             title: { Text("archived_habits".localized) },
                             icon: {
                                 Image("archive")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(.gray.gradient)
+                                    .settingsIcon()
                             }
                         )
                     }
@@ -89,9 +83,7 @@ struct SettingsView: View {
                         title: { Text("export_data".localized) },
                         icon: {
                             Image("export")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.gray.gradient)
+                                .settingsIcon()
                         }
                     )
                 }
@@ -104,18 +96,7 @@ struct SettingsView: View {
                             title: { Text("passcode_faceid".localized) },
                             icon: {
                                 Image("faceid")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [
-                                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
-                                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
-                                            ],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
+                                    .settingsIcon()
                             }
                         )
                         Spacer()
@@ -151,7 +132,7 @@ struct SettingsView: View {
                         } label: {
                             Image("instagram")
                                 .resizable()
-                                .frame(width: 24, height: 24)
+                                .frame(width: 22, height: 22)
                                 .foregroundStyle(.secondary)
                         }
                         .buttonStyle(.plain)
@@ -170,14 +151,14 @@ struct SettingsView: View {
                             
                             Image("heart.fill")
                                 .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.red.gradient)
+                                .frame(width: 16, height: 16)
+                                .foregroundStyle(Color.secondary)
                             
                             Text("in_kyrgyzstan".localized)
                             
                             Image("kyrgyzstan")
                                 .resizable()
-                                .frame(width: 24, height: 24)
+                                .frame(width: 20, height: 20)
                         }
                         .font(.subheadline)
                         .fontDesign(.rounded)

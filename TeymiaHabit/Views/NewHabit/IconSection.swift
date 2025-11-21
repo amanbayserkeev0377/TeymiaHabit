@@ -66,7 +66,7 @@ struct IconSection: View {
 
         return ZStack {
             Circle()
-                .fill(.secondary.opacity(0.1))
+                .fill(.secondary.opacity(0.07))
             
             Group {
                 if let icon = selectedIcon, icon.count == 1 && !sectionIcons.contains(icon) {
@@ -76,7 +76,7 @@ struct IconSection: View {
                     Image("emoji")
                         .resizable()
                         .frame(width: itemSize * 0.55, height: itemSize * 0.55)
-                        .foregroundStyle(.orange.gradient)
+                        .foregroundStyle(Color.main)
                     
                 }
             }
@@ -121,7 +121,7 @@ struct IconSection: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(.secondary.opacity(0.1))
+                    .fill(.secondary.opacity(0.07))
                 
                 Image(iconName)
                     .resizable()
@@ -156,7 +156,7 @@ struct IconSection: View {
                 .frame(width: itemSize * 0.8, height: itemSize * 0.8)
                 .frame(width: itemSize, height: itemSize)
                 .aspectRatio(contentMode: .fit)
-                .foregroundStyle(.primary.opacity(0.9))
+                .foregroundStyle(.primary.opacity(0.8))
         }
         .buttonStyle(.plain)
     }

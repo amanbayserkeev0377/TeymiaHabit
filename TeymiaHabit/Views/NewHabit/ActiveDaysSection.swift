@@ -23,8 +23,8 @@ struct ActiveDaysSection: View {
                     icon: {
                         Image("calendar.wed")
                             .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.gray.gradient)
+                            .frame(width: 18, height: 18)
+                            .foregroundStyle(Color.primary)
                     }
                 )
                 

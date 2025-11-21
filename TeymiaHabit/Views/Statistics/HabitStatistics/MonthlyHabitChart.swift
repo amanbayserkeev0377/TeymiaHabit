@@ -9,6 +9,7 @@ struct MonthlyHabitChart: View {
     @State private var currentMonthIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
+    @State private var animationProgress: CGFloat = 0 // Progress from 0 to 1
     
     private var calendar: Calendar {
         Calendar.userPreferred
@@ -18,15 +19,14 @@ struct MonthlyHabitChart: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-
             headerView
-            chartView
-            
+            chartContainer
         }
         .onAppear {
             setupMonths()
             findCurrentMonthIndex()
             generateChartData()
+            triggerAnimation()
         }
         .onChange(of: habit.goal) { _, _ in
             generateChartData()
@@ -57,7 +57,6 @@ struct MonthlyHabitChart: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToPreviousMonth ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44)
                 }
                 .disabled(!canNavigateToPreviousMonth)
                 .buttonStyle(BorderlessButtonStyle())
@@ -66,7 +65,8 @@ struct MonthlyHabitChart: View {
                 
                 Text(monthRangeString)
                     .font(.headline)
-                    .fontWeight(.medium)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
                 
                 Spacer()
                 
@@ -76,24 +76,25 @@ struct MonthlyHabitChart: View {
                         .frame(width: 24, height: 24)
                         .foregroundStyle(canNavigateToNextMonth ? .primary : Color.gray.opacity(0.5))
                         .contentShape(Rectangle())
-                        .frame(width: 44, height: 44)
                 }
                 .disabled(!canNavigateToNextMonth)
                 .buttonStyle(BorderlessButtonStyle())
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
             
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("average".localized)
-                        .font(.caption)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
-                        .textCase(.uppercase)
                     
                     Text(averageValueFormatted)
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .withHabitGradient(habit)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -102,40 +103,65 @@ struct MonthlyHabitChart: View {
                        calendar.isDate($0.date, inSameDayAs: selectedDate)
                    }) {
                     VStack(alignment: .center, spacing: 2) {
-                        Text(shortDateFormatter.string(from: selectedDate))
-                            .font(.caption)
+                        Text(shortDateFormatter.string(from: selectedDate).capitalized)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
                             .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
                         
                         Text(selectedDataPoint.formattedValueWithoutSeconds)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .withHabitGradient(habit)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.primary)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("total".localized)
-                        .font(.caption)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .foregroundStyle(.secondary)
-                        .textCase(.uppercase)
                     
                     Text(monthlyTotalFormatted)
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .withHabitGradient(habit)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .padding(.horizontal, 0)
+            .padding(.horizontal, 16)
+        }
+    }
+    
+    // MARK: - Chart Container with TabView
+    
+    @ViewBuilder
+    private var chartContainer: some View {
+        TabView(selection: $currentMonthIndex) {
+            ForEach(months.indices, id: \.self) { index in
+                chartView(for: index)
+                    .tag(index)
+            }
+            .padding(.horizontal, 16)
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(height: 180)
+        .onChange(of: currentMonthIndex) { _, _ in
+            selectedDate = nil
+            generateChartData()
+            triggerAnimation()
         }
     }
     
     // MARK: - Chart View
     
     @ViewBuilder
-    private var chartView: some View {
+    private func chartView(for index: Int) -> some View {
+        GeometryReader { geometry in
             Chart(chartData) { dataPoint in
                 BarMark(
                     x: .value("Day", dataPoint.date),
@@ -143,18 +169,19 @@ struct MonthlyHabitChart: View {
                 )
                 .foregroundStyle(barColor(for: dataPoint))
                 .cornerRadius(30)
-                .opacity(selectedDate == nil ? 1.0 : 
-                        (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.4))
+                .opacity(selectedDate == nil ? 1.0 :
+                        (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.3))
             }
-            .frame(height: 200)
             .chartXAxis {
                 AxisMarks(values: xAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
-                        .foregroundStyle(.gray.opacity(0.3))
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
+                        .foregroundStyle(Color.secondary.opacity(0.2))
                     AxisValueLabel {
                         if let date = value.as(Date.self) {
                             Text("\(calendar.component(.day, from: date))")
                                 .font(.caption)
+                                .fontWeight(.medium)
+                                .fontDesign(.rounded)
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -162,25 +189,11 @@ struct MonthlyHabitChart: View {
             }
             .chartYAxis {
                 AxisMarks(position: .trailing, values: yAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2]))
-                        .foregroundStyle(.gray.opacity(0.3))
-                    AxisValueLabel {
-                        if let intValue = value.as(Int.self) {
-                            if habit.type == .time {
-                                Text(formatTimeWithoutSeconds(intValue))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                Text("\(intValue)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
+                        .foregroundStyle(Color.secondary.opacity(0.2))
                 }
             }
             .chartXSelection(value: $selectedDate)
-            .gesture(dragGesture)
             .onTapGesture {
                 if selectedDate != nil {
                     withAnimation(.easeOut(duration: 0.2)) {
@@ -188,29 +201,24 @@ struct MonthlyHabitChart: View {
                     }
                 }
             }
-            .id("month-\(currentMonthIndex)-\(updateCounter)")
+            .mask(
+                // Mask that reveals from bottom to top
+                VStack(spacing: 0) {
+                    // Empty space at top (hidden part)
+                    Color.clear
+                        .frame(height: geometry.size.height * (1 - animationProgress))
+                    
+                    // Visible part from bottom
+                    Color.black
+                        .frame(height: geometry.size.height * animationProgress)
+                }
+            )
+        }
+        .frame(height: 180)
     }
     
     // MARK: - Computed Properties
     
-    private var dragGesture: some Gesture {
-        DragGesture(minimumDistance: 50)
-            .onEnded { value in
-                let horizontalDistance = value.translation.width
-                let verticalDistance = abs(value.translation.height)
-                
-                if abs(horizontalDistance) > verticalDistance * 2 {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        if horizontalDistance > 0 && canNavigateToPreviousMonth {
-                            showPreviousMonth()
-                        } else if horizontalDistance < 0 && canNavigateToNextMonth {
-                            showNextMonth()
-                        }
-                    }
-                }
-            }
-    }
-        
     private var currentMonth: Date {
         guard !months.isEmpty && currentMonthIndex >= 0 && currentMonthIndex < months.count else {
             return Date()
@@ -286,8 +294,8 @@ struct MonthlyHabitChart: View {
     }
     
     private var xAxisValues: [Date] {
-        return Array(stride(from: 0, to: chartData.count, by: 5)).compactMap { 
-            chartData.indices.contains($0) ? chartData[$0].date : nil 
+        return Array(stride(from: 0, to: chartData.count, by: 5)).compactMap {
+            chartData.indices.contains($0) ? chartData[$0].date : nil
         }
     }
     
@@ -313,8 +321,6 @@ struct MonthlyHabitChart: View {
         guard canNavigateToPreviousMonth else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentMonthIndex -= 1
-            selectedDate = nil
-            generateChartData()
         }
     }
     
@@ -322,8 +328,20 @@ struct MonthlyHabitChart: View {
         guard canNavigateToNextMonth else { return }
         withAnimation(.easeInOut(duration: 0.3)) {
             currentMonthIndex += 1
-            selectedDate = nil
-            generateChartData()
+        }
+    }
+    
+    // MARK: - Animation
+    
+    private func triggerAnimation() {
+        // Reset animation
+        animationProgress = 0
+        
+        // Animate from bottom to top
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                animationProgress = 1.0
+            }
         }
     }
     
@@ -351,7 +369,6 @@ struct MonthlyHabitChart: View {
     // MARK: - Helper Methods
     
     private func setupMonths() {
-        
         let today = Date()
         let currentMonthComponents = calendar.dateComponents([.year, .month], from: today)
         let currentMonth = calendar.date(from: currentMonthComponents) ?? today
@@ -402,8 +419,8 @@ struct MonthlyHabitChart: View {
         for day in 1...range.count {
             guard let currentDate = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else { continue }
             
-            let progress = habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date() 
-                ? habit.progressForDate(currentDate) 
+            let progress = habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date()
+                ? habit.progressForDate(currentDate)
                 : 0
             
             let dataPoint = ChartDataPoint(

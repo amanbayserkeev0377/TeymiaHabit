@@ -22,9 +22,7 @@ struct NotificationsSection: View {
                 title: { Text("notifications".localized) },
                 icon: {
                     Image("bell")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.red.gradient)
+                        .settingsIcon()
                 }
             )
         }

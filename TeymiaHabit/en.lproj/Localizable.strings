@@ -253,9 +253,8 @@
 "press_hold_bars" = "Press and hold bars for details";
 
 // Overview Stats Cards
-"active_habits" = "Active Habits";
+"active_habits" = "Habits";
 "completed_total" = "Completed";
-"active_days_total" = "Active Days";
 "overall_completion" = "Completion";
 
 /* ===================== Card Info Modal ===================== */

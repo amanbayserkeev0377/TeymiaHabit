@@ -121,12 +121,12 @@ struct IconPickerView: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(.secondary.opacity(0.1))
+                    .fill(.secondary.opacity(0.07))
                 
                 Image(icon)
                     .resizable()
                     .frame(width: 24, height: 24)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.primary)
             }
             .frame(width: 44, height: 44)
             .overlay(

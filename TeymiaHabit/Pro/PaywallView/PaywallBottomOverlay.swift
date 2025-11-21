@@ -267,14 +267,6 @@ struct PurchaseButton: View {
                         )
                 }
             )
-            .shadow(
-                color: selectedPackage?.storeProduct.productIdentifier == RevenueCatConfig.ProductIdentifiers.lifetimePurchase ?
-                Color.orange.opacity(0.4) :
-                    Color.purple.opacity(0.4),
-                radius: 8,
-                x: 0,
-                y: 4
-            )
         }
         .buttonStyle(.plain)
         .disabled(selectedPackage == nil || isPurchasing)

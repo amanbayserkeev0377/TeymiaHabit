@@ -15,7 +15,7 @@ struct ColorPickerSection: View {
     var enableProLocks: Bool = true
     
     private let freeColors: Set<HabitIconColor> = [
-        .primary, .red, .orange, .yellow, .green
+        .cloudBurst, .primary, .red, .orange, .yellow, .green
     ]
     
     private enum DesignConstants {

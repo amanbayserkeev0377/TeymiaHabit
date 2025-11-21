@@ -12,7 +12,7 @@ struct HabitIconView: View {
     init(
         iconName: String?,
         color: HabitIconColor,
-        size: CGFloat = 24,
+        size: CGFloat = 22,
         showBackground: Bool = true
     ) {
         self.iconName = iconName
@@ -56,12 +56,12 @@ struct HabitIconView: View {
                     .foregroundStyle(color.color.gradient)
             }
         }
-        .frame(width: size * 2, height: size * 2)
+        .frame(width: size * 1.8, height: size * 1.8)
         .background(
             Group {
                 if showBackground {
                     Circle()
-                        .fill(color.color.gradient.opacity(0.1))
+                        .fill(color.color.gradient.opacity(0.07))
                 }
             }
         )

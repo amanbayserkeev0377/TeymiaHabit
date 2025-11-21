@@ -27,19 +27,10 @@ struct GoalSection: View {
                     .frame(maxWidth: 200)
                 }
             } icon: {
-                Image("trophy.star")
+                Image("trophy")
                     .resizable()
-                    .frame(width: 20, height: 20)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
-                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .frame(width: 18, height: 18)
+                    .foregroundStyle(Color.primary)
             }
             
             if selectedType == .count {
@@ -58,8 +49,8 @@ struct GoalSection: View {
                 } icon: {
                     Image("count")
                         .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.gray.gradient)
+                        .frame(width: 18, height: 18)
+                        .foregroundStyle(Color.secondary)
                 }
                 .onChange(of: countText) { _, newValue in
                     if let number = Int(newValue), number > 0 {
@@ -93,8 +84,8 @@ struct GoalSection: View {
                 } icon : {
                     Image("clock")
                         .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.gray.gradient)
+                        .frame(width: 18, height: 18)
+                        .foregroundStyle(Color.secondary)
                 }
             }
         }

@@ -72,15 +72,11 @@ struct NewHabitView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
                     HabitIdentitySection(
                         selectedIcon: $selectedIcon,
                         selectedColor: $selectedIconColor,
                         title: $title
                     )
-                }
-                .listRowBackground(Color.mainRowBackground)
-                .listSectionSpacing(14)
                 
                 Section {
                     ColorPickerSection.forIconPicker(selectedColor: $selectedIconColor)

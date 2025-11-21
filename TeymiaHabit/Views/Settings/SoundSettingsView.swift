@@ -9,24 +9,6 @@ struct SoundSettingsView: View {
         NavigationStack {
             List {
                 Section {
-                    HStack {
-                        Spacer()
-                        
-                        Image("sounds.fill")
-                            .resizable()
-                            .foregroundStyle(.red.gradient)
-                            .frame(
-                                width: UIScreen.main.bounds.width * 0.25,
-                                height: UIScreen.main.bounds.width * 0.25
-                            )
-                        
-                        Spacer()
-                    }
-                }
-                .listRowBackground(Color.clear)
-                .listSectionSeparator(.hidden)
-                
-                Section {
                     Toggle("completion_sounds".localized, isOn: Binding(
                         get: { soundManager.isSoundEnabled },
                         set: { soundManager.setSoundEnabled($0) }
@@ -91,7 +73,7 @@ struct SoundRowView: View {
                 
                 Image("check")
                     .resizable()
-                    .frame(width: 24, height: 24)
+                    .frame(width: 20, height: 20)
                     .withAppGradient()
                     .opacity(isSelected ? 1 : 0)
                     .animation(.easeInOut, value: isSelected)

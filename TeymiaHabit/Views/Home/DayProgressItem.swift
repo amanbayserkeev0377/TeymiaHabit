@@ -89,7 +89,7 @@ struct DayProgressItem: View, Equatable {
     
     private var dayTextColor: Color {
         if isToday {
-            return .orange
+            return .appColor()
         } else if isSelected {
             return .primary
         } else if isFutureDate {
@@ -136,7 +136,7 @@ struct DayProgressItem: View, Equatable {
                 .frame(width: circleSize, height: circleSize)
                 
                 Circle()
-                    .fill(isToday ? Color.orange : Color.primary)
+                    .fill(isToday ? .appColor() : Color.primary)
                     .frame(width: 4, height: 4)
                     .opacity(isSelected ? 1 : 0)
             }

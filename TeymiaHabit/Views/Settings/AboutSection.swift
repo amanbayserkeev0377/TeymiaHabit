@@ -15,9 +15,7 @@ struct AboutSection: View {
                     title: { Text("rate_app".localized) },
                     icon: {
                         Image("star")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.yellow.gradient)
+                            .settingsIcon()
                     }
                 )
             }
@@ -31,9 +29,7 @@ struct AboutSection: View {
                     title: { Text("share_app".localized) },
                     icon: {
                         Image("share")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.orange.gradient)
+                            .settingsIcon()
                     }
                 )
             }
@@ -49,9 +45,7 @@ struct AboutSection: View {
                     title: { Text("privacy_policy".localized) },
                     icon: {
                         Image("lock")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.gray.gradient)
+                            .settingsIcon()
                     }
                 )
             }
@@ -67,9 +61,7 @@ struct AboutSection: View {
                     title: { Text("terms_of_service".localized) },
                     icon: {
                         Image("document")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.gray.gradient)
+                            .settingsIcon()
                     }
                 )
             }
@@ -83,9 +75,7 @@ struct AboutSection: View {
                     title: { Text("licenses_section_attributions".localized) },
                     icon: {
                         Image("link")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.gray.gradient)
+                            .settingsIcon()
                     }
                 )
             }

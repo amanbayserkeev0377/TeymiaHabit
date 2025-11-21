@@ -246,7 +246,7 @@
 "press_hold_bars" = "Зажмите столбцы для просмотра данных";
 
 // Overview Stats Cards
-"active_habits" = "Активные привычки";
+"active_habits" = "Привычки";
 "completed_total" = "Выполнено";
 "active_days_total" = "Активные дни";
 "overall_completion" = "Общий процент";

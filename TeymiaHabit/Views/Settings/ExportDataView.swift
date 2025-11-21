@@ -27,24 +27,6 @@ struct ExportDataView: View {
         NavigationStack {
             List {
                 Section {
-                    HStack {
-                        Spacer()
-                        
-                        Image("export.fill")
-                            .resizable()
-                            .frame(
-                                width: UIScreen.main.bounds.width * 0.25,
-                                height: UIScreen.main.bounds.width * 0.25
-                            )
-                            .foregroundStyle(.gray.gradient)
-                        
-                        Spacer()
-                    }
-                }
-                .listRowBackground(Color.clear)
-                .listSectionSeparator(.hidden)
-                
-                Section {
                     ForEach(ExportFormat.allCases, id: \.self) { format in
                         Button(action: {
                             if format.requiresPro && !proManager.isPro {

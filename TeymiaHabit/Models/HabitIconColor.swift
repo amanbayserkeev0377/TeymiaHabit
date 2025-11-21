@@ -81,7 +81,7 @@ enum HabitIconColor: String, CaseIterable, Codable {
         case .yellowOrange:
             return Color(#colorLiteral(red: 0.9707030654, green: 0.5556641221, blue: 0.5283203125, alpha: 1))
         case .cloudBurst:
-            return Color(#colorLiteral(red: 0.9160156846, green: 0.6655272841, blue: 0, alpha: 1))
+            return Color.main
         case .candy:
             return Color(#colorLiteral(red: 0.3254901961, green: 0.2039215686, blue: 0.6588235294, alpha: 1))
         }

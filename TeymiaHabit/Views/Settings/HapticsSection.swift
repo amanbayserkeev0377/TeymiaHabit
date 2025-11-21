@@ -10,9 +10,7 @@ struct HapticsSection: View {
                 title: { Text("haptics".localized) },
                 icon: {
                     Image("waveform")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.red.gradient)
+                        .settingsIcon()
                 }
             )
         }

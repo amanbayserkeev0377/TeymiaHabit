@@ -25,9 +25,7 @@ struct AppearanceSection: View {
                     title: { Text("appearance".localized) },
                     icon: {
                         Image("paintbrush")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.purple.gradient)
+                            .settingsIcon()
                     }
                 )
                 
@@ -35,7 +33,7 @@ struct AppearanceSection: View {
                 
                 Circle()
                     .fill(colorManager.selectedColor.color.gradient)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 22, height: 22)
             }
         }
     }
@@ -70,14 +68,14 @@ struct AppColorPickerView: View {
                                     icon: {
                                         Image(ThemeOption.allOptions[mode.rawValue].iconName)
                                             .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .withAppGradient()
+                                            .frame(width: 16, height: 16)
+                                            .foregroundStyle(Color.primary)
                                     }
                                 )
                                 Spacer()
                                 Image("check")
                                     .resizable()
-                                    .frame(width: 24, height: 24)
+                                    .frame(width: 20, height: 20)
                                     .withAppGradient()
                                     .opacity(themeMode == mode ? 1 : 0)
                                     .animation(.easeInOut, value: themeMode == mode)
@@ -177,6 +175,8 @@ struct AppIconButton: View {
     let isLocked: Bool
     let onTap: () -> Void
     
+    private let iconSize: CGFloat = 60
+    
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 8) {
@@ -184,15 +184,15 @@ struct AppIconButton: View {
                     Image(icon.previewImageName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
+                        .frame(width: iconSize, height: iconSize)
                         .opacity(isLocked ? 0.7 : 1.0)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(
-                                    isSelected && !isLocked ? colorManager.selectedColor.color : Color.gray.opacity(0.3),
-                                    lineWidth: isSelected ? 2.5 : 0.5
+                                    isSelected && !isLocked ? colorManager.selectedColor.color : Color.clear,
+                                    lineWidth: 1.5
                                 )
-                                .frame(width: 60, height: 60)
+                                .frame(width: iconSize * 1.05, height: iconSize * 1.05)
                         )
                     
                     if isLocked {

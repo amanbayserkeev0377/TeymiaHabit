@@ -23,9 +23,7 @@ struct LanguageSection: View {
                     title: { Text("language".localized) },
                     icon: {
                         Image("globe.ui")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.blue.gradient)
+                            .settingsIcon()
                     }
                 )
                 

@@ -45,7 +45,7 @@ struct ProFeature {
             icon: "paintbrush",
             title: "paywall_custom_colors_icons_title".localized,
             description: "paywall_custom_colors_icons_description".localized,
-            color: Color.purple.gradient
+            color: Color.indigo.gradient
         ),
         ProFeature(
             icon: "export",

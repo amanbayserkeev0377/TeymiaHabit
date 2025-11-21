@@ -37,8 +37,8 @@ struct ReminderSection: View {
                     icon: {
                         Image("bell")
                             .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.red.gradient)
+                            .frame(width: 18, height: 18)
+                            .foregroundStyle(Color.primary)
                     }
                 )
             }
@@ -68,6 +68,8 @@ struct ReminderSection: View {
                                     }
                                 } label: {
                                     Image("trash.swipe")
+                                        .resizable()
+                                        .frame(width: 22, height: 22)
                                         .foregroundStyle(.red.gradient)
                                 }
                             }

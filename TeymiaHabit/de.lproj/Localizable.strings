@@ -248,9 +248,8 @@
 "press_hold_bars" = "Halte Balken gedrückt für Details";
 
 // Overview Stats Cards
-"active_habits" = "Aktive Gewohnheiten";
+"active_habits" = "Gewohnheiten";
 "completed_total" = "Abgeschlossen";
-"active_days_total" = "Aktive Tage";
 "overall_completion" = "Gesamtabschlussrate";
 
 /* ===================== Card Info Modal ===================== */

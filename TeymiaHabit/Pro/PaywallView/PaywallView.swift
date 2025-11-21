@@ -25,7 +25,7 @@ struct PaywallView: View {
                         Color.clear
                             .frame(height: 200)
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 30)
                     .padding(.top, 40)
                 }
                 .background {

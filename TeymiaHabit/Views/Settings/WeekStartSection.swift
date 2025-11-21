@@ -48,9 +48,7 @@ struct WeekStartSection: View {
                 title: { Text("week_start_day".localized) },
                 icon: {
                     Image("calendar")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.gray.gradient)
+                        .settingsIcon()
                 }
             )
         }

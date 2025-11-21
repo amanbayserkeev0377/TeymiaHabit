@@ -66,14 +66,14 @@ struct HabitListRow: View {
             // Title + Progress
             VStack(alignment: .leading, spacing: 4) {
                 Text(habit.title)
-                    .font(.headline)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
                     .lineLimit(1)
                     .foregroundStyle(.primary)
                 
                 Text("\(formattedProgress) / \(habit.formattedGoal)")
-                    .font(.subheadline)
+                    .font(.callout)
+                    .fontWeight(.medium)
                     .fontDesign(.rounded)
                     .foregroundStyle(.primary)
                     .monospacedDigit()

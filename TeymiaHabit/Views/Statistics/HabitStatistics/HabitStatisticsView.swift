@@ -113,8 +113,8 @@ struct HabitStatisticsView: View {
                     HStack {
                         Image("calendar")
                             .resizable()
-                            .frame(width: 20, height: 20)
-                            .withHabitGradient(habit)
+                            .frame(width: 18, height: 18)
+                            .foregroundStyle(.primary)
                         Text("start_date".localized)
                         
                         Spacer()
@@ -124,10 +124,10 @@ struct HabitStatisticsView: View {
                     }
                     
                     HStack {
-                        Image("trophy.star")
+                        Image("trophy")
                             .resizable()
-                            .frame(width: 20, height: 20)
-                            .withHabitGradient(habit)
+                            .frame(width: 18, height: 18)
+                            .foregroundStyle(.primary)
                         Text("daily_goal".localized)
                         
                         Spacer()
@@ -139,8 +139,8 @@ struct HabitStatisticsView: View {
                     HStack {
                         Image("calendar.wed")
                             .resizable()
-                            .frame(width: 20, height: 20)
-                            .withHabitGradient(habit)
+                            .frame(width: 18, height: 18)
+                            .foregroundStyle(.primary)
                         Text("active_days".localized)
                         
                         Spacer()
@@ -158,8 +158,8 @@ struct HabitStatisticsView: View {
                         HStack {
                             Image("home.maintenance")
                                 .resizable()
-                                .frame(width: 20, height: 20)
-                                .withHabitGradient(habit)
+                                .frame(width: 18, height: 18)
+                                .foregroundStyle(.primary)
                             Text("reset_all_history".localized)
                         }
                     }
@@ -171,7 +171,7 @@ struct HabitStatisticsView: View {
                         HStack {
                             Image("trash")
                                 .resizable()
-                                .frame(width: 20, height: 20)
+                                .frame(width: 18, height: 18)
                                 .foregroundStyle(.red.gradient)
                             Text("delete_habit".localized)
                         }
@@ -227,19 +227,16 @@ struct HabitStatisticsView: View {
         case .week:
             WeeklyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
-                .padding(.horizontal, 16)
                 .transition(.opacity)
             
         case .month:
             MonthlyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
-                .padding(.horizontal, 16)
                 .transition(.opacity)
             
         case .year:
             YearlyHabitChart(habit: habit, updateCounter: updateCounter)
                 .padding(.vertical, 8)
-                .padding(.horizontal, 16)
                 .transition(.opacity)
         }
     }
