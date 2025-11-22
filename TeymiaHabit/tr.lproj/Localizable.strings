@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "Ekle";
-"button_done" = "Tamam";
 "button_delete" = "Sil";
 "button_cancel" = "İptal";
 "button_edit" = "Düzenle";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "İlerlemeyi Sıfırla";
 "complete" = "Tamamla";
 "completed" = "Tamamlandı";
+"skip" = "Atla";
+"unskip" = "Geri al";
+
 
 /* ===================== General ===================== */
 "today" = "Bugün";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "Alışkanlık Adı";
-"icon_and_color" = "Simge ve Renk";
 "goalsection_choose_time" = "Zaman Seç (saat:dakika)";
 "goalsection_enter_count" = "Sayı Gir";
 "active_days" = "Aktif Günler";
@@ -57,7 +58,6 @@
 "select_days" = "Günleri Seç";
 "reminders" = "Hatırlatıcılar";
 "reminder" = "Hatırlatıcı";
-"create_custom_habit" = "Özel Alışkanlık Oluştur";
 
 /* ===================== Other ===================== */
 "add_count" = "Sayı Ekle";

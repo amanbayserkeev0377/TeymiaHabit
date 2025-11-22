@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "arrow-small-left.png 13-51-09-299.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
+  }
+}

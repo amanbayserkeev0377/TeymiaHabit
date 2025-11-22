@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "Кошуу";
-"button_done" = "Бүттү";
 "button_delete" = "Жоюу";
 "button_cancel" = "Токтотуу";
 "button_edit" = "Түзөтүү";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "Прогрессти өчүрүү";
 "complete" = "Аткаруу";
 "completed" = "Аткарылды";
+"skip" = "Өткөрүү";
+"unskip" = "Жокко чыг.";
+
 
 /* ===================== General ===================== */
 "today" = "Бүгүн";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "Адаттын аты";
-"icon_and_color" = "Белги жана түс";
 "goalsection_choose_time" = "Убакытты тандаңыз (с:м)";
 "goalsection_enter_count" = "Санын жазыңыз";
 "active_days" = "Активдүү күндөр";
@@ -57,7 +58,6 @@
 "select_days" = "Күндөрдү танда";
 "reminders" = "Эскертүүлөр";
 "reminder" = "Эскертүү";
-"create_custom_habit" = "Өзгөчө адат жаратуу";
 
 /* ===================== Other ===================== */
 "add_count" = "Санын кошуу";

@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "追加";
-"button_done" = "完了";
 "button_delete" = "削除";
 "button_cancel" = "キャンセル";
 "button_edit" = "編集";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "進捗をリセット";
 "complete" = "完了する";
 "completed" = "完了済み";
+"skip" = "スキップ";
+"unskip" = "元に戻す";
+
 
 /* ===================== General ===================== */
 "today" = "今日";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "習慣の名前";
-"icon_and_color" = "アイコンと色";
 "goalsection_choose_time" = "時間を選択（時:分）";
 "goalsection_enter_count" = "回数を入力";
 "active_days" = "アクティブな日";
@@ -57,7 +58,6 @@
 "select_days" = "日を選択";
 "reminders" = "リマインダー";
 "reminder" = "リマインダー";
-"create_custom_habit" = "カスタム習慣を作成";
 
 /* ===================== Other ===================== */
 "add_count" = "回数を追加";

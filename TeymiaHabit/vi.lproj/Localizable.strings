@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "Thêm";
-"button_done" = "Xong";
 "button_delete" = "Xóa";
 "button_cancel" = "Hủy";
 "button_edit" = "Chỉnh sửa";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "Đặt lại Tiến độ";
 "complete" = "Hoàn thành";
 "completed" = "Đã hoàn thành";
+"skip" = "Bỏ qua";
+"unskip" = "Hoàn tác";
+
 
 /* ===================== General ===================== */
 "today" = "Hôm nay";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "Tên thói quen";
-"icon_and_color" = "Biểu tượng và Màu sắc";
 "goalsection_choose_time" = "Chọn thời gian (giờ:phút)";
 "goalsection_enter_count" = "Nhập số lần";
 "active_days" = "Ngày hoạt động";
@@ -57,7 +58,6 @@
 "select_days" = "Chọn ngày";
 "reminders" = "Nhắc nhở";
 "reminder" = "Nhắc nhở";
-"create_custom_habit" = "Tạo thói quen tùy chỉnh";
 
 /* ===================== Other ===================== */
 "add_count" = "Thêm số lần";

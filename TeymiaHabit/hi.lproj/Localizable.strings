@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "जोड़ें";
-"button_done" = "हो गया";
 "button_delete" = "हटाएँ";
 "button_cancel" = "रद्द करें";
 "button_edit" = "संपादन करें";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "प्रगति रीसेट करें";
 "complete" = "पूर्ण करें";
 "completed" = "पूर्ण हुआ";
+"skip" = "स्किप";
+"unskip" = "रद्द";
+
 
 /* ===================== General ===================== */
 "today" = "आज";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "आदत का नाम";
-"icon_and_color" = "आइकन और रंग";
 "goalsection_choose_time" = "समय चुनें (घं:मि)";
 "goalsection_enter_count" = "गिनती दर्ज करें";
 "active_days" = "सक्रिय दिन";
@@ -57,7 +58,6 @@
 "select_days" = "दिन चुनें";
 "reminders" = "रिमाइंडर";
 "reminder" = "रिमाइंडर";
-"create_custom_habit" = "कस्टम आदत बनाएँ";
 
 /* ===================== Other ===================== */
 "add_count" = "गिनती जोड़ें";

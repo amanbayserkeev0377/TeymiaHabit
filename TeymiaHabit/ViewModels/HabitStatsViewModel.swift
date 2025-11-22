@@ -79,8 +79,9 @@ class HabitStatsViewModel {
             }
             
             let isCompletedOnDate = sortedDates.contains { calendar.isDate($0, inSameDayAs: currentDate) }
+            let  isSkippedOnDate = habit.isSkipped(on: currentDate)
             
-            if isCompletedOnDate {
+            if isCompletedOnDate || isSkippedOnDate {
                 streak += 1
                 currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate)!
                 
@@ -111,7 +112,8 @@ class HabitStatsViewModel {
         
         while checkDate <= today {
             if habit.isActiveOnDate(checkDate) {
-                if completedDays.contains(checkDate) {
+                let isSkippedOnDate = habit.isSkipped(on: checkDate)
+                if completedDays.contains(checkDate) || isSkippedOnDate {
                     currentStreak += 1
                     bestStreak = max(bestStreak, currentStreak)
                 } else {

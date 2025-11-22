@@ -50,6 +50,9 @@ final class HabitDetailViewModel {
     
     var alertState = AlertState()
     var onHabitDeleted: (() -> Void)?
+    var isSkipped: Bool {
+        habit.isSkipped(on: currentDisplayedDate)
+    }
     
     // MARK: - Computed Properties
     
@@ -224,6 +227,11 @@ final class HabitDetailViewModel {
     
     func completeHabit() {
         guard !isAlreadyCompleted else { return }
+        
+        // Auto-unskip if habit was skipped
+        if isSkipped {
+            habit.unskipDate(currentDisplayedDate, modelContext: modelContext)
+        }
         
         if isTimeHabitToday && isTimerRunning {
             stopTimerAndEndActivity()
@@ -577,6 +585,28 @@ final class HabitDetailViewModel {
         cleanup()
         modelContext.delete(habit)
         try? modelContext.save()
+    }
+    
+    // MARK: - Skip Actions
+
+    func toggleSkip() {
+        if isSkipped {
+            unskipHabit()
+        } else {
+            skipHabit()
+        }
+    }
+
+    func skipHabit() {
+        habit.skipDate(currentDisplayedDate, modelContext: modelContext)
+        alertState.successFeedbackTrigger = true
+        WidgetUpdateService.shared.reloadWidgets()
+    }
+
+    func unskipHabit() {
+        habit.unskipDate(currentDisplayedDate, modelContext: modelContext)
+        alertState.successFeedbackTrigger = true
+        WidgetUpdateService.shared.reloadWidgets()
     }
     
     func syncWithTimerService() {

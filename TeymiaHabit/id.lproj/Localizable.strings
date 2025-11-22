@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "Tambah";
-"button_done" = "Selesai";
 "button_delete" = "Hapus";
 "button_cancel" = "Batal";
 "button_edit" = "Edit";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "Atur Ulang Kemajuan";
 "complete" = "Selesaikan";
 "completed" = "Selesai";
+"skip" = "Lewati";
+"unskip" = "Batal";
+
 
 /* ===================== General ===================== */
 "today" = "Hari Ini";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "Nama Kebiasaan";
-"icon_and_color" = "Ikon dan Warna";
 "goalsection_choose_time" = "Pilih Waktu (jam:menit)";
 "goalsection_enter_count" = "Masukkan Jumlah";
 "active_days" = "Hari Aktif";
@@ -57,7 +58,6 @@
 "select_days" = "Pilih Hari";
 "reminders" = "Pengingat";
 "reminder" = "Pengingat";
-"create_custom_habit" = "Buat Kebiasaan Kustom";
 
 /* ===================== Other ===================== */
 "add_count" = "Tambah Jumlah";

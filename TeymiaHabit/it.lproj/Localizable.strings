@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "Aggiungi";
-"button_done" = "Fatto";
 "button_delete" = "Elimina";
 "button_cancel" = "Annulla";
 "button_edit" = "Modifica";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "Reimposta Progressi";
 "complete" = "Completa";
 "completed" = "Completato";
+"skip" = "Salta";
+"unskip" = "Annulla";
+
 
 /* ===================== General ===================== */
 "today" = "Oggi";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "Nome Abitudine";
-"icon_and_color" = "Icona e Colore";
 "goalsection_choose_time" = "Scegli Orario (ore:min)";
 "goalsection_enter_count" = "Inserisci Conteggio";
 "active_days" = "Giorni Attivi";
@@ -57,7 +58,6 @@
 "select_days" = "Seleziona Giorni";
 "reminders" = "Promemoria";
 "reminder" = "Promemoria";
-"create_custom_habit" = "Crea Abitudine Personalizzata";
 
 /* ===================== Other ===================== */
 "add_count" = "Aggiungi Conteggio";

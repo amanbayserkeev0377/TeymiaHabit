@@ -42,16 +42,7 @@ struct PrivacySettingsView: View {
                             width: UIScreen.main.bounds.width * 0.25,
                             height: UIScreen.main.bounds.width * 0.25
                         )
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [
-                                    Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
-                                    Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .foregroundStyle(.gray.gradient)
                     
                     Spacer()
                 }
@@ -70,17 +61,8 @@ struct PrivacySettingsView: View {
                             } icon: {
                                 Image("shield.check")
                                     .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [
-                                                Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
-                                                Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
-                                            ],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
+                                    .frame(width: 18, height: 18)
+                                    .foregroundStyle(Color.primary)
                             }
                     }
                 } else {
@@ -93,8 +75,8 @@ struct PrivacySettingsView: View {
                         } icon: {
                             Image("key")
                                 .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.orange.gradient)
+                                .frame(width: 18, height: 18)
+                                .foregroundStyle(Color.primary)
                         }
                     }
                     
@@ -107,7 +89,7 @@ struct PrivacySettingsView: View {
                         } icon: {
                             Image("shield.exclamation")
                                 .resizable()
-                                .frame(width: 20, height: 20)
+                                .frame(width: 18, height: 18)
                                 .foregroundStyle(.red.gradient)
                         }
                     }
@@ -127,8 +109,8 @@ struct PrivacySettingsView: View {
                             } icon: {
                                 Image("clock")
                                     .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(.blue.gradient)
+                                    .frame(width: 18, height: 18)
+                                    .foregroundStyle(Color.primary)
                             }
                             
                             Spacer()
@@ -148,16 +130,7 @@ struct PrivacySettingsView: View {
                             Text(privacyManager.biometricDisplayName)
                         } icon: {
                             biometricIcon
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(#colorLiteral(red: 0.3, green: 0.8, blue: 0.4, alpha: 1)),
-                                            Color(#colorLiteral(red: 0.1, green: 0.5, blue: 0.2, alpha: 1))
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
+                                .foregroundStyle(Color.primary)
                         }
                         
                         Spacer()

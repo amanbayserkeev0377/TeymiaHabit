@@ -37,6 +37,49 @@ struct HomeView: View {
         baseHabits.filter { habit in
             habit.isActiveOnDate(selectedDate) &&
             selectedDate >= habit.startDate
+        }.sorted { first, second in
+            let firstCompleted = first.isCompletedForDate(selectedDate)
+            let firstSkipped = first.isSkipped(on: selectedDate)
+            let secondCompleted = second.isCompletedForDate(selectedDate)
+            let secondSkipped = second.isSkipped(on: selectedDate)
+            
+            // Priority order: incomplete > completed > skipped
+            
+            // 1. Incomplete & not skipped first
+            let firstIsActive = !firstCompleted && !firstSkipped
+            let secondIsActive = !secondCompleted && !secondSkipped
+            
+            if firstIsActive && !secondIsActive {
+                return true
+            }
+            if secondIsActive && !firstIsActive {
+                return false
+            }
+            
+            // 2. Then completed (but not skipped)
+            let firstIsOnlyCompleted = firstCompleted && !firstSkipped
+            let secondIsOnlyCompleted = secondCompleted && !secondSkipped
+            
+            if firstIsOnlyCompleted && secondSkipped {
+                return true
+            }
+            if secondIsOnlyCompleted && firstSkipped {
+                return false
+            }
+            
+            // 3. Skipped goes last
+            if firstSkipped && !secondSkipped {
+                return false
+            }
+            if secondSkipped && !firstSkipped {
+                return true
+            }
+            
+            // Maintain original order for items in same state
+            if first.displayOrder != second.displayOrder {
+                return first.displayOrder < second.displayOrder
+            }
+            return first.createdAt < second.createdAt
         }
     }
     
@@ -84,8 +127,12 @@ struct HomeView: View {
                                                 toggleHabitCompletion(habit)
                                             }
                                         )
+                                        .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)
+                                        .animation(.smooth(duration: 0.6), value: habit.isSkipped(on: selectedDate))
+                                        .animation(.smooth(duration: 0.6), value: habit.isCompletedForDate(selectedDate))
                                     }
                                 }
+                                .animation(.smooth(duration: 0.6), value: activeHabitsForDate.map { $0.id })
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                             }

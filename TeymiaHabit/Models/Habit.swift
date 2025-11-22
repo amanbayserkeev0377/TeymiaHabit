@@ -21,6 +21,7 @@ final class Habit {
     // MARK: - Status
     
     var isArchived: Bool = false
+    var skippedDates: [Date] = []
     
     // MARK: - Timestamps
     
@@ -313,5 +314,33 @@ extension Habit {
     
     func resetProgress(for date: Date, modelContext: ModelContext) {
         updateProgress(to: 0, for: date, modelContext: modelContext)
+    }
+}
+
+// MARK: - Skip Management
+
+extension Habit {
+    func isSkipped(on date: Date) -> Bool {
+        let calendar = Calendar.current
+        let dateStart = calendar.startOfDay(for: date)
+        return skippedDates.contains { calendar.isDate($0, inSameDayAs: dateStart) }
+    }
+    
+    func skipDate(_ date: Date, modelContext: ModelContext) {
+        let calendar = Calendar.current
+        let dateStart = calendar.startOfDay(for: date)
+        
+        if !isSkipped(on: dateStart) {
+            skippedDates.append(dateStart)
+            try? modelContext.save()
+        }
+    }
+    
+    func unskipDate(_ date: Date, modelContext: ModelContext) {
+        let calendar = Calendar.current
+        let dateStart = calendar.startOfDay(for: date)
+        
+        skippedDates.removeAll { calendar.isDate($0, inSameDayAs: dateStart) }
+        try? modelContext.save()
     }
 }

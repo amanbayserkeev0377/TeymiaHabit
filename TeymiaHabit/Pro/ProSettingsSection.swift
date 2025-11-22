@@ -50,7 +50,7 @@ struct ProSettingsSection: View {
                     
                     FreeTrialButton()
                 }
-                .shimmer(.init(tint: .white.opacity(0.7), highlight: .white, blur: 5))
+                .shimmer(.init(tint: .white.opacity(0.8), highlight: .white, blur: 5))
             }
             .padding(16)
             .background(
@@ -123,7 +123,7 @@ struct FreeTrialButton: View {
         HStack(spacing: 4) {
             Image("gift.fill")
                 .resizable()
-                .frame(width: 16, height: 16)
+                .frame(width: 12, height: 12)
             
             Text("paywall_7_days_free_trial".localized)
                 .font(.footnote)

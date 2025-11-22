@@ -118,11 +118,24 @@ struct HabitDetailView: View {
     
     private var menuButton: some View {
         Menu {
+            skipButton
             editButton
             archiveButton
             deleteButton
         } label: {
             Image(systemName: "ellipsis")
+        }
+        .tint(.primary)
+    }
+    
+    private var skipButton: some View {
+        Button {
+            viewModel?.toggleSkip()
+        } label: {
+            Label(
+                viewModel?.isSkipped == true ? "unskip".localized : "skip".localized,
+                image: viewModel?.isSkipped == true ? "arrow.left" : "arrow.right"
+            )
         }
         .tint(.primary)
     }
@@ -177,7 +190,7 @@ struct HabitDetailView: View {
     
     @ViewBuilder
     private func topSectionView() -> some View {
-        VStack {
+        VStack(spacing: 4) {
             Text(habit.title)
                 .font(.largeTitle.bold())
                 .fontDesign(.rounded)
@@ -186,6 +199,7 @@ struct HabitDetailView: View {
                 .padding(.horizontal, 24)
             
             Text("goal".localized(with: habit.formattedGoal))
+                .font(.subheadline)
                 .fontDesign(.rounded)
                 .foregroundStyle(.secondary)
         }

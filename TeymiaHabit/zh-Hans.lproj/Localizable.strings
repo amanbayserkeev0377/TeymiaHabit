@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "添加";
-"button_done" = "完成";
 "button_delete" = "删除";
 "button_cancel" = "取消";
 "button_edit" = "编辑";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "重置进度";
 "complete" = "完成";
 "completed" = "已完成";
+"skip" = "跳过";
+"unskip" = "撤销";
+
 
 /* ===================== General ===================== */
 "today" = "今天";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "习惯名称";
-"icon_and_color" = "图标与颜色";
 "goalsection_choose_time" = "选择时间（小时:分钟）";
 "goalsection_enter_count" = "输入次数";
 "active_days" = "活跃日";
@@ -57,7 +58,6 @@
 "select_days" = "选择日期";
 "reminders" = "提醒";
 "reminder" = "提醒";
-"create_custom_habit" = "创建自定义习惯";
 
 /* ===================== Other ===================== */
 "add_count" = "增加次数";

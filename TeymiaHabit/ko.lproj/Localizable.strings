@@ -15,7 +15,6 @@
 
 /* ===================== Buttons ===================== */
 "button_add" = "추가";
-"button_done" = "완료";
 "button_delete" = "삭제";
 "button_cancel" = "취소";
 "button_edit" = "편집";
@@ -24,6 +23,9 @@
 "button_reset_progress" = "진행 상황 초기화";
 "complete" = "완료";
 "completed" = "완료됨";
+"skip" = "건너뛰기";
+"unskip" = "취소";
+
 
 /* ===================== General ===================== */
 "today" = "오늘";
@@ -48,7 +50,6 @@
 
 /* ===================== Create/New Habit View ===================== */
 "habit_name" = "습관 이름";
-"icon_and_color" = "아이콘 및 색상";
 "goalsection_choose_time" = "시간 선택 (시:분)";
 "goalsection_enter_count" = "횟수 입력";
 "active_days" = "활성 요일";
@@ -57,7 +58,6 @@
 "select_days" = "요일 선택";
 "reminders" = "알림";
 "reminder" = "알림";
-"create_custom_habit" = "사용자 지정 습관 생성";
 
 /* ===================== Other ===================== */
 "add_count" = "횟수 추가";
