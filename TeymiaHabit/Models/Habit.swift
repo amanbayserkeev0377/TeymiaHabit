@@ -1,27 +1,39 @@
 import Foundation
 import SwiftData
 
-/// Core habit model that represents a user's habit with progress tracking
-/// Supports both count-based habits (e.g., "drink 8 glasses") and time-based habits (e.g., "read 30 minutes")
 @Model
-final class Habit {
+final class Habit: Identifiable {
     
     // MARK: - Identity
     
     var uuid: UUID = UUID()
+    var id: String {
+        uuid.uuidString
+    }
     
     // MARK: - Basic Properties
     
     var title: String = ""
     var type: HabitType = HabitType.count
     var goal: Int = 1
-    var iconName: String? = "check"
+    var iconName: String = ""
     var iconColor: HabitIconColor = HabitIconColor.primary
     
     // MARK: - Status
     
     var isArchived: Bool = false
-    var skippedDates: [Date] = []
+    
+    @Attribute(.externalStorage)
+    private var skippedDatesData: Data?
+    var skippedDates: [Date] {
+        get {
+            guard let data = skippedDatesData else { return [] }
+            return (try? JSONDecoder().decode([Date].self, from: data)) ?? []
+        }
+        set {
+            skippedDatesData = try? JSONEncoder().encode(newValue)
+        }
+    }
     
     // MARK: - Timestamps
     
@@ -86,7 +98,7 @@ final class Habit {
         title: String = "",
         type: HabitType = .count,
         goal: Int = 1,
-        iconName: String? = "check",
+        iconName: String,
         iconColor: HabitIconColor = .primary,
         createdAt: Date = Date(),
         activeDays: [Bool]? = nil,
@@ -125,7 +137,7 @@ final class Habit {
         title: String,
         type: HabitType,
         goal: Int,
-        iconName: String?,
+        iconName: String,
         iconColor: HabitIconColor = .primary,
         activeDays: [Bool],
         reminderTimes: [Date]?,
@@ -145,10 +157,6 @@ final class Habit {
     
     static func createDefaultActiveDaysBitMask() -> Int {
         return 0b1111111 // All days active
-    }
-    
-    var id: String {
-        uuid.uuidString
     }
 }
 
@@ -243,14 +251,15 @@ extension Habit {
     }
     
     func completionPercentageForDate(_ date: Date) -> Double {
-        let progress = min(progressForDate(date), 999999) // Cap extremely high values
+        let progress = min(progressForDate(date), 999999)
         
         if goal <= 0 {
             return progress > 0 ? 1.0 : 0.0
         }
         
         let percentage = Double(progress) / Double(goal)
-        return min(percentage, 1.0) // Cap at 100%
+        
+        return min(percentage, 2.0)
     }
     
     func addProgress(_ value: Int, for date: Date = .now) {

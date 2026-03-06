@@ -1,7 +1,7 @@
+import AudioToolbox
 import SwiftUI
 import UIKit
 
-/// Centralized haptic feedback manager with user preference support
 final class HapticManager {
     static let shared = HapticManager()
     
@@ -13,6 +13,7 @@ final class HapticManager {
         guard hapticsEnabled else { return }
         
         let generator = UINotificationFeedbackGenerator()
+        generator.prepare()
         generator.notificationOccurred(feedbackType)
     }
     
@@ -29,4 +30,12 @@ final class HapticManager {
         let generator = UIImpactFeedbackGenerator(style: style)
         generator.impactOccurred()
     }
+    
+    // Vibration
+    func playSystemNotificationVibration() {
+        guard hapticsEnabled else { return }
+        
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+    
 }

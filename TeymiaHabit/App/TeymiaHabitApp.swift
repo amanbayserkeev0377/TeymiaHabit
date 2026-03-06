@@ -7,12 +7,14 @@ import LocalAuthentication
 @main
 struct TeymiaHabitApp: App {
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.colorScheme) private var colorScheme
     
     let container: ModelContainer
     
+    @State private var themeManager = ThemeManager.shared
+    @State private var colorManager = AppColorManager.shared
     @State private var weekdayPrefs = WeekdayPreferences.shared
     @State private var privacyManager = PrivacyManager.shared
+    @State private var timerService = TimerService.shared
     @State private var pendingDeeplink: Habit? = nil
     @State private var showingGlobalPinView = false
     @State private var globalPinTitle = ""
@@ -28,6 +30,22 @@ struct TeymiaHabitApp: App {
     init() {
         RevenueCatConfig.configure()
         PrivacyManager.shared.checkAndLockOnAppStart()
+        
+        let titleFont = UIFont.rounded(ofSize: 18, weight: .semibold)
+        let largeTitleFont = UIFont.rounded(ofSize: 34, weight: .bold)
+
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.configureWithDefaultBackground()
+        standardAppearance.titleTextAttributes = [.font: titleFont]
+        standardAppearance.largeTitleTextAttributes = [.font: largeTitleFont]
+
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.configureWithTransparentBackground()
+        scrollEdgeAppearance.titleTextAttributes = [.font: titleFont]
+        scrollEdgeAppearance.largeTitleTextAttributes = [.font: largeTitleFont]
+
+        UINavigationBar.appearance().standardAppearance = standardAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = scrollEdgeAppearance
         
         do {
             let schema = Schema([Habit.self, HabitCompletion.self])
@@ -50,8 +68,12 @@ struct TeymiaHabitApp: App {
         WindowGroup {
             ZStack {
                 MainTabView()
+                    .environment(themeManager)
+                    .environment(colorManager)
                     .environment(weekdayPrefs)
+                    .environment(privacyManager)
                     .environment(ProManager.shared)
+                    .environment(timerService)
                     .environment(\.globalPin, globalPinEnvironment)
                     .onAppear {
                         setupLiveActivities()
@@ -61,11 +83,11 @@ struct TeymiaHabitApp: App {
                         handleDeepLink(url)
                     }
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
-                        handleAppTermination()
+                        try? container.mainContext.save()
                     }
                 
                 if privacyManager.isAppLocked {
-                    PrivacyLockView()
+                    AppLockView()
                         .transition(.opacity)
                         .zIndex(10000)
                         .allowsHitTesting(true)
@@ -99,7 +121,6 @@ struct TeymiaHabitApp: App {
                     .zIndex(2500)
                 }
             }
-            .environment(privacyManager)
             .onChange(of: privacyManager.isAppLocked) { _, newValue in
                 if !newValue && pendingDeeplink != nil {
                     handlePendingDeeplink()
@@ -124,7 +145,7 @@ struct TeymiaHabitApp: App {
             privacyManager.handleAppWillResignActive()
             
         case .inactive:
-            saveDataContext()
+            try? container.mainContext.save()
             
         case .active:
             handleAppForeground()
@@ -165,23 +186,21 @@ struct TeymiaHabitApp: App {
     }
     
     private func handlePendingDeeplink() {
-        if let habit = pendingDeeplink {
-            NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                openHabitDirectly(habit)
-                pendingDeeplink = nil
-            }
+        guard let habit = pendingDeeplink else { return }
+        
+        NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.openHabitDirectly(habit)
+            self.pendingDeeplink = nil
         }
     }
     
     private func openHabitDirectly(_ habit: Habit) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            NotificationCenter.default.post(
-                name: .openHabitFromDeeplink,
-                object: habit
-            )
-        }
+        NotificationCenter.default.post(
+            name: .openHabitFromDeeplink,
+            object: habit
+        )
     }
     
     // MARK: - Live Activities Setup
@@ -195,14 +214,13 @@ struct TeymiaHabitApp: App {
     // MARK: - App Lifecycle Methods
     
     private func handleAppBackground() {
-        saveDataContext()
+        try? container.mainContext.save()
         
         if privacyManager.isPrivacyEnabled {
             NotificationCenter.default.post(name: .dismissAllSheets, object: nil)
         }
         
         TimerService.shared.handleAppDidEnterBackground()
-        HabitManager.shared.cleanupInactiveViewModels()
     }
     
     private func handleAppForeground() {
@@ -215,15 +233,6 @@ struct TeymiaHabitApp: App {
         Task {
             await HabitLiveActivityManager.shared.restoreActiveActivitiesIfNeeded()
         }
-    }
-    
-    private func handleAppTermination() {
-        HabitManager.shared.cleanupAllViewModels()
-        saveDataContext()
-    }
-    
-    private func saveDataContext() {
-        try? container.mainContext.save()
     }
     
     // MARK: - Widget Deep Link Handling

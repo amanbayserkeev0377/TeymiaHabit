@@ -51,7 +51,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../TeymiaHabit/Pro/Teymia Habit.storekit">
+         identifier = "../../TeymiaHabit/Features/Pro/Teymia Habit.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction

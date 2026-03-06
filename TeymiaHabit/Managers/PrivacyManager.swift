@@ -198,7 +198,7 @@ final class PrivacyManager {
                     authenticationError = nil
                     updateLastActiveTime()
                 } else {
-                    authenticationError = "authentication_failed".localized
+                    authenticationError = "authentication_failed"
                 }
             }
         } catch {
@@ -225,13 +225,13 @@ final class PrivacyManager {
     
     private func authenticateUserWithSystem() async throws -> Bool {
         let context = LAContext()
-        context.localizedFallbackTitle = "use_passcode".localized
+        context.localizedFallbackTitle = "use_passcode"
         
         let policy: LAPolicy = privacySettings.isPasscodeSet && biometricType != .none ?
             .deviceOwnerAuthenticationWithBiometrics :
             .deviceOwnerAuthentication
         
-        let reason = "privacy_auth_reason".localized
+        let reason = "privacy_auth_reason"
         return try await context.evaluatePolicy(policy, localizedReason: reason)
     }
     
@@ -239,7 +239,7 @@ final class PrivacyManager {
         let context = LAContext()
         context.localizedFallbackTitle = ""
         
-        let reason = "privacy_auth_reason".localized
+        let reason = "privacy_auth_reason"
         return try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason)
     }
     

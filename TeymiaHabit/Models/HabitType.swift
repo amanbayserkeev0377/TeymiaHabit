@@ -8,9 +8,9 @@ enum HabitType: Int, Codable, CaseIterable {
     var name: String {
         switch self {
         case .count:
-            return "count".localized
+            return "habit.type_count"
         case .time:
-            return "time".localized
+            return "habit.type_time"
         }
     }
     

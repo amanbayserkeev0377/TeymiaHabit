@@ -12,7 +12,7 @@ struct HabitLiveActivityWidget: Widget {
                 DynamicIslandExpandedRegion(.leading) {
                     VStack {
                         Spacer()
-                        LiveActivityHabitIcon(context: context, size: 28)
+                        LiveActivityHabitIcon(context: context, size: 24)
                             .frame(width: 54, height: 54)
                         Spacer()
                     }
@@ -33,7 +33,7 @@ struct HabitLiveActivityWidget: Widget {
                             let templateText = baseProgress >= 3600 ? "9:99:99" : "99:99"
                             
                             Text(templateText)
-                                .font(.system(.title3, design: .rounded))
+                                .font(.system(.title2, design: .rounded))
                                 .fontWeight(.bold)
                                 .foregroundColor(.clear)
                                 .monospacedDigit()
@@ -42,7 +42,7 @@ struct HabitLiveActivityWidget: Widget {
                                         let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
                                         
                                         Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
-                                            .font(.system(.title3, design: .rounded))
+                                            .font(.system(.title2, design: .rounded))
                                             .fontWeight(.bold)
                                             .foregroundStyle(.primary)
                                             .monospacedDigit()
@@ -50,7 +50,7 @@ struct HabitLiveActivityWidget: Widget {
                                             .minimumScaleFactor(0.8)
                                     } else {
                                         Text(baseProgress.formattedAsTime())
-                                            .font(.system(.title3, design: .rounded))
+                                            .font(.system(.title2, design: .rounded))
                                             .fontWeight(.bold)
                                             .foregroundStyle(.primary)
                                             .monospacedDigit()
@@ -115,12 +115,7 @@ struct CompactLiveActivityContent: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            LiveActivityHabitIcon(context: context, size: 26)
-                .frame(width: 54, height: 54)
-                .background(
-                    Circle()
-                        .fill(context.attributes.habitIconColor.color.gradient.opacity(0.15))
-                )
+            LiveActivityHabitIcon(context: context, size: 24)
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(context.attributes.habitName)
@@ -134,14 +129,14 @@ struct CompactLiveActivityContent: View {
                     let adjustedStartTime = startTime.addingTimeInterval(-TimeInterval(baseProgress))
                     
                     Text(timerInterval: adjustedStartTime...Date.distantFuture, countsDown: false)
-                        .font(.system(.title3, design: .rounded))
-                        .fontWeight(.semibold)
+                        .font(.system(.title2, design: .rounded))
+                        .fontWeight(.bold)
                         .foregroundStyle(.primary)
                         .monospacedDigit()
                 } else {
                     Text(formattedProgress)
-                        .font(.system(.title3, design: .rounded))
-                        .fontWeight(.semibold)
+                        .font(.system(.title2, design: .rounded))
+                        .fontWeight(.bold)
                         .foregroundStyle(.primary)
                         .monospacedDigit()
                 }

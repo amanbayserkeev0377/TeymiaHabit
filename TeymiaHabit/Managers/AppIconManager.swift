@@ -40,7 +40,6 @@ final class AppIconManager {
             }
         }
         
-        // Update immediately like Apple does
         currentIcon = icon
     }
 }

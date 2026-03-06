@@ -1,4 +1,7 @@
+#if !targetEnvironment(macCatalyst)
 import ActivityKit
+#endif
+
 import Foundation
 import SwiftData
 import SwiftUI
@@ -7,7 +10,9 @@ import SwiftUI
 final class HabitLiveActivityManager {
     static let shared = HabitLiveActivityManager()
     
+    #if !targetEnvironment(macCatalyst)
     private var activeActivities: [String: Activity<HabitActivityAttributes>] = [:]
+    #endif
     
     private init() {}
     
@@ -18,6 +23,7 @@ final class HabitLiveActivityManager {
         currentProgress: Int,
         timerStartTime: Date
     ) async {
+        #if !targetEnvironment(macCatalyst)
         guard habit.type == .time else {
             return
         }
@@ -43,7 +49,7 @@ final class HabitLiveActivityManager {
             habitName: habit.title,
             habitGoal: habit.goal,
             habitType: habit.type == .time ? .time : .count,
-            habitIcon: habit.iconName ?? "check",
+            habitIcon: habit.iconName,
             habitIconColor: habit.iconColor
         )
         
@@ -72,6 +78,7 @@ final class HabitLiveActivityManager {
             // Silently handle Live Activity creation failures
             // Common causes: user disabled Live Activities, too many active activities
         }
+        #endif
     }
     
     func updateActivity(
@@ -80,6 +87,7 @@ final class HabitLiveActivityManager {
         isTimerRunning: Bool,
         timerStartTime: Date?
     ) async {
+        #if !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[habitId] else {
             return
         }
@@ -97,9 +105,11 @@ final class HabitLiveActivityManager {
         )
         
         await activity.update(activityContent)
+        #endif
     }
     
     func endActivity(for habitId: String) async {
+        #if !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[habitId] else { return }
         
         let finalContent = ActivityContent(
@@ -109,9 +119,11 @@ final class HabitLiveActivityManager {
         
         await activity.end(finalContent, dismissalPolicy: .immediate)
         activeActivities.removeValue(forKey: habitId)
+        #endif
     }
     
     func endAllActivities() async {
+        #if !targetEnvironment(macCatalyst)
         for (_, activity) in activeActivities {
             let finalContent = ActivityContent(
                 state: activity.content.state,
@@ -120,29 +132,47 @@ final class HabitLiveActivityManager {
             await activity.end(finalContent, dismissalPolicy: .immediate)
         }
         activeActivities.removeAll()
+        #endif
     }
     
     func hasActiveActivity(for habitId: String) -> Bool {
-        activeActivities[habitId]?.activityState == .active
+        #if !targetEnvironment(macCatalyst)
+        return activeActivities[habitId]?.activityState == .active
+        #else
+        return false
+        #endif
     }
     
     var totalActiveActivities: Int {
-        activeActivities.count
+        #if !targetEnvironment(macCatalyst)
+        return activeActivities.count
+        #else
+        return 0
+        #endif
     }
     
     // MARK: - Activity State Access
     
     func getActiveHabitIds() -> [String] {
-        Array(activeActivities.keys)
+        #if !targetEnvironment(macCatalyst)
+        return Array(activeActivities.keys)
+        #else
+        return []
+        #endif
     }
     
     func getActivityState(for habitId: String) -> HabitActivityAttributes.ContentState? {
-        activeActivities[habitId]?.content.state
+        #if !targetEnvironment(macCatalyst)
+        return activeActivities[habitId]?.content.state
+        #else
+        return nil
+        #endif
     }
     
     // MARK: - App Launch Restoration
     
     func restoreActiveActivitiesIfNeeded() async {
+        #if !targetEnvironment(macCatalyst)
         let activities = Activity<HabitActivityAttributes>.activities
         
         // Clear current state
@@ -153,5 +183,6 @@ final class HabitLiveActivityManager {
             let habitId = activity.attributes.habitId
             activeActivities[habitId] = activity
         }
+        #endif
     }
 }
