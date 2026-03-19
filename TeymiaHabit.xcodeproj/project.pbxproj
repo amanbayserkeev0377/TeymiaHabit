@@ -81,7 +81,7 @@
 				Features/Shared/Components/HabitIconView.swift,
 				Features/Shared/Logic/LiveActivityTypes.swift,
 				"Managers/AppColorManager+LiveActivity.swift",
-				Models/HabitIconColor.swift,
+				Models/Habits/HabitIconColor.swift,
 				Resources/Assets.xcassets,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
@@ -103,11 +103,11 @@
 				Features/Shared/Components/HabitIconView.swift,
 				Managers/AppColorManager.swift,
 				Managers/WeekdayPreferences.swift,
-				Models/Habit.swift,
-				Models/HabitCompletion.swift,
-				Models/HabitIconColor.swift,
-				Models/HabitType.swift,
-				Models/Weekday.swift,
+				Models/Habits/Habit.swift,
+				Models/Habits/HabitCompletion.swift,
+				Models/Habits/HabitIconColor.swift,
+				Models/Habits/HabitType.swift,
+				Models/Habits/Weekday.swift,
 				Resources/Assets.xcassets,
 			);
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
@@ -293,7 +293,6 @@
 				en,
 				ru,
 				"ky-KG",
-				Base,
 				"zh-Hans",
 				es,
 				fr,
@@ -309,6 +308,7 @@
 				vi,
 				it,
 				id,
+				Base,
 			);
 			mainGroup = 07A95EF12D9849F300044A7A;
 			minimizedProjectReferenceProxies = 1;
