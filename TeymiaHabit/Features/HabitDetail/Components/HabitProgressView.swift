@@ -38,7 +38,7 @@ struct HabitProgressView: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: .circle)
+        .glassEffect(.regular.interactive(), in: .circle)
         .disabled(viewModel.currentProgress <= 0)
     }
 
@@ -54,6 +54,6 @@ struct HabitProgressView: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: .circle)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }

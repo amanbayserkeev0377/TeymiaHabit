@@ -75,14 +75,14 @@ struct NewHabitView: View {
                         TextField("habit_name", text: $title)
                             .fontWeight(.medium)
                             .submitLabel(.done)
-                    } icon: { Image(systemName: "pencil").iconStyle() }
+                    } icon: { Image(systemName: "pencil.line").iconStyle(reversed: true) }
                     
                     NavigationLink {
                         IconPickerView(selectedIcon: $selectedIcon)
                     } label: {
                         HStack {
                             Label { Text("icon") }
-                            icon: { Image(systemName: "app.background.dotted").iconStyle() }
+                            icon: { Image(systemName: "app.background.dotted").iconStyle(reversed: true) }
                             
                             Spacer()
                             
@@ -98,7 +98,7 @@ struct NewHabitView: View {
                     } label: {
                         HStack {
                             Label { Text("color") }
-                            icon: { Image(systemName: "paintbrush.pointed").iconStyle() }
+                            icon: { Image(systemName: "paintbrush.pointed").iconStyle(reversed: true) }
                             
                             Spacer()
                             

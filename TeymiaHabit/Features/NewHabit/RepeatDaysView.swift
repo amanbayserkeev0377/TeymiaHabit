@@ -25,12 +25,12 @@ struct RepeatDaysView: View {
                 } label: {
                     Text(dayName)
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(isActive ? Color.white.gradient : Color.primary.gradient)
+                        .foregroundStyle(isActive ? Color.primaryInverse.gradient : Color.primary.gradient)
                         .frame(width: 40, height: 40)
                         .background {
                             if isActive {
                                 Circle()
-                                    .fill(.mainApp.gradient)
+                                    .fill(Color.primary.gradient)
                             }
                         }
                 }

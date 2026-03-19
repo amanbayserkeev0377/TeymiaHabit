@@ -63,7 +63,6 @@ struct TasksView: View {
     }
 }
 
-// MARK: - Вспомогательный View для строки
 struct TaskNavigationRow: View {
     let title: String
     let icon: String

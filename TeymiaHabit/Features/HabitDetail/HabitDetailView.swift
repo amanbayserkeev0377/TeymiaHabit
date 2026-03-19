@@ -36,18 +36,6 @@ struct HabitDetailView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     mainStackContent
                 }
-                .background {
-                    LinearGradient(
-                        colors: [
-                            Color(Color.mainBackground),
-                            Color(Color.mainBackground),
-                            habit.iconColor.color.opacity(0.1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .ignoresSafeArea()
-                }
                 .navigationTitle(habit.title)
                 .navigationSubtitle("goal \(habit.formattedGoal)")
                 .id(habit.uuid.uuidString)

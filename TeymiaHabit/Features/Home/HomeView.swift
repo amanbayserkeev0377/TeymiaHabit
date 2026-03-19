@@ -15,8 +15,8 @@ struct HomeView: View {
     private var allBaseHabits: [Habit]
     let zoomNamespace: Namespace.ID
     
-    @Binding var navigationPath: [PersistentIdentifier]
     @Binding var selectedDate: Date
+    @Binding var selectedHabit: Habit?
     
     @State private var showingNewHabit = false
     @State private var showingPaywall = false
@@ -99,28 +99,28 @@ struct HomeView: View {
                         .listRowSeparator(.hidden)
                         
                         ForEach(activeHabitsForDate) { habit in
-                            ZStack {
-                                NavigationLink(value: habit.persistentModelID) {
-                                    EmptyView()
-                                }
-                                .opacity(0)
-                                
-                                HabitCard(
-                                    habit: habit,
-                                    date: selectedDate,
-                                    onToggleCompletion: {
-                                        toggleHabitCompletion(habit)
-                                    },
-                                    zoomNamespace: zoomNamespace
-                                )
-                                .glassEffect(.regular.interactive(false), in: .capsule)
-                            }
+                            HabitCard(
+                                habit: habit,
+                                date: selectedDate,
+                                onToggleCompletion: { toggleHabitCompletion(habit) },
+                                zoomNamespace: zoomNamespace
+                            )
                             .buttonStyle(.plain)
+                            .matchedTransitionSource(id: habit.persistentModelID, in: zoomNamespace)
+                            .background(
+                                Capsule()
+                                    .fill(Color.rowBackground)
+                                    .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 4)
+                            )
                             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
                             .compositingGroup()
                             .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)
+                            .onTapGesture {
+                                    selectedHabit = habit
+                                    HapticManager.shared.playSelection()
+                                }
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 let isCompleted = habit.progressForDate(selectedDate) >= habit.goal
                                 Button {
@@ -277,13 +277,15 @@ struct HomeView: View {
     }
     
     private func deleteHabit(_ habit: Habit) {
-        if !navigationPath.isEmpty {
-            navigationPath.removeAll()
+        if selectedHabit?.persistentModelID == habit.persistentModelID {
+            selectedHabit = nil
         }
         
         withAnimation {
             HabitService.shared.delete(habit, context: modelContext)
         }
+        
+        WidgetUpdateService.shared.reloadWidgets()
     }
     
     private func archiveHabit(_ habit: Habit) {
@@ -357,11 +359,6 @@ struct HabitCard: View {
                 )
                 .padding(14)
             }
-            .background (
-                Capsule()
-                    .fill(Color.rowBackground)
-            )
-            .matchedTransitionSource(id: habit.persistentModelID, in: zoomNamespace)
             .contentShape(.dragPreview, Capsule())
             .contentShape(.contextMenuPreview, Capsule())
             .contextMenu {

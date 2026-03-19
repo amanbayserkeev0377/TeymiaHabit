@@ -34,7 +34,7 @@ struct ReminderSection: View {
                 Label(
                     title: { Text("reminders") },
                     icon: {
-                        Image(systemName: "bell")
+                        Image(systemName: "bell.badge")
                             .iconStyle()
                             .symbolEffect(.wiggle, value: isReminderEnabled)
                     }
