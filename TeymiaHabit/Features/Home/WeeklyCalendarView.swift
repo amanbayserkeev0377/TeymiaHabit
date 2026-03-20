@@ -29,36 +29,48 @@ struct WeeklyCalendarView: View {
     }
 
     var body: some View {
-        TabView(selection: $currentWeekIndex) {
-            ForEach(Array(weeks.enumerated()), id: \.element.first) { index, week in
-                HStack(spacing: 16) {
-                    ForEach(week, id: \.self) { date in
-                        let hasHabits = hasActiveHabits(for: date)
-                        let isAvailable = isDateInAvailableRange(date)
-                        let isSelected = calendar.isDate(selectedDate, inSameDayAs: date)
-                        let progress = hasHabits ? (progressData[date] ?? 0) : 0
-                        let showRing = hasHabits && isAvailable
-
-                        DayProgressItem(
-                            date: date,
-                            isSelected: isSelected,
-                            progress: progress,
-                            showProgressRing: showRing,
-                            isOverallProgress: true
-                        )
-                        .frame(width: 35)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            handleDateTap(date: date, hasHabits: hasHabits, isAvailable: isAvailable)
+        VStack(spacing: 6) {
+            HStack(spacing: 16) {
+                ForEach(dayHeaders, id: \.self) { day in
+                    Text(day)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.primary.gradient)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            TabView(selection: $currentWeekIndex) {
+                ForEach(Array(weeks.enumerated()), id: \.element.first) { index, week in
+                    HStack(spacing: 16) {
+                        ForEach(week, id: \.self) { date in
+                            let hasHabits = hasActiveHabits(for: date)
+                            let isAvailable = isDateInAvailableRange(date)
+                            let isSelected = calendar.isDate(selectedDate, inSameDayAs: date)
+                            let progress = hasHabits ? (progressData[date] ?? 0) : 0
+                            let showRing = hasHabits && isAvailable
+                            
+                            DayProgressItem(
+                                date: date,
+                                isSelected: isSelected,
+                                progress: progress,
+                                showProgressRing: showRing,
+                                isOverallProgress: true
+                            )
+                            .frame(maxWidth: .infinity)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                handleDateTap(date: date, hasHabits: hasHabits, isAvailable: isAvailable)
+                            }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .tag(index)
                 }
-                .padding(.horizontal, 16)
-                .tag(index)
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 55)
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .frame(height: 55)
         .onChange(of: currentWeekIndex) { _, _ in
             loadProgressData()
         }
@@ -251,5 +263,14 @@ struct WeeklyCalendarView: View {
         weeks.firstIndex {
             $0.contains { calendar.isDate($0, inSameDayAs: date) }
         }
+    }
+    
+    // MARK: - Day Headers
+    private var dayHeaders: [String] {
+        let weekdays = calendar.shortStandaloneWeekdaySymbols // ["Sun", "Mon", "Tue"...]
+        let firstDayIndex = calendar.firstWeekday - 1
+        let shifted = Array(weekdays[firstDayIndex...] + weekdays[..<firstDayIndex])
+        
+        return shifted.map { String($0.prefix(1)) }
     }
 }

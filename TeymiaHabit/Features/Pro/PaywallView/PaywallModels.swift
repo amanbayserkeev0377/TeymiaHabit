@@ -16,11 +16,6 @@ struct ProFeature {
             description: "paywall_unlimited_habits_description"
         ),
         ProFeature(
-            icon: "chart.bar",
-            title: "paywall_detailed_statistics_title",
-            description: "paywall_detailed_statistics_description"
-        ),
-        ProFeature(
             icon: "bell",
             title: "paywall_multiple_reminders_title",
             description: "paywall_multiple_reminders_description"

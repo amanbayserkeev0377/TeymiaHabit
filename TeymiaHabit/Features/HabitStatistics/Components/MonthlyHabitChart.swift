@@ -4,21 +4,32 @@ import Charts
 struct MonthlyHabitChart: View {
     let habit: Habit
     let updateCounter: Int
-    
+
     @State private var months: [Date] = []
     @State private var currentMonthIndex: Int = 0
     @State private var chartData: [ChartDataPoint] = []
     @State private var selectedDate: Date?
-    
-    private var calendar: Calendar {
-        Calendar.userPreferred
-    }
-    
+
+    private var calendar: Calendar { Calendar.userPreferred }
+
     // MARK: - Body
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            headerView
+            ChartPeriodHeader(
+                title: DateFormatter.capitalizedNominativeMonthYear(from: currentMonth),
+                canGoPrevious: canNavigateToPreviousMonth,
+                canGoNext: canNavigateToNextMonth,
+                averageLabel: averageFormatted,
+                totalLabel: totalFormatted,
+                selectedDateLabel: selectedDate.map { shortDateFormatter.string(from: $0) },
+                selectedValueLabel: selectedDate.flatMap { date in
+                    chartData.first { calendar.isDate($0.date, inSameDayAs: date) }
+                }?.formattedValueWithoutSeconds,
+                onPrevious: showPreviousMonth,
+                onNext: showNextMonth
+            )
+
             chartContainer
         }
         .onAppear {
@@ -26,120 +37,19 @@ struct MonthlyHabitChart: View {
             findCurrentMonthIndex()
             generateChartData()
         }
-        .onChange(of: habit.goal) { _, _ in
-            generateChartData()
-        }
-        .onChange(of: habit.activeDays) { _, _ in
-            generateChartData()
-        }
-        .onChange(of: updateCounter) { _, _ in
-            generateChartData()
-        }
-        .onChange(of: selectedDate) { oldValue, newValue in
-            if let old = oldValue, let new = newValue, !calendar.isDate(old, inSameDayAs: new) {
-                HapticManager.shared.playSelection()
-            }
-            else if oldValue == nil && newValue != nil {
-                HapticManager.shared.playSelection()
-            }
-        }
+        .onChange(of: habit.goal) { _, _ in generateChartData() }
+        .onChange(of: habit.activeDays) { _, _ in generateChartData() }
+        .onChange(of: updateCounter) { _, _ in generateChartData() }
+        .onChange(of: selectedDate, playHapticOnChange)
     }
-    
-    @ViewBuilder
-    private var headerView: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Button(action: showPreviousMonth) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20))
-                        .foregroundStyle(canNavigateToPreviousMonth ? .primary : Color.gray.opacity(0.5))
-                        .contentShape(Rectangle())
-                }
-                .disabled(!canNavigateToPreviousMonth)
-                .buttonStyle(.borderless)
-                
-                Spacer()
-                
-                Text(monthRangeString)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .fontDesign(.rounded)
-                
-                Spacer()
-                
-                Button(action: showNextMonth) {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 20))
-                        .foregroundStyle(canNavigateToNextMonth ? .primary : Color.gray.opacity(0.5))
-                        .contentShape(Rectangle())
-                }
-                .disabled(!canNavigateToNextMonth)
-                .buttonStyle(.borderless)
-            }
-            .padding(.horizontal, 16)
-            
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("average")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.secondary)
-                    
-                    Text(averageValueFormatted)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.primary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                if let selectedDate = selectedDate,
-                   let selectedDataPoint = chartData.first(where: {
-                       calendar.isDate($0.date, inSameDayAs: selectedDate)
-                   }) {
-                    VStack(alignment: .center, spacing: 2) {
-                        Text(shortDateFormatter.string(from: selectedDate).capitalized)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .fontDesign(.rounded)
-                            .foregroundStyle(.secondary)
-                        
-                        Text(selectedDataPoint.formattedValueWithoutSeconds)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .foregroundStyle(.primary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
-                
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("total")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.secondary)
-                    
-                    Text(monthlyTotalFormatted)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.primary)
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .padding(.horizontal, 16)
-        }
-    }
-    
-    // MARK: - Chart Container with TabView
-    
+
+    // MARK: - Chart Container
+
     @ViewBuilder
     private var chartContainer: some View {
         TabView(selection: $currentMonthIndex) {
             ForEach(months.indices, id: \.self) { index in
-                chartView(for: index)
+                chartView
                     .tag(index)
                     .padding(.horizontal, 16)
             }
@@ -151,255 +61,171 @@ struct MonthlyHabitChart: View {
             generateChartData()
         }
     }
-    
+
     // MARK: - Chart View
-    
+
     @ViewBuilder
-    private func chartView(for index: Int) -> some View {
-            Chart(chartData) { dataPoint in
-                BarMark(
-                    x: .value("Day", dataPoint.date),
-                    y: .value("Progress", dataPoint.value)
-                )
-                .foregroundStyle(barColor(for: dataPoint))
-                .cornerRadius(10)
-                .opacity(selectedDate == nil ? 1.0 :
-                        (calendar.isDate(dataPoint.date, inSameDayAs: selectedDate!) ? 1.0 : 0.3))
-            }
-            .chartXAxis {
-                AxisMarks(values: xAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2]))
-                        .foregroundStyle(Color.secondary.opacity(0.2))
-                    AxisValueLabel {
-                        if let date = value.as(Date.self) {
-                            Text("\(calendar.component(.day, from: date))")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.secondary)
-                        }
+    private var chartView: some View {
+        Chart(chartData) { dataPoint in
+            BarMark(
+                x: .value("Day", dataPoint.date),
+                y: .value("Progress", dataPoint.value)
+            )
+            .foregroundStyle(barColor(for: dataPoint))
+            .cornerRadius(10)
+            .opacity(barOpacity(for: dataPoint.date))
+        }
+        .chartXAxis {
+            AxisMarks(values: xAxisValues) { value in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2]))
+                    .foregroundStyle(.white.opacity(0.2).gradient)
+                AxisValueLabel {
+                    if let date = value.as(Date.self) {
+                        Text("\(calendar.component(.day, from: date))")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.white.opacity(0.2).gradient)
                     }
                 }
             }
-            .chartYAxis {
-                AxisMarks(position: .trailing, values: yAxisValues) { value in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
-                        .foregroundStyle(Color.secondary.opacity(0.2))
-                }
-            }
-            .chartXSelection(value: $selectedDate)
-            .onTapGesture {
-                if selectedDate != nil {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        selectedDate = nil
-                    }
-                }
-            }
+        }
+        .habitChartYAxis(values: yAxisValues)
+        .chartXSelection(value: $selectedDate)
+        .onTapGesture { clearSelection() }
         .frame(height: 180)
     }
-    
+
     // MARK: - Computed Properties
-    
+
     private var currentMonth: Date {
-        guard !months.isEmpty && currentMonthIndex >= 0 && currentMonthIndex < months.count else {
-            return Date()
-        }
+        guard !months.isEmpty, currentMonthIndex >= 0, currentMonthIndex < months.count else { return Date() }
         return months[currentMonthIndex]
     }
-    
-    private var monthRangeString: String {
-        return DateFormatter.capitalizedNominativeMonthYear(from: currentMonth)
+
+    private var averageFormatted: String {
+        let active = chartData.filter { $0.value > 0 }
+        guard !active.isEmpty else { return "0" }
+        let avg = active.reduce(0) { $0 + $1.value } / active.count
+        return habit.type == .time ? avg.formattedAsChartDuration() : "\(avg)"
     }
-    
-    private var averageValueFormatted: String {
-        guard !chartData.isEmpty else { return "0" }
-        
-        let activeDaysData = chartData.filter { $0.value > 0 }
-        guard !activeDaysData.isEmpty else { return "0" }
-        
-        let total = activeDaysData.reduce(0) { $0 + $1.value }
-        let average = total / activeDaysData.count
-        
-        switch habit.type {
-        case .count:
-            return "\(average)"
-        case .time:
-            return formatTimeWithoutSeconds(average)
-        }
-    }
-    
-    private var monthlyTotalFormatted: String {
-        guard !chartData.isEmpty else { return "0" }
-        
+
+    private var totalFormatted: String {
         let total = chartData.reduce(0) { $0 + $1.value }
-        
-        switch habit.type {
-        case .count:
-            return "\(total)"
-        case .time:
-            return formatTimeWithoutSeconds(total)
-        }
+        return habit.type == .time ? total.formattedAsChartDuration() : "\(total)"
     }
-    
-    private var shortDateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMM"
-        return formatter
-    }
-    
-    private func formatTimeWithoutSeconds(_ seconds: Int) -> String {
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        
-        if hours > 0 {
-            return String(format: "%d:%02d", hours, minutes)
-        } else if minutes > 0 {
-            return String(format: "0:%02d", minutes)
-        } else {
-            return "0"
-        }
-    }
-    
+
     private var yAxisValues: [Int] {
-        guard !chartData.isEmpty else { return [0] }
-        
-        let maxValue = chartData.map { $0.value }.max() ?? 0
-        guard maxValue > 0 else { return [0] }
-        
-        let displayMaxValue = habit.type == .time ? maxValue / 3600 : maxValue
-        let step = max(1, displayMaxValue / 3)
-        
-        let values = [0, step, step * 2, step * 3].filter { $0 <= displayMaxValue + step/2 }
-        
-        return habit.type == .time ? values.map { $0 * 3600 } : values
+        habitChartYAxisValues(for: chartData, habitType: habit.type)
     }
-    
+
     private var xAxisValues: [Date] {
-        return Array(stride(from: 0, to: chartData.count, by: 5)).compactMap {
+        stride(from: 0, to: chartData.count, by: 5).compactMap {
             chartData.indices.contains($0) ? chartData[$0].date : nil
         }
     }
-    
-    private var canNavigateToPreviousMonth: Bool {
-        return currentMonthIndex > 0
+
+    private var shortDateFormatter: DateFormatter {
+        let f = DateFormatter(); f.dateFormat = "d MMM"; return f
     }
-    
+
+    private var canNavigateToPreviousMonth: Bool { currentMonthIndex > 0 }
+
     private var canNavigateToNextMonth: Bool {
         guard !months.isEmpty else { return false }
-        
         let today = Date()
-        let currentMonthComponents = calendar.dateComponents([.year, .month], from: today)
-        let displayedMonthComponents = calendar.dateComponents([.year, .month], from: currentMonth)
-        
-        return !(displayedMonthComponents.year! > currentMonthComponents.year! ||
-                 (displayedMonthComponents.year! == currentMonthComponents.year! &&
-                  displayedMonthComponents.month! >= currentMonthComponents.month!))
+        let todayComps = calendar.dateComponents([.year, .month], from: today)
+        let currentComps = calendar.dateComponents([.year, .month], from: currentMonth)
+        return !(currentComps.year! > todayComps.year! ||
+            (currentComps.year! == todayComps.year! && currentComps.month! >= todayComps.month!))
     }
-    
-    // MARK: - Navigation Methods
-    
-    private func showPreviousMonth() {
-        guard canNavigateToPreviousMonth else { return }
-        withAnimation(.easeInOut(duration: 0.3)) {
-            currentMonthIndex -= 1
+
+    // MARK: - Helpers
+
+    private func barOpacity(for date: Date) -> Double {
+        guard let selected = selectedDate else { return 1.0 }
+        return calendar.isDate(date, inSameDayAs: selected) ? 1.0 : 0.3
+    }
+
+    private func clearSelection() {
+        if selectedDate != nil {
+            withAnimation(.easeOut(duration: 0.2)) { selectedDate = nil }
         }
     }
-    
-    private func showNextMonth() {
-        guard canNavigateToNextMonth else { return }
-        withAnimation(.easeInOut(duration: 0.3)) {
-            currentMonthIndex += 1
+
+    private func playHapticOnChange(oldValue: Date?, newValue: Date?) {
+        if let old = oldValue, let new = newValue, !calendar.isDate(old, inSameDayAs: new) {
+            HapticManager.shared.playSelection()
+        } else if oldValue == nil && newValue != nil {
+            HapticManager.shared.playSelection()
         }
     }
-    
-    // MARK: - Bar Color
 
     private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
-        let date = dataPoint.date
-        let value = dataPoint.value
-        
-        if !habit.isActiveOnDate(date) || date > Date() {
+        if !habit.isActiveOnDate(dataPoint.date) || dataPoint.date > Date() {
             return AppColorManager.getInactiveBarStyle()
         }
-        
-        if value == 0 {
-            return AppColorManager.getNoProgressBarStyle()
-        }
-        
+        if dataPoint.value == 0 { return AppColorManager.getNoProgressBarStyle() }
         return AppColorManager.getChartBarStyle(
             isCompleted: dataPoint.isCompleted,
             isExceeded: dataPoint.isOverAchieved,
             habit: habit
         )
     }
-    
-    // MARK: - Helper Methods
-    
+
+    // MARK: - Setup
+
     private func setupMonths() {
         let today = Date()
-        let currentMonthComponents = calendar.dateComponents([.year, .month], from: today)
-        let currentMonth = calendar.date(from: currentMonthComponents) ?? today
-        
-        let effectiveStartDate = HistoryLimits.limitStartDate(habit.startDate)
-        let habitStartComponents = calendar.dateComponents([.year, .month], from: effectiveStartDate)
-        let habitStartMonth = calendar.date(from: habitStartComponents) ?? effectiveStartDate
-        
-        var monthsList: [Date] = []
-        var currentMonthDate = habitStartMonth
-        
-        while currentMonthDate <= currentMonth {
-            monthsList.append(currentMonthDate)
-            currentMonthDate = calendar.date(byAdding: .month, value: 1, to: currentMonthDate) ?? currentMonthDate
+        let todayComps = calendar.dateComponents([.year, .month], from: today)
+        let currentMonth = calendar.date(from: todayComps) ?? today
+
+        let effectiveStart = HistoryLimits.limitStartDate(habit.startDate)
+        let startComps = calendar.dateComponents([.year, .month], from: effectiveStart)
+        let startMonth = calendar.date(from: startComps) ?? effectiveStart
+
+        var list: [Date] = []
+        var current = startMonth
+        while current <= currentMonth {
+            list.append(current)
+            current = calendar.date(byAdding: .month, value: 1, to: current) ?? current
         }
-        
-        months = monthsList
+        months = list
     }
-    
+
     private func findCurrentMonthIndex() {
-        let today = Date()
-        let currentMonthComponents = calendar.dateComponents([.year, .month], from: today)
-        let currentMonth = calendar.date(from: currentMonthComponents) ?? today
-        
-        if let index = months.firstIndex(where: { calendar.isDate($0, equalTo: currentMonth, toGranularity: .month) }) {
-            currentMonthIndex = index
+        let todayComps = calendar.dateComponents([.year, .month], from: Date())
+        let todayMonth = calendar.date(from: todayComps) ?? Date()
+        if let idx = months.firstIndex(where: { calendar.isDate($0, equalTo: todayMonth, toGranularity: .month) }) {
+            currentMonthIndex = idx
         } else {
             currentMonthIndex = max(0, months.count - 1)
         }
     }
-    
+
     private func generateChartData() {
-        guard !months.isEmpty && currentMonthIndex >= 0 && currentMonthIndex < months.count else {
-            chartData = []
-            return
+        guard !months.isEmpty, currentMonthIndex >= 0, currentMonthIndex < months.count,
+              let range = calendar.range(of: .day, in: .month, for: currentMonth),
+              let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: currentMonth))
+        else { chartData = []; return }
+
+        chartData = (1...range.count).compactMap { day in
+            guard let date = calendar.date(byAdding: .day, value: day - 1, to: firstDay) else { return nil }
+            let progress = (habit.isActiveOnDate(date) && date >= habit.startDate && date <= Date())
+                ? habit.progressForDate(date) : 0
+            return ChartDataPoint(date: date, value: progress, goal: habit.goal, habit: habit)
         }
-        
-        let month = currentMonth
-        
-        guard let range = calendar.range(of: .day, in: .month, for: month),
-              let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: month)) else {
-            chartData = []
-            return
-        }
-        
-        var data: [ChartDataPoint] = []
-        
-        for day in 1...range.count {
-            guard let currentDate = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else { continue }
-            
-            let progress = habit.isActiveOnDate(currentDate) && currentDate >= habit.startDate && currentDate <= Date()
-                ? habit.progressForDate(currentDate)
-                : 0
-            
-            let dataPoint = ChartDataPoint(
-                date: currentDate,
-                value: progress,
-                goal: habit.goal,
-                habit: habit
-            )
-            
-            data.append(dataPoint)
-        }
-        
-        chartData = data
+    }
+
+    // MARK: - Navigation
+
+    private func showPreviousMonth() {
+        guard canNavigateToPreviousMonth else { return }
+        withAnimation(.easeInOut(duration: 0.3)) { currentMonthIndex -= 1 }
+    }
+
+    private func showNextMonth() {
+        guard canNavigateToNextMonth else { return }
+        withAnimation(.easeInOut(duration: 0.3)) { currentMonthIndex += 1 }
     }
 }

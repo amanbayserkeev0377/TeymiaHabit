@@ -4,7 +4,7 @@ struct BaseInputPopover<Content: View>: View {
     let habit: Habit
     let date: Date
     let showQuickActions: Bool
-    let titleKey: String
+    let titleKey: LocalizedStringResource
     let isValid: Bool
     let onConfirm: () -> Void
     var onComplete: (() -> Void)? = nil
@@ -46,17 +46,23 @@ struct BaseInputPopover<Content: View>: View {
             }
             .font(.headline)
         }
-        .foregroundStyle(Color.primary)
+        .foregroundStyle(Color.primary.gradient)
     }
     
     private var quickActionsRow: some View {
-        VStack(spacing: 12) {
-            actionButton(icon: "plus.circle.fill", label: "button_add", color: habit.iconColor.color, isFilled: true, isEnabled: isValid, action: onConfirm)
+        VStack(alignment: .leading, spacing: 15) {
+            actionButton(label: "button_add", isEnabled: isValid, action: onConfirm)
                 .disabled(!isValid)
-            actionButton(icon: "checkmark.circle.fill", label: "complete", color: habit.iconColor.color, isFilled: true) { onComplete?() }
-            actionButton(icon: "arrow.counterclockwise.circle.fill", label: "button_reset", color: .red, isFilled: true) { onReset?() }
-            actionButton(icon: "", label: "button_cancel", color: .red) { dismiss() }
+            
+            actionButton(label: "complete") {
+                onComplete?()
+            }
+            
+            actionButton(label: "button_reset") {
+                onReset?()
+            }
         }
+        .padding(.horizontal, 12)
     }
     
     private var standardActionsRow: some View {
@@ -66,34 +72,37 @@ struct BaseInputPopover<Content: View>: View {
                 dismiss()
             } label: {
                 Text("button_add")
-                    .foregroundStyle(Color.primary)
-                    .frame(maxWidth: .infinity, minHeight: 40)
+                    .foregroundStyle(Color.primaryInverse)
+                    .frame(maxWidth: .infinity, minHeight: 44)
             }
             .contentShape(Capsule())
-            .glassEffect(.regular.interactive(), in: .capsule)
+            .glassEffect(.regular.tint(Color.primary).interactive(), in: .capsule)
             .disabled(!isValid)
             .animation(.smooth(duration: 0.2), value: isValid)
         }
+        .padding(.horizontal, 12)
     }
     
     @ViewBuilder
-    private func actionButton(icon: String, label: String? = nil, color: Color, isFilled: Bool = false, isEnabled: Bool = true, action: @escaping () -> Void) -> some View {
+    private func actionButton(
+        label: LocalizedStringResource? = nil,
+        isEnabled: Bool = true,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: { action(); dismiss() }) {
             HStack {
-                if !icon.isEmpty {
-                    Image(systemName: icon)
-                }
                 if let label = label {
                     Text(label)
+                        .fontWeight(.medium)
                 }
             }
             .frame(maxWidth: .infinity, minHeight: 44)
-            .foregroundStyle(isFilled ? Color(.systemBackground) : color)
+            .foregroundStyle(.primaryInverse)
         }
         .contentShape(Capsule())
-        .glassEffect(.regular.interactive(), in: .capsule)
+        .glassEffect(.clear.tint(Color.primary).interactive(), in: .capsule)
         .disabled(!isEnabled)
-        .animation(.smooth(duration: 0.2), value: isValid)
+        .animation(.smooth(duration: 0.2), value: isEnabled)
     }
 }
 

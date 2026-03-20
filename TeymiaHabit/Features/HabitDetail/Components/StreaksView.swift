@@ -13,10 +13,10 @@ struct StreaksView: View {
     }
     
     @ViewBuilder
-    private func statCard(value: String, label: String, icon: String) -> some View {
+    private func statCard(value: String, label: LocalizedStringResource, icon: String) -> some View {
         StatColumn(value: value, label: label, icon: icon)
             .padding(.vertical, 12)
-            .glassEffect(.regular.tint(Color.rowBackground), in: RoundedRectangle(
+            .glassEffect(.clear.interactive(false), in: RoundedRectangle(
                 cornerRadius: 24, style: .continuous
             ))
     }
@@ -24,27 +24,26 @@ struct StreaksView: View {
 
 struct StatColumn: View {
     let value: String
-    let label: String
+    let label: LocalizedStringResource
     let icon: String
     
     var body: some View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 22, weight: .bold))
-                .foregroundColor(.primary)
+                .foregroundStyle(Color.primary.opacity(0.9).gradient)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             
-            HStack(spacing: 2) {
+            HStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.footnote)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary.opacity(0.7))
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.7).gradient)
                 
                 Text(label)
                     .font(.footnote)
                     .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.7).gradient)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                     .fixedSize(horizontal: false, vertical: true)

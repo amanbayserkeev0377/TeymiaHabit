@@ -106,12 +106,7 @@ struct HomeView: View {
                                 zoomNamespace: zoomNamespace
                             )
                             .buttonStyle(.plain)
-                            .matchedTransitionSource(id: habit.persistentModelID, in: zoomNamespace)
-                            .background(
-                                Capsule()
-                                    .fill(Color.rowBackground)
-                                    .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 4)
-                            )
+                            .glassEffect(.regular.tint(Color.rowBackground).interactive(false), in: .capsule)
                             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)

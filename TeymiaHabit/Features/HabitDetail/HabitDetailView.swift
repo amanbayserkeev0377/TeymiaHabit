@@ -17,7 +17,6 @@ struct HabitDetailView: View {
     @State private var selectedDate: Date = Date()
     @State private var updateCounter = 0
     @State private var isEditPresented = false
-    @State private var showingPaywall = false
     @State private var showingResetAlert = false
     @State private var alertState = AlertState()
     @State private var barChartTimeRange: ChartTimeRange = .week
@@ -36,8 +35,7 @@ struct HabitDetailView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     mainStackContent
                 }
-                .navigationTitle(habit.title)
-                .navigationSubtitle("goal \(habit.formattedGoal)")
+                .preferredColorScheme(.dark)
                 .id(habit.uuid.uuidString)
                 .onChange(of: timerService.updateTrigger) { _, _ in
                     if timerService.isTimerRunning(for: habit.uuid.uuidString) {
@@ -54,21 +52,18 @@ struct HabitDetailView: View {
                 ))
                 .modifier(HabitDetailDialogsModifier(
                     isEditPresented: $isEditPresented,
-                    showingPaywall: $showingPaywall,
                     habit: habit,
                     viewModel: viewModel
                 ))
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        menuButton
-                    }
+                .safeAreaBar(edge: .top) {
+                    dragIndicator
                 }
                 .safeAreaBar(edge: .bottom) {
                     VStack {
                         if let vm = viewModel {
                             actionButtonsSection(viewModel: vm).padding(.bottom, 10)
                             if !vm.isAlreadyCompleted{
-                                completeButtonView(viewModel: vm)
+                                completeButtonView(viewModel: vm).padding(.bottom, 16)
                             }
                         }
                     }
@@ -87,23 +82,69 @@ struct HabitDetailView: View {
     
     // MARK: - Sub-Stacks
     private var mainStackContent: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: 40) {
             contentView
             
-            StreaksView(viewModel: statsViewModel)
+            habitTitle
                 .padding(.top, 24)
-                .padding(.horizontal, 16)
+            
+            StreaksView(viewModel: statsViewModel)
             
             calendarBlock
-                .glassEffect(.regular.tint(Color.rowBackground), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .padding(.horizontal, 16)
+                .background(liquidGlassBackground)
             
             chartBlock
-                .glassEffect(.regular.tint(Color.rowBackground), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .padding(.horizontal, 16)
+                .background(liquidGlassBackground)
                 .padding(.bottom, 50)
         }
         .padding(.top, 70)
+        .padding(.horizontal, 20)
+    }
+    
+    private var liquidGlassBackground: some View {
+        RoundedRectangle(cornerRadius: 24, style: .continuous)
+            .fill(.white.opacity(0.15).gradient)
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.4),
+                                .white.opacity(0.15),
+                                .white.opacity(0.15),
+                                .white.opacity(0.4)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+    }
+    
+    private var dragIndicator: some View {
+        Capsule()
+            .fill(.white.opacity(0.6))
+            .frame(width: 55, height: 5)
+            .padding(.top, 8)
+    }
+    
+    private var habitTitle: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(habit.title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.primary.gradient)
+                Text("goal \(habit.formattedGoal)")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.7).gradient)
+            }
+            
+            Spacer()
+            
+            menuButton
+        }
     }
     
     // MARK: - Content Blocks
@@ -115,7 +156,6 @@ struct HabitDetailView: View {
                     .padding(.horizontal, 16)
                 
                 barChartContent.frame(height: 240)
-                if !proManager.isPro { ProStatisticsOverlay { showingPaywall = true } }
             }
         }
     }
@@ -136,16 +176,13 @@ struct HabitDetailView: View {
                     handleCustomTimeInput(hours: h, minutes: m)
                 }
             )
-            if !proManager.isPro { ProStatisticsOverlay { showingPaywall = true } }
         }
     }
     
     private var contentView: some View {
         VStack(spacing: 0) {
             if let viewModel = viewModel {
-                VStack(spacing: 30) {
-                    HabitProgressView(viewModel: viewModel, habit: habit)
-                }
+                HabitProgressView(viewModel: viewModel, habit: habit)
             }
         }.frame(maxWidth: .infinity)
     }
@@ -162,8 +199,19 @@ struct HabitDetailView: View {
             Divider()
             Button(role: .destructive) { viewModel?.alertState.isDeleteAlertPresented = true } label: {
                 Label("button_delete", systemImage: "trash")
-            }.tint(.red)
-        } label: { Image(systemName: "ellipsis") }.tint(.primary)
+            }
+            .tint(.red)
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.primary)
+                .frame(width: 28, height: 28)
+                .background(
+                    Circle()
+                        .fill(.white.opacity(0.15))
+                )
+        }
+        .tint(.primary)
     }
     
     private func actionButtonsSection(viewModel: HabitDetailViewModel) -> some View {
@@ -316,13 +364,11 @@ private struct HabitDetailLifecycleModifier: ViewModifier {
 
 private struct HabitDetailDialogsModifier: ViewModifier {
     @Binding var isEditPresented: Bool
-    @Binding var showingPaywall: Bool
     let habit: Habit
     let viewModel: HabitDetailViewModel?
     
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isEditPresented) { NewHabitView(habit: habit).presentationSizing(.page) }
-            .fullScreenCover(isPresented: $showingPaywall) { PaywallView() }
     }
 }
