@@ -164,9 +164,19 @@ struct YearlyHabitChart: View {
     }
 
     private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
-        dataPoint.value == 0
-            ? AppColorManager.getNoProgressBarStyle()
-            : AnyShapeStyle(habit.iconColor.color.gradient.opacity(0.9))
+        
+        let topColor = habit.iconColor.lightColor
+        let bottomColor = habit.iconColor.darkColor
+        
+        let habitGradient = LinearGradient(
+            colors: [topColor, bottomColor],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        
+        return dataPoint.value == 0
+            ? AnyShapeStyle(Color(.systemGray6))
+            : AnyShapeStyle(habitGradient)
     }
 
     // MARK: - Setup

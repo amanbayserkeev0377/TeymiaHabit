@@ -135,7 +135,7 @@ struct PricingCard: View {
             )
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: RoundedRectangle(cornerRadius: 30, style: .continuous))
+        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 30))
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 hasAppeared = true
@@ -227,7 +227,7 @@ struct PurchaseButton: View {
             .background(Capsule().fill(.white.gradient))
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 30, style: .continuous))
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 30))
         .disabled(selectedPackage == nil || isPurchasing)
         .opacity(selectedPackage == nil || isPurchasing ? 0.7 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isPurchasing)

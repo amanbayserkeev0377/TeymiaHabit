@@ -27,7 +27,7 @@ struct GoalSection: View {
                     .labelsHidden()
                     .frame(maxWidth: 200)
                 }
-            } icon: { Image(systemName: "trophy").iconStyle() }
+            } icon: { RowIcon(systemName: "trophy") }
             
             if selectedType == .count {
                 Label {
@@ -44,8 +44,7 @@ struct GoalSection: View {
                     }
                 } icon: {
                     Image(systemName: "7.square")
-                        .font(.footnote)
-                        .fontWeight(.medium)
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.secondary)
                 }
                 .onChange(of: countText) { _, newValue in
@@ -65,7 +64,6 @@ struct GoalSection: View {
                     HStack {
                         Text("goalsection_choose_time")
                             .foregroundStyle(.secondary)
-                            .fontDesign(.rounded)
                             .minimumScaleFactor(0.8)
                         
                         Spacer()
@@ -79,8 +77,7 @@ struct GoalSection: View {
                     }
                 } icon : {
                     Image(systemName: "clock.arrow.trianglehead.clockwise.rotate.90.path.dotted")
-                        .font(.footnote)
-                        .fontWeight(.medium)
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.secondary)
                 }
             }

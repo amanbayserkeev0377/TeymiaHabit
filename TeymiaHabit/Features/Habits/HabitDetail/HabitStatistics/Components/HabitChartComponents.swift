@@ -46,7 +46,7 @@ struct ChartNavigationButton: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 20))
-                .foregroundStyle(isEnabled ? Color.primary.gradient : Color.white.opacity(0.5).gradient)
+                .foregroundStyle(isEnabled ? Color.appPrimary.gradient : Color.appPrimary.opacity(0.5).gradient)
                 .contentShape(Rectangle())
         }
         .disabled(!isEnabled)
@@ -62,8 +62,8 @@ struct ChartStatsRow: View {
     let totalLabel: String
     let selectedDateLabel: String?
     let selectedValueLabel: String?
-    let primaryColor: Color = .primary
-    let secondaryColor: Color = .white.opacity(0.7)
+    let primaryColor: Color = .appPrimary
+    let secondaryColor: Color = .appPrimary.opacity(0.5)
 
     var body: some View {
         HStack {
@@ -160,7 +160,7 @@ struct HabitChartYAxisModifier: ViewModifier {
             .chartYAxis {
                 AxisMarks(position: .trailing, values: values) { _ in
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [3]))
-                        .foregroundStyle(.white.opacity(0.2).gradient)
+                        .foregroundStyle(.appPrimary.opacity(0.2).gradient)
                 }
             }
     }

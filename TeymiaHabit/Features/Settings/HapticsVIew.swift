@@ -8,8 +8,7 @@ struct HapticsRowView: View {
             Label(
                 title: { Text("settings_haptics") },
                 icon: {
-                    Image(systemName: "waveform")
-                        .iconStyle()
+                    RowIcon(systemName: "waveform")
                         .symbolEffect(.variableColor.iterative, value: hapticsEnabled)
                 }
             )

@@ -154,7 +154,7 @@ struct PaywallHeaderSection: View {
                 .foregroundStyle(.white.gradient)
             
             Text("Pro")
-                .foregroundStyle(.mainApp)
+                .foregroundStyle(.appOrange)
         }
         .font(.largeTitle)
         .fontWeight(.bold)
@@ -175,7 +175,7 @@ struct PaywallExpandedFeaturesSection: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 24)
-            .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 30, style: .continuous))
+            .glassEffect(.clear, in: .rect(cornerRadius: 30))
             
             PaywallScrollableFooter() {
                 onRestorePurchases()

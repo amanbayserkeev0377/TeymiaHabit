@@ -3,7 +3,6 @@ import SwiftUI
 struct RepeatDaysView: View {
     @Binding var activeDays: [Bool]
     @Environment(WeekdayPreferences.self) private var weekdayPrefs
-    @Environment(AppColorManager.self) private var colorManager
     
     private var calendar: Calendar {
         Calendar.userPreferred
@@ -18,19 +17,20 @@ struct RepeatDaysView: View {
             ForEach(orderedWeekdays, id: \.self) { weekday in
                 let index = weekday.rawValue - 1
                 let isActive = activeDays[index]
-                let dayName = String(weekday.shortName.prefix(1)).uppercased()
+                let dayName = weekday.shortName.capitalized
                 
                 Button {
                     toggleDay(index)
                 } label: {
                     Text(dayName)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(isActive ? Color.primaryInverse.gradient : Color.primary.gradient)
+                        .font(.system(size: 12, weight: .semibold))
+                        .minimumScaleFactor(0.5)
+                        .foregroundStyle(isActive ? Color.primaryInverse.gradient : Color.appPrimary.gradient)
                         .frame(width: 40, height: 40)
                         .background {
                             if isActive {
                                 Circle()
-                                    .fill(Color.primary.gradient)
+                                    .fill(.appPrimary.gradient)
                             }
                         }
                 }

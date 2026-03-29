@@ -8,7 +8,7 @@ struct AppearanceRowView: View {
             HStack {
                 Label(
                     title: { Text("settings_appearance") },
-                    icon: { Image(systemName: themeMode.iconName).iconStyle() }
+                    icon: { RowIcon(systemName: themeMode.iconName) }
                 )
                 Spacer()
                 Text(themeMode.localizedName).foregroundStyle(Color.secondary)

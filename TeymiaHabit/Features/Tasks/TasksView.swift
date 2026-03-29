@@ -5,47 +5,77 @@ struct TasksView: View {
     @Environment(\.modelContext) private var modelContext
     
     @Query private var allTasks: [TodoTask]
-    @Query(filter: #Predicate<TaskList> { $0.group == nil }, sort: \TaskList.title)
-    private var standaloneLists: [TaskList]
-    
+    @Query(sort: \TaskList.title)
+    private var allLists: [TaskList]
+    private var standaloneLists: [TaskList] {
+        allLists.filter { $0.group == nil }
+    }
     @Query(sort: \TaskGroup.createdAt)
     private var groups: [TaskGroup]
     
     @State private var selectedScope: TaskScope?
+    @State private var isAddingList = false
+    @State private var newTaskTitle = ""
+    @State private var isAddingTask = false
+    @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
         List {
-            // MARK: - Scopes
+            // MARK: - Scope Grid
             Section {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    TaskScopeNavigationButton(title: "Completed", icon: "checkmark.circle.fill", color: Color(#colorLiteral(red: 0.007716967259, green: 0.7099662423, blue: 0.635252893, alpha: 1)), count: 0) {
-                        selectedScope = .completed
-                    }
-                    TaskScopeNavigationButton(title: "Inbox", icon: "tray.fill", color: Color(#colorLiteral(red: 0.2824559212, green: 0.5449249148, blue: 0.9648384452, alpha: 1)), count: inboxCount) {
-                        selectedScope = .inbox
-                    }
-                    TaskScopeNavigationButton(title: "Upcoming", icon: "calendar", color: Color(#colorLiteral(red: 0.9804772735, green: 0.3530035317, blue: 0.3137320876, alpha: 1)), count: upcomingCount) {
-                        selectedScope = .upcoming
-                    }
-                    TaskScopeNavigationButton(title: "Today", icon: "star.fill", color: .mainApp, count: todayCount) {
-                        selectedScope = .today
-                    }
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    spacing: 12
+                ) {
+                    TaskScopeNavigationButton(
+                        title: "Completed",
+                        icon: "checkmark.circle.fill",
+                        color: Color(#colorLiteral(red: 0.007716967259, green: 0.7099662423, blue: 0.635252893, alpha: 1)),
+                        count: completedCount
+                    ) { selectedScope = .completed }
+                    
+                    TaskScopeNavigationButton(
+                        title: "Inbox",
+                        icon: "tray.fill",
+                        color: Color(#colorLiteral(red: 0.2824559212, green: 0.5449249148, blue: 0.9648384452, alpha: 1)),
+                        count: inboxCount
+                    ) { selectedScope = .inbox }
+                    
+                    TaskScopeNavigationButton(
+                        title: "Upcoming",
+                        icon: "calendar",
+                        color: Color(#colorLiteral(red: 0.9804772735, green: 0.3530035317, blue: 0.3137320876, alpha: 1)),
+                        count: upcomingCount
+                    ) { selectedScope = .upcoming }
+                    
+                    TaskScopeNavigationButton(
+                        title: "Today",
+                        icon: "star.fill",
+                        color: .appOrange,
+                        count: todayCount
+                    ) { selectedScope = .today }
                 }
             }
             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
             
-            // MARK: - My Lists
+            // MARK: - Standalone Lists
             if !standaloneLists.isEmpty {
                 Section("My Lists") {
                     ForEach(standaloneLists) { list in
-                        TaskListNavigationRow(
-                            title: list.title,
-                            icon: list.iconName,
-                            color: list.iconColor.color,
-                            count: list.tasks.filter { !$0.isCompleted }.count
-                        )
+                        NavigationLink(destination: TaskListView(taskList: list)) {
+                            TaskListNavigationRow(
+                                title: list.title,
+                                iconName: list.iconName,
+                                color: list.iconColor.color,
+                                count: (list.tasks ?? []).filter { !$0.isCompleted }.count
+                            )
+                        }
+                        .navigationLinkIndicatorVisibility(.hidden)
+                    }
+                    .onDelete { indices in
+                        deleteLists(at: indices, from: standaloneLists)
                     }
                 }
             }
@@ -53,8 +83,17 @@ struct TasksView: View {
             // MARK: - Groups
             ForEach(groups) { group in
                 Section(group.title) {
-                    ForEach(group.lists.sorted(by: { $0.title < $1.title })) { list in
-                        TaskGroupNavigationRow(title: list.title)
+                    let sortedLists = (group.lists ?? []).sorted(by: { $0.title < $1.title })
+                    ForEach(sortedLists) { list in
+                        NavigationLink(destination: TaskListView(taskList: list)) {
+                            TaskListNavigationRow(
+                                title: list.title,
+                                iconName: list.iconName,
+                                color: list.iconColor.color,
+                                count: (list.tasks ?? []).filter { !$0.isCompleted }.count
+                            )
+                        }
+                        .navigationLinkIndicatorVisibility(.hidden)
                     }
                 }
             }
@@ -62,82 +101,119 @@ struct TasksView: View {
         .listStyle(.plain)
         .navigationTitle("Tasks")
         .navigationDestination(item: $selectedScope) { scope in
-            switch scope {
-            case .inbox: Text("Inbox")
-            case .today: Text("Today")
-            case .upcoming: Text("Upcoming")
-            case .completed: Text("Completed")
-            }
+            ScopeTaskListView(scope: scope)
         }
         .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                Button(action: addList) {
-                    Label("Add List", systemImage: "plus")
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isAddingList = true
+                } label: {
+                    Label("Add List", systemImage: "folder.badge.plus")
                 }
-                Button(action: addTask) {
-                    Image(systemName: "plus.circle")
+            }
+        }
+        .sheet(isPresented: $isAddingList) {
+            NewTaskListView()
+        }
+        .safeAreaBar(edge: .bottom, alignment: .center) {
+            if isAddingTask {
+                AddTaskBar(title: $newTaskTitle, isFocused: $isTextFieldFocused) {
+                    saveQuickTask()
+                }
+            }
+        }
+        .safeAreaBar(edge: .bottom, alignment: .trailing) {
+            if !isAddingTask {
+                FloatingAddButton {
+                    isAddingTask = true
+                    isTextFieldFocused = true
                 }
             }
         }
     }
     
-    // MARK: - Computed Properties
+    // MARK: - Computed Counts
     
     private var inboxCount: Int {
-        allTasks.filter { !$0.isCompleted && ($0.list == nil || $0.list?.title == "Inbox") }.count
+        allTasks.filter { !$0.isCompleted && $0.list == nil }.count
     }
     
     private var todayCount: Int {
         let calendar = Calendar.current
         return allTasks.filter { task in
-            guard let date = task.dueDate, !task.isCompleted else { return false }
+            guard !task.isCompleted, let date = task.dueDate else { return false }
             return calendar.isDateInToday(date)
         }.count
     }
     
     private var upcomingCount: Int {
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
+        let tomorrow = calendar.startOfDay(for: calendar.date(byAdding: .day, value: 1, to: Date()) ?? Date())
         return allTasks.filter { task in
-            guard let date = task.dueDate, !task.isCompleted else { return false }
-            return date > calendar.date(byAdding: .day, value: 1, to: today) ?? today
+            guard !task.isCompleted, let date = task.dueDate else { return false }
+            return date >= tomorrow
         }.count
     }
     
-    private func addTask() { }
-    private func addList() { }
+    private var completedCount: Int {
+        allTasks.filter { $0.isCompleted }.count
+    }
+    
+    // MARK: - Actions
+    
+    private func saveQuickTask() {
+        let trimmed = newTaskTitle.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
+            withAnimation(.spring(response: 0.35)) {
+                isAddingTask = false
+            }
+            return
+        }
+        
+        let task = TodoTask(title: trimmed)
+        modelContext.insert(task)
+        
+        withAnimation(.spring(response: 0.35)) {
+            newTaskTitle = ""
+            isAddingTask = false
+            isTextFieldFocused = false
+        }
+        HapticManager.shared.play(.success)
+    }
+    
+    private func deleteLists(at indices: IndexSet, from lists: [TaskList]) {
+        for index in indices {
+            modelContext.delete(lists[index])
+        }
+    }
 }
 
 struct TaskListNavigationRow: View {
     let title: String
-    let icon: String
+    let iconName: String
     let color: Color
     let count: Int
     
     var body: some View {
-        NavigationLink(destination: Text("Список \(title)")) {
-            HStack {
-                Label(
-                    title: { Text(title)
-                            .fontWeight(.semibold)
-                    },
-                    icon: { Image(systemName: icon)
-                            .foregroundStyle(color.gradient)
-                    }
-                )
-                Spacer()
-                
-                if count > 0 {
-                    Text("\(count)")
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color(.systemGray5))
-                        .clipShape(Capsule())
-                }
+        HStack {
+            Label {
+                Text(title)
+                    .fontWeight(.semibold)
+            } icon: { Image(systemName: iconName)
+                    .foregroundStyle(color.gradient)
+            }
+            
+            Spacer()
+            
+            if count > 0 {
+                Text("\(count)")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color(.systemGray5))
+                    .clipShape(Capsule())
             }
         }
-        .navigationLinkIndicatorVisibility(.hidden)
     }
 }
 
@@ -190,7 +266,7 @@ struct TaskScopeNavigationButton: View {
             .contentShape(Rectangle())
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 24))
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24))
         }
         .buttonStyle(.plain)
     }

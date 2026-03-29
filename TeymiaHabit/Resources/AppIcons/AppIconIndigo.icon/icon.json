@@ -1,0 +1,69 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:0.29319,0.16837,0.56649,1.00000",
+      "display-p3:0.16923,0.10549,0.38804,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
+  },
+  "groups" : [
+    {
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "display-p3:0.72484,0.43039,0.75720,1.00000",
+              "display-p3:0.40492,0.35157,0.73963,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5000000000000001,
+                "y" : 1
+              },
+              "stop" : {
+                "x" : 0.5000000000000001,
+                "y" : 0.21136821458863445
+              }
+            }
+          },
+          "glass" : true,
+          "image-name" : "vecteezy_check_1200257.png",
+          "name" : "vecteezy_check_1200257",
+          "position" : {
+            "scale" : 0.9,
+            "translation-in-points" : [
+              85.5234375,
+              3.6000000000000227
+            ]
+          }
+        }
+      ],
+      "lighting" : "individual",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

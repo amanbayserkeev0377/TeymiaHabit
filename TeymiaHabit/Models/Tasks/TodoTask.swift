@@ -3,7 +3,7 @@ import SwiftData
 
 @Model
 final class TodoTask {
-    var title: String
+    var title: String = ""
     var notes: String?
     var dueDate: Date?
     var isCompleted: Bool = false
@@ -11,10 +11,11 @@ final class TodoTask {
     var list: TaskList?
     
     @Relationship(deleteRule: .cascade)
-    var subtasks: [Subtask] = []
+    var subtasks: [Subtask]? = []
 
     init(title: String, dueDate: Date? = nil) {
         self.title = title
         self.dueDate = dueDate
+        self.subtasks = []
     }
 }

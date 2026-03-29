@@ -17,8 +17,7 @@ struct NotificationsRowView: View {
             Label(
                 title: { Text("settings_notifications") },
                 icon: {
-                    Image(systemName: "bell")
-                        .iconStyle()
+                    RowIcon(systemName: "bell")
                         .symbolEffect(.wiggle, value: manager.notificationsEnabled)
                 }
             )

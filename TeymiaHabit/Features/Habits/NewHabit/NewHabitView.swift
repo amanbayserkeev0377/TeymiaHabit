@@ -75,39 +75,23 @@ struct NewHabitView: View {
                         TextField("habit_name", text: $title)
                             .fontWeight(.medium)
                             .submitLabel(.done)
-                    } icon: { Image(systemName: "pencil.line").iconStyle() }
+                    } icon: { RowIcon(systemName: "pencil") }
                     
                     NavigationLink {
-                        IconPickerView(selectedIcon: $selectedIcon)
+                        IconPickerView(selectedIcon: $selectedIcon, selectedColor: $selectedIconColor)
                     } label: {
                         HStack {
                             Label { Text("icon") }
-                            icon: { Image(systemName: "app.background.dotted").iconStyle() }
+                            icon: { RowIcon(systemName: "questionmark") }
                             
                             Spacer()
                             
                             Image(selectedIcon)
                                 .resizable()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(selectedIconColor.color.gradient)
-                        }
-                    }
-                    
-                    NavigationLink {
-                        HabitColorPickerView(selectedColor: $selectedIconColor, iconName: selectedIcon)
-                    } label: {
-                        HStack {
-                            Label { Text("color") }
-                            icon: { Image(systemName: "paintbrush.pointed").iconStyle() }
-                            
-                            Spacer()
-                            
-                            Circle()
-                                .fill(LinearGradient(
-                                    colors: [selectedIconColor.lightColor, selectedIconColor.darkColor],
-                                    startPoint: .topLeading, endPoint: .bottomTrailing
-                                ))
-                                .frame(width: 20, height: 20)
+                                .foregroundStyle(
+                                    LinearGradient(colors: [selectedIconColor.lightColor, selectedIconColor.darkColor], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
                         }
                     }
                 }

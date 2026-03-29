@@ -6,12 +6,39 @@
       "layers" : [
         {
           "blend-mode" : "normal",
-          "fill" : {
-            "linear-gradient" : [
-              "srgb:0.92941,0.48235,0.19216,1.00000",
-              "display-p3:0.92941,0.41176,0.18039,1.00000"
-            ]
-          },
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:1.00000,1.00000,1.00000,1.00000",
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.8189098438036391,
+                    "y" : 0.029818702290076337
+                  },
+                  "stop" : {
+                    "x" : 0.555972150703742,
+                    "y" : 0.9418734096692112
+                  }
+                }
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:1.00000,1.00000,1.00000,1.00000",
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.8189098438036391,
+                    "y" : 0.029818702290076337
+                  },
+                  "stop" : {
+                    "x" : 0.555972150703742,
+                    "y" : 0.9418734096692112
+                  }
+                }
+              }
+            }
+          ],
           "glass" : true,
           "image-name" : "vecteezy_check_1200257.png",
           "name" : "vecteezy_check_1200257",
@@ -31,7 +58,7 @@
       },
       "translucency" : {
         "enabled" : true,
-        "value" : 0.2
+        "value" : 0.5
       }
     }
   ],

@@ -9,8 +9,6 @@ struct TeymiaHabitApp: App {
     
     let container: ModelContainer
     
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
-    @State private var colorManager = AppColorManager.shared
     @State private var weekdayPrefs = WeekdayPreferences.shared
     @State private var timerService = TimerService.shared
     @State private var pendingDeeplink: Habit? = nil
@@ -35,50 +33,61 @@ struct TeymiaHabitApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = scrollEdgeAppearance
         
         do {
-            let schema = Schema([Habit.self, HabitCompletion.self])
+            let schema = Schema([
+                Habit.self,
+                HabitCompletion.self,
+                TodoTask.self,
+                Subtask.self,
+                TaskList.self,
+                TaskGroup.self
+            ])
+
+            guard let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.amanbayserkeev.teymiahabit") else {
+                fatalError("Could not find App Group container.")
+            }
+
+            let appSupportURL = groupURL.appendingPathComponent("Library/Application Support", isDirectory: true)
+            try? FileManager.default.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
+            let storeURL = appSupportURL.appendingPathComponent("default.store")
             
             let modelConfiguration = ModelConfiguration(
+                "Default",
                 schema: schema,
-                isStoredInMemoryOnly: false,
+                url: storeURL,
+                allowsSave: true,
                 cloudKitDatabase: .private("iCloud.com.amanbayserkeev.teymiahabit")
             )
+        
             container = try ModelContainer(
                 for: schema,
                 configurations: [modelConfiguration]
             )
+            
+            print("DEBUG: SwiftData successfully initialized at \(storeURL.path)")
+            
         } catch {
+            print("DEBUG: CoreData/SwiftData Error: \(error)")
             fatalError("Failed to create ModelContainer: \(error)")
         }
     }
     
     var body: some Scene {
         WindowGroup {
-            Group {
-                if hasCompletedOnboarding {
-                    MainTabView()
-                } else {
-                    OnBoarding(items: OnBoarding.Item.sampleData) {
-                        withAnimation(.spring()) {
-                            hasCompletedOnboarding = true
-                        }
-                    }
+            MainTabView()
+                .environment(weekdayPrefs)
+                .environment(ProManager.shared)
+                .environment(timerService)
+                .fontDesign(.rounded)
+                .onAppear {
+                    setupLiveActivities()
+                    AppModelContext.shared.setModelContext(container.mainContext)
                 }
-            }
-            .environment(colorManager)
-            .environment(weekdayPrefs)
-            .environment(ProManager.shared)
-            .environment(timerService)
-            .fontDesign(.rounded)
-            .onAppear {
-                setupLiveActivities()
-                AppModelContext.shared.setModelContext(container.mainContext)
-            }
-            .onOpenURL { url in
-                handleDeepLink(url)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
-                try? container.mainContext.save()
-            }
+                .onOpenURL { url in
+                    handleDeepLink(url)
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
+                    try? container.mainContext.save()
+                }
         }
         .modelContainer(container)
         .onChange(of: scenePhase) { _, newPhase in

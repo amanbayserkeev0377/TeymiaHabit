@@ -6,7 +6,7 @@ struct ArchiveRowView: View {
         NavigationLink(destination: ArchiveView()) {
             Label(
                 title: { Text("settings_archived_habits") },
-                icon: { Image(systemName: "archivebox").iconStyle() }
+                icon: { RowIcon(systemName: "archivebox") }
             )
         }
     }
@@ -14,7 +14,6 @@ struct ArchiveRowView: View {
 
 struct ArchiveView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
     
     @Query(
         filter: #Predicate<Habit> { habit in
@@ -73,7 +72,6 @@ struct ArchiveView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(habit.title)
-                    .fontWeight(.medium)
                     .lineLimit(1)
                     .foregroundStyle(Color.primary)
                 

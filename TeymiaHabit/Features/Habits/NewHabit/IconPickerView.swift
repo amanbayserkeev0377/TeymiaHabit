@@ -13,9 +13,27 @@ struct CategorySection: Identifiable, Hashable {
 }
 
 struct IconPickerView: View {
+    
+    // MARK: - Bindings
     @Binding var selectedIcon: String
+    @Binding var selectedColor: HabitIconColor
     @State private var searchText: String = ""
     
+    // MARK: - Layout Constants
+    private enum Layout {
+        static let circleSize: CGFloat = 44
+        static let strokeWidth: CGFloat = 1.5
+        static let selectedScale: CGFloat = 1.15
+        static let gridSpacing: CGFloat = 14
+        static let sectionSpacing: CGFloat = 18
+        static let verticalPadding: CGFloat = 16
+        static let horizontalPadding: CGFloat = 16
+    }
+    
+    // Grid Configuration
+    private let columns = Array (
+        repeating: GridItem(.flexible(), spacing: Layout.gridSpacing), count: 6
+    )
     
     // MARK: - ICONS
     
@@ -39,7 +57,7 @@ struct IconPickerView: View {
             "finish.flag", "finish.flag.fill", "first.laurel", "first.laurel.fill", "medal.first", "medal.first.fill",
             "medal.star", "medal.star.fill", "trophy", "trophy.fill", "badget.check", "badget.check.fill"
         ]),
-
+        
         
         CategorySection(name: "productivity", icons: [
             "book", "book.fill", "book2", "book2.fill", "book.bookmark", "book.bookmark.fill",
@@ -133,9 +151,9 @@ struct IconPickerView: View {
             "person.luggage", "person.luggage.fill", "car.side", "car.side.fill", "motorcycle", "motorcycle.fill",
             "circle.phone", "circle.phone.fill", "laptop", "laptop.fill", "tv.retro", "tv.retro.fill",
             "life", "life.fill"
-
+            
         ])
-,
+        ,
         
         CategorySection(name: "brands", icons: [
             "apple.logo", "android", "google", "meta", "facebook", "instagram",
@@ -176,49 +194,80 @@ struct IconPickerView: View {
         }
     }
     
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 14), count: 6)
+    // MARK: - Gradients
+    private var selectedCircleGradient: LinearGradient {
+        LinearGradient(
+            colors: [selectedColor.lightColor.opacity(0.1), selectedColor.darkColor.opacity(0.1)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    private var unselectedCircleGradient: LinearGradient {
+        LinearGradient(
+            colors: [.appSecondary],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    private var selectedIconGradient: LinearGradient {
+        LinearGradient(
+            colors: [selectedColor.lightColor, selectedColor.darkColor],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    private var unselectedIconGradient: LinearGradient {
+        LinearGradient(
+            colors: [.appPrimary],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
     
     var body: some View {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 20) {
-                    if filteredIcons.isEmpty {
-                        ContentUnavailableView.search(text: searchText)
-                            .padding(.top, 30)
-                    } else {
-                        ForEach(filteredIcons) { category in
-                            Section(header: sectionHeader(category.name)) {
-                                LazyVGrid(columns: columns, spacing: 18) {
-                                    ForEach(category.icons, id: \.self) { icon in
-                                        iconButton(icon: icon)
-                                    }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 20) {
+                if filteredIcons.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
+                        .padding(.top, 30)
+                } else {
+                    ForEach(filteredIcons) { category in
+                        Section(header: sectionHeader(category.name)) {
+                            LazyVGrid(columns: columns, spacing: Layout.sectionSpacing) {
+                                ForEach(category.icons, id: \.self) { icon in
+                                    iconButton(icon: icon)
                                 }
-                                .padding(.horizontal, 16)
                             }
-                            .id(category.id)
+                            .padding(.horizontal, Layout.horizontalPadding)
                         }
+                        .id(category.id)
                     }
                 }
-                .padding(.vertical, 16)
             }
-            .animation(.snappy, value: searchText)
-            .navigationTitle("icon")
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText)
-            .searchToolbarBehavior(.minimize)
-            .toolbar {
-                ToolbarSpacer(.flexible, placement: .bottomBar)
-                DefaultToolbarItem(kind: .search, placement: .bottomBar)
-            }
+            .padding(.vertical, Layout.verticalPadding)
         }
+        .safeAreaBar(edge: .bottom) {
+            ColorSelectionView(selectedColor: $selectedColor)
+        }
+        .animation(.snappy, value: searchText)
+        .navigationTitle("icon")
+        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+    }
+    
+    // MARK: - Private Views
     
     private func sectionHeader(_ title: String) -> some View {
-            Text(title)
-                .font(.title3.bold())
-                .foregroundStyle(.primary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        Text(title)
+            .font(.title3.bold())
+            .foregroundStyle(.primary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
     
     private func iconButton(icon: String) -> some View {
         let isSelected = selectedIcon == icon
@@ -231,17 +280,23 @@ struct IconPickerView: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(isSelected ? Color.primary : Color.secondary.opacity(0.1))
+                    .fill(isSelected ? selectedCircleGradient : unselectedCircleGradient)
+                    .overlay(
+                        Circle()
+                            .stroke(selectedIconGradient, lineWidth: Layout.strokeWidth)
+                            .frame(width: Layout.circleSize, height: Layout.circleSize)
+                            .opacity(isSelected ? 1 : 0)
+                    )
                 
                 Image(icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
-                    .foregroundStyle(isSelected ? Color.primaryInverse.gradient : Color.primary.gradient)
+                    .foregroundStyle(isSelected ? selectedIconGradient : unselectedIconGradient)
             }
-            .frame(width: 44, height: 44)
+            .frame(width: Layout.circleSize, height: Layout.circleSize)
             .contentShape(Rectangle())
-            .scaleEffect(isSelected ? 1.15 : 1.0)
+            .scaleEffect(isSelected ? Layout.selectedScale : 1.0)
         }
         .buttonStyle(.plain)
     }

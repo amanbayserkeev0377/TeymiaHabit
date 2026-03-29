@@ -72,7 +72,7 @@ struct WeeklyHabitChart: View {
                 y: .value("Progress", dataPoint.value)
             )
             .foregroundStyle(barColor(for: dataPoint))
-            .cornerRadius(10)
+            .cornerRadius(8)
             .opacity(barOpacity(for: dataPoint.date))
         }
         .chartXAxis {
@@ -174,14 +174,27 @@ struct WeeklyHabitChart: View {
 
     private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
         if !habit.isActiveOnDate(dataPoint.date) || dataPoint.date > Date() {
-            return AppColorManager.getInactiveBarStyle()
+            return AnyShapeStyle(Color(.systemGray6))
         }
-        if dataPoint.value == 0 { return AppColorManager.getNoProgressBarStyle() }
-        return AppColorManager.getChartBarStyle(
-            isCompleted: dataPoint.isCompleted,
-            isExceeded: dataPoint.isOverAchieved,
-            habit: habit
+        
+        if dataPoint.value == 0 {
+            return AnyShapeStyle(Color.secondary.opacity(0.3))
+        }
+        
+        let topColor = habit.iconColor.lightColor
+        let bottomColor = habit.iconColor.darkColor
+        
+        let habitGradient = LinearGradient(
+            colors: [topColor, bottomColor],
+            startPoint: .top,
+            endPoint: .bottom
         )
+        
+        if dataPoint.isCompleted || dataPoint.isOverAchieved {
+            return AnyShapeStyle(habitGradient)
+        } else {
+            return AnyShapeStyle(habitGradient.opacity(0.8))
+        }
     }
 
     // MARK: - Setup

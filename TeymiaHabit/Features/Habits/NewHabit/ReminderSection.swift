@@ -5,7 +5,6 @@ struct ReminderSection: View {
     @Binding var isReminderEnabled: Bool
     @Binding var reminderTimes: [Date]
     @Environment(ProManager.self) private var proManager
-    @Environment(AppColorManager.self) private var colorManager
     
     @State private var isNotificationPermissionAlertPresented = false
     @State private var isProcessingToggle = false
@@ -34,8 +33,7 @@ struct ReminderSection: View {
                 Label(
                     title: { Text("reminders") },
                     icon: {
-                        Image(systemName: "bell.badge")
-                            .iconStyle()
+                        RowIcon(systemName: "bell")
                             .symbolEffect(.wiggle, value: isReminderEnabled)
                     }
                 )
@@ -85,7 +83,6 @@ struct ReminderSection: View {
                                 Image(systemName: "plus")
                                 Text("add_reminder")
                             }
-                            .foregroundStyle(.mainApp)
                             .fontWeight(.medium)
                         }
                     }

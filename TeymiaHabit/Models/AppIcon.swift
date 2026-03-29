@@ -3,15 +3,13 @@ import Foundation
 enum AppIcon: String, CaseIterable, Identifiable {
     case main = "AppIcon"
     case dark = "AppIconDark"
-    case minimal = "AppIconMinimal"
-    case minimalDark = "AppIconMinimalDark"
-    case blue = "AppIconBlue"
-    case green = "AppIconGreen"
+    case orange = "AppIconOrange"
     case mint = "AppIconMint"
-    case orchid = "AppIconOrchid"
-    case purple = "AppIconPurple"
-    case red = "AppIconRed"
+    case raspberry = "AppIconRaspberry"
+    case lime = "AppIconLime"
     case yellow = "AppIconYellow"
+    case indigo = "AppIconIndigo"
+    case cyan = "AppIconCyan"
     
     var id: String { rawValue }
     
@@ -19,15 +17,13 @@ enum AppIcon: String, CaseIterable, Identifiable {
         switch self {
         case .main: return "appicon_main"
         case .dark: return "appicon_dark"
-        case .minimal: return "appicon_minimal"
-        case .minimalDark: return "appicon_minimal_dark"
-        case .blue: return "appicon_blue"
-        case .green: return "appicon_green"
+        case .orange: return "appicon_orange"
         case .mint: return "appicon_mint"
-        case .orchid: return "appicon_orchid"
-        case .purple: return "appicon_purple"
-        case .red: return "appicon_red"
+        case .raspberry: return "appicon_raspberry"
+        case .lime: return "appicon_lime"
         case .yellow: return "appicon_yellow"
+        case .indigo: return "appicon_indigo"
+        case .cyan: return "appicon_cyan"
         }
     }
     
@@ -46,7 +42,7 @@ enum AppIcon: String, CaseIterable, Identifiable {
         switch self {
         case .main, .dark:
             return false  // Free icons
-        case .minimal, .minimalDark, .blue, .green, .mint, .orchid, .purple, .red, .yellow:
+        case .orange, .mint, .raspberry, .lime, .yellow, .indigo, .cyan:
             return true   // Pro icons
         }
     }

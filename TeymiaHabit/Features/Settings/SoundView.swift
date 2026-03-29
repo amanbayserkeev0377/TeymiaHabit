@@ -6,7 +6,7 @@ struct SoundRowView: View {
         NavigationLink(destination: SoundView()) {
             Label(
                 title: { Text("settings_sounds") },
-                icon: { Image(systemName: "speaker.wave.2").iconStyle() }
+                icon: { RowIcon(systemName: "speaker.wave.1") }
             )
         }
     }
@@ -68,7 +68,6 @@ struct SoundView: View {
                         }
                     }
                 ))
-                .tint(.mainApp)
             }
             
             if soundManager.isSoundEnabled {

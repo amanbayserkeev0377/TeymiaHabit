@@ -5,7 +5,6 @@ import AVFoundation
 struct HabitDetailView: View {
     let habit: Habit
     let date: Date
-    let zoomNamespace: Namespace.ID
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -20,10 +19,9 @@ struct HabitDetailView: View {
     @State private var barChartTimeRange: ChartTimeRange = .week
     
     // MARK: - Init
-    init(habit: Habit, date: Date, zoomNamespace: Namespace.ID) {
+    init(habit: Habit, date: Date) {
         self.habit = habit
         self.date = date
-        self.zoomNamespace = zoomNamespace
         self._statsViewModel = State(initialValue: HabitStatsViewModel(habit: habit))
     }
     
@@ -101,23 +99,24 @@ struct HabitDetailView: View {
                 Color.clear
             }
         }
-        .navigationTransition(.zoom(sourceID: habit.id, in: zoomNamespace))
     }
         
     // MARK: - Buttons
     private var menuButton: some View {
         Menu {
+            Button(role: .destructive) { viewModel?.alertState.isDeleteAlertPresented = true } label: {
+                Label("button_delete", systemImage: "trash")
+            }
+            .tint(.red)
+            
+            Divider()
+            
             Button { viewModel?.toggleSkip() } label: {
                 Label(viewModel?.isSkipped == true ? "unskip" : "skip",
                       systemImage: viewModel?.isSkipped == true ? "arrow.left" : "arrow.right")
             }
             Button { isEditPresented = true } label: { Label("button_edit", systemImage: "pencil") }
             Button { archiveHabit() } label: { Label("archive", systemImage: "archivebox") }
-            Divider()
-            Button(role: .destructive) { viewModel?.alertState.isDeleteAlertPresented = true } label: {
-                Label("button_delete", systemImage: "trash")
-            }
-            .tint(.red)
         } label: {
             Image(systemName: "ellipsis")
         }

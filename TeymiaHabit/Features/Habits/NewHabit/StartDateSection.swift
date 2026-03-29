@@ -7,7 +7,7 @@ struct StartDateSection: View {
         HStack {
             Label(
                 title: { Text("start_date") },
-                icon: { Image(systemName: "calendar.badge").iconStyle() }
+                icon: { RowIcon(systemName: "calendar") }
             )
             
             Spacer()

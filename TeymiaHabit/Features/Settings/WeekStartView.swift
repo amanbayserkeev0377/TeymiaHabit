@@ -8,7 +8,7 @@ struct WeekStartRowView: View {
             HStack {
                 Label(
                     title: { Text("settings_week_start") },
-                    icon: { Image(systemName: "calendar").iconStyle() }
+                    icon: { RowIcon(systemName: "calendar") }
                 )
                 Spacer()
                 Text(selectedWeekDayName).foregroundStyle(Color.secondary)
@@ -53,8 +53,7 @@ struct WeekStartView: View {
                         
                         Spacer()
                         
-                        if prefs.firstDayOfWeek == option.value {                            SelectionCheckmark()
-                        }
+                        if prefs.firstDayOfWeek == option.value { SelectionCheckmark() }
                     }
                 }
             }

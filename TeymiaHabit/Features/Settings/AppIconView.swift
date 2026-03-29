@@ -5,7 +5,7 @@ struct AppIconRowView: View {
         NavigationLink(destination: AppIconView()) {
             Label(
                 title: { Text("settings_app_icon") },
-                icon: { Image(systemName: "checkmark.app").iconStyle() }
+                icon: { RowIcon(systemName: "checkmark.app") }
             )
         }
     }

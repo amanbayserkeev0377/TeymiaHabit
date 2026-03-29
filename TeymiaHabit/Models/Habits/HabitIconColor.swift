@@ -10,28 +10,28 @@ enum HabitIconColor: String, CaseIterable, Codable {
     var color: Color {
         switch self {
         case .primary: .primary
-        case .red: .colorRed
-        case .orange: .colorOrange
-        case .yellow: .colorYellow
-        case .mint: .colorMint
-        case .green: .colorGreen
-        case .blue: .colorBlue
-        case .purple: .colorPurple
-        case .softLavender: .colorSoftLavender
-        case .pink: .colorPink
-        case .sky: .colorSky
-        case .brown: .colorBrown
-        case .gray: .colorGray
-        case .colorPicker: .colorPicker
-        case .coral: .colorCoral
-        case .bluePink: .colorBluePink
-        case .oceanBlue: .colorOceanBlue
-        case .antarctica: .colorAntarctica
+        case .red: .red
+        case .orange: .orange
+        case .yellow: .yellow
+        case .mint: .mint
+        case .green: .green
+        case .blue: .blue
+        case .purple: .purple
+        case .softLavender: .purple
+        case .pink: .pink
+        case .sky: .cyan
+        case .brown: .brown
+        case .gray: .gray
+        case .colorPicker: .gray
+        case .coral: .orange
+        case .bluePink: .blue
+        case .oceanBlue: .blue
+        case .antarctica: .teal
         case .sweetMorning: .red
-        case .lusciousLime: .green
-        case .celestial: .red
-        case .yellowOrange: .yellow
-        case .cloudBurst: .blue
+        case .lusciousLime: .mint
+        case .celestial: .gray
+        case .yellowOrange: .orange
+        case .cloudBurst: .cyan
         case .candy: .pink
         case .fitnessRed: .red
         case .fitnessGreen: .green
@@ -45,7 +45,7 @@ extension HabitIconColor {
     private var colorPair: (dark: Color, light: Color) {
         switch self {
         case .primary:
-            (.colorPrimaryDark, .colorPrimaryLight)
+            (.primaryDark, .primaryLight)
         case .red:
             (Color(#colorLiteral(red: 0.8666666667, green: 0.3411764706, blue: 0.3176470588, alpha: 1)), Color(#colorLiteral(red: 1, green: 0.3843137255, blue: 0.3607843137, alpha: 1)))
         case .orange:

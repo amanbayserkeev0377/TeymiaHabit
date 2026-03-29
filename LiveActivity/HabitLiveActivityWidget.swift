@@ -182,14 +182,6 @@ struct LiveActivityProgressRing: View {
         currentProgress > context.attributes.habitGoal
     }
     
-    private var ringColor: Color {
-        LiveActivityColorManager.getRingColor(
-            habitColor: context.attributes.habitIconColor,
-            isCompleted: isCompleted,
-            isExceeded: isExceeded
-        )
-    }
-    
     private var adaptedIconSize: CGFloat {
         ringSize * 0.4
     }
@@ -202,7 +194,7 @@ struct LiveActivityProgressRing: View {
             Circle()
                 .trim(from: 0, to: min(completionPercentage, 1.0))
                 .stroke(
-                    ringColor.gradient,
+                    .orange.gradient,
                     style: StrokeStyle(
                         lineWidth: lineWidth,
                         lineCap: .round

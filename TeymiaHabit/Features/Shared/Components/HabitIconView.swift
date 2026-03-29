@@ -11,7 +11,7 @@ struct HabitIconView: View {
     init(
         iconName: String?,
         iconColor: HabitIconColor,
-        size: CGFloat = 24,
+        size: CGFloat = 20,
         showBackground: Bool = true
     ) {
         self.iconName = iconName
