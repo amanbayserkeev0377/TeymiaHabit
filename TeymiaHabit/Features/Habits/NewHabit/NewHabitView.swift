@@ -29,20 +29,19 @@ struct NewHabitView: View {
                                 TextField("habit_name", text: $vm.title)
                                     .fontWeight(.medium)
                                     .submitLabel(.done)
-                            } icon: { RowIcon(systemName: "pencil") }
+                            } icon: { RowIcon(iconName: "pencil") }
                             
                             NavigationLink {
                                 IconPickerView(selectedIcon: $vm.selectedIcon, selectedColor: $vm.selectedIconColor)
                             } label: {
                                 HStack {
                                     Label { Text("icon") }
-                                    icon: { RowIcon(systemName: "questionmark") }
+                                    icon: { RowIcon(iconName: "app.background.dotted") }
                                     
                                     Spacer()
                                     
-                                    Image(vm.selectedIcon)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
+                                    Image(systemName: vm.selectedIcon)
+                                        .font(.system(size: 20))
                                         .foregroundStyle(
                                             LinearGradient(colors: [vm.selectedIconColor.lightColor, vm.selectedIconColor.darkColor], startPoint: .topLeading, endPoint: .bottomTrailing)
                                         )
@@ -64,16 +63,13 @@ struct NewHabitView: View {
                             StartDateSection(startDate: $vm.startDate)
                             ReminderSection(
                                 isReminderEnabled: $vm.isReminderEnabled,
-                                reminderTimes: $vm.reminderTimes,
-                                onShowPaywall: { vm.showPaywall = true }
+                                reminderTimes: $vm.reminderTimes
                             )
                         }
                     }
                     .navigationTitle(vm.habit == nil ? "create_habit" : "edit_habit")
+                    .navigationBarTitleDisplayMode(.inline)
                     .scrollDismissesKeyboard(.immediately)
-                    .sheet(isPresented: $vm.showPaywall) {
-                        PaywallView()
-                    }
                     .toolbar {
                         CloseToolbarButton()
                         

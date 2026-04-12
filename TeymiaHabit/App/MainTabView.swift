@@ -3,47 +3,61 @@ import SwiftData
 
 struct MainTabView: View {
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
+    @Environment(\.modelContext) private var modelContext
     @Environment(NavigationManager.self) private var navManager
+    
     @State private var selectedDate: Date = .now
     
     var body: some View {
         @Bindable var nav = navManager
         
-        TabView(selection: $nav.selectedTab) {
+        AnimatedTabView(selection: $nav.selectedTab) {
             // Habits
-            NavigationStack {
-                HabitsView(selectedDate: $selectedDate, selectedHabit: $nav.selectedHabit)
+            Tab.init(AppTab.habits.title, systemImage: AppTab.habits.symbolImage, value: .habits) {
+                NavigationStack {
+                    HabitsView(
+                        selectedDate: $selectedDate,
+                        selectedHabit: $nav.selectedHabit
+                    )
+                }
             }
-            .tabItem { Label(AppTab.habits.title, systemImage: AppTab.habits.symbolImage) }
-            .tag(AppTab.habits)
             
             // Tasks
-            NavigationStack { TasksView() }
-            .tabItem { Label(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage) }
-            .tag(AppTab.tasks)
+            Tab.init(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage, value: .tasks) {
+                NavigationStack {
+//                    StatisticsView()
+                    Text("Statistics")
+                }
+            }
             
             // Settings
-            NavigationStack { SettingsView() }
-            .tabItem { Label(AppTab.settings.title, systemImage: AppTab.settings.symbolImage) }
-            .tag(AppTab.settings)
+            Tab.init(AppTab.settings.title, systemImage: AppTab.settings.symbolImage, value: .settings) {
+                NavigationSplitView {
+                    SettingsView()
+                } detail: {
+                    Image(systemName: "gearshape")
+                }
+            }
+        } effects: { tab in
+            switch tab {
+            case .habits: [.bounce]
+            case .tasks: [.bounce]
+            case .settings: [.rotate]
+            }
         }
         .preferredColorScheme(themeMode.colorScheme)
-        .tint(.appOrange)
-        .sheet(item: $nav.selectedHabit) { habit in
-            NavigationStack { HabitDetailView(habit: habit, date: selectedDate) }
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.visible)
-        }
     }
 }
 
-enum AppTab: Hashable {
-    case habits, tasks, settings
+enum AppTab: AnimatedTabSelectionProtocol {
+    case habits
+    case tasks
+    case settings
     
     var symbolImage: String {
         switch self {
         case .habits: return "checkmark.circle.dotted"
-        case .tasks: return "checklist"
+        case .tasks: return "chart.bar"
         case .settings: return "gearshape"
         }
     }
@@ -51,7 +65,7 @@ enum AppTab: Hashable {
     var title: LocalizedStringResource {
         switch self {
         case .habits: return "tabview_habits"
-        case .tasks: return "tabview_tasks"
+        case .tasks: return "tabview_statistics"
         case .settings: return "tabview_settings"
         }
     }

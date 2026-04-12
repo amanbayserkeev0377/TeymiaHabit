@@ -1,55 +1,58 @@
 import SwiftUI
 import SwiftData
-import AVFoundation
 
 struct HabitDetailView: View {
     let habit: Habit
     let date: Date
     
-    @Environment(AppDependencyContainer.self) private var appContainer
+    @Environment(HabitService.self) private var habitService
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    @State private var viewModel: HabitDetailViewModel?
+    @State private var viewModel: HabitDetailViewModel
     @State private var showingStats = false
     @State private var isEditPresented = false
     
     // MARK: - Init
-    init(habit: Habit, date: Date) {
+    init(habit: Habit, date: Date, modelContext: ModelContext, appContainer: AppDependencyContainer) {
         self.habit = habit
         self.date = date
+        _viewModel = State(wrappedValue: HabitDetailViewModel(
+            habit: habit,
+            initialDate: date,
+            modelContext: modelContext,
+            appContainer: appContainer
+        )
+        )
     }
     
     // MARK: - Body
     var body: some View {
-        Group {
-            if habit.modelContext != nil, let vm = viewModel {
-                @Bindable var vm = vm
-                
-                mainContent(vm: vm)
-                    .navigationTitle(habit.title)
-                    .navigationSubtitle("Goal: \(habit.formattedGoal)")
-                    .toolbar { toolbarContent(vm: vm) }
-                    .deleteSingleHabitAlert(
-                        isPresented: $vm.alertState.isDeleteAlertPresented,
-                        habitName: habit.title,
-                        onDelete: deleteHabit
-                    )
-            } else {
-                ProgressView()
-                    .onAppear(perform: setupViewModel)
-            }
-        }
-        .id(habit.uuid.uuidString)
-        .onDisappear { viewModel?.prepareForDeletion() }
-        .onChange(of: date) { _, newDate in
-            viewModel?.updateDisplayedDate(newDate)
-        }
-        .sheet(isPresented: $isEditPresented) {
-            NewHabitView(habit: habit)
-        }
-        .sheet(isPresented: $showingStats) {
-            HabitStatisticsView(habit: habit)
+        NavigationStack {
+            mainContent(vm: viewModel)
+                .navigationTitle(habit.title)
+                .navigationSubtitle("Goal: \(habit.formattedGoal)")
+                .toolbar {
+                    toolbarContent(vm: viewModel)
+                }
+                .deleteSingleHabitAlert(
+                    isPresented: $viewModel.alertState.isDeleteAlertPresented,
+                    habitName: habit.title,
+                    onDelete: deleteHabit
+                )
+                .id(habit.uuid.uuidString)
+                .onDisappear {
+                    viewModel.prepareForDeletion()
+                }
+                .onChange(of: date) { _, newDate in
+                    viewModel.updateDisplayedDate(newDate)
+                }
+                .sheet(isPresented: $isEditPresented) {
+                    NewHabitView(habit: habit)
+                }
+                .sheet(isPresented: $showingStats) {
+                    HabitStatisticsView(habit: habit)
+                }
         }
     }
     
@@ -71,10 +74,16 @@ struct HabitDetailView: View {
     
     @ToolbarContentBuilder
     private func toolbarContent(vm: HabitDetailViewModel) -> some ToolbarContent {
-        ToolbarItemGroup(placement: .primaryAction) {
-            Button { showingStats = true } label: {
-                Label("Show Statistics", systemImage: "chart.bar.fill")
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                showingStats = true
+            } label: {
+                Image(systemName: "chart.bar.fill")
             }
+            .tint(.primary)
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
             menuButton(vm: vm)
         }
     }
@@ -83,26 +92,25 @@ struct HabitDetailView: View {
     @ViewBuilder
     private func menuButton(vm: HabitDetailViewModel) -> some View {
         Menu {
-            Button(role: .destructive) {
-                vm.alertState.isDeleteAlertPresented = true
+            Button {
+                isEditPresented = true
             } label: {
-                Label("button_delete", systemImage: "trash")
+                Label("button_edit", systemImage: "pencil")
+            }
+            
+            Button {
+                archiveHabit()
+            } label: {
+                Label("archive", systemImage: "archivebox")
             }
             
             Divider()
             
-            Button { vm.toggleSkip() } label: {
-                Label(vm.isSkipped ? "unskip" : "skip",
-                      systemImage: vm.isSkipped ? "arrow.left" : "arrow.right")
-            }
-            
-            Button { isEditPresented = true } label: {
-                Label("button_edit", systemImage: "pencil")
-            }
-            
-            Button { archiveHabit() } label: {
-                Label("archive", systemImage: "archivebox")
-            }
+            Button(role: .destructive) {
+                vm.alertState.isDeleteAlertPresented = true
+            } label: {
+                Label("button_delete", systemImage: "trash")
+            }.tint(.red)
         } label: {
             Image(systemName: "ellipsis")
         }
@@ -127,7 +135,8 @@ struct HabitDetailView: View {
             }
             .font(.system(size: 17, weight: .semibold))
             .foregroundStyle(.primaryInverse)
-            .frame(maxWidth: .infinity).frame(height: 52).contentShape(Capsule())
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .contentShape(.capsule)
             .background(
                 LinearGradient(
                     colors: [
@@ -147,30 +156,16 @@ struct HabitDetailView: View {
     
     // MARK: - Actions
     private func archiveHabit() {
-        appContainer.habitService.archive(habit, context: modelContext)
+        habitService.archive(habit, context: modelContext)
         dismiss()
     }
     
     private func deleteHabit() {
-        viewModel?.prepareForDeletion()
+        viewModel.prepareForDeletion()
         dismiss()
         Task {
             try? await Task.sleep(for: .milliseconds(300))
-            appContainer.habitService.delete(habit, context: modelContext)
-        }
-    }
-    
-    // MARK: - Helpers
-    
-    private func setupViewModel() {
-        if viewModel == nil {
-            viewModel = HabitDetailViewModel(
-                habit: habit,
-                initialDate: date,
-                modelContext: modelContext,
-                appContainer: appContainer
-            )
-            viewModel?.onHabitDeleted = { dismiss() }
+            habitService.delete(habit, context: modelContext)
         }
     }
 }

@@ -1,4 +1,4 @@
-#if !os(macOS)
+#if !targetEnvironment(macCatalyst)
 import ActivityKit
 import WidgetKit
 #endif
@@ -8,7 +8,7 @@ import SwiftUI
 
 // MARK: - Live Activity Attributes
 
-#if !os(macOS)
+#if !targetEnvironment(macCatalyst)
 struct HabitActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var currentProgress: Int
@@ -27,7 +27,7 @@ struct HabitActivityAttributes: ActivityAttributes {
 
 #else
 
-// Placeholder for macOS Catalyst
+// Placeholder for mac Catalyst
 struct HabitActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var currentProgress: Int
@@ -112,7 +112,7 @@ extension Notification.Name {
 
 // MARK: - Live Activity Icon View
 
-#if !os(macOS)
+#if !targetEnvironment(macCatalyst)
 struct LiveActivityHabitIcon: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     let size: CGFloat

@@ -10,12 +10,12 @@ struct TeymiaHabitApp: App {
     @State private var appContainer: AppDependencyContainer
     
     init() {
-        RevenueCatConfig.configure()
+        #if os(iOS)
         AppFont.configureAppearance()
+        #endif
         
         let schema = Schema([
-            Habit.self, HabitCompletion.self, TodoTask.self,
-            Subtask.self, TaskList.self, TaskGroup.self
+            Habit.self, HabitCompletion.self
         ])
         
         let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.amanbayserkeev.teymiahabit")!
@@ -37,7 +37,6 @@ struct TeymiaHabitApp: App {
             MainTabView()
                 .environment(appContainer)
                 .environment(appContainer.navManager)
-                .environment(appContainer.proManager)
                 .environment(appContainer.habitsViewModel)
                 .environment(appContainer.notificationManager)
                 .environment(appContainer.soundManager)

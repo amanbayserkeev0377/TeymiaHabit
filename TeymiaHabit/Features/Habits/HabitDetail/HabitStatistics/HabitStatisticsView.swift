@@ -17,7 +17,6 @@ struct HabitStatisticsView: View {
                 Section {
                     StreaksView(viewModel: statsViewModel)
                 }
-                .listRowInsets(EdgeInsets())
                 
                 Section {
                     MonthlyCalendarView(

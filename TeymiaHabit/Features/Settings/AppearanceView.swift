@@ -1,22 +1,5 @@
 import SwiftUI
 
-struct AppearanceRowView: View {
-    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
-    
-    var body: some View {
-        NavigationLink(destination: AppearanceView()) {
-            HStack {
-                Label(
-                    title: { Text("settings_appearance") },
-                    icon: { RowIcon(systemName: themeMode.iconName) }
-                )
-                Spacer()
-                Text(themeMode.localizedName).foregroundStyle(Color.secondary)
-            }
-        }
-    }
-}
-
 struct AppearanceView: View {
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     
@@ -31,10 +14,7 @@ struct AppearanceView: View {
                             Label(
                                 title: { Text(mode.localizedName).foregroundStyle(Color.primary) },
                                 icon: {
-                                    Image(systemName: mode.iconName)
-                                        .font(.footnote)
-                                        .fontWeight(.medium)
-                                        .foregroundStyle(Color.primary.gradient)
+                                    RowIcon(iconName: mode.iconName)
                                 }
                             )
                             Spacer()
@@ -70,7 +50,7 @@ enum ThemeMode: Int, CaseIterable {
     
     var iconName: String {
         switch self {
-        case .system: "swirl.circle.righthalf.filled"
+        case .system: "iphone"
         case .light:  "sun.max"
         case .dark:   "moon.stars"
         }

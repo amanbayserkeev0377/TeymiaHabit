@@ -101,7 +101,7 @@ struct MonthlyCalendarView: View {
                     }
             }
         }
-//        .tabViewStyle(.page(indexDisplayMode: .never)) TODO
+        .tabViewStyle(.page(indexDisplayMode: .never))
         .frame(height: 280)
         .onAppear {
             generateCalendarDaysIfNeeded(for: currentMonthIndex)
@@ -138,10 +138,10 @@ struct MonthlyCalendarView: View {
                         selectedDate = date
                         popoverDate = date
                     }
-//                    .popover(item: $popoverDate) { date in
-//                        DayProgressPopover(habit: habit, date: date)
-//                            .presentationCompactAdaptation(.sheet)
-//                    }
+                    .popover(item: $popoverDate) { date in
+                        DayProgressPopover(habit: habit, date: date)
+                            .presentationCompactAdaptation(.popover)
+                    }
                 } else {
                     Color.clear.frame(width: 40, height: 40)
                 }

@@ -22,7 +22,7 @@ struct ConfirmationToolbarButton: ToolbarContent {
     
     var body: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Button(role: .confirm, action: action) {
+            Button(action: action) {
                 Image(systemName: "checkmark")
                     .fontWeight(.semibold)
             }

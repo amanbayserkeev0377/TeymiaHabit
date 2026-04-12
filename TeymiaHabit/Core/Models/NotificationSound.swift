@@ -22,7 +22,6 @@ enum NotificationSound: String, CaseIterable, Identifiable {
         }
     }
     
-    var requiresPro: Bool { self != .system }
     var fileExtension: String { "wav" }
 }
 
@@ -39,6 +38,5 @@ extension NotificationSound: HabitSoundProtocol {}
 
 protocol HabitSoundProtocol: Identifiable {
     var displayName: LocalizedStringResource { get }
-    var requiresPro: Bool { get }
     var rawValue: String { get }
 }

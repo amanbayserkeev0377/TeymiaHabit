@@ -3,37 +3,20 @@ import SwiftUI
 struct HabitIconView: View {
     let iconName: String?
     let iconColor: HabitIconColor
-    let size: CGFloat
-    let showBackground: Bool
+    var size: CGFloat = 20
+    var showBackground: Bool = true
     
-    private let fallbackIcon = "ui-checkmark"
+    private let fallbackIcon = "checkmark"
     
-    init(
-        iconName: String?,
-        iconColor: HabitIconColor,
-        size: CGFloat = 20,
-        showBackground: Bool = true
-    ) {
-        self.iconName = iconName
-        self.iconColor = iconColor
-        self.size = size
-        self.showBackground = showBackground
-    }
-    
-    private var finalIconName: String {
-        guard let name = iconName, !name.isEmpty else { return fallbackIcon }
-        
-        let cleaned = name
-            .replacingOccurrences(of: "sf_", with: "")
-            .replacingOccurrences(of: "img_", with: "")
-        
-        if UIImage(named: cleaned) != nil {
-            return cleaned
-        } else {
-            return fallbackIcon
+    // Check if icon exists as SF Symbol, otherwise use fallback
+    private var resolvedIcon: String {
+        guard let name = iconName else { return fallbackIcon }
+        if UIImage(systemName: name) != nil {
+            return name
         }
+        return fallbackIcon
     }
-    
+        
     var body: some View {
         let gradient = LinearGradient(
             colors: [iconColor.lightColor, iconColor.darkColor],
@@ -47,10 +30,8 @@ struct HabitIconView: View {
                     .fill(gradient.opacity(0.1))
             }
             
-            Image(finalIconName)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: size, height: size)
+            Image(systemName: resolvedIcon)
+                .font(.system(size: size))
                 .foregroundStyle(gradient)
         }
         .frame(width: size * 2, height: size * 2)

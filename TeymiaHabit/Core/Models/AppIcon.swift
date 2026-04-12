@@ -36,14 +36,4 @@ enum AppIcon: String, CaseIterable, Identifiable {
     var previewImageName: String {
         "Preview-\(rawValue)"
     }
-    
-    // Check if icon requires Pro
-    var requiresPro: Bool {
-        switch self {
-        case .main, .dark:
-            return false  // Free icons
-        case .orange, .mint, .raspberry, .lime, .yellow, .indigo, .cyan:
-            return true   // Pro icons
-        }
-    }
 }

@@ -20,6 +20,10 @@ struct HabitListRow: View {
     
     private var cardProgress: Int {
         guard habit.modelContext != nil else { return 0 }
+        if let tempValue = vm.temporaryProgress[habit.uuid] {
+            return tempValue
+        }
+        
         let _ = timerService.updateTrigger
         
         if isTimerActive {
@@ -41,22 +45,19 @@ struct HabitListRow: View {
             // Title + Progress
             VStack(alignment: .leading, spacing: 4) {
                 Text(habit.title)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-                    .foregroundStyle(.primary)
+                    .font(.headline)
                 
                 Text("\(habit.formatProgress(cardProgress)) / \(habit.formattedGoal)")
-                    .font(.callout)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                    .monospacedDigit()
+                    .font(.subheadline)
             }
+            .foregroundStyle(Color.primary.gradient)
+            .lineLimit(1)
             
             Spacer()
             
             // Interactive Progress Ring
             Button(action: {
-                vm.handleRingTap(on: habit)
+                vm.handleRingTap(on: habit, date: date)
             }) {
                 ProgressRing(
                     progress: cardCompletionPercentage,
@@ -70,9 +71,10 @@ struct HabitListRow: View {
             }
             .buttonStyle(.plain)
         }
+        .padding(8)
         .onChange(of: timerService.updateTrigger) { _, _ in
             if isTimerActive {
-                vm.checkCompletionForActiveTimer(habit)
+                vm.checkCompletionForActiveTimer(habit, date: date)
             }
         }
     }
@@ -94,8 +96,11 @@ struct HabitListRow: View {
         
         var body: some View {
             HabitListRow(habit: habit, date: date)
-                .padding(6)
-                .contentShape(Rectangle())
+//                .padding(6)
+                .contentShape(.capsule)
+                .contentShape(.dragPreview, .capsule)
+                .contentShape(.contextMenuPreview, .capsule)
+                .glassEffect(.regular.interactive(false), in: .capsule)
                 .contextMenu {
                     skipButton
                     editButton
@@ -113,7 +118,7 @@ struct HabitListRow: View {
         // MARK: - Context Menu Buttons
         
         private var skipButton: some View {
-            Button { vm.toggleSkip(for: habit) } label: {
+            Button { vm.toggleSkip(for: habit, date: date) } label: {
                 Label(
                     isSkipped ? "unskip" : "skip",
                     systemImage: isSkipped ? "arrow.left" : "arrow.right"

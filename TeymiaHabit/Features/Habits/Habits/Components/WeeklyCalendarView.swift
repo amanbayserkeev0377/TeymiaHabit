@@ -65,7 +65,7 @@ struct WeeklyCalendarView: View {
                     .tag(index)
                 }
             }
-//            .tabViewStyle(.page(indexDisplayMode: .never)) TODO
+            .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 55)
         }
         .onChange(of: currentWeekIndex) { _, _ in
@@ -80,9 +80,6 @@ struct WeeklyCalendarView: View {
         .onChange(of: selectedDate) { _, newDate in
             handleSelectedDateChange(newDate)
         }
-//        .onChange(of: weekdayPrefs.firstDayOfWeek) { _, _ in
-//            handleWeekdayPrefsChange()
-//        } TODO
         .onChange(of: habitsData) { _, _ in
             handleHabitsDataChange()
         }

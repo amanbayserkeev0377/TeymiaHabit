@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct RowIcon: View {
-    let systemName: String
+    let iconName: String
     
     var body: some View {
-        Image(systemName: systemName)
+        Image(systemName: iconName)
             .font(.callout)
             .fontWeight(.medium)
-            .foregroundStyle(.appPrimary)
+            .foregroundStyle(.primary)
     }
 }

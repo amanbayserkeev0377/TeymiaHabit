@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		072DD4152DE8243500157BF8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 072DD4142DE8243500157BF8 /* RevenueCat */; };
-		E73266642F2C90CD00BFD4EB /* liveactivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 077FAE6E2E12DE7C007790C5 /* liveactivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E73266682F2C90D000BFD4EB /* TeymiaHabitWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07EA6CCC2E31DFB800171765 /* TeymiaHabitWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E73266642F2C90CD00BFD4EB /* liveactivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 077FAE6E2E12DE7C007790C5 /* liveactivityExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E73266682F2C90D000BFD4EB /* TeymiaHabitWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07EA6CCC2E31DFB800171765 /* TeymiaHabitWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +53,9 @@
 			membershipExceptions = (
 				Info.plist,
 			);
+			platformFiltersByRelativePath = {
+				Resources/LaunchScreen.storyboard = (ios, );
+			};
 			target = 07A95EF92D9849F300044A7A /* TeymiaHabit */;
 		};
 		077FAE852E12DE7E007790C5 /* Exceptions for "LiveActivity" folder in "liveactivityExtension" target */ = {
@@ -68,7 +70,6 @@
 			membershipExceptions = (
 				Core/Models/HabitIconColor.swift,
 				"Extensions/Color+Hex.swift",
-				Extensions/NotificationName.swift,
 				Extensions/TimeFormatting.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
@@ -90,15 +91,9 @@
 				Core/Models/HabitCompletion.swift,
 				Core/Models/HabitIconColor.swift,
 				Core/Models/HabitType.swift,
-				Core/Models/Subtask.swift,
-				Core/Models/TaskGroup.swift,
-				Core/Models/TaskList.swift,
-				Core/Models/TaskScope.swift,
-				Core/Models/TodoTask.swift,
 				Core/Models/Weekday.swift,
 				"Extensions/Calendar+Extensions.swift",
 				"Extensions/Color+Hex.swift",
-				Extensions/NotificationName.swift,
 				Extensions/TimeFormatting.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
@@ -145,7 +140,6 @@
 		07A95EF72D9849F300044A7A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
-				072DD4152DE8243500157BF8 /* RevenueCat in Frameworks */,
 			);
 		};
 		07EA6CC92E31DFB800171765 /* Frameworks */ = {
@@ -216,9 +210,6 @@
 				07A95EFC2D9849F300044A7A /* TeymiaHabit */,
 			);
 			name = TeymiaHabit;
-			packageProductDependencies = (
-				072DD4142DE8243500157BF8 /* RevenueCat */,
-			);
 			productName = Tymi;
 			productReference = 07A95EFA2D9849F300044A7A /* TeymiaHabit.app */;
 			productType = "com.apple.product-type.application";
@@ -289,7 +280,6 @@
 			mainGroup = 07A95EF12D9849F300044A7A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				072DD4132DE8243500157BF8 /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 07A95EFB2D9849F300044A7A /* Products */;
@@ -342,11 +332,13 @@
 /* Begin PBXTargetDependency section */
 		E73266662F2C90CD00BFD4EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 			targetProxy = E73266652F2C90CD00BFD4EB /* PBXContainerItemProxy */;
 		};
 		E732666A2F2C90D000BFD4EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
 			targetProxy = E73266692F2C90D000BFD4EB /* PBXContainerItemProxy */;
 		};
@@ -588,17 +580,18 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -634,17 +627,18 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -752,25 +746,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		072DD4132DE8243500157BF8 /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.25.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		072DD4142DE8243500157BF8 /* RevenueCat */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 072DD4132DE8243500157BF8 /* XCRemoteSwiftPackageReference "purchases-ios" */;
-			productName = RevenueCat;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 07A95EF22D9849F300044A7A /* Project object */;
 }

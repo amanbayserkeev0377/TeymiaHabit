@@ -18,10 +18,8 @@ final class NewHabitViewModel {
     var isReminderEnabled = false
     var reminderTimes: [Date] = [Date()]
     var startDate = Date()
-    var selectedIcon: String = "book"
+    var selectedIcon: String = "book.fill"
     var selectedIconColor: HabitIconColor = .primary
-    
-    var showPaywall = false
     var onSaveCompletion: (() -> Void)?
     
     init(

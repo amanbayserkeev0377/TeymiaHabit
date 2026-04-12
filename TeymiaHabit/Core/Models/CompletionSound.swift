@@ -28,7 +28,6 @@ enum CompletionSound: String, CaseIterable, Identifiable {
         }
     }
 
-    var requiresPro: Bool { self != .default }
     var fileExtension: String { "wav" }
 }
 

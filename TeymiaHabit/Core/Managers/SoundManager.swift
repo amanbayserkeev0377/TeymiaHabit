@@ -5,7 +5,6 @@ import Foundation
 
 @Observable
 final class SoundManager {
-    private let proManager: ProManager
     private var audioPlayer: AVAudioPlayer?
     private let userDefaults = UserDefaults.standard
     
@@ -21,9 +20,7 @@ final class SoundManager {
         }
     }
     
-    init(proManager: ProManager) {
-        self.proManager = proManager
-        
+    init() {
         let rawValue = userDefaults.string(forKey: UserDefaults.SoundKeys.selectedCompletionSound) ?? CompletionSound.default.rawValue
         self.selectedSound = CompletionSound(rawValue: rawValue) ?? .default
         
@@ -34,8 +31,6 @@ final class SoundManager {
         }
         
         setupAudioSession()
-        startObservingProStatus()
-        Task { @MainActor in validateSelectedSoundForProStatus() }
     }
     
     deinit {
@@ -50,13 +45,6 @@ final class SoundManager {
     
     func setSoundEnabled(_ enabled: Bool) {
         isSoundEnabled = enabled
-    }
-    
-    @MainActor
-    func validateSelectedSoundForProStatus() {
-        if selectedSound.requiresPro && !proManager.isPro {
-            selectedSound = .default
-        }
     }
     
     // MARK: - Audio Playback
@@ -100,19 +88,8 @@ final class SoundManager {
     
     // MARK: - Private Methods
     
-    private func startObservingProStatus() {
-        NotificationCenter.default.addObserver(
-            forName: .proStatusChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task { @MainActor in
-                self?.validateSelectedSoundForProStatus()
-            }
-        }
-    }
-    
     private func setupAudioSession() {
+        #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(
                 .ambient,
@@ -123,6 +100,7 @@ final class SoundManager {
         } catch {
             // Silent fail for audio session setup
         }
+        #endif
     }
 }
 

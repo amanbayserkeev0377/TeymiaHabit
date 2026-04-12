@@ -15,7 +15,6 @@ struct DayProgressPopover: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Заголовок
             VStack(spacing: 4) {
                 Text(date.formatted(date: .abbreviated, time: .omitted))
                     .font(.subheadline)
@@ -32,60 +31,44 @@ struct DayProgressPopover: View {
             
             Divider()
             
-            // Ввод данных
             Group {
                 if habit.type == .count {
                     TextField("0", text: $inputText)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
-                        .numberKeyboard()
+                        .keyboardType(.numberPad)
                         .padding(.vertical, 8)
                 } else {
                     DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
-                    #if os(iOS)
                         .datePickerStyle(.wheel)
-                    #endif
                         .labelsHidden()
                         .frame(maxHeight: 120)
                 }
             }
             .padding(.horizontal)
             
-            Divider()
-            
-            // Кнопки действий
-            VStack(spacing: 0) {
-                actionButton("button_add") { addProgress() }
-                
-                Divider()
-                
-                actionButton("complete") {
-                    habitService.completeHabit(for: habit, date: date, context: modelContext)
-                }
-                
-                Divider()
-                
-                actionButton("button_reset", isDestructive: true) {
-                    habitService.resetProgress(for: habit, date: date, context: modelContext)
-                }
+            actionButton("button_add") {
+                addProgress()
             }
         }
-        .frame(width: 280) // Чуть увеличил ширину для комфорта
+        .frame(width: 280)
     }
     
-    // Вспомогательный компонент кнопки, чтобы не дублировать код
-    private func actionButton(_ label: LocalizedStringResource, isDestructive: Bool = false, action: @escaping () -> Void) -> some View {
+    private func actionButton(_ label: LocalizedStringResource, action: @escaping () -> Void) -> some View {
         Button {
             action()
             dismiss()
         } label: {
             Text(label)
-                .font(.body.weight(.medium))
+                .fontWeight(.medium)
+                .foregroundStyle(.primaryInverse)
                 .frame(maxWidth: .infinity, minHeight: 44)
-                .contentShape(Rectangle())
+                .contentShape(.capsule)
         }
         .buttonStyle(.plain)
-        .foregroundStyle(isDestructive ? .red : .blue)
+        .glassEffect(.clear.interactive().tint(.appPrimary), in: .capsule)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 16)
     }
     
     private func addProgress() {
@@ -100,15 +83,5 @@ struct DayProgressPopover: View {
                 habitService.addProgress(totalSeconds, to: habit, date: date, context: modelContext)
             }
         }
-    }
-}
-
-extension View {
-    func numberKeyboard() -> some View {
-        #if os(iOS)
-        return self.keyboardType(.numberPad)
-        #else
-        return self
-        #endif
     }
 }

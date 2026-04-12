@@ -13,7 +13,7 @@ struct AboutSection: View {
             } label: {
                 Label(
                     title: { Text("settings_rate").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(systemName: "star") }
+                    icon: { RowIcon(iconName: "star") }
                 )
             }
             
@@ -21,7 +21,7 @@ struct AboutSection: View {
             ShareLink(item: URL(string: "https://apps.apple.com/app/id6746747903")!) {
                 Label(
                     title: { Text("settings_share").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(systemName: "square.and.arrow.up") }
+                    icon: { RowIcon(iconName: "square.and.arrow.up") }
                 )
             }
             
@@ -33,7 +33,7 @@ struct AboutSection: View {
             } label: {
                 Label(
                     title: { Text("settings_privacy_policy").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(systemName: "lock") }
+                    icon: { RowIcon(iconName: "lock") }
                 )
             }
             
@@ -45,7 +45,7 @@ struct AboutSection: View {
             } label: {
                 Label(
                     title: { Text("settings_tos").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(systemName: "text.document") }
+                    icon: { RowIcon(iconName: "document") }
                 )
             }
         }

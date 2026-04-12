@@ -4,14 +4,11 @@ import UserNotifications
 struct ReminderSection: View {
     @Binding var isReminderEnabled: Bool
     @Binding var reminderTimes: [Date]
-    @Environment(ProManager.self) private var proManager
     @Environment(NotificationManager.self) private var notificationManager
     @Environment(\.openURL) private var openURL
     
     @State private var isNotificationPermissionAlertPresented = false
     @State private var isProcessingToggle = false
-    
-    let onShowPaywall: () -> Void
     
     var body: some View {
         Section {
@@ -35,7 +32,7 @@ struct ReminderSection: View {
                 Label(
                     title: { Text("reminders") },
                     icon: {
-                        RowIcon(systemName: "bell")
+                        RowIcon(iconName: "bell.badge")
                             .symbolEffect(.wiggle, value: isReminderEnabled)
                     }
                 )
@@ -56,37 +53,29 @@ struct ReminderSection: View {
                             .labelsHidden()
                             .datePickerStyle(.compact)
                             
-                            if reminderTimes.count > 1 && (proManager.isPro || index > 0) {
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        if reminderTimes.indices.contains(index) {
-                                            reminderTimes.remove(at: index)
-                                        }
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    if reminderTimes.indices.contains(index) {
+                                        reminderTimes.remove(at: index)
                                     }
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .foregroundStyle(.red.gradient)
                                 }
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundStyle(.red.gradient)
                             }
                         }
                     }
                     
-                    if reminderTimes.count < proManager.maxRemindersCount {
-                        Button {
-                            if reminderTimes.count >= 2 && !proManager.isPro {
-                                onShowPaywall()
-                            } else {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    reminderTimes.append(Date())
-                                }
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: "plus")
-                                Text("add_reminder")
-                            }
-                            .fontWeight(.medium)
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            reminderTimes.append(Date())
                         }
+                    } label: {
+                        HStack {
+                            Image(systemName: "plus")
+                            Text("add_reminder")
+                        }
+                        .fontWeight(.medium)
                     }
                 }
                 .transition(.asymmetric(
@@ -131,7 +120,7 @@ struct ReminderSection: View {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             openURL(url)
         }
-#elseif os(macOS)
+#elseif targetEnvironment(macCatalyst)
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
             openURL(url)
         }

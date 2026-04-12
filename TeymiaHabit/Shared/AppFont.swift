@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 enum AppFont {
     static func configureAppearance() {
         let titleFont = UIFont.rounded(ofSize: 18, weight: .semibold)
@@ -35,3 +36,4 @@ extension UIFont {
         return systemFont
     }
 }
+#endif

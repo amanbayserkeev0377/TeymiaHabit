@@ -1,17 +1,6 @@
 import SwiftUI
 import SwiftData
 
-struct ArchiveRowView: View {
-    var body: some View {
-        NavigationLink(destination: ArchiveView()) {
-            Label(
-                title: { Text("settings_archived_habits") },
-                icon: { RowIcon(systemName: "archivebox") }
-            )
-        }
-    }
-}
-
 struct ArchiveView: View {
     // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext

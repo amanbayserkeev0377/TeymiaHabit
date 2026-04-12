@@ -66,7 +66,7 @@ struct MonthlyHabitChart: View {
                     .padding(.horizontal, 16)
             }
         }
-//        .tabViewStyle(.page(indexDisplayMode: .never)) TODO
+        .tabViewStyle(.page(indexDisplayMode: .never))
         .frame(height: 180)
         .onChange(of: currentMonthIndex) { _, _ in
             selectedDate = nil

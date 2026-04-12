@@ -6,7 +6,6 @@ import SwiftUI
 @MainActor
 final class AppDependencyContainer {
     // MARK: - Properties (Managers & Services)
-    let proManager = ProManager()
     let navManager = NavigationManager()
     let notificationManager = NotificationManager()
     let timerService = TimerService()
@@ -24,8 +23,8 @@ final class AppDependencyContainer {
     // MARK: - Init
     init(modelContext: ModelContext) {
         let habitServiceInstance = HabitService(widgetService: widgetService)
-        let soundManagerInstance = SoundManager(proManager: proManager)
-        let iconManagerInstance = AppIconManager(proManager: proManager)
+        let soundManagerInstance = SoundManager()
+        let iconManagerInstance = AppIconManager()
         
         let habitWidgetServiceInstance = HabitWidgetService(
             modelContext: modelContext,
@@ -46,19 +45,5 @@ final class AppDependencyContainer {
         self.iconManager = iconManagerInstance
         self.habitWidgetService = habitWidgetServiceInstance
         self.habitsViewModel = habitsVMInstance
-        
-        setupSubscriptions()
-    }
-    
-    private func setupSubscriptions() {
-        NotificationCenter.default.addObserver(
-            forName: .proStatusChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task { @MainActor in
-                self?.soundManager.validateSelectedSoundForProStatus()
-            }
-        }
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 @Observable @MainActor
 final class HabitLiveActivityManager {
     
-    #if !os(macOS)
+    #if !targetEnvironment(macCatalyst)
     private var activeActivities: [String: Activity<HabitActivityAttributes>] = [:]
     #endif
     
@@ -22,7 +22,7 @@ final class HabitLiveActivityManager {
         currentProgress: Int,
         timerStartTime: Date
     ) async {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         guard habit.type == .time else {
             return
         }
@@ -86,7 +86,7 @@ final class HabitLiveActivityManager {
         isTimerRunning: Bool,
         timerStartTime: Date?
     ) async {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[habitId] else {
             return
         }
@@ -108,7 +108,7 @@ final class HabitLiveActivityManager {
     }
     
     func endActivity(for habitId: String) async {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[habitId] else { return }
         
         let finalContent = ActivityContent(
@@ -122,7 +122,7 @@ final class HabitLiveActivityManager {
     }
     
     func endAllActivities() async {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         for (_, activity) in activeActivities {
             let finalContent = ActivityContent(
                 state: activity.content.state,
@@ -135,7 +135,7 @@ final class HabitLiveActivityManager {
     }
     
     func hasActiveActivity(for habitId: String) -> Bool {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         return activeActivities[habitId]?.activityState == .active
         #else
         return false
@@ -143,7 +143,7 @@ final class HabitLiveActivityManager {
     }
     
     var totalActiveActivities: Int {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         return activeActivities.count
         #else
         return 0
@@ -153,7 +153,7 @@ final class HabitLiveActivityManager {
     // MARK: - Activity State Access
     
     func getActiveHabitIds() -> [String] {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         return Array(activeActivities.keys)
         #else
         return []
@@ -161,7 +161,7 @@ final class HabitLiveActivityManager {
     }
     
     func getActivityState(for habitId: String) -> HabitActivityAttributes.ContentState? {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         return activeActivities[habitId]?.content.state
         #else
         return nil
@@ -171,7 +171,7 @@ final class HabitLiveActivityManager {
     // MARK: - App Launch Restoration
     
     func restoreActiveActivitiesIfNeeded() async {
-        #if !os(macOS)
+        #if !targetEnvironment(macCatalyst)
         let activities = Activity<HabitActivityAttributes>.activities
         
         // Clear current state

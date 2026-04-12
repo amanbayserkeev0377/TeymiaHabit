@@ -1,25 +1,12 @@
 import SwiftUI
 import SwiftData
 
-struct SoundRowView: View {
-    var body: some View {
-        NavigationLink(destination: SoundView()) {
-            Label(
-                title: { Text("settings_sounds") },
-                icon: { RowIcon(systemName: "speaker.wave.1") }
-            )
-        }
-    }
-}
-
 struct SoundView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(ProManager.self) private var proManager
     @Environment(SoundManager.self) private var soundManager
     @Environment(NotificationManager.self) private var notificationManager
     
     @State private var selectedTab: SoundTab = .completion
-    @State private var showProPaywall = false
     
     enum SoundTab: String, CaseIterable {
         case completion, notification
@@ -51,7 +38,6 @@ struct SoundView: View {
             }
         }
         .navigationTitle("settings_sounds")
-        .fullScreenCover(isPresented: $showProPaywall) { PaywallView() }
     }
     
     // MARK: - Sections
@@ -74,8 +60,7 @@ struct SoundView: View {
                     ForEach(CompletionSound.allCases) { sound in
                         SoundSelectionRowView(
                             sound: sound,
-                            isSelected: soundManager.selectedSound == sound,
-                            isPro: proManager.isPro
+                            isSelected: soundManager.selectedSound == sound
                         ) {
                             handleCompletionSelect(sound)
                         }
@@ -91,8 +76,7 @@ struct SoundView: View {
             ForEach(NotificationSound.allCases) { sound in
                 SoundSelectionRowView(
                     sound: sound,
-                    isSelected: notificationManager.selectedNotificationSound == sound,
-                    isPro: proManager.isPro
+                    isSelected: notificationManager.selectedNotificationSound == sound
                 ) {
                     handleNotificationSelect(sound)
                 }
@@ -106,30 +90,21 @@ struct SoundView: View {
     private func handleCompletionSelect(_ sound: CompletionSound) {
         soundManager.playSound(sound)
         
-        if sound.requiresPro && !proManager.isPro {
-            showProPaywall = true
-        } else {
             soundManager.setSelectedSound(sound)
-        }
     }
     
     private func handleNotificationSelect(_ sound: NotificationSound) {
         soundManager.playNotificationPreview(sound)
         
-        if sound.requiresPro && !proManager.isPro {
-            showProPaywall = true
-        } else {
             Task {
                 await notificationManager.setSelectedNotificationSound(sound, modelContext: modelContext)
             }
-        }
     }
 }
 
 struct SoundSelectionRowView<T: HabitSoundProtocol>: View {
     let sound: T
     let isSelected: Bool
-    let isPro: Bool
     let action: () -> Void
     
     var body: some View {
@@ -145,10 +120,6 @@ struct SoundSelectionRowView<T: HabitSoundProtocol>: View {
                 
                 if isSelected {
                     SelectionCheckmark()
-                }
-                
-                if sound.requiresPro && !isPro {
-                    ProLockBadge()
                 }
             }
         }

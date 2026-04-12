@@ -29,7 +29,6 @@ final class HabitDetailViewModel {
     private(set) var currentDisplayedDate: Date
     
     // MARK: - Computed Properties
-    var isSkipped: Bool { habit.isSkipped(on: currentDisplayedDate) }
     var isTimerRunning: Bool { timerService.isTimerRunning(for: cachedHabitId) }
     var canStartTimer: Bool { timerService.canStartNewTimer || isTimerRunning }
     var timerStartTime: Date? { timerService.getTimerStartTime(for: cachedHabitId) }
@@ -39,7 +38,13 @@ final class HabitDetailViewModel {
     private var isToday: Bool { Calendar.current.isDateInToday(currentDisplayedDate) }
     private var isTimeHabitToday: Bool { habit.type == .time && isToday }
     
+    private var uiProgressOverride: Int?
+    
     var currentProgress: Int {
+        if let override = uiProgressOverride {
+            return override
+        }
+        
         _ = timerService.updateTrigger
         if isTimeHabitToday, let live = timerService.getLiveProgress(for: cachedHabitId) {
             return live
@@ -96,8 +101,8 @@ final class HabitDetailViewModel {
         stopTimerIfNeeded()
         let step = habit.type == .count ? 1 : 60
         let maxVal = habit.type == .count ? 999_999 : 86_400
-        let current = habit.progressForDate(currentDisplayedDate)
-        let new = min(current + step, maxVal)
+        let new = min(currentProgress + step, maxVal)
+        uiProgressOverride = new
         saveProgress(new)
         updateLiveActivityIfNeeded(progress: new, timerRunning: false)
     }
@@ -114,10 +119,6 @@ final class HabitDetailViewModel {
     
     func completeHabit() {
         guard !isAlreadyCompleted else { return }
-        
-        if isSkipped {
-            unskipHabit()
-        }
         
         stopTimerAndEndActivity()
         saveProgress(habit.goal)
@@ -169,20 +170,7 @@ final class HabitDetailViewModel {
             )
         }
     }
-    
-    // MARK: - Skip Actions
-    func toggleSkip() { isSkipped ? unskipHabit() : skipHabit() }
-    
-    func skipHabit() {
-        habitService.skipDate(currentDisplayedDate, for: habit, context: modelContext)
-        alertState.successFeedbackTrigger = true
-    }
-    
-    func unskipHabit() {
-        habitService.unskipDate(currentDisplayedDate, for: habit, context: modelContext)
-        alertState.successFeedbackTrigger = true
-    }
-    
+     
     // MARK: - Private Helpers
     private func saveProgress(_ value: Int) {
         let calendar = Calendar.current
@@ -204,10 +192,12 @@ final class HabitDetailViewModel {
             
             do {
                 try modelContext.save()
+                uiProgressOverride = nil
                 widgetService.reloadWidgetsAfterDataChange()
                 onDataSaved?()
             } catch {
                 print("Failed to save progress: \(error)")
+                uiProgressOverride = nil
             }
         }
     }
