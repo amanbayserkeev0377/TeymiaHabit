@@ -18,7 +18,7 @@ struct ProgressRing: View {
     private var colors: (dark: Color, light: Color) {
         if let hex = habit.hexColor {
             let color = Color(hex: hex)
-            return (color.darkened(by: 0.15), color.lightened(by: 0.4))
+            return (color.darkened(by: 0.05), color.lightened(by: 0.4))
         }
         return (habit.iconColor.darkColor, habit.iconColor.lightColor)
     }

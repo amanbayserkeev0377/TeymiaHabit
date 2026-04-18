@@ -36,7 +36,7 @@ enum HabitIconColor: String, CaseIterable, Codable {
     }
     
     var lightColor: Color { baseColor.lightened(by: 0.4) }
-    var darkColor: Color { baseColor.darkened(by: 0.15) }
+    var darkColor: Color { baseColor.darkened(by: 0.05) }
 }
 
 extension Color {

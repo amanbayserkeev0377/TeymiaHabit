@@ -84,13 +84,12 @@ struct WeeklyHabitChart: View {
                 y: .value("Progress", dataPoint.value)
             )
             .foregroundStyle(barColor(for: dataPoint))
-            .cornerRadius(8)
+            .clipShape(.capsule)
             .opacity(barOpacity(for: dataPoint.date))
         }
+        .chartXAxis(.hidden)
         .chartXAxis {
             AxisMarks(values: chartData.map { $0.date }) { value in
-                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.6, dash: [2]))
-                    .foregroundStyle(.appPrimary.opacity(0.2).gradient)
                 AxisValueLabel {
                     if let date = value.as(Date.self) {
                         let index = calendar.component(.weekday, from: date) - 1
@@ -104,7 +103,7 @@ struct WeeklyHabitChart: View {
         }
         .habitChartYAxis(values: yAxisValues)
         .chartXSelection(value: $selectedDate)
-        .onTapGesture { clearSelection() }
+//        .onTapGesture { clearSelection() }
         .frame(height: 180)
     }
 
