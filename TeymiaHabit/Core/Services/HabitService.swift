@@ -11,7 +11,6 @@ final class HabitService {
     
     // MARK: - Progress Management
     
-    
     /// Complete
     @discardableResult
     func completeHabit(for habit: Habit, date: Date, context: ModelContext) -> Bool {
@@ -69,6 +68,22 @@ final class HabitService {
         updateProgress(to: after, for: habit, date: date, context: context)
         
         return before < habit.goal && after >= habit.goal
+    }
+    
+    func saveProgress(_ value: Int, for habit: Habit, date: Date, context: ModelContext) {
+        let calendar = Calendar.current
+        if let existing = habit.completions?.first(where: {
+            calendar.isDate($0.date, inSameDayAs: date)
+        }) {
+            if value > 0 {
+                existing.value = value
+            } else {
+                context.delete(existing)
+            }
+        } else if value > 0 {
+            let completion = HabitCompletion(date: date, value: value, habit: habit)
+            context.insert(completion)
+        }
     }
     
     // MARK: - Skip Managemenent

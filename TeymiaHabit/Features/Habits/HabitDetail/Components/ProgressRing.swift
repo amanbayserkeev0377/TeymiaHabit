@@ -16,7 +16,11 @@ struct ProgressRing: View {
     private var adaptiveLineWidth: CGFloat { lineWidth ?? (size * 0.12) }
     
     private var colors: (dark: Color, light: Color) {
-        (habit.iconColor.darkColor, habit.iconColor.lightColor)
+        if let hex = habit.hexColor {
+            let color = Color(hex: hex)
+            return (color.darkened(by: 0.15), color.lightened(by: 0.4))
+        }
+        return (habit.iconColor.darkColor, habit.iconColor.lightColor)
     }
     
     var body: some View {
@@ -25,7 +29,7 @@ struct ProgressRing: View {
         ZStack {
             // 1. Background Ring
             Circle()
-                .stroke(Color.secondary.opacity(0.1), lineWidth: adaptiveLineWidth)
+                .stroke(Color.gray.opacity(0.1), lineWidth: adaptiveLineWidth)
             
             // 2. Main Ring (Progress)
             Circle()
@@ -87,18 +91,14 @@ struct ProgressRing: View {
         if isCompleted || isExceeded {
             Image(systemName: "checkmark")
                 .font(.system(size: size * 0.4, weight: .bold))
-                .foregroundStyle(
-                    LinearGradient(colors: [colors.light, colors.dark], startPoint: .leading, endPoint: .trailing)
-                )
+                .foregroundStyle(habit.actualColor.gradient)
                 .transition(.symbolEffect(.drawOn))
         } else {
             let iconName = habit.type == .count ? "plus" : (isTimerRunning ? "pause.fill" : "play.fill")
             
             Image(systemName: iconName)
                 .font(.system(size: size * 0.35, weight: .semibold))
-                .foregroundStyle(
-                    LinearGradient(colors: [colors.light, colors.dark], startPoint: .leading, endPoint: .trailing)
-                )
+                .foregroundStyle(.primary)
                 .contentTransition(.symbolEffect(.replace, options: .speed(1.3)))
         }
     }
@@ -108,9 +108,7 @@ struct ProgressRing: View {
         if isCompleted && !isExceeded {
             Image(systemName: "checkmark")
                 .font(.system(size: size * 0.4, weight: .bold))
-                .foregroundStyle(
-                    LinearGradient(colors: [colors.light, colors.dark], startPoint: .leading, endPoint: .trailing)
-                )
+                .foregroundStyle(habit.actualColor.gradient)
                 .transition(.symbolEffect(.drawOn))
         } else {
             Text(getProgressText())

@@ -48,35 +48,9 @@ struct AboutSection: View {
                     icon: { RowIcon(iconName: "document") }
                 )
             }
+        } footer: {
+            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "2.1"
+            Text("Teymia Habit \(version)")
         }
-        
-        // About App
-        Section {
-            VStack(spacing: 4) {
-                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "2.1"
-                
-                Text("Teymia Habit \(version)")
-                    .multilineTextAlignment(.center)
-                
-                HStack(spacing: 4) {
-                    Text("made_with")
-                    
-                    Image(systemName: "heart.fill")
-                        .foregroundStyle(.pink.gradient)
-                    
-                    Text("in_kyrgyzstan")
-                    
-                    Image("kyrgyzstan")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                }
-            }
-            .font(.callout)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity)
-        }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .listSectionSeparator(.hidden)
     }
 }

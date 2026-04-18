@@ -165,28 +165,19 @@ struct MonthlyHabitChart: View {
         }
     }
 
-    private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
+    private func barColor(for dataPoint: ChartDataPoint) -> AnyGradient {
         if !habit.isActiveOnDate(dataPoint.date) || dataPoint.date > Date() {
-            return AnyShapeStyle(.appSecondary)
+            return Color.secondary.gradient
         }
         
         if dataPoint.value == 0 {
-            return AnyShapeStyle(Color.secondary.opacity(0.3))
+            return Color.secondary.opacity(0.3).gradient
         }
         
-        let topColor = habit.iconColor.lightColor
-        let bottomColor = habit.iconColor.darkColor
-        
-        let habitGradient = LinearGradient(
-            colors: [topColor, bottomColor],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
         if dataPoint.isCompleted || dataPoint.isOverAchieved {
-            return AnyShapeStyle(habitGradient)
+            return habit.actualColor.gradient
         } else {
-            return AnyShapeStyle(habitGradient.opacity(0.8))
+            return habit.actualColor.opacity(0.8).gradient
         }
     }
 

@@ -146,7 +146,6 @@ final class HabitsViewModel {
         soundManager.playCompletionSound()
     }
     
-    
     // MARK: - Debounce
     private func saveAndReloadWithDebounce(for uuid: UUID) {
         try? modelContext.save()

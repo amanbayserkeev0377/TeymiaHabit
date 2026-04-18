@@ -1,13 +1,5 @@
 import SwiftUI
 
-#if canImport(UIKit)
-import UIKit
-typealias PlatformColor = UIColor
-#elseif canImport(AppKit)
-import AppKit
-typealias PlatformColor = NSColor
-#endif
-
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -34,25 +26,17 @@ extension Color {
     }
     
     func toHex() -> String {
-        // Используем PlatformColor (это либо UIColor, либо NSColor)
-        let components = PlatformColor(self).cgColor.components ?? [0, 0, 0, 1]
+        let resolved = self.resolve(in: .init())
         
-        let r = Float(components[0])
-        let g = Float(components[1])
-        let b = Float(components[2])
-        let a = components.count >= 4 ? Float(components[3]) : Float(1.0)
+        let r = Int(resolved.red * 255)
+        let g = Int(resolved.green * 255)
+        let b = Int(resolved.blue * 255)
+        let a = Int(resolved.opacity * 255)
         
-        if a < 1.0 {
-            return String(format: "#%02X%02X%02X%02X",
-                        Int(round(r * 255)),
-                        Int(round(g * 255)),
-                        Int(round(b * 255)),
-                        Int(round(a * 255)))
+        if resolved.opacity < 1.0 {
+            return String(format: "#%02X%02X%02X%02X", r, g, b, a)
         } else {
-            return String(format: "#%02X%02X%02X",
-                        Int(round(r * 255)),
-                        Int(round(g * 255)),
-                        Int(round(b * 255)))
+            return String(format: "#%02X%02X%02X", r, g, b)
         }
     }
 }

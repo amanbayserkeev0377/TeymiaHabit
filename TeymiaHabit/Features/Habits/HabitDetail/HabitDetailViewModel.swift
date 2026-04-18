@@ -22,15 +22,12 @@ final class HabitDetailViewModel {
     
     // MARK: - UI State
     var alertState = AlertState()
-    var onHabitDeleted: (() -> Void)?
-    var onDataSaved: (() -> Void)?
     
     // MARK: - Displayed date
     private(set) var currentDisplayedDate: Date
     
     // MARK: - Computed Properties
     var isTimerRunning: Bool { timerService.isTimerRunning(for: cachedHabitId) }
-    var canStartTimer: Bool { timerService.canStartNewTimer || isTimerRunning }
     var timerStartTime: Date? { timerService.getTimerStartTime(for: cachedHabitId) }
     var formattedGoal: String { habit.formattedGoal }
     var hasActiveLiveActivity: Bool { habitLiveActivityManager.hasActiveActivity(for: cachedHabitId) }
@@ -80,6 +77,7 @@ final class HabitDetailViewModel {
     // MARK: - Date Management
     func updateDisplayedDate(_ newDate: Date) {
         currentDisplayedDate = newDate
+        uiProgressOverride = nil
         goalSoundPlayed = false
         goalNotificationSent = false
     }
@@ -108,11 +106,11 @@ final class HabitDetailViewModel {
     }
     
     func decrementProgress() {
-        let current = habit.progressForDate(currentDisplayedDate)
-        guard current > 0 else { alertState.errorFeedbackTrigger.toggle(); return }
+        let current = currentProgress
         stopTimerIfNeeded()
         let step = habit.type == .count ? 1 : 60
         let new = max(current - step, 0)
+        uiProgressOverride = new
         saveProgress(new)
         updateLiveActivityIfNeeded(progress: new, timerRunning: false)
     }
@@ -121,14 +119,15 @@ final class HabitDetailViewModel {
         guard !isAlreadyCompleted else { return }
         
         stopTimerAndEndActivity()
+        uiProgressOverride = habit.goal
         saveProgress(habit.goal)
         
-        alertState.successFeedbackTrigger.toggle()
         soundManager.playCompletionSound()
     }
     
     func resetProgress() {
         stopTimerAndEndActivity()
+        uiProgressOverride = 0
         habitService.resetProgress(for: habit, date: currentDisplayedDate, context: modelContext)
         updateLiveActivityIfNeeded(progress: 0, timerRunning: false)
     }
@@ -136,21 +135,19 @@ final class HabitDetailViewModel {
     // MARK: - Timer Actions
     func toggleTimer() {
         guard isTimeHabitToday else { return }
-        isTimerRunning ? stopTimer() : startTimer()
+        
+        if isTimerRunning {
+            stopTimer()
+        } else {
+            startTimer()
+        }
     }
     
     private func startTimer() {
-        guard timerService.canStartNewTimer else {
-            alertState.errorFeedbackTrigger.toggle()
-            return
-        }
         
         let base = habit.progressForDate(currentDisplayedDate)
         goalSoundPlayed = false
         goalNotificationSent = false
-        
-        let ok = timerService.startTimer(for: cachedHabitId, baseProgress: base)
-        guard ok else { alertState.errorFeedbackTrigger.toggle(); return }
         
         Task {
             guard let start = timerStartTime else { return }
@@ -173,32 +170,15 @@ final class HabitDetailViewModel {
      
     // MARK: - Private Helpers
     private func saveProgress(_ value: Int) {
-        let calendar = Calendar.current
-        
-        let toDelete = habit.completions?.filter { calendar.isDate($0.date, inSameDayAs: currentDisplayedDate) } ?? []
-        for item in toDelete {
-            modelContext.delete(item)
-        }
-        
-        if value > 0 {
-            let newCompletion = HabitCompletion(date: currentDisplayedDate, value: value, habit: habit)
-            modelContext.insert(newCompletion)
-        }
+        habitService.saveProgress(value, for: habit, date: currentDisplayedDate, context: modelContext)
         
         saveTask?.cancel()
         saveTask = Task {
             try? await Task.sleep(for: .seconds(0.8))
             guard !Task.isCancelled else { return }
-            
-            do {
-                try modelContext.save()
-                uiProgressOverride = nil
-                widgetService.reloadWidgetsAfterDataChange()
-                onDataSaved?()
-            } catch {
-                print("Failed to save progress: \(error)")
-                uiProgressOverride = nil
-            }
+            try? modelContext.save()
+            uiProgressOverride = nil
+            widgetService.reloadWidgetsAfterDataChange()
         }
     }
     

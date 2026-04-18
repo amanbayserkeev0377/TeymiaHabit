@@ -49,7 +49,8 @@ final class HabitLiveActivityManager {
             habitGoal: habit.goal,
             habitType: habit.type == .time ? .time : .count,
             habitIcon: habit.iconName,
-            habitIconColor: habit.iconColor
+            habitIconColor: habit.iconColor,
+            habitHexColor: habit.hexColor
         )
         
         let initialState = HabitActivityAttributes.ContentState(

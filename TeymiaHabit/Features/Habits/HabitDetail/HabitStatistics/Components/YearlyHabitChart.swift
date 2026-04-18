@@ -153,7 +153,7 @@ struct YearlyHabitChart: View {
     private func barOpacity(for date: Date) -> Double {
         guard let selected = selectedDate else { return 1.0 }
         return (calendar.component(.month, from: date) == calendar.component(.month, from: selected) &&
-                calendar.component(.year,  from: date) == calendar.component(.year,  from: selected)) ? 1.0 : 0.3
+                calendar.component(.year, from: date) == calendar.component(.year, from: selected)) ? 1.0 : 0.3
     }
 
     private func clearSelection() {
@@ -167,20 +167,11 @@ struct YearlyHabitChart: View {
         return String(f.string(from: date).prefix(1)).uppercased()
     }
 
-    private func barColor(for dataPoint: ChartDataPoint) -> AnyShapeStyle {
-        
-        let topColor = habit.iconColor.lightColor
-        let bottomColor = habit.iconColor.darkColor
-        
-        let habitGradient = LinearGradient(
-            colors: [topColor, bottomColor],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    private func barColor(for dataPoint: ChartDataPoint) -> AnyGradient {
         
         return dataPoint.value == 0
-            ? AnyShapeStyle(.appSecondary)
-            : AnyShapeStyle(habitGradient)
+        ? Color.secondary.gradient
+        : habit.actualColor.gradient
     }
 
     // MARK: - Setup

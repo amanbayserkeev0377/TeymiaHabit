@@ -2,8 +2,6 @@ import SwiftUI
 
 struct AlertState: Equatable {
     var isDeleteAlertPresented: Bool = false
-    var successFeedbackTrigger: Bool = false
-    var errorFeedbackTrigger: Bool = false
 }
 
 private struct DeleteSingleHabitAlertModifier: ViewModifier {

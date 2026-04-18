@@ -66,7 +66,7 @@ struct ArchiveView: View {
     @ViewBuilder
     private func archivedHabitRow(_ habit: Habit) -> some View {
         HStack(spacing: 12) {
-            HabitIconView(iconName: habit.iconName, iconColor: habit.iconColor)
+            HabitIconView(iconName: habit.iconName, color: habit.actualColor)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(habit.title)

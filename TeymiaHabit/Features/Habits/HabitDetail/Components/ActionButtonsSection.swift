@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ActionButtonsSection: View {
+    @Environment(HabitService.self) private var habitService
+    
     let habit: Habit
     let date: Date
     let isToday: Bool
@@ -78,6 +80,7 @@ struct ActionButtonsSection: View {
         .glassEffect(.regular.interactive(), in: .circle)
         .popover(isPresented: $isShowingPopover) {
             DayProgressPopover(habit: habit, date: date)
+                .environment(habitService)
                 .presentationCompactAdaptation(.popover)
         }
     }

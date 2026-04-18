@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Model
 final class Habit: Identifiable {
@@ -8,6 +9,7 @@ final class Habit: Identifiable {
     var title: String = ""
     var iconName: String = "book"
     var iconColor: HabitIconColor = HabitIconColor.primary
+    var hexColor: String? = nil
     var type: HabitType = HabitType.count
     var goal: Int = 1
     var activeDaysBitmask: Int = 0b1111111
@@ -21,6 +23,14 @@ final class Habit: Identifiable {
     
     @Relationship(deleteRule: .cascade, inverse: \HabitCompletion.habit)
     var completions: [HabitCompletion]?
+    
+    @Transient
+    var actualColor: Color {
+        if let hex = hexColor {
+            return Color(hex: hex)
+        }
+        return iconColor.baseColor
+    }
     
     // MARK: - Computed Data
     var activeDays: [Bool] {
@@ -63,6 +73,7 @@ final class Habit: Identifiable {
         goal: Int = 1,
         iconName: String,
         iconColor: HabitIconColor = .primary,
+        hexColor: String? = nil,
         createdAt: Date = Date(),
         activeDays: [Bool]? = nil,
         reminderTimes: [Date]? = nil,
@@ -74,6 +85,7 @@ final class Habit: Identifiable {
         self.goal = goal
         self.iconName = iconName
         self.iconColor = iconColor
+        self.hexColor = hexColor
         self.createdAt = createdAt
         self.startDate = Calendar.current.startOfDay(for: startDate)
         
@@ -92,6 +104,7 @@ final class Habit: Identifiable {
         goal: Int,
         iconName: String,
         iconColor: HabitIconColor,
+        hexColor: String?,
         activeDays: [Bool],
         reminderTimes: [Date]?,
         startDate: Date
@@ -101,6 +114,7 @@ final class Habit: Identifiable {
         self.goal = goal
         self.iconName = iconName
         self.iconColor = iconColor
+        self.hexColor = hexColor
         self.activeDays = activeDays
         self.reminderTimes = reminderTimes
         self.startDate = Calendar.current.startOfDay(for: startDate)

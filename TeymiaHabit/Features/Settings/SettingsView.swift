@@ -8,11 +8,11 @@ struct SettingsView: View {
                 Section {
                     AppearanceRow()
 #if !targetEnvironment(macCatalyst)
-                    LanguageRow()
                     AppIconRow()
+                    LanguageRow()
+                    NotificationsRow()
 #endif
                     SoundRow()
-                    NotificationsRow()
                     ArchiveRow()
                 }
                 
@@ -20,67 +20,23 @@ struct SettingsView: View {
             }
             .navigationTitle("settings")
     }
-    
+        
     private struct AppearanceRow: View {
         @AppStorage("themeMode") private var themeMode: ThemeMode = .system
         
         var body: some View {
-            NavigationLink(destination: AppearanceView()) {
-                HStack {
-                    Label(
-                        title: { Text("settings_appearance") },
-                        icon: { RowIcon(iconName: themeMode.iconName) }
-                    )
-                    Spacer()
-                    Text(themeMode.localizedName)
-                        .foregroundStyle(Color.secondary)
+            Picker(selection: $themeMode) {
+                ForEach(ThemeMode.allCases, id: \.self) { mode in
+                    Text(mode.localizedName).tag(mode)
                 }
+            } label: {
+                Label(
+                    title: { Text("settings_appearance") },
+                    icon: { RowIcon(iconName: themeMode.iconName) }
+                )
             }
-        }
-    }
-    
-    private struct LanguageRow: View {
-        var body: some View {
-            Button(action: openAppSettings) {
-                HStack {
-                    Label {
-                        Text("settings_language")
-                            .foregroundStyle(.primary)
-                    } icon: {
-                        RowIcon(iconName: "globe")
-                    }
-                    
-                    Spacer()
-                    
-                    Text(currentLanguage)
-                        .foregroundStyle(.secondary)
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.footnote)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.secondary.opacity(0.5))
-                }
-                .padding(.trailing, 2)
-            }
-        }
-        
-        
-        private func openAppSettings() {
-#if os(iOS)
-            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-            UIApplication.shared.open(url)
-#elseif targetEnvironment(macCatalyst)
-            guard let url = URL(string: "x-apple.systempreferences:com.apple.preference") else { return }
-            NSWorkspace.shared.open(url)
-#endif
-        }
-        
-        private var currentLanguage: String {
-            let languageCode = Bundle.main.preferredLocalizations.first ?? "en"
-            let locale = Locale.current
-            let languageName = locale.localizedString(forLanguageCode: languageCode) ?? languageCode
-            
-            return languageName.capitalized
+            .pickerStyle(.menu)
+            .tint(.secondary)
         }
     }
     
@@ -114,6 +70,43 @@ struct SettingsView: View {
                     icon: { RowIcon(iconName: "archivebox") }
                 )
             }
+        }
+    }
+    
+    private struct LanguageRow: View {
+        var body: some View {
+            Button(action: openAppSettings) {
+                HStack {
+                    Label(
+                        title: { Text("settings_language") },
+                        icon: { RowIcon(iconName: "globe") }
+                    )
+                    
+                    Spacer()
+                    
+                    Text(currentLanguage)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .foregroundStyle(.primary)
+        }
+        
+        private func openAppSettings() {
+#if os(iOS)
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            UIApplication.shared.open(url)
+#elseif targetEnvironment(macCatalyst)
+            guard let url = URL(string: "x-apple.systempreferences:com.apple.preference") else { return }
+            NSWorkspace.shared.open(url)
+#endif
+        }
+        
+        private var currentLanguage: String {
+            let languageCode = Bundle.main.preferredLocalizations.first ?? "en"
+            let locale = Locale.current
+            let languageName = locale.localizedString(forLanguageCode: languageCode) ?? languageCode
+            
+            return languageName.capitalized
         }
     }
 }

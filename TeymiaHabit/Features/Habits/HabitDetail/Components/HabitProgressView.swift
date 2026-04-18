@@ -21,7 +21,7 @@ struct HabitProgressView: View {
                 incrementButton
                 Spacer()
             }
-        .onChange(of: viewModel.currentProgress) { oldValue, newValue in
+        .onChange(of: viewModel.currentProgress) { _, newValue in
             viewModel.checkGoalProgress(newValue)
         }
     }

@@ -8,12 +8,12 @@ struct HabitWidgetTimelineProvider: TimelineProvider {
         HabitWidgetEntry.placeholder
     }
     
-    func getSnapshot(in context: Context, completion: @escaping (HabitWidgetEntry) -> ()) {
+    func getSnapshot(in context: Context, completion: @escaping (HabitWidgetEntry) -> Void) {
         let entry = getCurrentEntry()
         completion(entry)
     }
     
-    func getTimeline(in context: Context, completion: @escaping (Timeline<HabitWidgetEntry>) -> ()) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<HabitWidgetEntry>) -> Void) {
         let currentEntry = getCurrentEntry()
         let nextMidnight = Calendar.current.startOfDay(for: Date().addingTimeInterval(86400))
         
@@ -88,6 +88,7 @@ struct HabitWidgetData: Identifiable {
     let title: String
     let iconName: String
     let iconColor: HabitIconColor
+    let hexColor: String?
     let progress: Double
     let currentValue: Int
     let goal: Int
@@ -95,11 +96,19 @@ struct HabitWidgetData: Identifiable {
     let isExceeded: Bool
     let type: HabitType
     
+    var actualColor: Color {
+        if let hex = hexColor {
+            return Color(hex: hex)
+        }
+        return iconColor.baseColor
+    }
+    
     init(from habit: Habit, date: Date = Date()) {
         self.id = habit.uuid
         self.title = habit.title
         self.iconName = habit.iconName
         self.iconColor = habit.iconColor
+        self.hexColor = habit.hexColor
         self.goal = habit.goal
         self.type = habit.type
         
@@ -120,6 +129,7 @@ struct HabitWidgetData: Identifiable {
         title: String,
         iconName: String,
         iconColor: HabitIconColor,
+        hexColor: String? = nil,
         progress: Double,
         currentValue: Int,
         goal: Int,
@@ -131,6 +141,7 @@ struct HabitWidgetData: Identifiable {
         self.title = title
         self.iconName = iconName
         self.iconColor = iconColor
+        self.hexColor = hexColor
         self.progress = progress
         self.currentValue = currentValue
         self.goal = goal
@@ -279,11 +290,7 @@ struct HabitRingCell: View {
             Circle()
                 .trim(from: 0, to: habit.progress)
                 .stroke(
-                    LinearGradient(
-                        colors: [colors.light, colors.dark],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
+                    habit.actualColor.gradient,
                     style: StrokeStyle(
                         lineWidth: 6.0,
                         lineCap: .round
@@ -293,16 +300,12 @@ struct HabitRingCell: View {
             
             HabitIconView(
                 iconName: habit.iconName,
-                iconColor: habit.iconColor,
+                color: habit.actualColor,
                 size: size * 0.4,
                 showBackground: false
             )
         }
         .frame(width: size, height: size)
-    }
-    
-    private var colors: (dark: Color, light: Color) {
-        (habit.iconColor.darkColor, habit.iconColor.lightColor)
     }
 }
 

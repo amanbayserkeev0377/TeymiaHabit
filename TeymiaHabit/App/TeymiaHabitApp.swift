@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftData
 import UserNotifications
-import RevenueCat
 
 @main
 struct TeymiaHabitApp: App {

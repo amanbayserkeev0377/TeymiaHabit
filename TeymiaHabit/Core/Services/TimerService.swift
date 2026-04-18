@@ -116,10 +116,8 @@ final class TimerService {
         let now = Date()
         var staleTimers: [String] = []
         
-        for (habitId, timerData) in activeTimers {
-            if !calendar.isDate(timerData.startTime, inSameDayAs: now) {
-                staleTimers.append(habitId)
-            }
+        for (habitId, timerData) in activeTimers where !calendar.isDate(timerData.startTime, inSameDayAs: now) {
+            staleTimers.append(habitId)
         }
         
         for habitId in staleTimers {

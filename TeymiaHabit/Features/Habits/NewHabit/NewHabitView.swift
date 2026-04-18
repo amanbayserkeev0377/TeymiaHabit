@@ -15,7 +15,6 @@ struct NewHabitView: View {
         self.habit = habit
     }
     
-    
     // MARK: - Body
     
     var body: some View {
@@ -32,7 +31,11 @@ struct NewHabitView: View {
                             } icon: { RowIcon(iconName: "pencil") }
                             
                             NavigationLink {
-                                IconPickerView(selectedIcon: $vm.selectedIcon, selectedColor: $vm.selectedIconColor)
+                                IconPickerView(
+                                    selectedIcon: $vm.selectedIcon,
+                                    selectedColor: $vm.selectedIconColor,
+                                    hexColor: $vm.selectedHexColor
+                                )
                             } label: {
                                 HStack {
                                     Label { Text("icon") }
@@ -42,9 +45,7 @@ struct NewHabitView: View {
                                     
                                     Image(systemName: vm.selectedIcon)
                                         .font(.system(size: 20))
-                                        .foregroundStyle(
-                                            LinearGradient(colors: [vm.selectedIconColor.lightColor, vm.selectedIconColor.darkColor], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                        )
+                                        .foregroundStyle(vm.actualColor)
                                 }
                             }
                         }

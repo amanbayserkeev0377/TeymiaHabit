@@ -5,6 +5,7 @@ struct IconPickerView: View {
     // MARK: - Bindings
     @Binding var selectedIcon: String
     @Binding var selectedColor: HabitIconColor
+    @Binding var hexColor: String?
     @State private var searchText: String = ""
     
     // MARK: - Layout Constants
@@ -13,18 +14,15 @@ struct IconPickerView: View {
         static let strokeWidth: CGFloat = 1.5
         static let selectedScale: CGFloat = 1.15
         static let gridSpacing: CGFloat = 14
-        static let sectionSpacing: CGFloat = 18
         static let verticalPadding: CGFloat = 16
         static let horizontalPadding: CGFloat = 16
     }
     
-    // Grid Configuration
-    private let columns = Array (
+    private let columns = Array(
         repeating: GridItem(.flexible(), spacing: Layout.gridSpacing), count: 6
     )
     
-    // MARK: - ICONS
-    
+    // MARK: - Icons
     private let icons: [String] = [
         "figure.walk", "figure.walk.motion", "figure.run", "figure.badminton", "figure.baseball", "figure.basketball",
         "figure.bowling", "figure.boxing", "figure.cooldown", "figure.core.training", "figure.cricket", "figure.cross.training",
@@ -57,37 +55,10 @@ struct IconPickerView: View {
         return icons.filter { $0.lowercased().contains(query) }
     }
     
-    // MARK: - Gradients
-    private var selectedCircleGradient: LinearGradient {
-        LinearGradient(
-            colors: [selectedColor.lightColor.opacity(0.1), selectedColor.darkColor.opacity(0.1)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    private var unselectedCircleGradient: LinearGradient {
-        LinearGradient(
-            colors: [.appSecondary],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    private var selectedIconGradient: LinearGradient {
-        LinearGradient(
-            colors: [selectedColor.lightColor, selectedColor.darkColor],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    private var unselectedIconGradient: LinearGradient {
-        LinearGradient(
-            colors: [.appPrimary],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+    // Resolved active color for icon highlight
+    private var activeColor: Color {
+        if let hex = hexColor { return Color(hex: hex) }
+        return selectedColor.baseColor
     }
     
     var body: some View {
@@ -106,7 +77,7 @@ struct IconPickerView: View {
             }
         }
         .safeAreaBar(edge: .bottom) {
-            ColorSelectionView(selectedColor: $selectedColor)
+            ColorSelectionView(selectedColor: $selectedColor, hexColor: $hexColor)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 6)
         }
@@ -126,17 +97,11 @@ struct IconPickerView: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(isSelected ? selectedCircleGradient : unselectedCircleGradient)
-                    .overlay(
-                        Circle()
-                            .stroke(selectedIconGradient, lineWidth: Layout.strokeWidth)
-                            .frame(width: Layout.circleSize, height: Layout.circleSize)
-                            .opacity(isSelected ? 1 : 0)
-                    )
+                    .fill(isSelected ? activeColor : .secondary.opacity(0.1))
                 
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                    .foregroundStyle(isSelected ? selectedIconGradient : unselectedIconGradient)
+                    .foregroundStyle(isSelected ? .primaryInverse : .primary)
             }
             .frame(width: Layout.circleSize, height: Layout.circleSize)
             .contentShape(Rectangle())

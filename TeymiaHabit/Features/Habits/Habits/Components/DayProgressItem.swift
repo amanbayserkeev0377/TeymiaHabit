@@ -123,7 +123,7 @@ struct DayProgressItem: View, Equatable {
         
         ZStack {
             Circle()
-                .stroke(Color(.appSecondary), lineWidth: lineWidth)
+                .stroke(.secondary.opacity(0.1), lineWidth: lineWidth)
             
             Circle()
                 .trim(from: 0, to: progress)

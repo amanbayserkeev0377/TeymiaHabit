@@ -8,7 +8,7 @@ extension View {
     }
 }
 
-fileprivate struct ShimmerEffectHelper: ViewModifier {
+private struct ShimmerEffectHelper: ViewModifier {
     var config: ShimmerConfig
     @State private var moveTo: CGFloat = -1.5
 

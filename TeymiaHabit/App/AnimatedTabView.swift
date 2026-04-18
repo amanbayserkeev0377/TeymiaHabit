@@ -22,7 +22,7 @@ struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabCont
             imageViews = $0
         })
         .compositingGroup()
-        .onChange(of: selection) { oldValue, newValue in
+        .onChange(of: selection) { _, newValue in
             let symbolEffects = effects(newValue)
             guard let imageView = imageViews[newValue] else { return }
             
@@ -33,9 +33,9 @@ struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabCont
     }
 }
 
-fileprivate struct ExtractImageViewsFromTabView<Value: AnimatedTabSelectionProtocol>: UIViewRepresentable {
+private struct ExtractImageViewsFromTabView<Value: AnimatedTabSelectionProtocol>: UIViewRepresentable {
     
-    var result: ([Value: UIImageView]) -> ()
+    var result: ([Value: UIImageView]) -> Void
     
     func makeUIView(context: Context) -> some UIView {
         let view = UIView()

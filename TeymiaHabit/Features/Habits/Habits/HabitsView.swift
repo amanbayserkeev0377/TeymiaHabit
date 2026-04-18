@@ -26,7 +26,7 @@ struct HabitsView: View {
                 habitsList
             }
         }
-        .onChange(of: allHabits, initial: true) { oldValue, newValue in
+        .onChange(of: allHabits, initial: true) { _, newValue in
             Task { @MainActor in
                 vm.allBaseHabits = newValue
             }
@@ -75,7 +75,7 @@ struct HabitsView: View {
         .sheet(item: $habitToEdit) { habit in
             NewHabitView(habit: habit)
         }
-        .sheet(item: $selectedHabit) { habit in
+        .fullScreenCover(item: $selectedHabit) { habit in
             HabitDetailView(
                 habit: habit,
                 date: selectedDate,
@@ -110,8 +110,6 @@ struct HabitsView: View {
                 HabitCard(habit: habit, date: selectedDate)
                 .matchedTransitionSource(id: habit.id, in: habitNamespace)
                 .buttonStyle(.plain)
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
                 .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)
                 .onTapGesture { selectedHabit = habit }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {

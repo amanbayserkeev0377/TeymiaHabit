@@ -137,20 +137,9 @@ struct HabitDetailView: View {
             .foregroundStyle(.primaryInverse)
             .frame(maxWidth: .infinity, minHeight: 52)
             .contentShape(.capsule)
-            .background(
-                LinearGradient(
-                    colors: [
-                        habit.iconColor.lightColor,
-                        habit.iconColor.darkColor
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                in: .capsule
-            )
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: .capsule)
+        .glassEffect(.regular.interactive().tint(.primary), in: .capsule)
         .padding(.horizontal, 24)
     }
     

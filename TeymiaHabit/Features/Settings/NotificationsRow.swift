@@ -22,6 +22,7 @@ struct NotificationsRow: View {
                 }
             )
         }
+        .tint(.green)
         .alert("alert_notifications_permission", isPresented: $isPermissionAlertPresented) {
             Button("button_cancel", role: .cancel) { }
             Button("button_settings") { openSettings() }
@@ -52,12 +53,7 @@ struct NotificationsRow: View {
     }
 
     private func openSettings() {
-        #if os(iOS)
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
         UIApplication.shared.open(url)
-        #elseif targetEnvironment(macCatalyst)
-        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") else { return }
-        NSWorkspace.shared.open(url)
-        #endif
     }
 }

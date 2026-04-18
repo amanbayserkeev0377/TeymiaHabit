@@ -35,7 +35,7 @@ struct MainTabView: View {
                 NavigationSplitView {
                     SettingsView()
                 } detail: {
-                    Image(systemName: "gearshape")
+                    SoundView()
                 }
             }
         } effects: { tab in
@@ -46,6 +46,7 @@ struct MainTabView: View {
             }
         }
         .preferredColorScheme(themeMode.colorScheme)
+        .tabBarMinimizeBehavior(.onScrollDown)
     }
 }
 

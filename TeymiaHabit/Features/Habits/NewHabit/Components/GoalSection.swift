@@ -75,7 +75,7 @@ struct GoalSection: View {
                                 updateHoursAndMinutesFromTimeDate()
                             }
                     }
-                } icon : {
+                } icon: {
                     Image(systemName: "clock.arrow.trianglehead.clockwise.rotate.90.path.dotted")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.secondary)

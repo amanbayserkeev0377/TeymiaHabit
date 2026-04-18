@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Observable @MainActor
 final class NewHabitViewModel {
@@ -20,7 +21,13 @@ final class NewHabitViewModel {
     var startDate = Date()
     var selectedIcon: String = "book.fill"
     var selectedIconColor: HabitIconColor = .primary
+    var selectedHexColor: String? = nil
     var onSaveCompletion: (() -> Void)?
+    
+    var actualColor: Color {
+        if let hex = selectedHexColor { return Color(hex: hex) }
+        return selectedIconColor.baseColor
+    }
     
     init(
         modelContext: ModelContext,
@@ -52,6 +59,7 @@ final class NewHabitViewModel {
         startDate = habit.startDate
         selectedIcon = habit.iconName
         selectedIconColor = habit.iconColor
+        selectedHexColor = habit.hexColor
     }
     
     var isFormValid: Bool {
@@ -92,6 +100,7 @@ final class NewHabitViewModel {
                 goal: effectiveGoal,
                 iconName: selectedIcon,
                 iconColor: selectedIconColor,
+                hexColor: selectedHexColor,
                 activeDays: activeDays,
                 reminderTimes: isReminderEnabled ? reminderTimes : nil,
                 startDate: Calendar.current.startOfDay(for: startDate)
@@ -104,6 +113,7 @@ final class NewHabitViewModel {
                 goal: effectiveGoal,
                 iconName: selectedIcon,
                 iconColor: selectedIconColor,
+                hexColor: selectedHexColor,
                 createdAt: Date(),
                 activeDays: activeDays,
                 reminderTimes: isReminderEnabled ? reminderTimes : nil,

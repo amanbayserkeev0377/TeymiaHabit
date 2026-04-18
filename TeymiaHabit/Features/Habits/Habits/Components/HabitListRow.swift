@@ -24,7 +24,7 @@ struct HabitListRow: View {
             return tempValue
         }
         
-        let _ = timerService.updateTrigger
+        _ = timerService.updateTrigger
         
         if isTimerActive {
             return timerService.getLiveProgress(for: habit.uuid.uuidString) ?? habit.progressForDate(date)
@@ -40,7 +40,7 @@ struct HabitListRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            HabitIconView(iconName: habit.iconName, iconColor: habit.iconColor)
+            HabitIconView(iconName: habit.iconName, color: habit.actualColor)
             
             // Title + Progress
             VStack(alignment: .leading, spacing: 4) {
@@ -50,7 +50,7 @@ struct HabitListRow: View {
                 Text("\(habit.formatProgress(cardProgress)) / \(habit.formattedGoal)")
                     .font(.subheadline)
             }
-            .foregroundStyle(Color.primary.gradient)
+            .foregroundStyle(.primary)
             .lineLimit(1)
             
             Spacer()
@@ -71,7 +71,8 @@ struct HabitListRow: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(8)
+        .padding(2)
+        .contentShape(.rect)
         .onChange(of: timerService.updateTrigger) { _, _ in
             if isTimerActive {
                 vm.checkCompletionForActiveTimer(habit, date: date)
@@ -79,7 +80,6 @@ struct HabitListRow: View {
         }
     }
 }
-    
     
     // MARK: - Habit Card
     
@@ -96,11 +96,9 @@ struct HabitListRow: View {
         
         var body: some View {
             HabitListRow(habit: habit, date: date)
-//                .padding(6)
-                .contentShape(.capsule)
-                .contentShape(.dragPreview, .capsule)
-                .contentShape(.contextMenuPreview, .capsule)
-                .glassEffect(.regular.interactive(false), in: .capsule)
+//                .contentShape(.capsule)
+//                .contentShape(.dragPreview, .capsule)
+//                .contentShape(.contextMenuPreview, .capsule)
                 .contextMenu {
                     skipButton
                     editButton

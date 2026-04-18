@@ -23,6 +23,14 @@ struct HabitActivityAttributes: ActivityAttributes {
     let habitType: HabitActivityType
     let habitIcon: String
     let habitIconColor: HabitIconColor
+    let habitHexColor: String?
+    
+    var actualColor: Color {
+        if let hex = habitHexColor {
+            return Color(hex: hex)
+        }
+        return habitIconColor.baseColor
+    }
 }
 
 #else
@@ -49,26 +57,20 @@ struct HabitActivityAttributes {
 // MARK: - Shared Types
 
 enum HabitActivityType: String, Codable, CaseIterable {
-    case count = "count"
-    case time = "time"
-    
-    var displayName: String {
-        switch self {
-        case .count: return "Count"
-        case .time: return "Time"
-        }
+    case count
+    case time
+
+    var localizedName: LocalizedStringResource {
+        LocalizedStringResource(String.LocalizationValue(self.rawValue))
     }
 }
 
 enum WidgetAction: String, CaseIterable {
-    case toggleTimer = "toggleTimer"
-    case dismissActivity = "dismissActivity"
+    case toggleTimer
+    case dismissActivity
     
-    var displayName: String {
-        switch self {
-        case .toggleTimer: return "Toggle Timer"
-        case .dismissActivity: return "Dismiss Activity"
-        }
+    var localizedName: LocalizedStringResource {
+        LocalizedStringResource(String.LocalizationValue(self.rawValue))
     }
 }
 
@@ -120,7 +122,7 @@ struct LiveActivityHabitIcon: View {
     var body: some View {
         HabitIconView(
             iconName: context.attributes.habitIcon,
-            iconColor: context.attributes.habitIconColor,
+            color: context.attributes.actualColor,
             size: size
         )
     }
