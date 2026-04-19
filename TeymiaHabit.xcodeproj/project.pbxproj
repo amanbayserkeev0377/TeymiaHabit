@@ -68,12 +68,13 @@
 		077FAE882E12E028007790C5 /* Exceptions for "TeymiaHabit" folder in "liveactivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Core/Extensions/Color+Hex.swift",
+				Core/Extensions/TimeFormatting.swift,
 				Core/Models/HabitIconColor.swift,
-				"Extensions/Color+Hex.swift",
-				Extensions/TimeFormatting.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
-				Shared/Logic/LiveActivityTypes.swift,
+				Shared/LiveActivityState.swift,
+				Shared/LiveActivityTypes.swift,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 		};
@@ -87,14 +88,14 @@
 		07EA6CE42E31E31A00171765 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabitWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Core/Extensions/Calendar+Extensions.swift",
+				"Core/Extensions/Color+Hex.swift",
+				Core/Extensions/TimeFormatting.swift,
 				Core/Models/Habit.swift,
 				Core/Models/HabitCompletion.swift,
 				Core/Models/HabitIconColor.swift,
 				Core/Models/HabitType.swift,
-				Core/Models/Weekday.swift,
-				"Extensions/Calendar+Extensions.swift",
-				"Extensions/Color+Hex.swift",
-				Extensions/TimeFormatting.swift,
+				Core/Utilities/Weekday.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
 			);
@@ -604,8 +605,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -652,8 +653,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;

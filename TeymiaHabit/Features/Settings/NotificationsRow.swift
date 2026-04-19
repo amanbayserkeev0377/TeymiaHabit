@@ -22,7 +22,6 @@ struct NotificationsRow: View {
                 }
             )
         }
-        .tint(.green)
         .alert("alert_notifications_permission", isPresented: $isPermissionAlertPresented) {
             Button("button_cancel", role: .cancel) { }
             Button("button_settings") { openSettings() }

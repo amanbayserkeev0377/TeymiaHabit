@@ -5,8 +5,6 @@ struct HabitDetailView: View {
     let habit: Habit
     let date: Date
     
-    @Environment(HabitService.self) private var habitService
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
     @State private var viewModel: HabitDetailViewModel
@@ -38,7 +36,10 @@ struct HabitDetailView: View {
                 .deleteSingleHabitAlert(
                     isPresented: $viewModel.alertState.isDeleteAlertPresented,
                     habitName: habit.title,
-                    onDelete: deleteHabit
+                    onDelete: {
+                        viewModel.deleteHabit()
+                        dismiss()
+                    }
                 )
                 .id(habit.uuid.uuidString)
                 .onDisappear {
@@ -99,7 +100,8 @@ struct HabitDetailView: View {
             }
             
             Button {
-                archiveHabit()
+                vm.archiveHabit()
+                dismiss()
             } label: {
                 Label("archive", systemImage: "archivebox")
             }
@@ -139,22 +141,7 @@ struct HabitDetailView: View {
             .contentShape(.capsule)
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular.interactive().tint(.primary), in: .capsule)
+        .glassEffect(.regular.interactive().tint(habit.actualColor), in: .capsule)
         .padding(.horizontal, 24)
-    }
-    
-    // MARK: - Actions
-    private func archiveHabit() {
-        habitService.archive(habit, context: modelContext)
-        dismiss()
-    }
-    
-    private func deleteHabit() {
-        viewModel.prepareForDeletion()
-        dismiss()
-        Task {
-            try? await Task.sleep(for: .milliseconds(300))
-            habitService.delete(habit, context: modelContext)
-        }
     }
 }

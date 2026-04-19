@@ -22,7 +22,7 @@ struct MainTabView: View {
                 }
             }
             
-            // Tasks
+            // Statistics
             Tab.init(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage, value: .tasks) {
                 NavigationStack {
 //                    StatisticsView()

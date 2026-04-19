@@ -1,8 +1,31 @@
 import Foundation
 import SwiftData
 
+// MARK: - Protocol
+@MainActor
+protocol HabitServiceProtocol {
+    // Progress
+    @discardableResult
+    func completeHabit(for habit: Habit, date: Date, context: ModelContext) -> Bool
+    @discardableResult
+    func addProgress(_ delta: Int, to habit: Habit, date: Date, context: ModelContext) -> Bool
+    @discardableResult
+    func updateProgress(to newValue: Int, for habit: Habit, date: Date, context: ModelContext) -> Bool
+    func saveProgress(_ value: Int, for habit: Habit, date: Date, context: ModelContext)
+    func resetProgress(for habit: Habit, date: Date, context: ModelContext)
+    
+    // Skip
+    func skipDate(_ date: Date, for habit: Habit, context: ModelContext)
+    func unskipDate(_ date: Date, for habit: Habit, context: ModelContext)
+    
+    // Lifecycle
+    func archive(_ habit: Habit, context: ModelContext)
+    func unarchive(_ habit: Habit, context: ModelContext)
+    func delete(_ habit: Habit, context: ModelContext)
+}
+
 @Observable @MainActor
-final class HabitService {
+final class HabitService: HabitServiceProtocol {
     private let widgetService: WidgetService
     
     init(widgetService: WidgetService) {

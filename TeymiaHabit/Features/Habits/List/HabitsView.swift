@@ -69,7 +69,7 @@ struct HabitsView: View {
             }
         }
         .sheet(isPresented: $showingNewHabit) {
-            NewHabitView()
+            NewHabitView(habit: nil)
                 .presentationSizing(.page)
         }
         .sheet(item: $habitToEdit) { habit in
@@ -107,7 +107,9 @@ struct HabitsView: View {
             .listRowSeparator(.hidden)
             
             ForEach(vm.activeHabits(for: selectedDate)) { habit in
-                HabitCard(habit: habit, date: selectedDate)
+                HabitCard(habit: habit, date: selectedDate, onEdit: {
+                    habitToEdit = habit
+                })
                 .matchedTransitionSource(id: habit.id, in: habitNamespace)
                 .buttonStyle(.plain)
                 .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)

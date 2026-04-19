@@ -7,7 +7,7 @@ final class HabitDetailViewModel {
     // MARK: - Dependencies
     private let habit: Habit
     private let modelContext: ModelContext
-    private let habitService: HabitService
+    private let habitService: any HabitServiceProtocol
     private let timerService: TimerService
     private let widgetService: WidgetService
     private let notificationManager: NotificationManager
@@ -206,5 +206,19 @@ final class HabitDetailViewModel {
     
     func prepareForDeletion() {
         saveTask?.cancel()
+    }
+    
+    // MARK: - Delete and Archive
+    
+   func deleteHabit() {
+        prepareForDeletion()
+        Task {
+            try? await Task.sleep(for: .milliseconds(300))
+            habitService.delete(habit, context: modelContext)
+        }
+    }
+    
+    func archiveHabit() {
+        habitService.archive(habit, context: modelContext)
     }
 }

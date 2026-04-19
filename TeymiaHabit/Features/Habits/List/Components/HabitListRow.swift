@@ -71,8 +71,7 @@ struct HabitListRow: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(2)
-        .contentShape(.rect)
+        .padding(4)
         .onChange(of: timerService.updateTrigger) { _, _ in
             if isTimerActive {
                 vm.checkCompletionForActiveTimer(habit, date: date)
@@ -88,17 +87,15 @@ struct HabitListRow: View {
         
         let habit: Habit
         let date: Date
+        var onEdit: () -> Void
         
-        @State private var isEditPresented = false
         @State private var showDeleteAlert = false
         
         private var isSkipped: Bool { habit.isSkipped(on: date) }
         
         var body: some View {
             HabitListRow(habit: habit, date: date)
-//                .contentShape(.capsule)
-//                .contentShape(.dragPreview, .capsule)
-//                .contentShape(.contextMenuPreview, .capsule)
+                .contentShape(.rect)
                 .contextMenu {
                     skipButton
                     editButton
@@ -126,7 +123,7 @@ struct HabitListRow: View {
         }
         
         private var editButton: some View {
-            Button { isEditPresented = true } label: {
+            Button { onEdit() } label: {
                 Label("button_edit", systemImage: "pencil")
             }
             .tint(.primary)

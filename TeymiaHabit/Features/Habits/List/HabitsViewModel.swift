@@ -1,11 +1,10 @@
-import Foundation
 import SwiftData
 import SwiftUI
 
 @Observable @MainActor
 final class HabitsViewModel {
     private let modelContext: ModelContext
-    private let habitService: HabitService
+    private let habitService: any HabitServiceProtocol
     private let soundManager: SoundManager
     private let timerService: TimerService
     private(set) var widgetService: WidgetService
@@ -16,7 +15,7 @@ final class HabitsViewModel {
     
     init(
         modelContext: ModelContext,
-        habitService: HabitService,
+        habitService: any HabitServiceProtocol,
         notificationManager: NotificationManager,
         soundManager: SoundManager,
         widgetService: WidgetService,
