@@ -52,7 +52,9 @@ struct NotificationsRow: View {
     }
 
     private func openSettings() {
+        #if os(iOS)
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
         UIApplication.shared.open(url)
+        #endif
     }
 }

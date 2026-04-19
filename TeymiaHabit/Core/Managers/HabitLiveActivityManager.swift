@@ -1,47 +1,27 @@
-#if !targetEnvironment(macCatalyst)
-import ActivityKit
-#endif
-
-import Foundation
 import SwiftData
 import SwiftUI
 
+#if os(iOS)
+import ActivityKit
+
 @Observable @MainActor
 final class HabitLiveActivityManager {
-    
-    #if !targetEnvironment(macCatalyst)
     private var activeActivities: [String: Activity<HabitActivityAttributes>] = [:]
-    #endif
     
     init() {}
     
     // MARK: - Public Interface
     
-    func startActivity(
-        for habit: Habit,
-        currentProgress: Int,
-        timerStartTime: Date
-    ) async {
-        #if !targetEnvironment(macCatalyst)
-        guard habit.type == .time else {
-            return
-        }
-        
+    func startActivity(for habit: Habit, currentProgress: Int, timerStartTime: Date) async {
+        guard habit.type == .time else { return }
         let habitId = habit.uuid.uuidString
         
         if activeActivities[habitId] != nil {
-            await updateActivity(
-                for: habitId,
-                currentProgress: currentProgress,
-                isTimerRunning: true,
-                timerStartTime: timerStartTime
-            )
+            await updateActivity(for: habitId, currentProgress: currentProgress, isTimerRunning: true, timerStartTime: timerStartTime)
             return
         }
         
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            return
-        }
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         
         let attributes = HabitActivityAttributes(
             habitId: habitId,
@@ -60,37 +40,18 @@ final class HabitLiveActivityManager {
             lastUpdateTime: Date()
         )
         
-        let activityContent = ActivityContent(
-            state: initialState,
-            staleDate: Date().addingTimeInterval(30)
-        )
+        let activityContent = ActivityContent(state: initialState, staleDate: Date().addingTimeInterval(30))
         
         do {
-            let activity = try Activity.request(
-                attributes: attributes,
-                content: activityContent,
-                pushType: nil
-            )
-            
+            let activity = try Activity.request(attributes: attributes, content: activityContent, pushType: nil)
             activeActivities[habitId] = activity
-            
         } catch {
-            // Silently handle Live Activity creation failures
-            // Common causes: user disabled Live Activities, too many active activities
+            print("Live Activity error: \(error)")
         }
-        #endif
     }
     
-    func updateActivity(
-        for habitId: String,
-        currentProgress: Int,
-        isTimerRunning: Bool,
-        timerStartTime: Date?
-    ) async {
-        #if !targetEnvironment(macCatalyst)
-        guard let activity = activeActivities[habitId] else {
-            return
-        }
+    func updateActivity(for habitId: String, currentProgress: Int, isTimerRunning: Bool, timerStartTime: Date?) async {
+        guard let activity = activeActivities[habitId] else { return }
         
         let updatedState = HabitActivityAttributes.ContentState(
             currentProgress: currentProgress,
@@ -99,90 +60,54 @@ final class HabitLiveActivityManager {
             lastUpdateTime: Date()
         )
         
-        let activityContent = ActivityContent(
-            state: updatedState,
-            staleDate: Date().addingTimeInterval(30)
-        )
-        
-        await activity.update(activityContent)
-        #endif
+        await activity.update(ActivityContent(state: updatedState, staleDate: Date().addingTimeInterval(30)))
     }
     
     func endActivity(for habitId: String) async {
-        #if !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[habitId] else { return }
-        
-        let finalContent = ActivityContent(
-            state: activity.content.state,
-            staleDate: Date()
-        )
-        
-        await activity.end(finalContent, dismissalPolicy: .immediate)
+        await activity.end(ActivityContent(state: activity.content.state, staleDate: Date()), dismissalPolicy: .immediate)
         activeActivities.removeValue(forKey: habitId)
-        #endif
     }
     
     func endAllActivities() async {
-        #if !targetEnvironment(macCatalyst)
         for (_, activity) in activeActivities {
-            let finalContent = ActivityContent(
-                state: activity.content.state,
-                staleDate: Date()
-            )
-            await activity.end(finalContent, dismissalPolicy: .immediate)
+            await activity.end(nil, dismissalPolicy: .immediate)
         }
         activeActivities.removeAll()
-        #endif
     }
     
     func hasActiveActivity(for habitId: String) -> Bool {
-        #if !targetEnvironment(macCatalyst)
-        return activeActivities[habitId]?.activityState == .active
-        #else
-        return false
-        #endif
+        activeActivities[habitId]?.activityState == .active
     }
     
-    var totalActiveActivities: Int {
-        #if !targetEnvironment(macCatalyst)
-        return activeActivities.count
-        #else
-        return 0
-        #endif
-    }
+    var totalActiveActivities: Int { activeActivities.count }
     
-    // MARK: - Activity State Access
-    
-    func getActiveHabitIds() -> [String] {
-        #if !targetEnvironment(macCatalyst)
-        return Array(activeActivities.keys)
-        #else
-        return []
-        #endif
-    }
+    func getActiveHabitIds() -> [String] { Array(activeActivities.keys) }
     
     func getActivityState(for habitId: String) -> HabitActivityAttributes.ContentState? {
-        #if !targetEnvironment(macCatalyst)
-        return activeActivities[habitId]?.content.state
-        #else
-        return nil
-        #endif
+        activeActivities[habitId]?.content.state
     }
-    
-    // MARK: - App Launch Restoration
     
     func restoreActiveActivitiesIfNeeded() async {
-        #if !targetEnvironment(macCatalyst)
-        let activities = Activity<HabitActivityAttributes>.activities
-        
-        // Clear current state
         activeActivities.removeAll()
-        
-        // Restore all active activities
-        for activity in activities {
-            let habitId = activity.attributes.habitId
-            activeActivities[habitId] = activity
+        for activity in Activity<HabitActivityAttributes>.activities {
+            activeActivities[activity.attributes.habitId] = activity
         }
-        #endif
     }
 }
+
+#else
+@Observable @MainActor
+final class HabitLiveActivityManager {
+    init() {}
+    func startActivity(for habit: Habit, currentProgress: Int, timerStartTime: Date) async {}
+    func updateActivity(for habitId: String, currentProgress: Int, isTimerRunning: Bool, timerStartTime: Date?) async {}
+    func endActivity(for habitId: String) async {}
+    func endAllActivities() async {}
+    func hasActiveActivity(for habitId: String) -> Bool { false }
+    var totalActiveActivities: Int { 0 }
+    func getActiveHabitIds() -> [String] { [] }
+    func getActivityState(for habitId: String) -> Any? { nil }
+    func restoreActiveActivitiesIfNeeded() async {}
+}
+#endif

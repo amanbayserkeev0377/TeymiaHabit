@@ -10,7 +10,7 @@ struct HabitIconView: View {
     
     private var resolvedIcon: String {
         guard let name = iconName else { return fallbackIcon }
-        return UIImage(systemName: name) != nil ? name : fallbackIcon
+        return IconValidator.isValid(systemName: name) ? name : fallbackIcon
     }
     
     var body: some View {

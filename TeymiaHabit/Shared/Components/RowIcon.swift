@@ -7,6 +7,6 @@ struct RowIcon: View {
         Image(systemName: iconName)
             .font(.callout)
             .fontWeight(.medium)
-            .foregroundStyle(.primary)
+            .foregroundStyle(Color.primary)
     }
 }

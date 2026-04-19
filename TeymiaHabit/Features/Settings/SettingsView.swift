@@ -4,10 +4,10 @@ struct SettingsView: View {
     @Environment(AppDependencyContainer.self) private var appContainer
     
     var body: some View {
-            List {
+            Form {
                 Section {
                     AppearanceRow()
-#if !targetEnvironment(macCatalyst)
+#if os(iOS)
                     AppIconRow()
                     LanguageRow()
                     NotificationsRow()
@@ -19,6 +19,7 @@ struct SettingsView: View {
                 AboutSection()
             }
             .navigationTitle("settings")
+            .formStyle(.grouped)
     }
         
     private struct AppearanceRow: View {
@@ -35,7 +36,7 @@ struct SettingsView: View {
                     icon: { RowIcon(iconName: themeMode.iconName) }
                 )
             }
-            .pickerStyle(.menu)
+            .pickerStyle(.automatic)
             .tint(.secondary)
         }
     }
@@ -92,13 +93,13 @@ struct SettingsView: View {
         }
         
         private func openAppSettings() {
-#if os(iOS)
+            #if os(iOS)
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
             UIApplication.shared.open(url)
-#elseif targetEnvironment(macCatalyst)
+            #elseif os(macOS)
             guard let url = URL(string: "x-apple.systempreferences:com.apple.preference") else { return }
             NSWorkspace.shared.open(url)
-#endif
+            #endif
         }
         
         private var currentLanguage: String {

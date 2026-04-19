@@ -20,21 +20,19 @@ struct HabitDetailView: View {
             initialDate: date,
             modelContext: modelContext,
             appContainer: appContainer
-        )
-        )
+        ))
     }
     
     // MARK: - Body
     var body: some View {
         NavigationStack {
+            @Bindable var vm = viewModel
             mainContent(vm: viewModel)
                 .navigationTitle(habit.title)
                 .navigationSubtitle("Goal: \(habit.formattedGoal)")
-                .toolbar {
-                    toolbarContent(vm: viewModel)
-                }
+                .toolbar { toolbarContent(vm: viewModel) }
                 .deleteSingleHabitAlert(
-                    isPresented: $viewModel.alertState.isDeleteAlertPresented,
+                    isPresented: $vm.alertState.isDeleteAlertPresented,
                     habitName: habit.title,
                     onDelete: {
                         viewModel.deleteHabit()
@@ -42,9 +40,7 @@ struct HabitDetailView: View {
                     }
                 )
                 .id(habit.uuid.uuidString)
-                .onDisappear {
-                    viewModel.prepareForDeletion()
-                }
+                .onDisappear { viewModel.prepareForDeletion() }
                 .onChange(of: date) { _, newDate in
                     viewModel.updateDisplayedDate(newDate)
                 }
@@ -58,7 +54,6 @@ struct HabitDetailView: View {
     }
     
     // MARK: - Content
-    
     @ViewBuilder
     private func mainContent(vm: HabitDetailViewModel) -> some View {
         VStack(spacing: 0) {
@@ -67,24 +62,25 @@ struct HabitDetailView: View {
             Spacer()
             VStack(spacing: 30) {
                 actionButtonsSection(viewModel: vm)
-                completeButtonView(viewModel: vm).disabled(vm.isAlreadyCompleted)
+                completeButtonView(viewModel: vm)
+                    .disabled(vm.isAlreadyCompleted)
             }
             Spacer()
         }
+        .frame(maxWidth: 500, maxHeight: 700)
     }
     
     @ToolbarContentBuilder
     private func toolbarContent(vm: HabitDetailViewModel) -> some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                showingStats = true
-            } label: {
+        CloseToolbarButton(dismiss: { dismiss() })
+        
+        ToolbarItem(placement: .primaryAction) {
+            Button { showingStats = true } label: {
                 Image(systemName: "chart.bar.fill")
             }
             .tint(.primary)
         }
-        
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .primaryAction) {
             menuButton(vm: vm)
         }
     }
@@ -93,26 +89,21 @@ struct HabitDetailView: View {
     @ViewBuilder
     private func menuButton(vm: HabitDetailViewModel) -> some View {
         Menu {
-            Button {
-                isEditPresented = true
-            } label: {
+            Button { isEditPresented = true } label: {
                 Label("button_edit", systemImage: "pencil")
             }
-            
             Button {
                 vm.archiveHabit()
                 dismiss()
             } label: {
                 Label("archive", systemImage: "archivebox")
             }
-            
             Divider()
-            
             Button(role: .destructive) {
                 vm.alertState.isDeleteAlertPresented = true
             } label: {
                 Label("button_delete", systemImage: "trash")
-            }.tint(.red)
+            }
         } label: {
             Image(systemName: "ellipsis")
         }
@@ -132,13 +123,11 @@ struct HabitDetailView: View {
     
     private func completeButtonView(viewModel: HabitDetailViewModel) -> some View {
         Button(action: { viewModel.completeHabit() }) {
-            HStack {
-                Text(viewModel.isAlreadyCompleted ? "completed" : "complete")
-            }
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(.primaryInverse)
-            .frame(maxWidth: .infinity, minHeight: 52)
-            .contentShape(.capsule)
+            Text(viewModel.isAlreadyCompleted ? "completed" : "complete")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(.primaryInverse)
+                .frame(maxWidth: .infinity, minHeight: 52)
+                .contentShape(.capsule)
         }
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive().tint(habit.actualColor), in: .capsule)

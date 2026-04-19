@@ -1,14 +1,10 @@
-#if !targetEnvironment(macCatalyst)
-import ActivityKit
-import WidgetKit
-#endif
-
-import Foundation
 import SwiftUI
 
-// MARK: - Live Activity Attributes
+#if os(iOS)
+import ActivityKit
+import WidgetKit
 
-#if !targetEnvironment(macCatalyst)
+// MARK: - Live Activity Attributes
 struct HabitActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var currentProgress: Int
@@ -35,7 +31,7 @@ struct HabitActivityAttributes: ActivityAttributes {
 
 #else
 
-// Placeholder for mac Catalyst
+// macOS placeholder - no Live Activities support
 struct HabitActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var currentProgress: Int
@@ -50,12 +46,12 @@ struct HabitActivityAttributes {
     let habitType: HabitActivityType
     let habitIcon: String
     let habitIconColor: HabitIconColor
+    let habitHexColor: String?
 }
 
 #endif
 
-// MARK: - Shared Types
-
+// MARK: - Shared Types (все платформы)
 enum HabitActivityType: String, Codable, CaseIterable {
     case count
     case time
@@ -78,7 +74,7 @@ struct WidgetActionNotification {
     let action: WidgetAction
     let habitId: String
     let timestamp: Date
-    let actionId: String // Unique ID to prevent duplicate actions
+    let actionId: String
     
     init(action: WidgetAction, habitId: String) {
         self.action = action
@@ -89,7 +85,6 @@ struct WidgetActionNotification {
 }
 
 // MARK: - Extensions
-
 extension HabitActivityAttributes.ContentState {
     var elapsedSeconds: Int {
         guard let startTime = timerStartTime else { return 0 }
@@ -98,11 +93,6 @@ extension HabitActivityAttributes.ContentState {
     
     var totalTimeSeconds: Int {
         currentProgress + (isTimerRunning ? elapsedSeconds : 0)
-    }
-    
-    var progressPercentage: Double {
-        // Note: Requires goal from attributes for calculation
-        return 0.0
     }
 }
 
@@ -113,8 +103,7 @@ extension Notification.Name {
 }
 
 // MARK: - Live Activity Icon View
-
-#if !targetEnvironment(macCatalyst)
+#if os(iOS)
 struct LiveActivityHabitIcon: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     let size: CGFloat

@@ -27,6 +27,7 @@ struct WeeklyCalendarView: View {
 
     var body: some View {
         VStack(spacing: 6) {
+            #if os(iOS)
             HStack(spacing: 16) {
                 ForEach(dayHeaders, id: \.self) { day in
                     Text(day)
@@ -39,34 +40,54 @@ struct WeeklyCalendarView: View {
             
             TabView(selection: $currentWeekIndex) {
                 ForEach(Array(weeks.enumerated()), id: \.element.first) { index, week in
-                    HStack(spacing: 16) {
-                        ForEach(week, id: \.self) { date in
-                            let hasHabits = hasActiveHabits(for: date)
-                            let isAvailable = isDateInAvailableRange(date)
-                            let isSelected = calendar.isDate(selectedDate, inSameDayAs: date)
-                            let progress = hasHabits ? (progressData[date] ?? 0) : 0
-                            let showRing = hasHabits && isAvailable
-                            
-                            DayProgressItem(
-                                date: date,
-                                isSelected: isSelected,
-                                progress: progress,
-                                showProgressRing: showRing,
-                                isOverallProgress: true
-                            )
-                            .frame(maxWidth: .infinity)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                handleDateTap(date: date, hasHabits: hasHabits, isAvailable: isAvailable)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .tag(index)
+                    weekRow(week: week)
+                        .tag(index)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 55)
+            
+            #else
+            HStack(spacing: 0) {
+                Button {
+                    withAnimation { currentWeekIndex = max(0, currentWeekIndex - 1) }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .frame(width: 28)
+                }
+                .buttonStyle(.plain)
+                .disabled(currentWeekIndex == 0)
+                
+                VStack(spacing: 6) {
+                    HStack(spacing: 16) {
+                        ForEach(dayHeaders, id: \.self) { day in
+                            Text(day)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(Color.primary.gradient)
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                    
+                    if !weeks.isEmpty, currentWeekIndex < weeks.count {
+                        weekRow(week: weeks[currentWeekIndex], withPadding: false)
+                    }
+                }
+                
+                Button {
+                    withAnimation { currentWeekIndex = min(weeks.count - 1, currentWeekIndex + 1) }
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .frame(width: 28)
+                }
+                .buttonStyle(.plain)
+                .disabled(currentWeekIndex == weeks.count - 1)
+            }
+            .padding(.horizontal, 16)
+            #endif
         }
         .onChange(of: currentWeekIndex) { _, _ in
             loadProgressData()
@@ -86,6 +107,31 @@ struct WeeklyCalendarView: View {
         .onChange(of: completionsData) { _, _ in
             loadProgressData()
         }
+    }
+
+    private func weekRow(week: [Date], withPadding: Bool = true) -> some View {
+        HStack(spacing: 16) {
+            ForEach(week, id: \.self) { date in
+                let hasHabits = hasActiveHabits(for: date)
+                let isAvailable = isDateInAvailableRange(date)
+                let isSelected = calendar.isDate(selectedDate, inSameDayAs: date)
+                let progress = hasHabits ? (progressData[date] ?? 0) : 0
+                
+                DayProgressItem(
+                    date: date,
+                    isSelected: isSelected,
+                    progress: progress,
+                    showProgressRing: hasHabits && isAvailable,
+                    isOverallProgress: true
+                )
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    handleDateTap(date: date, hasHabits: hasHabits, isAvailable: isAvailable)
+                }
+            }
+        }
+        .padding(.horizontal, withPadding ? 16 : 0)
     }
 
     // MARK: - Derived Data

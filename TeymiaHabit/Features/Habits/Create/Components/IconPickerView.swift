@@ -83,7 +83,7 @@ struct IconPickerView: View {
         }
         .animation(.snappy, value: searchText)
         .navigationTitle("icon")
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+        .searchable(text: $searchText)
     }
     
     // MARK: - Private Views

@@ -91,6 +91,7 @@ struct MonthlyCalendarView: View {
     }
     
     private var monthGridContainer: some View {
+        #if os(iOS)
         TabView(selection: $currentMonthIndex) {
             ForEach(months.indices, id: \.self) { index in
                 monthGrid(forIndex: index)
@@ -111,6 +112,21 @@ struct MonthlyCalendarView: View {
             if newValue > 0 { generateCalendarDaysIfNeeded(for: newValue - 1) }
             if newValue < months.count - 1 { generateCalendarDaysIfNeeded(for: newValue + 1) }
         }
+        
+        #else
+        monthGrid(forIndex: currentMonthIndex)
+            .frame(height: 280)
+            .onAppear {
+                generateCalendarDaysIfNeeded(for: currentMonthIndex)
+                cacheCalendarDays(for: currentMonthIndex)
+            }
+            .onChange(of: currentMonthIndex) { _, newValue in
+                generateCalendarDaysIfNeeded(for: newValue)
+                if newValue > 0 { generateCalendarDaysIfNeeded(for: newValue - 1) }
+                if newValue < months.count - 1 { generateCalendarDaysIfNeeded(for: newValue + 1) }
+                cacheCalendarDays(for: newValue)
+            }
+        #endif
     }
     
     private func monthGrid(forIndex index: Int) -> some View {

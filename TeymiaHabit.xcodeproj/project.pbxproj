@@ -69,8 +69,10 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Core/Extensions/Color+Hex.swift",
+				"Core/Extensions/DatePicker+AdaptiveStyle.swift",
 				Core/Extensions/TimeFormatting.swift,
 				Core/Models/HabitIconColor.swift,
+				Core/Utilities/IconValidator.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
 				Shared/LiveActivityState.swift,
@@ -90,11 +92,13 @@
 			membershipExceptions = (
 				"Core/Extensions/Calendar+Extensions.swift",
 				"Core/Extensions/Color+Hex.swift",
+				"Core/Extensions/DatePicker+AdaptiveStyle.swift",
 				Core/Extensions/TimeFormatting.swift,
 				Core/Models/Habit.swift,
 				Core/Models/HabitCompletion.swift,
 				Core/Models/HabitIconColor.swift,
 				Core/Models/HabitType.swift,
+				Core/Utilities/IconValidator.swift,
 				Core/Utilities/Weekday.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,

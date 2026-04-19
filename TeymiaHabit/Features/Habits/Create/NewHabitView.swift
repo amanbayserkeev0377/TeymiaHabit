@@ -39,7 +39,7 @@ struct NewHabitView: View {
     private func habitForm(vm: NewHabitViewModel) -> some View {
         @Bindable var vm = vm
         NavigationStack {
-            List {
+            Form {
                 Section {
                     Label {
                         TextField("habit_name", text: $vm.title)
@@ -83,16 +83,17 @@ struct NewHabitView: View {
                     )
                 }
             }
+            .formStyle(.grouped)
             .navigationTitle(vm.habit == nil ? "create_habit" : "edit_habit")
-            .navigationBarTitleDisplayMode(.inline)
             .scrollDismissesKeyboard(.immediately)
             .toolbar {
-                CloseToolbarButton()
+                CloseToolbarButton(dismiss: { dismiss() })
                 ConfirmationToolbarButton(
                     action: { vm.save() },
                     isDisabled: !vm.isFormValid
                 )
             }
         }
+        .presentationSizing(.page)
     }
 }

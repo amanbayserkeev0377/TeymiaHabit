@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HabitStatisticsView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var statsViewModel: HabitStatsViewModel
     let habit: Habit
     
@@ -13,7 +14,7 @@ struct HabitStatisticsView: View {
         @Bindable var vm = statsViewModel
         
         NavigationStack {
-            List {
+            Form {
                 Section {
                     StreaksView(viewModel: statsViewModel)
                 }
@@ -36,10 +37,11 @@ struct HabitStatisticsView: View {
                 }
                 .listRowInsets(EdgeInsets())
             }
+            .formStyle(.grouped)
             .navigationTitle(habit.title)
             .navigationSubtitle("Goal: \(habit.formattedGoal)")
             .toolbar {
-                CloseToolbarButton()
+                CloseToolbarButton(dismiss: { dismiss() })
             }
         }
     }

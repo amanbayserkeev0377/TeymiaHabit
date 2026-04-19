@@ -20,7 +20,7 @@ struct SoundView: View {
     }
     
     var body: some View {
-        List {
+        Form {
             Section {
                 Picker("", selection: $selectedTab) {
                     ForEach(SoundTab.allCases, id: \.self) { tab in
@@ -28,6 +28,7 @@ struct SoundView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                .frame(maxWidth: 500)
                 .listRowBackground(Color.clear)
             }
             
@@ -37,6 +38,7 @@ struct SoundView: View {
                 notificationSection
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("settings_sounds")
     }
     

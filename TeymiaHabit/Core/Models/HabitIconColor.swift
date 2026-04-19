@@ -1,5 +1,13 @@
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+typealias NativeColor = UIColor
+#elseif canImport(AppKit)
+import AppKit
+typealias NativeColor = NSColor
+#endif
+
 enum HabitIconColor: String, CaseIterable, Codable {
     // MARK: - Basic Colors
     case primary, red, orange, yellow, mint, green, blue, purple
@@ -40,24 +48,37 @@ enum HabitIconColor: String, CaseIterable, Codable {
 }
 
 extension Color {
-    // Returns a lighter variant by adjusting HSB brightness
     func lightened(by amount: CGFloat = 0.2) -> Color {
-        Color(UIColor(self).adjustedBrightness(by: amount))
+        applyAdjustment(factor: amount)
     }
     
-    // Returns a darker variant by adjusting HSB brightness
     func darkened(by amount: CGFloat = 0.2) -> Color {
-        Color(UIColor(self).adjustedBrightness(by: -amount))
+        applyAdjustment(factor: -amount)
+    }
+    
+    private func applyAdjustment(factor: CGFloat) -> Color {
+        #if canImport(UIKit)
+        let native = NativeColor(self)
+        #elseif canImport(AppKit)
+        let native = NativeColor(self)
+        #endif
+        
+        return Color(native.adjustedBrightness(by: factor))
     }
 }
 
-extension UIColor {
-    func adjustedBrightness(by factor: CGFloat) -> UIColor {
+extension NativeColor {
+    func adjustedBrightness(by factor: CGFloat) -> NativeColor {
         var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        guard getHue(&h, saturation: &s, brightness: &b, alpha: &a) else {
-            return self
-        }
-        return UIColor(
+        
+        #if canImport(UIKit)
+        guard getHue(&h, saturation: &s, brightness: &b, alpha: &a) else { return self }
+        #elseif canImport(AppKit)
+        guard let rgbColor = self.usingColorSpace(.deviceRGB) else { return self }
+        rgbColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        #endif
+        
+        return NativeColor(
             hue: h,
             saturation: s,
             brightness: max(0, min(1, b + factor)),

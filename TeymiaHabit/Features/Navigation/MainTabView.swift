@@ -5,6 +5,7 @@ struct MainTabView: View {
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     @Environment(\.modelContext) private var modelContext
     @Environment(NavigationManager.self) private var navManager
+    @Environment(AppDependencyContainer.self) private var appContainer
     
     @State private var selectedDate: Date = .now
     
@@ -15,27 +16,22 @@ struct MainTabView: View {
             // Habits
             Tab.init(AppTab.habits.title, systemImage: AppTab.habits.symbolImage, value: .habits) {
                 NavigationStack {
-                    HabitsView(
-                        selectedDate: $selectedDate,
-                        selectedHabit: $nav.selectedHabit
-                    )
+                    HabitsView(selectedDate: $selectedDate)
                 }
             }
             
             // Statistics
             Tab.init(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage, value: .tasks) {
                 NavigationStack {
-//                    StatisticsView()
+                    //                    StatisticsView()
                     Text("Statistics")
                 }
             }
             
             // Settings
             Tab.init(AppTab.settings.title, systemImage: AppTab.settings.symbolImage, value: .settings) {
-                NavigationSplitView {
+                NavigationStack {
                     SettingsView()
-                } detail: {
-                    SoundView()
                 }
             }
         } effects: { tab in
@@ -46,7 +42,7 @@ struct MainTabView: View {
             }
         }
         .preferredColorScheme(themeMode.colorScheme)
-        .tabBarMinimizeBehavior(.onScrollDown)
+//        .tabBarMinimizeBehavior(.onScrollDown) TODO
     }
 }
 

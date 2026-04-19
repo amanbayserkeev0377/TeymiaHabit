@@ -33,7 +33,7 @@ struct GoalSection: View {
                 Label {
                     HStack {
                         TextField("goalsection_enter_count", text: $countText)
-                            .keyboardType(.numberPad)
+                            .numberKeyboardOnly()
                             .multilineTextAlignment(.leading)
                             .fontWeight(.medium)
                             .fontDesign(.rounded)

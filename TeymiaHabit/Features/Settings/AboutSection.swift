@@ -16,6 +16,7 @@ struct AboutSection: View {
                     icon: { RowIcon(iconName: "star") }
                 )
             }
+            .buttonStyle(.automatic)
             
             // Share App
             ShareLink(item: URL(string: "https://apps.apple.com/app/id6746747903")!) {

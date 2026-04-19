@@ -20,9 +20,10 @@ struct ArchiveView: View {
     @State private var isDeleteSingleAlertPresented = false
     
     var body: some View {
-        List {
+        Form {
             listContent
         }
+        .formStyle(.grouped)
         .navigationTitle("settings_archived_habits")
         .deleteSingleHabitAlert(
             isPresented: $isDeleteSingleAlertPresented,

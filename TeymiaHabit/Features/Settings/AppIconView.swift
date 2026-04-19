@@ -5,7 +5,7 @@ struct AppIconView: View {
     @State private var currentIcon: AppIcon = .main
     
     var body: some View {
-        List {
+        Form {
             Section {
                 ForEach(AppIcon.allCases) { icon in
                     Button {
@@ -27,6 +27,7 @@ struct AppIconView: View {
                 }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("settings_app_icon")
         .onAppear {
             currentIcon = appIconManager.currentIcon

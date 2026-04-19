@@ -52,6 +52,34 @@ struct TeymiaHabitApp: App {
         .onChange(of: scenePhase) { _, newPhase in
             handleScenePhaseChange(newPhase)
         }
+        
+#if os(macOS)
+WindowGroup("habit_detail", id: "habit-detail", for: UUID.self) { $habitId in
+    if let id = habitId,
+       let habit = try? modelContainer.mainContext.fetch(
+        FetchDescriptor<Habit>(predicate: #Predicate { $0.uuid == id })
+       ).first {
+        HabitDetailView(
+            habit: habit,
+            date: Date(),
+            modelContext: modelContainer.mainContext,
+            appContainer: appContainer
+        )
+        .environment(appContainer)
+        .environment(appContainer.navManager)
+        .environment(appContainer.habitsViewModel)
+        .environment(appContainer.notificationManager)
+        .environment(appContainer.soundManager)
+        .environment(appContainer.iconManager)
+        .environment(appContainer.timerService)
+        .environment(appContainer.habitService)
+        .environment(appContainer.widgetService)
+        .environment(appContainer.habitWidgetService)
+        .fontDesign(.rounded)
+    }
+}
+.modelContainer(modelContainer)
+#endif
     }
     
     // MARK: - Lifecycle & Scene Phase
@@ -78,7 +106,7 @@ struct TeymiaHabitApp: App {
     // MARK: - DeepLink Handling
     
     private func handleDeepLink(_ url: URL) {
-        // Парсим URL: teymiahabit://habit/UUID
+        // Parse URL: teymiahabit://habit/UUID
         guard url.scheme == "teymiahabit", url.host == "habit",
               let habitId = url.pathComponents.last,
               let habitUUID = UUID(uuidString: habitId) else { return }

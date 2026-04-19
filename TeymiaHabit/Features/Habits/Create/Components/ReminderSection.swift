@@ -116,14 +116,14 @@ struct ReminderSection: View {
     }
     
     private func openSettings() {
-#if os(iOS)
+        #if os(iOS)
         if let url = URL(string: UIApplication.openSettingsURLString) {
             openURL(url)
         }
-#elseif targetEnvironment(macCatalyst)
+        #elseif os(macOS)
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
-            openURL(url)
+            NSWorkspace.shared.open(url)
         }
-#endif
+        #endif
     }
 }
