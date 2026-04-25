@@ -4,14 +4,13 @@ import UserNotifications
 
 @main
 struct TeymiaHabitApp: App {
+    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     @Environment(\.scenePhase) private var scenePhase
     let modelContainer: ModelContainer
     @State private var appContainer: AppDependencyContainer
     
     init() {
-        #if os(iOS)
         AppFont.configureAppearance()
-        #endif
         
         let schema = Schema([
             Habit.self, HabitCompletion.self
@@ -45,41 +44,36 @@ struct TeymiaHabitApp: App {
                 .environment(appContainer.widgetService)
                 .environment(appContainer.habitWidgetService)
                 .fontDesign(.rounded)
-                .onAppear { setupLiveActivities() }
-                .onOpenURL { url in handleDeepLink(url) }
+                .onAppear {
+                    applyTheme(themeMode)
+                    setupLiveActivities()
+                }
+                .onChange(of: themeMode) { _, newValue in
+                    applyTheme(newValue)
+                }
+                .onOpenURL {
+                    url in handleDeepLink(url)
+                }
         }
         .modelContainer(modelContainer)
         .onChange(of: scenePhase) { _, newPhase in
             handleScenePhaseChange(newPhase)
         }
-        
-#if os(macOS)
-WindowGroup("habit_detail", id: "habit-detail", for: UUID.self) { $habitId in
-    if let id = habitId,
-       let habit = try? modelContainer.mainContext.fetch(
-        FetchDescriptor<Habit>(predicate: #Predicate { $0.uuid == id })
-       ).first {
-        HabitDetailView(
-            habit: habit,
-            date: Date(),
-            modelContext: modelContainer.mainContext,
-            appContainer: appContainer
-        )
-        .environment(appContainer)
-        .environment(appContainer.navManager)
-        .environment(appContainer.habitsViewModel)
-        .environment(appContainer.notificationManager)
-        .environment(appContainer.soundManager)
-        .environment(appContainer.iconManager)
-        .environment(appContainer.timerService)
-        .environment(appContainer.habitService)
-        .environment(appContainer.widgetService)
-        .environment(appContainer.habitWidgetService)
-        .fontDesign(.rounded)
     }
-}
-.modelContainer(modelContainer)
-#endif
+    
+    // MARK: - Theme
+    
+    private func applyTheme(_ mode: ThemeMode) {
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else { return }
+        
+        let style: UIUserInterfaceStyle = switch mode {
+        case .system: .unspecified
+        case .light: .light
+        case .dark: .dark
+        }
+        
+        windowScene.windows.forEach { $0.overrideUserInterfaceStyle = style }
     }
     
     // MARK: - Lifecycle & Scene Phase

@@ -8,10 +8,7 @@ protocol AnimatedTabSelectionProtocol: CaseIterable, Hashable {
 struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabContent<Selection>>: View {
     @Binding var selection: Selection
     @TabContentBuilder<Selection> var content: () -> Content
-    
-    #if os(iOS)
     @State private var imageViews: [Selection: UIImageView] = [:]
-    #endif
     
     var effects: (Selection) -> [any DiscreteSymbolEffect & SymbolEffect]
     
@@ -19,8 +16,6 @@ struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabCont
         TabView(selection: $selection) {
             content()
         }
-        .tint(.appOrange)
-        #if os(iOS)
         .tabViewStyle(.tabBarOnly)
         .background(ExtractImageViewsFromTabView {
             imageViews = $0
@@ -34,12 +29,8 @@ struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabCont
                 imageView.addSymbolEffect(effect, options: .nonRepeating)
             }
         }
-        #endif
     }
 }
-
-#if os(iOS)
-import UIKit
 
 private struct ExtractImageViewsFromTabView<Value: AnimatedTabSelectionProtocol>: UIViewRepresentable {
     var result: ([Value: UIImageView]) -> Void
@@ -88,4 +79,3 @@ fileprivate extension UIView {
         subviews.flatMap { $0.subviews(type: type) }
     }
 }
-#endif

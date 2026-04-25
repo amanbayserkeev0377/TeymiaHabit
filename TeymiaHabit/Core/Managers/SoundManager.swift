@@ -89,7 +89,6 @@ final class SoundManager {
     // MARK: - Private Methods
     
     private func setupAudioSession() {
-        #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(
                 .ambient,
@@ -100,7 +99,6 @@ final class SoundManager {
         } catch {
             // Silent fail for audio session setup
         }
-        #endif
     }
 }
 

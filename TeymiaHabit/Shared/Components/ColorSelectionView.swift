@@ -49,6 +49,7 @@ struct ColorSelectionView: View {
         }
         .frame(height: buttonSize + 36)
         .glassEffect(.regular.interactive(false), in: .capsule)
+        .sensoryFeedback(.selection, trigger: selectedColor)
         .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 4)
         .clipShape(.capsule)
     }

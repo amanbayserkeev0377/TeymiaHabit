@@ -1,53 +1,55 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     @Environment(AppDependencyContainer.self) private var appContainer
+    @State private var showingThemeChange: Bool = false
     
     var body: some View {
-            Form {
-                Section {
-                    AppearanceRow()
-#if os(iOS)
-                    AppIconRow()
-                    LanguageRow()
-                    NotificationsRow()
-#endif
-                    SoundRow()
-                    ArchiveRow()
+            ScrollView {
+                LazyVStack(spacing: 24) {
+                    CustomSection {
+                        AppearanceRow {
+                            showingThemeChange.toggle()
+                        }
+                        CustomDivider()
+                        
+                        AppIconRow()
+                        LanguageRow()
+                        NotificationsRow()
+                        SoundRow()
+                        ArchiveRow()
+                    }
                 }
                 
                 AboutSection()
             }
+            .background(.groupBackground)
             .navigationTitle("settings")
-            .formStyle(.grouped)
+            .sheet(isPresented: $showingThemeChange) {
+                ThemeChangeView()
+                    .presentationDetents([.height(ThemeChangeView.sheetHeight)])
+                    .presentationDragIndicator(.visible)
+            }
     }
         
     private struct AppearanceRow: View {
         @AppStorage("themeMode") private var themeMode: ThemeMode = .system
+        var onTap: () -> Void
         
         var body: some View {
-            Picker(selection: $themeMode) {
-                ForEach(ThemeMode.allCases, id: \.self) { mode in
-                    Text(mode.localizedName).tag(mode)
-                }
-            } label: {
-                Label(
-                    title: { Text("settings_appearance") },
-                    icon: { RowIcon(iconName: themeMode.iconName) }
-                )
-            }
-            .pickerStyle(.automatic)
-            .tint(.secondary)
+            CustomRow(
+                title: "settings_appearance",
+                icon: themeMode.iconName,
+                action: onTap
+            )
         }
     }
     
     private struct AppIconRow: View {
         var body: some View {
             NavigationLink(destination: AppIconView()) {
-                Label(
-                    title: { Text("settings_app_icon") },
-                    icon: { RowIcon(iconName: "app.specular") }
-                )
+                CustomRow(title: "settings_app_icon", icon: "ui-globe")
             }
         }
     }
@@ -93,13 +95,8 @@ struct SettingsView: View {
         }
         
         private func openAppSettings() {
-            #if os(iOS)
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
             UIApplication.shared.open(url)
-            #elseif os(macOS)
-            guard let url = URL(string: "x-apple.systempreferences:com.apple.preference") else { return }
-            NSWorkspace.shared.open(url)
-            #endif
         }
         
         private var currentLanguage: String {

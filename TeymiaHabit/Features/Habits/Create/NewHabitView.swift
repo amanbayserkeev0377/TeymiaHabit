@@ -39,7 +39,7 @@ struct NewHabitView: View {
     private func habitForm(vm: NewHabitViewModel) -> some View {
         @Bindable var vm = vm
         NavigationStack {
-            Form {
+            List {
                 Section {
                     Label {
                         TextField("habit_name", text: $vm.title)
@@ -58,8 +58,9 @@ struct NewHabitView: View {
                             Label { Text("icon") }
                             icon: { RowIcon(iconName: "app.background.dotted") }
                             Spacer()
-                            Image(systemName: vm.selectedIcon)
-                                .font(.system(size: 20))
+                            Image(vm.selectedIcon)
+                                .resizable()
+                                .frame(width: 24, height: 24)
                                 .foregroundStyle(vm.actualColor)
                         }
                     }
@@ -83,8 +84,8 @@ struct NewHabitView: View {
                     )
                 }
             }
-            .formStyle(.grouped)
             .navigationTitle(vm.habit == nil ? "create_habit" : "edit_habit")
+            .navigationBarTitleDisplayMode(.inline)
             .scrollDismissesKeyboard(.immediately)
             .toolbar {
                 CloseToolbarButton(dismiss: { dismiss() })
@@ -94,6 +95,5 @@ struct NewHabitView: View {
                 )
             }
         }
-        .presentationSizing(.page)
     }
 }

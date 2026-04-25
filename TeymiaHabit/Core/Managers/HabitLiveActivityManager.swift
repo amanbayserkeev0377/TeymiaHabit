@@ -1,7 +1,5 @@
 import SwiftData
 import SwiftUI
-
-#if os(iOS)
 import ActivityKit
 
 @Observable @MainActor
@@ -95,19 +93,3 @@ final class HabitLiveActivityManager {
         }
     }
 }
-
-#else
-@Observable @MainActor
-final class HabitLiveActivityManager {
-    init() {}
-    func startActivity(for habit: Habit, currentProgress: Int, timerStartTime: Date) async {}
-    func updateActivity(for habitId: String, currentProgress: Int, isTimerRunning: Bool, timerStartTime: Date?) async {}
-    func endActivity(for habitId: String) async {}
-    func endAllActivities() async {}
-    func hasActiveActivity(for habitId: String) -> Bool { false }
-    var totalActiveActivities: Int { 0 }
-    func getActiveHabitIds() -> [String] { [] }
-    func getActivityState(for habitId: String) -> Any? { nil }
-    func restoreActiveActivitiesIfNeeded() async {}
-}
-#endif

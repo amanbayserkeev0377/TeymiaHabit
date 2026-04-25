@@ -7,17 +7,8 @@ struct HabitsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppDependencyContainer.self) private var appContainer
     @Environment(NavigationManager.self) private var navManager
-    
-    #if os(iOS)
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    private var isCompact: Bool { horizontalSizeClass == .compact }
     @Namespace private var habitNamespace
     @State private var isEditMode: EditMode = .inactive
-    #endif
-    
-#if os(macOS)
-@Environment(\.openWindow) private var openWindow
-#endif
     
     @Binding var selectedDate: Date
     @State private var selectedHabit: Habit?
@@ -45,12 +36,7 @@ struct HabitsView: View {
         .sheet(item: $habitToEdit) { habit in
             NewHabitView(habit: habit)
         }
-        #if os(iOS)
-        .fullScreenCover(isPresented: Binding(
-            get: { selectedHabit != nil && isCompact },
-            set: { if !$0 { selectedHabit = nil } }
-        )) {
-            if let habit = selectedHabit {
+        .fullScreenCover(item: $selectedHabit) { habit in
                 HabitDetailView(
                     habit: habit,
                     date: selectedDate,
@@ -58,31 +44,7 @@ struct HabitsView: View {
                     appContainer: appContainer
                 )
                 .navigationTransition(.zoom(sourceID: habit.id, in: habitNamespace))
-            }
         }
-        .sheet(isPresented: Binding(
-            get: { selectedHabit != nil && !isCompact },
-            set: { if !$0 { selectedHabit = nil } }
-        )) {
-            if let habit = selectedHabit {
-                HabitDetailView(
-                    habit: habit,
-                    date: selectedDate,
-                    modelContext: modelContext,
-                    appContainer: appContainer
-                )
-            }
-        }
-        #else
-        .sheet(item: $selectedHabit) { habit in
-            HabitDetailView(
-                habit: habit,
-                date: selectedDate,
-                modelContext: modelContext,
-                appContainer: appContainer
-            )
-        }
-        #endif
         .onChange(of: navManager.habitToOpen) { _, habit in
             guard let habit else { return }
             selectedHabit = habit
@@ -93,7 +55,6 @@ struct HabitsView: View {
     // MARK: - Toolbar
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        #if os(iOS)
         if !vm.allBaseHabits.isEmpty {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -106,7 +67,6 @@ struct HabitsView: View {
                 }
             }
         }
-        #endif
         
         if !Calendar.current.isDateInToday(selectedDate) {
             ToolbarItem(placement: .primaryAction) {
@@ -129,19 +89,12 @@ struct HabitsView: View {
     
     // MARK: - Habits List
     private var habitsList: some View {
-        #if os(iOS)
         List {
             habitListContent
         }
         .listStyle(.plain)
         .scrollIndicators(.hidden)
         .environment(\.editMode, $isEditMode)
-        #else
-        Form {
-            habitListContent
-        }
-        .formStyle(.grouped)
-        #endif
     }
 
     @ViewBuilder
@@ -157,17 +110,11 @@ struct HabitsView: View {
             HabitCard(habit: habit, date: selectedDate, onEdit: {
                 habitToEdit = habit
             })
-            #if os(iOS)
             .matchedTransitionSource(id: habit.id, in: habitNamespace)
-            #endif
             .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)
             .onTapGesture {
-                #if os(iOS)
                 guard isEditMode != .active else { return }
                 selectedHabit = habit
-                #elseif os(macOS)
-                openWindow(id: "habit-detail", value: habit.uuid)
-                #endif
             }
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 swipeActions(for: habit)
@@ -207,9 +154,7 @@ struct HabitsView: View {
                     .padding(.vertical, 12)
                 }
                 .buttonStyle(.plain)
-                #if os(iOS)
                 .glassEffect(.regular.tint(.primary).interactive(), in: .capsule)
-                #endif
             }
         )
     }

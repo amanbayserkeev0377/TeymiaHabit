@@ -6,11 +6,12 @@ struct HabitIconView: View {
     var size: CGFloat = 20
     var showBackground: Bool = true
     
-    private let fallbackIcon = "checkmark"
+    private let fallbackIcon = "book"
     
     private var resolvedIcon: String {
-        guard let name = iconName else { return fallbackIcon }
-        return IconValidator.isValid(systemName: name) ? name : fallbackIcon
+        guard let name = iconName, !name.isEmpty else { return fallbackIcon }
+        
+        return UIImage(systemName: name) != nil ? name : fallbackIcon
     }
     
     var body: some View {
@@ -20,10 +21,30 @@ struct HabitIconView: View {
                     .fill(color.opacity(0.15))
             }
             
-            Image(systemName: resolvedIcon)
-                .font(.system(size: size))
+            iconImage
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size, height: size)
                 .foregroundStyle(color.gradient)
         }
         .frame(width: size * 2, height: size * 2)
+    }
+    
+    @ViewBuilder
+    private var iconImage: some View {
+        if let name = iconName, !name.isEmpty {
+            if UIImage(named: name) != nil {
+                Image(name)
+                    .resizable()
+            } else if UIImage(systemName: name) != nil {
+                Image(systemName: name)
+                    .font(.system(size: size))
+            } else {
+                Image(systemName: fallbackIcon)
+                    .font(.system(size: size))
+            }
+        } else {
+            Image(systemName: fallbackIcon)
+                .font(.system(size: size))
+        }
     }
 }

@@ -27,7 +27,6 @@ struct WeeklyCalendarView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            #if os(iOS)
             HStack(spacing: 16) {
                 ForEach(dayHeaders, id: \.self) { day in
                     Text(day)
@@ -46,48 +45,6 @@ struct WeeklyCalendarView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 55)
-            
-            #else
-            HStack(spacing: 0) {
-                Button {
-                    withAnimation { currentWeekIndex = max(0, currentWeekIndex - 1) }
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .frame(width: 28)
-                }
-                .buttonStyle(.plain)
-                .disabled(currentWeekIndex == 0)
-                
-                VStack(spacing: 6) {
-                    HStack(spacing: 16) {
-                        ForEach(dayHeaders, id: \.self) { day in
-                            Text(day)
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundStyle(Color.primary.gradient)
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
-                    
-                    if !weeks.isEmpty, currentWeekIndex < weeks.count {
-                        weekRow(week: weeks[currentWeekIndex], withPadding: false)
-                    }
-                }
-                
-                Button {
-                    withAnimation { currentWeekIndex = min(weeks.count - 1, currentWeekIndex + 1) }
-                } label: {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .frame(width: 28)
-                }
-                .buttonStyle(.plain)
-                .disabled(currentWeekIndex == weeks.count - 1)
-            }
-            .padding(.horizontal, 16)
-            #endif
         }
         .onChange(of: currentWeekIndex) { _, _ in
             loadProgressData()

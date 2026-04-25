@@ -1,13 +1,5 @@
 import SwiftUI
 
-#if canImport(UIKit)
-import UIKit
-typealias NativeColor = UIColor
-#elseif canImport(AppKit)
-import AppKit
-typealias NativeColor = NSColor
-#endif
-
 enum HabitIconColor: String, CaseIterable, Codable {
     // MARK: - Basic Colors
     case primary, red, orange, yellow, mint, green, blue, purple
@@ -57,28 +49,18 @@ extension Color {
     }
     
     private func applyAdjustment(factor: CGFloat) -> Color {
-        #if canImport(UIKit)
-        let native = NativeColor(self)
-        #elseif canImport(AppKit)
-        let native = NativeColor(self)
-        #endif
-        
-        return Color(native.adjustedBrightness(by: factor))
+        let uiColor = UIColor(self)
+        return Color(uiColor.adjustedBrightness(by: factor))
     }
 }
 
-extension NativeColor {
-    func adjustedBrightness(by factor: CGFloat) -> NativeColor {
+extension UIColor {
+    func adjustedBrightness(by factor: CGFloat) -> UIColor {
         var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         
-        #if canImport(UIKit)
         guard getHue(&h, saturation: &s, brightness: &b, alpha: &a) else { return self }
-        #elseif canImport(AppKit)
-        guard let rgbColor = self.usingColorSpace(.deviceRGB) else { return self }
-        rgbColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-        #endif
         
-        return NativeColor(
+        return UIColor(
             hue: h,
             saturation: s,
             brightness: max(0, min(1, b + factor)),

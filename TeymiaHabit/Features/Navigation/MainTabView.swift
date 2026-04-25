@@ -41,8 +41,8 @@ struct MainTabView: View {
             case .settings: [.rotate]
             }
         }
-        .preferredColorScheme(themeMode.colorScheme)
-//        .tabBarMinimizeBehavior(.onScrollDown) TODO
+        .tint(.accent)
+        .tabBarMinimizeBehavior(.onScrollDown)
     }
 }
 

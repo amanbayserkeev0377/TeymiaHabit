@@ -72,7 +72,15 @@ struct HabitDetailView: View {
     
     @ToolbarContentBuilder
     private func toolbarContent(vm: HabitDetailViewModel) -> some ToolbarContent {
-        CloseToolbarButton(dismiss: { dismiss() })
+//        CloseToolbarButton(dismiss: { dismiss() })
+        ToolbarItem(placement: .cancellationAction) {
+            Button(role: .close) {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .fontWeight(.semibold)
+            }
+        }
         
         ToolbarItem(placement: .primaryAction) {
             Button { showingStats = true } label: {

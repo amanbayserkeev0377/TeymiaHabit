@@ -1,6 +1,4 @@
 import SwiftUI
-
-#if os(iOS)
 import ActivityKit
 import WidgetKit
 
@@ -28,28 +26,6 @@ struct HabitActivityAttributes: ActivityAttributes {
         return habitIconColor.baseColor
     }
 }
-
-#else
-
-// macOS placeholder - no Live Activities support
-struct HabitActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        var currentProgress: Int
-        var isTimerRunning: Bool
-        var timerStartTime: Date?
-        var lastUpdateTime: Date
-    }
-    
-    let habitId: String
-    let habitName: String
-    let habitGoal: Int
-    let habitType: HabitActivityType
-    let habitIcon: String
-    let habitIconColor: HabitIconColor
-    let habitHexColor: String?
-}
-
-#endif
 
 // MARK: - Shared Types (все платформы)
 enum HabitActivityType: String, Codable, CaseIterable {
@@ -103,7 +79,6 @@ extension Notification.Name {
 }
 
 // MARK: - Live Activity Icon View
-#if os(iOS)
 struct LiveActivityHabitIcon: View {
     let context: ActivityViewContext<HabitActivityAttributes>
     let size: CGFloat
@@ -116,4 +91,3 @@ struct LiveActivityHabitIcon: View {
         )
     }
 }
-#endif

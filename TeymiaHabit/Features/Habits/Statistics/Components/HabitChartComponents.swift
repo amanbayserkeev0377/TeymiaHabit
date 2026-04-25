@@ -35,6 +35,79 @@ func habitChartYAxisValues(for data: [ChartDataPoint], habitType: HabitType) -> 
     return habitType == .time ? values.map { $0 * 3600 } : values
 }
 
+// MARK: - Shared Bar Color Logic
+
+/// Returns the appropriate gradient color for a bar based on habit state
+func habitBarColor(for dataPoint: ChartDataPoint, habit: Habit) -> AnyGradient {
+    if !habit.isActiveOnDate(dataPoint.date) || dataPoint.date > Date() {
+        return Color.secondary.gradient
+    }
+
+    if dataPoint.value == 0 {
+        return Color.secondary.opacity(0.3).gradient
+    }
+
+    if dataPoint.isCompleted || dataPoint.isOverAchieved {
+        return habit.actualColor.gradient
+    } else {
+        return habit.actualColor.opacity(0.8).gradient
+    }
+}
+
+/// Returns opacity based on selection state
+func habitBarOpacity(for date: Date, selected: Date?, calendar: Calendar) -> Double {
+    guard let selected else { return 1.0 }
+    return calendar.isDate(date, inSameDayAs: selected) ? 1.0 : 0.3
+}
+
+// MARK: - Shared Haptic Logic
+
+func shouldPlayChartHaptic(old: Date?, new: Date?, calendar: Calendar) -> Bool {
+    if let old, let new, !calendar.isDate(old, inSameDayAs: new) {
+        return true
+    } else if old == nil && new != nil {
+        return true
+    }
+    return false
+}
+
+// MARK: - Chart Stats Formatting
+
+/// Formats average value from chart data
+func chartAverageFormatted(chartData: [ChartDataPoint], habitType: HabitType) -> String {
+    let active = chartData.filter { $0.value > 0 }
+    guard !active.isEmpty else { return "0" }
+    let avg = active.reduce(0) { $0 + $1.value } / active.count
+    return habitType == .time ? avg.formattedAsChartDuration() : "\(avg)"
+}
+
+/// Formats total value from chart data
+func chartTotalFormatted(chartData: [ChartDataPoint], habitType: HabitType) -> String {
+    let total = chartData.reduce(0) { $0 + $1.value }
+    return habitType == .time ? total.formattedAsChartDuration() : "\(total)"
+}
+
+// MARK: - Chart Container (iOS TabView / macOS static)
+
+/// Platform-adaptive chart container: swipeable TabView on iOS, static on macOS
+struct ChartContainer<Content: View>: View {
+    @Binding var currentIndex: Int
+    let count: Int
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        TabView(selection: $currentIndex) {
+            ForEach(0..<count, id: \.self) { index in
+                content()
+                    .tag(index)
+                    .padding(.horizontal, 16)
+            }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .frame(height: 180)
+    }
+}
+
 // MARK: - Chart Navigation Buttons
 
 struct ChartNavigationButton: View {

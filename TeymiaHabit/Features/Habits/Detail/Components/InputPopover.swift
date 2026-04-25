@@ -36,11 +36,11 @@ struct DayProgressPopover: View {
                     TextField("0", text: $inputText)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
-                        .numberKeyboardOnly()
+                        .keyboardType(.numberPad)
                         .padding(.vertical, 8)
                 } else {
                     DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
-                        .adaptiveWheelStyle()
+                        .datePickerStyle(.wheel)
                         .labelsHidden()
                         .frame(maxHeight: 120)
                 }

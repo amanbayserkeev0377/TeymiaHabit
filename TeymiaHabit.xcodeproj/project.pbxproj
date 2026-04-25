@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E73266642F2C90CD00BFD4EB /* liveactivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 077FAE6E2E12DE7C007790C5 /* liveactivityExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E73266682F2C90D000BFD4EB /* TeymiaHabitWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07EA6CCC2E31DFB800171765 /* TeymiaHabitWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E73266642F2C90CD00BFD4EB /* liveactivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 077FAE6E2E12DE7C007790C5 /* liveactivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E73266682F2C90D000BFD4EB /* TeymiaHabitWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07EA6CCC2E31DFB800171765 /* TeymiaHabitWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,10 +69,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Core/Extensions/Color+Hex.swift",
-				"Core/Extensions/DatePicker+AdaptiveStyle.swift",
 				Core/Extensions/TimeFormatting.swift,
 				Core/Models/HabitIconColor.swift,
-				Core/Utilities/IconValidator.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
 				Shared/LiveActivityState.swift,
@@ -92,13 +90,11 @@
 			membershipExceptions = (
 				"Core/Extensions/Calendar+Extensions.swift",
 				"Core/Extensions/Color+Hex.swift",
-				"Core/Extensions/DatePicker+AdaptiveStyle.swift",
 				Core/Extensions/TimeFormatting.swift,
 				Core/Models/Habit.swift,
 				Core/Models/HabitCompletion.swift,
 				Core/Models/HabitIconColor.swift,
 				Core/Models/HabitType.swift,
-				Core/Utilities/IconValidator.swift,
 				Core/Utilities/Weekday.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
@@ -355,13 +351,11 @@
 /* Begin PBXTargetDependency section */
 		E73266662F2C90CD00BFD4EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 			targetProxy = E73266652F2C90CD00BFD4EB /* PBXContainerItemProxy */;
 		};
 		E732666A2F2C90D000BFD4EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
 			targetProxy = E73266692F2C90D000BFD4EB /* PBXContainerItemProxy */;
 		};
@@ -609,13 +603,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -657,13 +651,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.amanbayserkeev.teymiahabit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
