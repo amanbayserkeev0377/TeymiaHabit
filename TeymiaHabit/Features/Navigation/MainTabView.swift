@@ -41,7 +41,6 @@ struct MainTabView: View {
             case .settings: [.rotate]
             }
         }
-        .tint(.accent)
         .tabBarMinimizeBehavior(.onScrollDown)
     }
 }

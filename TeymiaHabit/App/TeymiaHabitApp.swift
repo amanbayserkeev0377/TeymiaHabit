@@ -10,8 +10,6 @@ struct TeymiaHabitApp: App {
     @State private var appContainer: AppDependencyContainer
     
     init() {
-        AppFont.configureAppearance()
-        
         let schema = Schema([
             Habit.self, HabitCompletion.self
         ])
@@ -44,36 +42,18 @@ struct TeymiaHabitApp: App {
                 .environment(appContainer.widgetService)
                 .environment(appContainer.habitWidgetService)
                 .fontDesign(.rounded)
+                .tint(Color.primary)
                 .onAppear {
-                    applyTheme(themeMode)
                     setupLiveActivities()
                 }
-                .onChange(of: themeMode) { _, newValue in
-                    applyTheme(newValue)
-                }
-                .onOpenURL {
-                    url in handleDeepLink(url)
+                .onOpenURL { url in
+                    handleDeepLink(url)
                 }
         }
         .modelContainer(modelContainer)
         .onChange(of: scenePhase) { _, newPhase in
             handleScenePhaseChange(newPhase)
         }
-    }
-    
-    // MARK: - Theme
-    
-    private func applyTheme(_ mode: ThemeMode) {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else { return }
-        
-        let style: UIUserInterfaceStyle = switch mode {
-        case .system: .unspecified
-        case .light: .light
-        case .dark: .dark
-        }
-        
-        windowScene.windows.forEach { $0.overrideUserInterfaceStyle = style }
     }
     
     // MARK: - Lifecycle & Scene Phase

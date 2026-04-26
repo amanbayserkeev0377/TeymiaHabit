@@ -61,7 +61,7 @@ struct DayProgressPopover: View {
         } label: {
             Text(label)
                 .fontWeight(.medium)
-                .foregroundStyle(.primaryInverse)
+                .foregroundStyle(Color(.systemBackground))
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .contentShape(.capsule)
         }

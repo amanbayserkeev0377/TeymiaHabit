@@ -36,7 +36,7 @@ struct ColorSelectionView: View {
                 .labelsHidden()
                 .overlay(
                     Circle()
-                        .strokeBorder(.primaryInverse, lineWidth: 2)
+                        .strokeBorder(Color(.systemBackground), lineWidth: 2)
                         .frame(width: buttonSize * 0.9, height: buttonSize * 0.9)
                         .opacity(hexColor != nil ? 1 : 0)
                 )
@@ -68,7 +68,7 @@ struct ColorSelectionView: View {
                 .frame(width: buttonSize, height: buttonSize)
                 .overlay(
                     Circle()
-                        .strokeBorder(.primaryInverse, lineWidth: 2)
+                        .strokeBorder(Color(.systemBackground), lineWidth: 2)
                         .frame(width: buttonSize * 0.9, height: buttonSize * 0.9)
                         .opacity(isSelected ? 1 : 0)
                 )

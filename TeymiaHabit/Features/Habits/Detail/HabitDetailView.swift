@@ -133,7 +133,7 @@ struct HabitDetailView: View {
         Button(action: { viewModel.completeHabit() }) {
             Text(viewModel.isAlreadyCompleted ? "completed" : "complete")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(.primaryInverse)
+                .foregroundStyle(Color(.systemBackground))
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .contentShape(.capsule)
         }

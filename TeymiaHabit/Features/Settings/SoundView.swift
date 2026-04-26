@@ -55,6 +55,7 @@ struct SoundView: View {
                         }
                     }
                 ))
+                .tint(Color.toggle)
             }
             
             if soundManager.isSoundEnabled {

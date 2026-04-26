@@ -1,55 +1,52 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
-    @Environment(AppDependencyContainer.self) private var appContainer
+//    @Environment(AppDependencyContainer.self) private var appContainer
     @State private var showingThemeChange: Bool = false
     
     var body: some View {
-            ScrollView {
-                LazyVStack(spacing: 24) {
-                    CustomSection {
-                        AppearanceRow {
-                            showingThemeChange.toggle()
-                        }
-                        CustomDivider()
-                        
-                        AppIconRow()
-                        LanguageRow()
-                        NotificationsRow()
-                        SoundRow()
-                        ArchiveRow()
-                    }
-                }
-                
-                AboutSection()
+        List {
+            Section {
+                AppearanceRow()
+                AppIconRow()
+                NotificationsRow()
+                SoundRow()
+                ArchiveRow()
+                LanguageRow()
             }
-            .background(.groupBackground)
-            .navigationTitle("settings")
-            .sheet(isPresented: $showingThemeChange) {
-                ThemeChangeView()
-                    .presentationDetents([.height(ThemeChangeView.sheetHeight)])
-                    .presentationDragIndicator(.visible)
-            }
+            
+            AboutSection()
+        }
+        .groupBackground()
+        .navigationTitle("settings")
     }
-        
+    
     private struct AppearanceRow: View {
         @AppStorage("themeMode") private var themeMode: ThemeMode = .system
-        var onTap: () -> Void
-        
+            
         var body: some View {
-            CustomRow(
-                title: "settings_appearance",
-                icon: themeMode.iconName,
-                action: onTap
-            )
+            Picker(selection: $themeMode) {
+                ForEach(ThemeMode.allCases, id: \.self) { mode in
+                    Text(mode.localizedName).tag(mode)
+                }
+            } label: {
+                Label(
+                    title: { Text("settings_appearance") },
+                    icon: { RowIcon(iconName: themeMode.iconName) }
+                )
+            }
+            .pickerStyle(.menu)
+            .tint(.secondary)
         }
     }
     
     private struct AppIconRow: View {
         var body: some View {
             NavigationLink(destination: AppIconView()) {
-                CustomRow(title: "settings_app_icon", icon: "ui-globe")
+                Label(
+                    title: { Text("settings_app_icon") },
+                    icon: { RowIcon(iconName: "app.specular") }
+                )
             }
         }
     }
@@ -82,7 +79,7 @@ struct SettingsView: View {
                 HStack {
                     Label(
                         title: { Text("settings_language") },
-                        icon: { RowIcon(iconName: "globe") }
+                        icon: { RowIcon(iconName: "globe.americas.fill") }
                     )
                     
                     Spacer()

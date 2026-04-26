@@ -5,53 +5,41 @@ struct AboutSection: View {
     
     var body: some View {
         Section {
-            // Rate App
-            Button {
-                if let url = URL(string: "https://apps.apple.com/app/id6746747903") {
-                    openURL(url, prefersInApp: true)
-                }
-            } label: {
-                Label(
-                    title: { Text("settings_rate").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(iconName: "star") }
-                )
+            // Rate
+            settingsButton("settings_rate", icon: "star") {
+                openURL(AppConfig.rateAppURL)
             }
-            .buttonStyle(.automatic)
             
-            // Share App
-            ShareLink(item: URL(string: "https://apps.apple.com/app/id6746747903")!) {
-                Label(
-                    title: { Text("settings_share").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(iconName: "square.and.arrow.up") }
-                )
+            // Share
+            ShareLink(item: AppConfig.appStoreURL) {
+                settingsLabel("settings_share", icon: "square.and.arrow.up")
             }
             
             // Privacy Policy
-            Button {
-                if let url = URL(string: "https://www.notion.so/Privacy-Policy-1ffd5178e65a80d4b255fd5491fba4a8") {
-                    openURL(url, prefersInApp: true)
-                }
-            } label: {
-                Label(
-                    title: { Text("settings_privacy_policy").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(iconName: "lock") }
-                )
+            settingsButton("settings_privacy_policy", icon: "lock") {
+                openURL(AppConfig.privacyPolicyURL)
             }
             
             // Terms of Service
-            Button {
-                if let url = URL(string: "https://www.notion.so/Terms-of-Service-204d5178e65a80b89993e555ffd3511f") {
-                    openURL(url, prefersInApp: true)
-                }
-            } label: {
-                Label(
-                    title: { Text("settings_tos").foregroundStyle(Color.primary) },
-                    icon: { RowIcon(iconName: "document") }
-                )
+            settingsButton("settings_tos", icon: "document") {
+                openURL(AppConfig.termsOfServiceURL)
             }
         } footer: {
-            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "2.1"
-            Text("Teymia Habit \(version)")
+            Text("Teymia Habit \(Bundle.main.appVersion)")
+        }
+    }
+    
+    private func settingsButton(_ title: LocalizedStringKey, icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            settingsLabel(title, icon: icon)
+        }
+    }
+    
+    private func settingsLabel(_ title: LocalizedStringKey, icon: String) -> some View {
+        Label {
+            Text(title).foregroundStyle(.primary)
+        } icon: {
+            RowIcon(iconName: icon)
         }
     }
 }

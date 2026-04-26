@@ -37,6 +37,7 @@ struct ReminderSection: View {
                     }
                 )
             }
+            .tint(Color.toggle)
             .disabled(isProcessingToggle)
             
             if isReminderEnabled {

@@ -68,11 +68,11 @@
 		077FAE882E12E028007790C5 /* Exceptions for "TeymiaHabit" folder in "liveactivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Core/Extensions/Color+Hex.swift",
 				Core/Extensions/TimeFormatting.swift,
 				Core/Models/HabitIconColor.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
+				"Shared/DesignSystem/Color+Hex.swift",
 				Shared/LiveActivityState.swift,
 				Shared/LiveActivityTypes.swift,
 			);
@@ -89,7 +89,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Core/Extensions/Calendar+Extensions.swift",
-				"Core/Extensions/Color+Hex.swift",
 				Core/Extensions/TimeFormatting.swift,
 				Core/Models/Habit.swift,
 				Core/Models/HabitCompletion.swift,
@@ -98,6 +97,7 @@
 				Core/Utilities/Weekday.swift,
 				Resources/Assets.xcassets,
 				Shared/Components/HabitIconView.swift,
+				"Shared/DesignSystem/Color+Hex.swift",
 			);
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
 		};

@@ -149,7 +149,7 @@ struct HabitsView: View {
                     }
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.primaryInverse)
+                    .foregroundStyle(Color(.systemBackground))
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                 }
