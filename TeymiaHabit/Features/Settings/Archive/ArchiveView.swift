@@ -119,10 +119,10 @@ struct ArchiveView: View {
     // MARK: - Private Methods
     
     private func unarchiveHabit(_ habit: Habit) {
-        appContainer.habitService.unarchive(habit, context: modelContext)
+        appContainer.habitService.unarchive(habit)
     }
     
     private func deleteHabit(_ habit: Habit) {
-        appContainer.habitService.delete(habit, context: modelContext)
+        appContainer.habitService.delete(habit)
     }
 }

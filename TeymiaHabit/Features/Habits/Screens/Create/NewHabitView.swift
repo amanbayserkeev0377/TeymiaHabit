@@ -24,10 +24,8 @@ struct NewHabitView: View {
         }
         .task {
             guard viewModel == nil else { return }
-            viewModel = NewHabitViewModel(
+            viewModel = appContainer.habitFactory.makeNewHabitViewModel(
                 modelContext: modelContext,
-                notificationManager: appContainer.notificationManager,
-                widgetService: appContainer.widgetService,
                 habit: habit,
                 onSaveCompletion: { dismiss() }
             )
@@ -39,7 +37,7 @@ struct NewHabitView: View {
     private func habitForm(vm: NewHabitViewModel) -> some View {
         @Bindable var vm = vm
         NavigationStack {
-            List {
+            Form {
                 Section {
                     Label {
                         TextField("habit_name", text: $vm.title)

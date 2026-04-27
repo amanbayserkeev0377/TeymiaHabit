@@ -4,7 +4,6 @@ import UserNotifications
 
 @main
 struct TeymiaHabitApp: App {
-    @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     @Environment(\.scenePhase) private var scenePhase
     let modelContainer: ModelContainer
     @State private var appContainer: AppDependencyContainer
@@ -33,14 +32,11 @@ struct TeymiaHabitApp: App {
             MainTabView()
                 .environment(appContainer)
                 .environment(appContainer.navManager)
-                .environment(appContainer.habitsViewModel)
                 .environment(appContainer.notificationManager)
                 .environment(appContainer.soundManager)
                 .environment(appContainer.iconManager)
                 .environment(appContainer.timerService)
-                .environment(appContainer.habitService)
-                .environment(appContainer.widgetService)
-                .environment(appContainer.habitWidgetService)
+                .environment(\.habitService, appContainer.habitService)
                 .fontDesign(.rounded)
                 .tint(Color.primary)
                 .onAppear {

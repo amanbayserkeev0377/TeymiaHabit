@@ -2,10 +2,9 @@ import SwiftUI
 
 struct SettingsView: View {
 //    @Environment(AppDependencyContainer.self) private var appContainer
-    @State private var showingThemeChange: Bool = false
     
     var body: some View {
-        List {
+        Form {
             Section {
                 AppearanceRow()
                 AppIconRow()
@@ -20,59 +19,7 @@ struct SettingsView: View {
         .groupBackground()
         .navigationTitle("settings")
     }
-    
-    private struct AppearanceRow: View {
-        @AppStorage("themeMode") private var themeMode: ThemeMode = .system
-            
-        var body: some View {
-            Picker(selection: $themeMode) {
-                ForEach(ThemeMode.allCases, id: \.self) { mode in
-                    Text(mode.localizedName).tag(mode)
-                }
-            } label: {
-                Label(
-                    title: { Text("settings_appearance") },
-                    icon: { RowIcon(iconName: themeMode.iconName) }
-                )
-            }
-            .pickerStyle(.menu)
-            .tint(.secondary)
-        }
-    }
-    
-    private struct AppIconRow: View {
-        var body: some View {
-            NavigationLink(destination: AppIconView()) {
-                Label(
-                    title: { Text("settings_app_icon") },
-                    icon: { RowIcon(iconName: "app.specular") }
-                )
-            }
-        }
-    }
-    
-    private struct SoundRow: View {
-        var body: some View {
-            NavigationLink(destination: SoundView()) {
-                Label(
-                    title: { Text("settings_sounds") },
-                    icon: { RowIcon(iconName: "speaker.wave.1") }
-                )
-            }
-        }
-    }
-    
-    private struct ArchiveRow: View {
-        var body: some View {
-            NavigationLink(destination: ArchiveView()) {
-                Label(
-                    title: { Text("settings_archived_habits") },
-                    icon: { RowIcon(iconName: "archivebox") }
-                )
-            }
-        }
-    }
-    
+        
     private struct LanguageRow: View {
         var body: some View {
             Button(action: openAppSettings) {

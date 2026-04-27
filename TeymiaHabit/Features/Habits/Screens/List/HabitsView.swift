@@ -3,17 +3,23 @@ import SwiftData
 
 struct HabitsView: View {
     @Query(sort: \Habit.displayOrder) private var allHabits: [Habit]
-    @Environment(HabitsViewModel.self) private var vm
     @Environment(\.modelContext) private var modelContext
     @Environment(AppDependencyContainer.self) private var appContainer
     @Environment(NavigationManager.self) private var navManager
+    
+    @State var vm: HabitsViewModel
+    @Binding var selectedDate: Date
+    
     @Namespace private var habitNamespace
     @State private var isEditMode: EditMode = .inactive
-    
-    @Binding var selectedDate: Date
     @State private var selectedHabit: Habit?
     @State private var showingNewHabit = false
     @State private var habitToEdit: Habit? = nil
+    
+    init(vm: HabitsViewModel, selectedDate: Binding<Date>) {
+        self.vm = vm
+        self._selectedDate = selectedDate
+    }
     
     var body: some View {
         Group {
@@ -37,13 +43,8 @@ struct HabitsView: View {
             NewHabitView(habit: habit)
         }
         .fullScreenCover(item: $selectedHabit) { habit in
-                HabitDetailView(
-                    habit: habit,
-                    date: selectedDate,
-                    modelContext: modelContext,
-                    appContainer: appContainer
-                )
-                .navigationTransition(.zoom(sourceID: habit.id, in: habitNamespace))
+            HabitDetailView(habit: habit, date: selectedDate)
+            .navigationTransition(.zoom(sourceID: habit.id, in: habitNamespace))
         }
         .onChange(of: navManager.habitToOpen) { _, habit in
             guard let habit else { return }
@@ -95,8 +96,9 @@ struct HabitsView: View {
         .listStyle(.plain)
         .scrollIndicators(.hidden)
         .environment(\.editMode, $isEditMode)
+        .environment(vm)
     }
-
+    
     @ViewBuilder
     private var habitListContent: some View {
         Section {
@@ -112,6 +114,9 @@ struct HabitsView: View {
             })
             .matchedTransitionSource(id: habit.id, in: habitNamespace)
             .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)
+            .listRowBackground(Color.clear)
+            .listRowSpacing(0)
+            .listRowSeparator(.hidden)
             .onTapGesture {
                 guard isEditMode != .active else { return }
                 selectedHabit = habit

@@ -4,8 +4,8 @@ struct DayProgressPopover: View {
     let habit: Habit
     let date: Date
     
-    @Environment(HabitService.self) private var habitService
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.habitService) private var habitService
+    @Environment(AppDependencyContainer.self) private var appContainer
     @Environment(\.dismiss) private var dismiss
     
     @State private var inputText: String = ""
@@ -66,7 +66,7 @@ struct DayProgressPopover: View {
                 .contentShape(.capsule)
         }
         .buttonStyle(.plain)
-        .glassEffect(.clear.interactive().tint(.appPrimary), in: .capsule)
+        .glassEffect(.regular.interactive().tint(.primary), in: .capsule)
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
     }
@@ -74,13 +74,13 @@ struct DayProgressPopover: View {
     private func addProgress() {
         if habit.type == .count {
             if let val = Int(inputText), val > 0 {
-                habitService.addProgress(val, to: habit, date: date, context: modelContext)
+                appContainer.habitService.addProgress(val, to: habit, date: date)
             }
         } else {
             let comps = Calendar.current.dateComponents([.hour, .minute], from: selectedTime)
             let totalSeconds = (comps.hour ?? 0) * 3600 + (comps.minute ?? 0) * 60
             if totalSeconds > 0 {
-                habitService.addProgress(totalSeconds, to: habit, date: date, context: modelContext)
+                appContainer.habitService.addProgress(totalSeconds, to: habit, date: date)
             }
         }
     }

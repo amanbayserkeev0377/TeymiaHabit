@@ -1,49 +1,47 @@
 import Foundation
 import SwiftData
-import SwiftUI
 
 @Observable
 @MainActor
 final class AppDependencyContainer {
-    // MARK: - Properties (Managers & Services)
+    // MARK: - Managers (shared, app-wide)
     let navManager = NavigationManager()
     let notificationManager = NotificationManager()
     let timerService = TimerService()
-    let widgetService = WidgetService()
     let habitLiveActivityManager = HabitLiveActivityManager()
+    let soundManager = SoundManager()
+    let iconManager = AppIconManager()
     
-    private(set) var habitService: HabitService
+    // MARK: - Services (protocol types for testability)
+    private(set) var widgetService: any WidgetServiceProtocol
+    private(set) var habitService: any HabitServiceProtocol
     private(set) var habitWidgetService: HabitWidgetService
-    private(set) var soundManager: SoundManager
-    private(set) var iconManager: AppIconManager
     
-    // MARK: - ViewModels
-    let habitsViewModel: HabitsViewModel
+    // MARK: - Factories
+    private(set) var habitFactory: HabitViewModelFactory
     
     // MARK: - Init
     init(modelContext: ModelContext) {
-        let habitServiceInstance = HabitService(widgetService: widgetService)
-        let soundManagerInstance = SoundManager()
-        let iconManagerInstance = AppIconManager()
+        let widgetServiceInstance = WidgetService()
+        self.widgetService = widgetServiceInstance
         
-        let habitWidgetServiceInstance = HabitWidgetService(
+        let dataSource = HabitLocalDataSource(modelContext: modelContext)
+        let habitServiceInstance = HabitService(
+            dataSource: dataSource,
+            widgetService: widgetServiceInstance
+        )
+        self.habitService = habitServiceInstance
+        self.habitWidgetService = HabitWidgetService(
             modelContext: modelContext,
             habitService: habitServiceInstance
         )
-        
-        let habitsVMInstance = HabitsViewModel(
-            modelContext: modelContext,
+        self.habitFactory = HabitViewModelFactory(
             habitService: habitServiceInstance,
+            widgetService: widgetServiceInstance,
             notificationManager: notificationManager,
-            soundManager: soundManagerInstance,
-            widgetService: widgetService,
-            timerService: timerService
+            soundManager: soundManager,
+            timerService: timerService,
+            habitLiveActivityManager: habitLiveActivityManager
         )
-        
-        self.habitService = habitServiceInstance
-        self.soundManager = soundManagerInstance
-        self.iconManager = iconManagerInstance
-        self.habitWidgetService = habitWidgetServiceInstance
-        self.habitsViewModel = habitsVMInstance
     }
 }

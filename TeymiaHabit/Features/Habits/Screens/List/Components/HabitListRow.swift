@@ -71,7 +71,7 @@ struct HabitListRow: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(4)
+        .padding(Spacing.md)
         .onChange(of: timerService.updateTrigger) { _, _ in
             if isTimerActive {
                 vm.checkCompletionForActiveTimer(habit, date: date)
@@ -95,7 +95,11 @@ struct HabitListRow: View {
         
         var body: some View {
             HabitListRow(habit: habit, date: date)
-                .contentShape(.rect)
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: Radius.xl))
+                .contentShape(.rect(cornerRadius: Radius.xl))
+                .contentShape(.contextMenuPreview, .capsule)
+                .contentShape(.dragPreview, .capsule)
+                .contentShape(.hoverEffect, .capsule)
                 .contextMenu {
                     skipButton
                     editButton

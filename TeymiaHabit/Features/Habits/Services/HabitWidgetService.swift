@@ -5,10 +5,10 @@ import SwiftUI
 @Observable @MainActor
 final class HabitWidgetService {
     private let modelContext: ModelContext
-    private let habitService: HabitService
+    private let habitService: any HabitServiceProtocol
     private let appGroupsID = "group.com.amanbayserkeev.teymiahabit"
     
-    init(modelContext: ModelContext, habitService: HabitService) {
+    init(modelContext: ModelContext, habitService: any HabitServiceProtocol) {
         self.modelContext = modelContext
         self.habitService = habitService
     }
@@ -22,13 +22,10 @@ final class HabitWidgetService {
         
         guard let habit = try? modelContext.fetch(descriptor).first else { return }
         
-        let today = Date()
-        
         habitService.updateProgress(
             to: progress,
             for: habit,
-            date: today,
-            context: modelContext
+            date: Date()
         )
     }
 }

@@ -6,10 +6,9 @@ final class HabitDetailViewModel {
     
     // MARK: - Dependencies
     private let habit: Habit
-    private let modelContext: ModelContext
     private let habitService: any HabitServiceProtocol
     private let timerService: TimerService
-    private let widgetService: WidgetService
+    private let widgetService: any WidgetServiceProtocol
     private let notificationManager: NotificationManager
     private let soundManager: SoundManager
     private let habitLiveActivityManager: HabitLiveActivityManager
@@ -38,10 +37,7 @@ final class HabitDetailViewModel {
     private var uiProgressOverride: Int?
     
     var currentProgress: Int {
-        if let override = uiProgressOverride {
-            return override
-        }
-        
+        if let override = uiProgressOverride { return override }
         _ = timerService.updateTrigger
         if isTimeHabitToday, let live = timerService.getLiveProgress(for: cachedHabitId) {
             return live
@@ -59,18 +55,21 @@ final class HabitDetailViewModel {
     init(
         habit: Habit,
         initialDate: Date,
-        modelContext: ModelContext,
-        appContainer: AppDependencyContainer
+        habitService: any HabitServiceProtocol,
+        timerService: TimerService,
+        widgetService: any WidgetServiceProtocol,
+        notificationManager: NotificationManager,
+        soundManager: SoundManager,
+        habitLiveActivityManager: HabitLiveActivityManager
     ) {
         self.habit = habit
         self.currentDisplayedDate = initialDate
-        self.modelContext = modelContext
-        self.habitService = appContainer.habitService
-        self.timerService = appContainer.timerService
-        self.widgetService = appContainer.widgetService
-        self.notificationManager = appContainer.notificationManager
-        self.soundManager = appContainer.soundManager
-        self.habitLiveActivityManager = appContainer.habitLiveActivityManager
+        self.habitService = habitService
+        self.timerService = timerService
+        self.widgetService = widgetService
+        self.notificationManager = notificationManager
+        self.soundManager = soundManager
+        self.habitLiveActivityManager = habitLiveActivityManager
         self.cachedHabitId = habit.uuid.uuidString
     }
     
@@ -117,25 +116,22 @@ final class HabitDetailViewModel {
     
     func completeHabit() {
         guard !isAlreadyCompleted else { return }
-        
         stopTimerAndEndActivity()
         uiProgressOverride = habit.goal
         saveProgress(habit.goal)
-        
         soundManager.playCompletionSound()
     }
     
     func resetProgress() {
         stopTimerAndEndActivity()
         uiProgressOverride = 0
-        habitService.resetProgress(for: habit, date: currentDisplayedDate, context: modelContext)
+        habitService.resetProgress(for: habit, date: currentDisplayedDate)
         updateLiveActivityIfNeeded(progress: 0, timerRunning: false)
     }
     
     // MARK: - Timer Actions
     func toggleTimer() {
         guard isTimeHabitToday else { return }
-        
         if isTimerRunning {
             stopTimer()
         } else {
@@ -144,14 +140,18 @@ final class HabitDetailViewModel {
     }
     
     private func startTimer() {
-        
         let base = habit.progressForDate(currentDisplayedDate)
         goalSoundPlayed = false
         goalNotificationSent = false
+        _ = timerService.startTimer(for: cachedHabitId, baseProgress: base)
         
         Task {
             guard let start = timerStartTime else { return }
-            await habitLiveActivityManager.startActivity(for: habit, currentProgress: base, timerStartTime: start)
+            await habitLiveActivityManager.startActivity(
+                for: habit,
+                currentProgress: base,
+                timerStartTime: start
+            )
         }
     }
     
@@ -167,16 +167,16 @@ final class HabitDetailViewModel {
             )
         }
     }
-     
+    
     // MARK: - Private Helpers
+    
     private func saveProgress(_ value: Int) {
-        habitService.saveProgress(value, for: habit, date: currentDisplayedDate, context: modelContext)
+        habitService.saveProgress(value, for: habit, date: currentDisplayedDate)
         
         saveTask?.cancel()
         saveTask = Task {
             try? await Task.sleep(for: .seconds(0.8))
             guard !Task.isCancelled else { return }
-            try? modelContext.save()
             uiProgressOverride = nil
             widgetService.reloadWidgetsAfterDataChange()
         }
@@ -210,15 +210,15 @@ final class HabitDetailViewModel {
     
     // MARK: - Delete and Archive
     
-   func deleteHabit() {
+    func deleteHabit() {
         prepareForDeletion()
         Task {
             try? await Task.sleep(for: .milliseconds(300))
-            habitService.delete(habit, context: modelContext)
+            habitService.delete(habit)
         }
     }
     
     func archiveHabit() {
-        habitService.archive(habit, context: modelContext)
+        habitService.archive(habit)
     }
 }

@@ -1,12 +1,11 @@
-import Foundation
 import SwiftData
 import SwiftUI
 
 @Observable @MainActor
 final class NewHabitViewModel {
-    private let modelContext: ModelContext
+    private let dataSource: any HabitDataSourceProtocol
     private let notificationManager: NotificationManager
-    private let widgetService: WidgetService
+    private let widgetService: any WidgetServiceProtocol
     
     let habit: Habit?
     
@@ -30,13 +29,13 @@ final class NewHabitViewModel {
     }
     
     init(
-        modelContext: ModelContext,
+        dataSource: any HabitDataSourceProtocol,
         notificationManager: NotificationManager,
-        widgetService: WidgetService,
+        widgetService: any WidgetServiceProtocol,
         habit: Habit? = nil,
         onSaveCompletion: (() -> Void)? = nil
     ) {
-        self.modelContext = modelContext
+        self.dataSource = dataSource
         self.notificationManager = notificationManager
         self.widgetService = widgetService
         self.habit = habit
@@ -119,7 +118,8 @@ final class NewHabitViewModel {
                 reminderTimes: isReminderEnabled ? reminderTimes : nil,
                 startDate: startDate
             )
-            modelContext.insert(newHabit)
+            dataSource.insert(newHabit)
+            dataSource.save()
             handleNotifications(for: newHabit)
         }
         

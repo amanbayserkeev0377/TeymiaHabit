@@ -8,27 +8,26 @@ struct MainTabView: View {
     @Environment(AppDependencyContainer.self) private var appContainer
     
     @State private var selectedDate: Date = .now
+    @State private var habitsViewModel: HabitsViewModel?
     
     var body: some View {
         @Bindable var nav = navManager
         
         AnimatedTabView(selection: $nav.selectedTab) {
-            // Habits
             Tab.init(AppTab.habits.title, systemImage: AppTab.habits.symbolImage, value: .habits) {
                 NavigationStack {
-                    HabitsView(selectedDate: $selectedDate)
+                    if let vm = habitsViewModel {
+                        HabitsView(vm: vm, selectedDate: $selectedDate)
+                    }
                 }
             }
             
-            // Statistics
             Tab.init(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage, value: .tasks) {
                 NavigationStack {
-                    //                    StatisticsView()
                     Text("Statistics")
                 }
             }
             
-            // Settings
             Tab.init(AppTab.settings.title, systemImage: AppTab.settings.symbolImage, value: .settings) {
                 NavigationStack {
                     SettingsView()
@@ -41,7 +40,12 @@ struct MainTabView: View {
             case .settings: [.rotate]
             }
         }
+        .preferredColorScheme(themeMode.colorScheme)
         .tabBarMinimizeBehavior(.onScrollDown)
+        .task {
+            guard habitsViewModel == nil else { return }
+            habitsViewModel = appContainer.habitFactory.makeHabitsViewModel(modelContext: modelContext)
+        }
     }
 }
 

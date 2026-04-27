@@ -1,8 +1,15 @@
 import WidgetKit
 
-/// Service for managing Home Screen widget updates
+// MARK: - Protocol
+@MainActor
+protocol WidgetServiceProtocol {
+    func reloadWidgets()
+    func reloadWidgetsAfterDataChange()
+}
+
+// MARK: - Implementation
 @Observable @MainActor
-final class WidgetService {
+final class WidgetService: WidgetServiceProtocol {
     private let appGroup = "group.com.amanbayserkeev.teymiahabit"
     
     init() {}
@@ -11,10 +18,9 @@ final class WidgetService {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
-    /// Reload widgets with delay for database synchronization
     func reloadWidgetsAfterDataChange() {
         Task {
-            try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
+            try? await Task.sleep(nanoseconds: 200_000_000)
             WidgetCenter.shared.reloadAllTimelines()
         }
     }
