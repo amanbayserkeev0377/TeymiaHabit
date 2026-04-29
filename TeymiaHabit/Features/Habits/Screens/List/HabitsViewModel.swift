@@ -3,25 +3,25 @@ import SwiftUI
 
 @Observable @MainActor
 final class HabitsViewModel {
-    private let habitService: any HabitServiceProtocol
+    private let modelContext: ModelContext
+    private let habitService: HabitService
     private let soundManager: SoundManager
     private let timerService: TimerService
-    private let dataSource: any HabitDataSourceProtocol
-    private let widgetService: any WidgetServiceProtocol
+    private let widgetService: WidgetService
     private let notificationManager: NotificationManager
     
     var allBaseHabits: [Habit] = []
     var temporaryProgress: [UUID: Int] = [:]
     
     init(
-        dataSource: any HabitDataSourceProtocol,
-        habitService: any HabitServiceProtocol,
+        modelContext: ModelContext,
+        habitService: HabitService,
         notificationManager: NotificationManager,
         soundManager: SoundManager,
-        widgetService: any WidgetServiceProtocol,
+        widgetService: WidgetService,
         timerService: TimerService
     ) {
-        self.dataSource = dataSource
+        self.modelContext = modelContext
         self.habitService = habitService
         self.notificationManager = notificationManager
         self.soundManager = soundManager
@@ -124,7 +124,7 @@ final class HabitsViewModel {
         }
         
         // Save reorder through dataSource
-        dataSource.save()
+        try? modelContext.save()
         widgetService.reloadWidgetsAfterDataChange()
     }
     
@@ -140,7 +140,7 @@ final class HabitsViewModel {
     // MARK: - Debounce
     
     private func saveAndReloadWithDebounce(for uuid: UUID) {
-        dataSource.save()
+        try? modelContext.save()
         widgetService.reloadWidgetsAfterDataChange()
         Task {
             try? await Task.sleep(for: .seconds(0.6))

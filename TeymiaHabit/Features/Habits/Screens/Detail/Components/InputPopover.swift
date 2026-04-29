@@ -4,8 +4,7 @@ struct DayProgressPopover: View {
     let habit: Habit
     let date: Date
     
-    @Environment(\.habitService) private var habitService
-    @Environment(AppDependencyContainer.self) private var appContainer
+    @Environment(HabitService.self) private var habitService
     @Environment(\.dismiss) private var dismiss
     
     @State private var inputText: String = ""
@@ -36,11 +35,11 @@ struct DayProgressPopover: View {
                     TextField("0", text: $inputText)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
-                        .keyboardType(.numberPad)
+                        .adaptiveNumberPad()
                         .padding(.vertical, 8)
                 } else {
                     DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
-                        .datePickerStyle(.wheel)
+                        .adaptiveWheelStyle()
                         .labelsHidden()
                         .frame(maxHeight: 120)
                 }
@@ -61,7 +60,7 @@ struct DayProgressPopover: View {
         } label: {
             Text(label)
                 .fontWeight(.medium)
-                .foregroundStyle(Color(.systemBackground))
+                .foregroundStyle(Color.blackWhite)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .contentShape(.capsule)
         }
@@ -74,13 +73,13 @@ struct DayProgressPopover: View {
     private func addProgress() {
         if habit.type == .count {
             if let val = Int(inputText), val > 0 {
-                appContainer.habitService.addProgress(val, to: habit, date: date)
+                habitService.addProgress(val, to: habit, date: date)
             }
         } else {
             let comps = Calendar.current.dateComponents([.hour, .minute], from: selectedTime)
             let totalSeconds = (comps.hour ?? 0) * 3600 + (comps.minute ?? 0) * 60
             if totalSeconds > 0 {
-                appContainer.habitService.addProgress(totalSeconds, to: habit, date: date)
+                habitService.addProgress(totalSeconds, to: habit, date: date)
             }
         }
     }

@@ -5,34 +5,15 @@ struct MainTabView: View {
     @AppStorage("themeMode") private var themeMode: ThemeMode = .system
     @Environment(\.modelContext) private var modelContext
     @Environment(NavigationManager.self) private var navManager
-    @Environment(AppDependencyContainer.self) private var appContainer
     
     @State private var selectedDate: Date = .now
-    @State private var habitsViewModel: HabitsViewModel?
     
     var body: some View {
         @Bindable var nav = navManager
         
+        #if os(iOS)
         AnimatedTabView(selection: $nav.selectedTab) {
-            Tab.init(AppTab.habits.title, systemImage: AppTab.habits.symbolImage, value: .habits) {
-                NavigationStack {
-                    if let vm = habitsViewModel {
-                        HabitsView(vm: vm, selectedDate: $selectedDate)
-                    }
-                }
-            }
-            
-            Tab.init(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage, value: .tasks) {
-                NavigationStack {
-                    Text("Statistics")
-                }
-            }
-            
-            Tab.init(AppTab.settings.title, systemImage: AppTab.settings.symbolImage, value: .settings) {
-                NavigationStack {
-                    SettingsView()
-                }
-            }
+            tabContent
         } effects: { tab in
             switch tab {
             case .habits: [.bounce]
@@ -41,10 +22,31 @@ struct MainTabView: View {
             }
         }
         .preferredColorScheme(themeMode.colorScheme)
-        .tabBarMinimizeBehavior(.onScrollDown)
-        .task {
-            guard habitsViewModel == nil else { return }
-            habitsViewModel = appContainer.habitFactory.makeHabitsViewModel(modelContext: modelContext)
+//        .tabBarMinimizeBehavior(.onScrollDown) TODO
+        #else
+        TabView(selection: $nav.selectedTab) {
+            tabContent
+        }
+        .preferredColorScheme(themeMode.colorScheme)
+        #endif
+    }
+    
+    @TabContentBuilder<AppTab>
+    private var tabContent: some TabContent<AppTab> {
+        Tab.init(AppTab.habits.title, systemImage: AppTab.habits.symbolImage, value: .habits) {
+            NavigationStack {
+                HabitsView(selectedDate: $selectedDate)
+            }
+        }
+        
+        Tab.init(AppTab.tasks.title, systemImage: AppTab.tasks.symbolImage, value: .tasks) {
+            NavigationStack {
+                Text("Statistics")
+            }
+        }
+        
+        Tab.init(AppTab.settings.title, systemImage: AppTab.settings.symbolImage, value: .settings) {
+            SettingsView()
         }
     }
 }

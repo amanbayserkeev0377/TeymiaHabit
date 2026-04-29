@@ -2,97 +2,116 @@ import SwiftUI
 import SwiftData
 
 struct NewHabitView: View {
-    @Environment(AppDependencyContainer.self) private var appContainer
     @Environment(\.modelContext) private var modelContext
+    @Environment(NotificationManager.self) private var notificationManager
+    @Environment(WidgetService.self) private var widgetService
+    
+    var habit: Habit? = nil
+    
+    var body: some View {
+        NewHabitContentView(
+            habit: habit,
+            modelContext: modelContext,
+            notificationManager: notificationManager,
+            widgetService: widgetService
+        )
+    }
+    
+}
+
+struct NewHabitContentView: View {
     @Environment(\.dismiss) private var dismiss
-    
-    let habit: Habit?
-    @State private var viewModel: NewHabitViewModel?
-    
-    // MARK: - Initialization
-    init(habit: Habit? = nil) {
-        self.habit = habit
+    @State private var viewModel: NewHabitViewModel
+
+    // MARK: - Init
+    init(
+        habit: Habit?,
+        modelContext: ModelContext,
+        notificationManager: NotificationManager,
+        widgetService: WidgetService
+    ) {
+        _viewModel = State(wrappedValue: NewHabitViewModel(
+            modelContext: modelContext,
+            notificationManager: notificationManager,
+            widgetService: widgetService,
+            habit: habit
+        ))
     }
     
     // MARK: - Body
     var body: some View {
-        Group {
-            if let viewModel {
-                @Bindable var vm = viewModel
-                habitForm(vm: vm)
+        @Bindable var vm = viewModel
+        habitForm(vm: vm)
+            .secondaryBackground()
+            .navigationTitle(vm.habit == nil ? "create_habit" : "edit_habit")
+//            .navigationBarTitleDisplayMode(.inline) TODO
+            .scrollDismissesKeyboard(.immediately)
+            .toolbar {
+                CloseToolbarButton(dismiss: {
+                    dismiss()
+                })
+                ConfirmationToolbarButton(
+                    action: {
+                        vm.save()
+                        dismiss()
+                    },
+                    isDisabled: !vm.isFormValid
+                )
             }
-        }
-        .task {
-            guard viewModel == nil else { return }
-            viewModel = appContainer.habitFactory.makeNewHabitViewModel(
-                modelContext: modelContext,
-                habit: habit,
-                onSaveCompletion: { dismiss() }
-            )
-        }
     }
     
     // MARK: - Form
     @ViewBuilder
     private func habitForm(vm: NewHabitViewModel) -> some View {
         @Bindable var vm = vm
-            Form {
-                Section {
-                    Label {
-                        TextField("habit_name", text: $vm.title)
-                            .fontWeight(.medium)
-                    } icon: { RowIcon(iconName: "pencil") }
-                    
-                    NavigationLink {
-                        IconPickerView(
-                            selectedIcon: $vm.selectedIcon,
-                            selectedColor: $vm.selectedIconColor,
-                            hexColor: $vm.selectedHexColor
-                        )
-                    } label: {
-                        HStack {
-                            Label { Text("icon") }
-                            icon: { RowIcon(iconName: "app.background.dotted") }
-                            Spacer()
-                            Image(vm.selectedIcon)
-                                .resizable()
-                                .frame(size: DS.Icon.s20)
-                                .foregroundStyle(vm.actualColor)
-                        }
+        Form {
+            Section {
+                Label {
+                    TextField("habit_name", text: $vm.title)
+                        .fontWeight(.medium)
+                } icon: { RowIcon(iconName: "pencil") }
+                
+                NavigationLink {
+                    IconPickerView(
+                        selectedIcon: $vm.selectedIcon,
+                        selectedColor: $vm.selectedIconColor,
+                        hexColor: $vm.selectedHexColor
+                    )
+                } label: {
+                    HStack {
+                        Label { Text("icon") }
+                        icon: { RowIcon(iconName: "app.background.dotted") }
+                        Spacer()
+                        Image(vm.selectedIcon)
+                            .resizable()
+                            .frame(size: DS.Icon.s20)
+                            .foregroundStyle(vm.actualColor)
                     }
                 }
-                .rowBackground()
-                
-                Section {
-                    GoalSection(
-                        selectedType: $vm.selectedType,
-                        countGoal: $vm.countGoal,
-                        hours: $vm.hours,
-                        minutes: $vm.minutes
-                    )
-                }
-                .rowBackground()
-                
-                Section {
-                    RepeatDaysView(activeDays: $vm.activeDays)
-                    StartDateSection(startDate: $vm.startDate)
-                    ReminderSection(
-                        isReminderEnabled: $vm.isReminderEnabled,
-                        reminderTimes: $vm.reminderTimes
-                    )
-                }
-                .rowBackground()
             }
-            .secondaryBackground()
-            .navigationTitle(vm.habit == nil ? "create_habit" : "edit_habit")
-            .navigationBarTitleDisplayMode(.inline)
-            .scrollDismissesKeyboard(.immediately)
-            .toolbar {
-                CloseToolbarButton(dismiss: { dismiss() })
-                ConfirmationToolbarButton(
-                    action: { vm.save() },
-                    isDisabled: !vm.isFormValid
+            .rowBackground()
+            
+            Section {
+                GoalSection(
+                    selectedType: $vm.selectedType,
+                    countGoal: $vm.countGoal,
+                    hours: $vm.hours,
+                    minutes: $vm.minutes
                 )
             }
+            .rowBackground()
+            
+            Section {
+                RepeatDaysView(activeDays: $vm.activeDays)
+                StartDateSection(startDate: $vm.startDate)
+                ReminderSection(
+                    isReminderEnabled: $vm.isReminderEnabled,
+                    reminderTimes: $vm.reminderTimes
+                )
+            }
+            .rowBackground()
+        }
+        .formStyle(.grouped)
     }
+    
 }

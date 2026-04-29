@@ -1,3 +1,4 @@
+#if os(iOS)
 import SwiftUI
 import ActivityKit
 import WidgetKit
@@ -91,3 +92,4 @@ struct LiveActivityHabitIcon: View {
         )
     }
 }
+#endif

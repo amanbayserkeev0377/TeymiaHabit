@@ -4,26 +4,55 @@ import SwiftData
 struct HabitDetailView: View {
     let habit: Habit
     let date: Date
-    let appContainer: AppDependencyContainer
+    
+    @Environment(HabitService.self) private var habitService
+    @Environment(TimerService.self) private var timerService
+    @Environment(WidgetService.self) private var widgetService
+    @Environment(NotificationManager.self) private var notificationManager
+    @Environment(SoundManager.self) private var soundManager
+    @Environment(HabitLiveActivityManager.self) private var habitLiveActivityManager
+    
+    var body: some View {
+        HabitDetailContentView(
+            habit: habit,
+            date: date,
+            viewModel: HabitDetailViewModel(
+                habit: habit,
+                initialDate: date,
+                habitService: habitService,
+                timerService: timerService,
+                widgetService: widgetService,
+                notificationManager: notificationManager,
+                soundManager: soundManager,
+                habitLiveActivityManager: habitLiveActivityManager
+            )
+        )
+    }
+}
+
+struct HabitDetailContentView: View {
+    let habit: Habit
+    let date: Date
     
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: HabitDetailViewModel
     @State private var showingStats = false
     @State private var isEditPresented = false
     
-    init(habit: Habit, date: Date, appContainer: AppDependencyContainer) {
+    init(
+        habit: Habit,
+        date: Date,
+        viewModel: HabitDetailViewModel
+    ) {
         self.habit = habit
         self.date = date
-        self.appContainer = appContainer
-        _viewModel = State(wrappedValue: appContainer.habitFactory.makeHabitDetailViewModel(
-            habit: habit,
-            initialDate: date
-        ))
+        _viewModel = State(wrappedValue: viewModel)
     }
     
     var body: some View {
         @Bindable var vm = viewModel
         mainContent(vm: viewModel)
+            .primaryBackground()
             .navigationTitle(habit.title)
             .navigationSubtitle("Goal: \(habit.formattedGoal)")
             .toolbar { toolbarContent(vm: viewModel) }
@@ -41,32 +70,27 @@ struct HabitDetailView: View {
                 viewModel.updateDisplayedDate(newDate)
             }
             .sheet(isPresented: $isEditPresented) {
-                NewHabitView(habit: habit)
-                    .environment(appContainer)
+                    NewHabitView()
             }
             .sheet(isPresented: $showingStats) {
                 HabitStatisticsView(habit: habit)
-            }
-            .task {
-                viewModel.start()
             }
     }
     
     // MARK: - Content
     @ViewBuilder
     private func mainContent(vm: HabitDetailViewModel) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
-            HabitProgressView(viewModel: vm, habit: habit)
-            Spacer()
-            VStack(spacing: 30) {
-                actionButtonsSection(viewModel: vm)
-                completeButtonView(viewModel: vm)
-                    .disabled(vm.isAlreadyCompleted)
-            }
-            Spacer()
+        ScrollView {
+                Spacer()
+                HabitProgressView(viewModel: vm, habit: habit)
+                Spacer()
+                VStack(spacing: 30) {
+                    actionButtonsSection(viewModel: vm)
+                    completeButtonView(viewModel: vm)
+                        .disabled(vm.isAlreadyCompleted)
+                }
+                Spacer()
         }
-        .frame(maxWidth: 500, maxHeight: 700)
     }
     
     @ToolbarContentBuilder
@@ -131,12 +155,12 @@ struct HabitDetailView: View {
         Button(action: { viewModel.completeHabit() }) {
             Text(viewModel.isAlreadyCompleted ? "completed" : "complete")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Color(.systemBackground))
+                .foregroundStyle(Color.blackWhite)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .contentShape(.capsule)
         }
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive().tint(habit.actualColor), in: .capsule)
-        .padding(.horizontal, 24)
+        .padding(.horizontal, DS.Spacing.s24)
     }
 }

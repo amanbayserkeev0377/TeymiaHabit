@@ -76,7 +76,7 @@ struct IconPickerView: View {
         }
         .animation(.snappy, value: searchText)
         .navigationTitle("icon")
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitleDisplayMode(.inline) TODO
         .searchable(text: $searchText)
     }
     
@@ -106,7 +106,7 @@ struct IconPickerView: View {
                 Image(icon)
                     .resizable()
                     .frame(size: DS.Icon.s24)
-                    .foregroundStyle(isSelected ? Color(.systemBackground) : .primary)
+                    .foregroundStyle(isSelected ? Color.blackWhite : .primary)
             }
             .frame(width: Layout.circleSize, height: Layout.circleSize)
             .contentShape(Rectangle())

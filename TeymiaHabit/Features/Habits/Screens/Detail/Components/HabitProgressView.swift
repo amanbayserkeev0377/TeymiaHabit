@@ -4,55 +4,74 @@ struct HabitProgressView: View {
     let viewModel: HabitDetailViewModel
     let habit: Habit
     
+    private enum Layout {
+        static let minRingSize: CGFloat = 140
+        static let maxRingSize: CGFloat = 300
+        static let ringWidthRatio: CGFloat = 0.5
+        static let buttonSizeRatio: CGFloat = 0.25
+    }
+    
     var body: some View {
-            HStack {
+        GeometryReader { geometry in
+            let availableWidth = geometry.size.width
+            let adaptiveSize = min(
+                max(availableWidth * Layout.ringWidthRatio, Layout.minRingSize),
+                Layout.maxRingSize
+            )
+            
+            let adaptiveButtonSize = adaptiveSize * Layout.buttonSizeRatio
+            
+            HStack(spacing: DS.Spacing.s16) {
                 Spacer()
-                decrementButton
+                
+                actionButton(
+                    systemName: "minus",
+                    size: adaptiveButtonSize,
+                    action: viewModel.decrementProgress,
+                    isDisabled: viewModel.currentProgress <= 0
+                )
+                
                 Spacer()
+                
                 ProgressRing(
                     progress: viewModel.completionPercentage,
                     currentValue: "\(viewModel.currentProgress)",
                     isCompleted: viewModel.isAlreadyCompleted,
                     isExceeded: viewModel.currentProgress > habit.goal,
                     habit: habit,
-                    size: 180
+                    size: adaptiveSize
                 )
+                
                 Spacer()
-                incrementButton
+                
+                actionButton(
+                    systemName: "plus",
+                    size: adaptiveButtonSize,
+                    action: viewModel.incrementProgress
+                )
+                
                 Spacer()
             }
-        .onChange(of: viewModel.currentProgress) { _, newValue in
-            viewModel.checkGoalProgress(newValue)
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
+        .frame(height: Layout.maxRingSize)
+        .padding(.horizontal, DS.Spacing.s24)
     }
     
-    private var decrementButton: some View {
-        Button {
-
-            viewModel.decrementProgress()
-        } label: {
-            Image(systemName: "minus")
-                .font(.system(size: 24, weight: .medium))
+    // MARK: - Subviews
+    private func actionButton(systemName: String, size: CGFloat, action: @escaping () -> Void, isDisabled: Bool = false) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: size * 0.4, weight: .medium))
                 .foregroundStyle(Color.primary)
-                .frame(width: 48, height: 48)
-                .contentShape(Circle())
+                .frame(width: size, height: size)
+                .background {
+                    Circle().fill(Color.clear)
+                }
         }
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: .circle)
-        .disabled(viewModel.currentProgress <= 0)
-    }
-
-    private var incrementButton: some View {
-        Button {
-            viewModel.incrementProgress()
-        } label: {
-            Image(systemName: "plus")
-                .font(.system(size: 24, weight: .medium))
-                .foregroundStyle(Color.primary)
-                .frame(width: 48, height: 48)
-                .contentShape(Circle())
-        }
-        .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.4 : 1.0)
     }
 }

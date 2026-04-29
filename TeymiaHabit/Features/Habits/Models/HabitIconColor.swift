@@ -34,37 +34,4 @@ enum HabitIconColor: String, CaseIterable, Codable {
         case .colorPicker: .colorPicker
         }
     }
-    
-    var lightColor: Color { baseColor.lightened(by: 0.4) }
-    var darkColor: Color { baseColor.darkened(by: 0.05) }
-}
-
-extension Color {
-    func lightened(by amount: CGFloat = 0.2) -> Color {
-        applyAdjustment(factor: amount)
-    }
-    
-    func darkened(by amount: CGFloat = 0.2) -> Color {
-        applyAdjustment(factor: -amount)
-    }
-    
-    private func applyAdjustment(factor: CGFloat) -> Color {
-        let uiColor = UIColor(self)
-        return Color(uiColor.adjustedBrightness(by: factor))
-    }
-}
-
-extension UIColor {
-    func adjustedBrightness(by factor: CGFloat) -> UIColor {
-        var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        
-        guard getHue(&h, saturation: &s, brightness: &b, alpha: &a) else { return self }
-        
-        return UIColor(
-            hue: h,
-            saturation: s,
-            brightness: max(0, min(1, b + factor)),
-            alpha: a
-        )
-    }
 }

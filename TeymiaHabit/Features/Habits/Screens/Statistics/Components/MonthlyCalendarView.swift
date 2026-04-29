@@ -101,7 +101,7 @@ struct MonthlyCalendarView: View {
                     }
             }
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
+//        .tabViewStyle(.page(indexDisplayMode: .never)) TODO
         .frame(height: 280)
         .onAppear {
             generateCalendarDaysIfNeeded(for: currentMonthIndex)

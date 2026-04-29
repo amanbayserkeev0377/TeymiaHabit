@@ -30,7 +30,9 @@ final class SoundManager {
             self.isSoundEnabled = userDefaults.bool(forKey: UserDefaults.SoundKeys.completionSoundEnabled)
         }
         
+        #if os(iOS)
         setupAudioSession()
+        #endif
     }
     
     deinit {
@@ -89,6 +91,7 @@ final class SoundManager {
     // MARK: - Private Methods
     
     private func setupAudioSession() {
+        #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(
                 .ambient,
@@ -97,8 +100,9 @@ final class SoundManager {
             )
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            // Silent fail for audio session setup
+            // Silent fail
         }
+        #endif
     }
 }
 

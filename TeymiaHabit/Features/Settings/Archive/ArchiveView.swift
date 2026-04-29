@@ -4,12 +4,12 @@ import SwiftData
 struct ArchiveView: View {
     // MARK: - Dependencies
     @Environment(\.modelContext) private var modelContext
-    @Environment(AppDependencyContainer.self) private var appContainer
+    @Environment(HabitService.self) private var habitService
     
     // MARK: - Data
     @Query(
-        filter: #Predicate<Habit> { habit in
-            habit.isArchived
+        filter: #Predicate<Habit> {
+            $0.isArchived
         },
         sort: [SortDescriptor(\Habit.createdAt, order: .reverse)]
     )
@@ -119,10 +119,10 @@ struct ArchiveView: View {
     // MARK: - Private Methods
     
     private func unarchiveHabit(_ habit: Habit) {
-        appContainer.habitService.unarchive(habit)
+        habitService.unarchive(habit)
     }
     
     private func deleteHabit(_ habit: Habit) {
-        appContainer.habitService.delete(habit)
+        habitService.delete(habit)
     }
 }

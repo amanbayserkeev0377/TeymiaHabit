@@ -32,6 +32,11 @@ final class Habit: Identifiable {
         return iconColor.baseColor
     }
     
+    @Transient
+    var ringColors: (dark: Color, light: Color) {
+        actualColor.ringGradientPair
+    }
+    
     // MARK: - Computed Data
     var activeDays: [Bool] {
         get {

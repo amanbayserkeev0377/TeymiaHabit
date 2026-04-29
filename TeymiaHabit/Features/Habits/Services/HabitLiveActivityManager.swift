@@ -1,9 +1,12 @@
 import SwiftData
 import SwiftUI
+#if os(iOS)
 import ActivityKit
+#endif
 
 @Observable @MainActor
 final class HabitLiveActivityManager {
+    #if os(iOS)
     private var activeActivities: [String: Activity<HabitActivityAttributes>] = [:]
     
     init() {}
@@ -92,4 +95,12 @@ final class HabitLiveActivityManager {
             activeActivities[activity.attributes.habitId] = activity
         }
     }
+    #else
+    func hasActiveActivity(for habitId: String) -> Bool { false }
+    func startActivity(for habit: Habit, currentProgress: Int, timerStartTime: Date) async {}
+    func updateActivity(for habitId: String, currentProgress: Int, isTimerRunning: Bool, timerStartTime: Date?) async {}
+    func endActivity(for habitId: String) async {}
+    func endAllActivities() async {}
+    func restoreActiveActivitiesIfNeeded() async {}
+    #endif
 }

@@ -6,13 +6,20 @@ import UserNotifications
 struct TeymiaHabitApp: App {
     @Environment(\.scenePhase) private var scenePhase
     let modelContainer: ModelContainer
-    @State private var appContainer: AppDependencyContainer
+    @State private var habitService: HabitService
+    @State private var widgetService = WidgetService()
+    @State private var notificationManager = NotificationManager()
+    @State private var soundManager = SoundManager()
+    @State private var timerService = TimerService()
+    @State private var navManager = NavigationManager()
+    @State private var habitLiveActivityManager = HabitLiveActivityManager()
     
     init() {
-        let schema = Schema([
-            Habit.self, HabitCompletion.self
-        ])
+        #if os(iOS)
+        AppFont.configureAppearance()
+        #endif
         
+        let schema = Schema([Habit.self, HabitCompletion.self])
         let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.amanbayserkeev.teymiahabit")!
         let storeURL = groupURL.appendingPathComponent("Library/Application Support/default.store")
         let config = ModelConfiguration(schema: schema, url: storeURL)
@@ -20,8 +27,12 @@ struct TeymiaHabitApp: App {
         do {
             let container = try ModelContainer(for: schema, configurations: [config])
             self.modelContainer = container
-            
-            self._appContainer = State(initialValue: AppDependencyContainer(modelContext: container.mainContext))
+            let widgetSvc = WidgetService()
+            self._widgetService = State(initialValue: widgetSvc)
+            self._habitService = State(initialValue: HabitService(
+                modelContext: container.mainContext,
+                widgetService: widgetSvc
+            ))
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
@@ -30,14 +41,15 @@ struct TeymiaHabitApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environment(appContainer)
-                .environment(appContainer.navManager)
-                .environment(appContainer.notificationManager)
-                .environment(appContainer.soundManager)
-                .environment(appContainer.iconManager)
-                .environment(appContainer.timerService)
-                .environment(\.habitService, appContainer.habitService)
+                .fontDesign(.rounded)
                 .tint(DS.Colors.appPrimary)
+                .environment(habitService)
+                .environment(widgetService)
+                .environment(notificationManager)
+                .environment(soundManager)
+                .environment(timerService)
+                .environment(navManager)
+                .environment(habitLiveActivityManager)
                 .onAppear {
                     setupLiveActivities()
                 }
@@ -57,14 +69,14 @@ struct TeymiaHabitApp: App {
         switch phase {
         case .background:
             try? modelContainer.mainContext.save()
-            appContainer.timerService.handleAppDidEnterBackground()
+            timerService.handleAppDidEnterBackground()
             
         case .inactive:
             try? modelContainer.mainContext.save()
             
         case .active:
-            appContainer.timerService.handleAppWillEnterForeground()
-            appContainer.widgetService.reloadWidgets()
+            timerService.handleAppWillEnterForeground()
+            widgetService.reloadWidgets()
             checkPendingHabitFromWidget()
             setupLiveActivities()
             
@@ -88,7 +100,7 @@ struct TeymiaHabitApp: App {
             )
             
             if let foundHabit = try? modelContainer.mainContext.fetch(descriptor).first {
-                appContainer.navManager.openHabit(foundHabit)
+                navManager.openHabit(foundHabit)
             }
         }
     }
@@ -110,7 +122,7 @@ struct TeymiaHabitApp: App {
 
     private func setupLiveActivities() {
         Task {
-            await appContainer.habitLiveActivityManager.restoreActiveActivitiesIfNeeded()
+            await habitLiveActivityManager.restoreActiveActivitiesIfNeeded()
         }
     }
 }

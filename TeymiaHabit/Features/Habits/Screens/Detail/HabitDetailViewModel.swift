@@ -3,13 +3,12 @@ import SwiftData
 
 @Observable @MainActor
 final class HabitDetailViewModel {
-    private var isStarted = false
     
     // MARK: - Dependencies
     private let habit: Habit
-    private let habitService: any HabitServiceProtocol
+    private let habitService: HabitService
     private let timerService: TimerService
-    private let widgetService: any WidgetServiceProtocol
+    private let widgetService: WidgetService
     private let notificationManager: NotificationManager
     private let soundManager: SoundManager
     private let habitLiveActivityManager: HabitLiveActivityManager
@@ -56,9 +55,9 @@ final class HabitDetailViewModel {
     init(
         habit: Habit,
         initialDate: Date,
-        habitService: any HabitServiceProtocol,
+        habitService: HabitService,
         timerService: TimerService,
-        widgetService: any WidgetServiceProtocol,
+        widgetService: WidgetService,
         notificationManager: NotificationManager,
         soundManager: SoundManager,
         habitLiveActivityManager: HabitLiveActivityManager
@@ -72,12 +71,6 @@ final class HabitDetailViewModel {
         self.soundManager = soundManager
         self.habitLiveActivityManager = habitLiveActivityManager
         self.cachedHabitId = habit.uuid.uuidString
-    }
-    
-    // MARK: - Start
-    func start() {
-        guard !isStarted else { return }
-        isStarted = true
     }
     
     // MARK: - Date Management

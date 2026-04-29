@@ -43,7 +43,7 @@ struct WeeklyCalendarView: View {
                         .tag(index)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+//            .tabViewStyle(.page(indexDisplayMode: .never)) TODO
             .frame(height: 55)
         }
         .onChange(of: currentWeekIndex) { _, _ in

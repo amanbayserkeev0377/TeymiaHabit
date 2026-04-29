@@ -4,7 +4,7 @@ protocol AnimatedTabSelectionProtocol: CaseIterable, Hashable {
     var title: LocalizedStringResource { get }
     var symbolImage: String { get }
 }
-
+#if os(iOS)
 struct AnimatedTabView<Selection: AnimatedTabSelectionProtocol, Content: TabContent<Selection>>: View {
     @Binding var selection: Selection
     @TabContentBuilder<Selection> var content: () -> Content
@@ -79,3 +79,5 @@ fileprivate extension UIView {
         subviews.flatMap { $0.subviews(type: type) }
     }
 }
+#endif
+

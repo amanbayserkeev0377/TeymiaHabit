@@ -1,37 +1,13 @@
 import Foundation
 import SwiftData
 
-// MARK: - Protocol
-@MainActor
-protocol HabitServiceProtocol {
-    // Progress
-    @discardableResult
-    func completeHabit(for habit: Habit, date: Date) -> Bool
-    @discardableResult
-    func addProgress(_ delta: Int, to habit: Habit, date: Date) -> Bool
-    @discardableResult
-    func updateProgress(to newValue: Int, for habit: Habit, date: Date) -> Bool
-    func saveProgress(_ value: Int, for habit: Habit, date: Date)
-    func resetProgress(for habit: Habit, date: Date)
-    
-    // Skip
-    func skipDate(_ date: Date, for habit: Habit)
-    func unskipDate(_ date: Date, for habit: Habit)
-    
-    // Lifecycle
-    func archive(_ habit: Habit)
-    func unarchive(_ habit: Habit)
-    func delete(_ habit: Habit)
-}
-
-// MARK: - Implementation
 @Observable @MainActor
-final class HabitService: HabitServiceProtocol {
-    private let dataSource: any HabitDataSourceProtocol
-    private let widgetService: any WidgetServiceProtocol
+final class HabitService {
+    private let modelContext: ModelContext
+    private let widgetService: WidgetService
     
-    init(dataSource: any HabitDataSourceProtocol, widgetService: any WidgetServiceProtocol) {
-        self.dataSource = dataSource
+    init(modelContext: ModelContext, widgetService: WidgetService) {
+        self.modelContext = modelContext
         self.widgetService = widgetService
     }
     
@@ -64,13 +40,14 @@ final class HabitService: HabitServiceProtocol {
         let targetDate = calendar.startOfDay(for: date)
         let wasCompleted = habit.progressForDate(targetDate) >= habit.goal
         
-        // Delete existing completions for this date
-        let existingCompletions = dataSource.fetchCompletions(for: habit, on: targetDate)
-        existingCompletions.forEach { dataSource.delete($0) }
+        let existingCompletions = habit.completions?.filter {
+            calendar.isDate($0.date, inSameDayAs: targetDate)
+        } ?? []
+        existingCompletions.forEach { modelContext.delete($0) }
         
         if newValue > 0 {
             let newCompletion = HabitCompletion(date: targetDate, value: newValue, habit: habit)
-            dataSource.insert(newCompletion)
+            modelContext.insert(newCompletion)
         }
         
         saveAndRefresh()
@@ -88,17 +65,20 @@ final class HabitService: HabitServiceProtocol {
     }
     
     func saveProgress(_ value: Int, for habit: Habit, date: Date) {
-        let existingCompletions = dataSource.fetchCompletions(for: habit, on: date)
+        let calendar = Calendar.current
+        let existingCompletions = habit.completions?.filter {
+            calendar.isDate($0.date, inSameDayAs: date)
+        } ?? []
         
         if let existing = existingCompletions.first {
             if value > 0 {
                 existing.value = value
             } else {
-                dataSource.delete(existing)
+                modelContext.delete(existing)
             }
         } else if value > 0 {
             let completion = HabitCompletion(date: date, value: value, habit: habit)
-            dataSource.insert(completion)
+            modelContext.insert(completion)
         }
         
         saveAndRefresh()
@@ -143,14 +123,14 @@ final class HabitService: HabitServiceProtocol {
     }
     
     func delete(_ habit: Habit) {
-        dataSource.delete(habit)
+        modelContext.delete(habit)
         saveAndRefresh()
     }
     
     // MARK: - Private Helpers
     
     private func saveAndRefresh() {
-        dataSource.save()
+        try? modelContext.save()
         widgetService.reloadWidgetsAfterDataChange()
     }
 }

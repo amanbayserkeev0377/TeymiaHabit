@@ -24,17 +24,23 @@ struct HabitIconView: View {
     private var resolvedImage: some View {
         let name = iconName ?? fallbackIcon
         
-        if UIImage(named: name) != nil {
+        #if canImport(UIKit)
+        let assetExists = UIImage(named: name) != nil
+        #else
+        let assetExists = NSImage(named: name) != nil
+        #endif
+
+        if assetExists {
             Image(name)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(size: size)
+                .frame(width: size, height: size)
                 .foregroundStyle(color.gradient)
         } else {
-            Image(systemName: UIImage(systemName: name) != nil ? name : fallbackIcon)
+            Image(systemName: name)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(size: size)
+                .frame(width: size, height: size)
                 .foregroundStyle(color.gradient)
         }
     }

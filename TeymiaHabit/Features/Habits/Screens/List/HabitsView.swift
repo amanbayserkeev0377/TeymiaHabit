@@ -2,23 +2,45 @@ import SwiftUI
 import SwiftData
 
 struct HabitsView: View {
-    @Query(sort: \Habit.displayOrder) private var allHabits: [Habit]
     @Environment(\.modelContext) private var modelContext
-    @Environment(AppDependencyContainer.self) private var appContainer
-    @Environment(NavigationManager.self) private var navManager
+    @Environment(HabitService.self) private var habitService
+    @Environment(SoundManager.self) private var soundManager
+    @Environment(TimerService.self) private var timerService
+    @Environment(WidgetService.self) private var widgetService
+    @Environment(NotificationManager.self) private var notificationManager
     
-    @State var vm: HabitsViewModel
     @Binding var selectedDate: Date
     
-    @Namespace private var habitNamespace
+    var body: some View {
+        HabitsContentView(
+            selectedDate: $selectedDate,
+            viewModel: HabitsViewModel(
+                modelContext: modelContext,
+                habitService: habitService,
+                notificationManager: notificationManager,
+                soundManager: soundManager,
+                widgetService: widgetService,
+                timerService: timerService
+            )
+        )
+    }
+}
+
+struct HabitsContentView: View {
+    @Query(sort: \Habit.displayOrder) private var allHabits: [Habit]
+    @Environment(NavigationManager.self) private var navManager
+    @Binding var selectedDate: Date
+    @State private var vm: HabitsViewModel
+    #if os(iOS)
     @State private var isEditMode: EditMode = .inactive
+    #endif
     @State private var selectedHabit: Habit?
     @State private var showingNewHabit = false
     @State private var habitToEdit: Habit? = nil
-    
-    init(vm: HabitsViewModel, selectedDate: Binding<Date>) {
-        self.vm = vm
+        
+    init(selectedDate: Binding<Date>, viewModel: HabitsViewModel) {
         self._selectedDate = selectedDate
+        self._vm = State(wrappedValue: viewModel)
     }
     
     var body: some View {
@@ -37,21 +59,17 @@ struct HabitsView: View {
         .sheet(isPresented: $showingNewHabit) {
             NavigationStack {
                 NewHabitView()
-                    .environment(appContainer)
             }
         }
         .sheet(item: $habitToEdit) { habit in
             NavigationStack {
                 NewHabitView(habit: habit)
-                    .environment(appContainer)
             }
         }
-        .fullScreenCover(item: $selectedHabit) { habit in
+        .sheet(item: $selectedHabit) { habit in
             NavigationStack {
-                HabitDetailView(habit: habit, date: selectedDate, appContainer: appContainer)
-                    .environment(appContainer)
+                HabitDetailView(habit: habit, date: selectedDate)
             }
-            .navigationTransition(.zoom(sourceID: habit.id, in: habitNamespace))
         }
         .onChange(of: navManager.habitToOpen) { _, habit in
             guard let habit else { return }
@@ -63,8 +81,9 @@ struct HabitsView: View {
     // MARK: - Toolbar
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
+        #if os(iOS)
         if !vm.allBaseHabits.isEmpty {
-            ToolbarItem(placement: .topBarLeading) {
+            ToolbarItem(placement: .secondaryAction) {
                 Button {
                     withAnimation {
                         isEditMode = isEditMode == .active ? .inactive : .active
@@ -75,6 +94,7 @@ struct HabitsView: View {
                 }
             }
         }
+        #endif
         
         if !Calendar.current.isDateInToday(selectedDate) {
             ToolbarItem(placement: .primaryAction) {
@@ -103,10 +123,12 @@ struct HabitsView: View {
         .primaryBackground()
         .listStyle(.plain)
         .scrollIndicators(.hidden)
+        #if os(iOS)
         .environment(\.editMode, $isEditMode)
+        #endif
         .environment(vm)
         .navigationTitle(vm.navigationTitle(for: selectedDate))
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitleDisplayMode(.inline) TODO
         .toolbar { toolbarContent }
     }
     
@@ -123,7 +145,6 @@ struct HabitsView: View {
             HabitCard(habit: habit, date: selectedDate, onEdit: {
                 habitToEdit = habit
             })
-            .matchedTransitionSource(id: habit.id, in: habitNamespace)
             .opacity(habit.isSkipped(on: selectedDate) ? 0.4 : 1.0)
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
@@ -134,7 +155,9 @@ struct HabitsView: View {
                 trailing: DS.Spacing.s16
             ))
             .onTapGesture {
+                #if os(iOS)
                 guard isEditMode != .active else { return }
+                #endif
                 selectedHabit = habit
             }
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -170,7 +193,7 @@ struct HabitsView: View {
                     }
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundStyle(Color(.systemBackground))
+                    .foregroundStyle(Color.blackWhite)
                     .padding(.horizontal, DS.Spacing.s24)
                     .padding(.vertical, DS.Spacing.s12)
                 }

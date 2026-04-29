@@ -3,9 +3,9 @@ import SwiftUI
 
 @Observable @MainActor
 final class NewHabitViewModel {
-    private let dataSource: any HabitDataSourceProtocol
+    private let modelContext: ModelContext
     private let notificationManager: NotificationManager
-    private let widgetService: any WidgetServiceProtocol
+    private let widgetService: WidgetService
     
     let habit: Habit?
     
@@ -29,21 +29,17 @@ final class NewHabitViewModel {
     }
     
     init(
-        dataSource: any HabitDataSourceProtocol,
+        modelContext: ModelContext,
         notificationManager: NotificationManager,
-        widgetService: any WidgetServiceProtocol,
-        habit: Habit? = nil,
-        onSaveCompletion: (() -> Void)? = nil
+        widgetService: WidgetService,
+        habit: Habit? = nil
     ) {
-        self.dataSource = dataSource
+        self.modelContext = modelContext
         self.notificationManager = notificationManager
         self.widgetService = widgetService
         self.habit = habit
-        self.onSaveCompletion = onSaveCompletion
         
-        if let habit = habit {
-            setupInitialValues(from: habit)
-        }
+        if let habit = habit { setupInitialValues(from: habit) }
     }
     
     private func setupInitialValues(from habit: Habit) {
@@ -118,13 +114,12 @@ final class NewHabitViewModel {
                 reminderTimes: isReminderEnabled ? reminderTimes : nil,
                 startDate: startDate
             )
-            dataSource.insert(newHabit)
-            dataSource.save()
+            modelContext.insert(newHabit)
+            try? modelContext.save()
             handleNotifications(for: newHabit)
         }
         
         widgetService.reloadWidgetsAfterDataChange()
-        onSaveCompletion?()
     }
     
     private func handleNotifications(for habit: Habit) {

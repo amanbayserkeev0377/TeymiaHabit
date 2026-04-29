@@ -1,10 +1,13 @@
+included:
+  - TeymiaHabit
 excluded:
   - Pods
   - DerivedData
+  - ./*/Packages
 
 disabled_rules:
   - trailing_whitespace
-  - implicit_optional_initialization # for CloudKit
+  - implicit_optional_initialization # CloudKit (@Optional)
   - identifier_name
   - multiple_closures_with_trailing_closure
 
@@ -13,7 +16,6 @@ type_name:
   excluded:
     - DS
 
-# SwiftData
 function_parameter_count:
   warning: 12
   error: 20
@@ -21,3 +23,13 @@ function_parameter_count:
 line_length:
   warning: 160
   error: 200
+
+opening_brace:
+  severity: warning
+  allow_multiline_declarations: true
+
+empty_count:
+  severity: warning
+
+statement_position:
+  severity: warning

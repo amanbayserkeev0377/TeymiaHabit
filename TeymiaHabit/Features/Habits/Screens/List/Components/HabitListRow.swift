@@ -47,8 +47,12 @@ struct HabitListRow: View {
                 Text(habit.title)
                     .font(.headline)
                 
-                Text("\(habit.formatProgress(cardProgress)) / \(habit.formattedGoal)")
-                    .font(.subheadline)
+                Text("\(habit.formatProgress(cardProgress)) | \(habit.formattedGoal)")
+                    .font(.subheadline).monospacedDigit()
+                    .fontWeight(.medium)
+                    .contentTransition(.numericText())
+                    .animation(.spring, value: cardProgress)
+                    
             }
             .foregroundStyle(.primary)
             .lineLimit(1)
@@ -99,9 +103,11 @@ struct HabitListRow: View {
             HabitListRow(habit: habit, date: date)
                 .glassEffect(.regular.interactive().tint(DS.Colors.rowBackground), in: cardShape)
                 .contentShape(cardShape)
+            #if os(iOS)
                 .contentShape(.dragPreview, cardShape)
                 .contentShape(.contextMenuPreview, cardShape)
                 .contentShape(.hoverEffect, cardShape)
+            #endif
                 .contextMenu {
                     skipButton
                     editButton

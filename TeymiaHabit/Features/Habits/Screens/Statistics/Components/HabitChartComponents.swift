@@ -103,7 +103,7 @@ struct ChartContainer<Content: View>: View {
                     .padding(.horizontal, 16)
             }
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
+//        .tabViewStyle(.page(indexDisplayMode: .never)) TODO
         .frame(height: 180)
     }
 }

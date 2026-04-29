@@ -5,10 +5,10 @@ import SwiftUI
 @Observable @MainActor
 final class HabitWidgetService {
     private let modelContext: ModelContext
-    private let habitService: any HabitServiceProtocol
+    private let habitService: HabitService
     private let appGroupsID = "group.com.amanbayserkeev.teymiahabit"
     
-    init(modelContext: ModelContext, habitService: any HabitServiceProtocol) {
+    init(modelContext: ModelContext, habitService: HabitService) {
         self.modelContext = modelContext
         self.habitService = habitService
     }

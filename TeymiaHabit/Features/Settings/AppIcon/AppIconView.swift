@@ -1,4 +1,16 @@
+#if os(iOS)
 import SwiftUI
+
+struct AppIconRow: View {
+    var body: some View {
+        NavigationLink(destination: AppIconView()) {
+            Label(
+                title: { Text("settings_app_icon") },
+                icon: { RowIcon(iconName: "app.specular") }
+            )
+        }
+    }
+}
 
 struct AppIconView: View {
     @Environment(AppIconManager.self) private var appIconManager
@@ -59,3 +71,4 @@ struct AppIconImage: View {
         }
     }
 }
+#endif

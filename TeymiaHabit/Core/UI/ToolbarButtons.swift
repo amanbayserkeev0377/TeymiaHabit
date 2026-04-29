@@ -21,7 +21,7 @@ struct ConfirmationToolbarButton: ToolbarContent {
     
     var body: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
-            Button(role: .confirm) {
+            Button {
                 action()
             } label: {
                 Image(systemName: "checkmark")

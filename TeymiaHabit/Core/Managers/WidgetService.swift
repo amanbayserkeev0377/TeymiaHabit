@@ -1,15 +1,8 @@
 import WidgetKit
 
-// MARK: - Protocol
-@MainActor
-protocol WidgetServiceProtocol {
-    func reloadWidgets()
-    func reloadWidgetsAfterDataChange()
-}
-
 // MARK: - Implementation
 @Observable @MainActor
-final class WidgetService: WidgetServiceProtocol {
+final class WidgetService {
     private let appGroup = "group.com.amanbayserkeev.teymiahabit"
     
     init() {}
