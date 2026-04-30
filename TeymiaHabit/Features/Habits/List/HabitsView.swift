@@ -69,6 +69,8 @@ struct HabitsContentView: View {
         .sheet(item: $selectedHabit) { habit in
             NavigationStack {
                 HabitDetailView(habit: habit, date: selectedDate)
+                    .presentationDetents([.fraction(0.6)])
+                    .presentationDragIndicator(.visible)
             }
         }
         .onChange(of: navManager.habitToOpen) { _, habit in
@@ -120,7 +122,6 @@ struct HabitsContentView: View {
         List {
             habitListContent
         }
-        .primaryBackground()
         .listStyle(.plain)
         .scrollIndicators(.hidden)
         #if os(iOS)

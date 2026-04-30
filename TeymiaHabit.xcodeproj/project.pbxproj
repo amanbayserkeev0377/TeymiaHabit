@@ -76,14 +76,14 @@
 		077FAE882E12E028007790C5 /* Exceptions for "TeymiaHabit" folder in "liveactivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Core/Extensions/RingColor.swift,
+				Core/Extensions/TimeFormatting.swift,
 				Core/Extensions/ViewLayout.swift,
 				"Core/Extensions/Сolor.swift",
-				Core/UI/DesignSystem.swift,
-				Core/UI/HabitIconView.swift,
-				Features/Habits/Extensions/RingColor.swift,
-				Features/Habits/Extensions/TimeFormatting.swift,
-				Features/Habits/Models/HabitIconColor.swift,
+				Core/Models/HabitIconColor.swift,
 				Resources/Assets.xcassets,
+				Shared/DesignSystem.swift,
+				Shared/HabitIconView.swift,
 			);
 			target = 077FAE6D2E12DE7C007790C5 /* liveactivityExtension */;
 		};
@@ -97,19 +97,19 @@
 		07EA6CE42E31E31A00171765 /* Exceptions for "TeymiaHabit" folder in "TeymiaHabitWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Core/Extensions/Calendar.swift,
+				Core/Extensions/RingColor.swift,
+				Core/Extensions/TimeFormatting.swift,
 				Core/Extensions/ViewLayout.swift,
 				"Core/Extensions/Сolor.swift",
-				Core/UI/DesignSystem.swift,
-				Core/UI/HabitIconView.swift,
-				Features/Habits/Extensions/Calendar.swift,
-				Features/Habits/Extensions/RingColor.swift,
-				Features/Habits/Extensions/TimeFormatting.swift,
-				Features/Habits/Models/Habit.swift,
-				Features/Habits/Models/HabitCompletion.swift,
-				Features/Habits/Models/HabitIconColor.swift,
-				Features/Habits/Models/HabitType.swift,
-				Features/Habits/Utilities/Weekday.swift,
+				Core/Models/Habit.swift,
+				Core/Models/HabitCompletion.swift,
+				Core/Models/HabitIconColor.swift,
+				Core/Models/HabitType.swift,
+				Core/Utilities/Weekday.swift,
 				Resources/Assets.xcassets,
+				Shared/DesignSystem.swift,
+				Shared/HabitIconView.swift,
 			);
 			target = 07EA6CCB2E31DFB800171765 /* TeymiaHabitWidgetsExtension */;
 		};

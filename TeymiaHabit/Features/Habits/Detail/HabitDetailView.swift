@@ -52,9 +52,8 @@ struct HabitDetailContentView: View {
     var body: some View {
         @Bindable var vm = viewModel
         mainContent(vm: viewModel)
-            .primaryBackground()
-            .navigationTitle(habit.title)
-            .navigationSubtitle("Goal: \(habit.formattedGoal)")
+//            .navigationTitle(habit.title)
+//            .navigationSubtitle("Goal: \(habit.formattedGoal)")
             .toolbar { toolbarContent(vm: viewModel) }
             .deleteSingleHabitAlert(
                 isPresented: $vm.alertState.isDeleteAlertPresented,
@@ -70,7 +69,9 @@ struct HabitDetailContentView: View {
                 viewModel.updateDisplayedDate(newDate)
             }
             .sheet(isPresented: $isEditPresented) {
+                NavigationStack {
                     NewHabitView()
+                }
             }
             .sheet(isPresented: $showingStats) {
                 HabitStatisticsView(habit: habit)
@@ -80,30 +81,26 @@ struct HabitDetailContentView: View {
     // MARK: - Content
     @ViewBuilder
     private func mainContent(vm: HabitDetailViewModel) -> some View {
-        ScrollView {
-                Spacer()
-                HabitProgressView(viewModel: vm, habit: habit)
-                Spacer()
-                VStack(spacing: 30) {
-                    actionButtonsSection(viewModel: vm)
-                    completeButtonView(viewModel: vm)
-                        .disabled(vm.isAlreadyCompleted)
-                }
-                Spacer()
+        VStack(spacing: 24) {
+            titleView()
+            HabitProgressView(viewModel: vm, habit: habit)
+            VStack(spacing: 24) {
+                actionButtonsSection(viewModel: vm)
+                completeButtonView(viewModel: vm)
+                    .disabled(vm.isAlreadyCompleted)
+            }
         }
+        .padding(.vertical, 16)
+    }
+    
+    @ViewBuilder
+    private func titleView() -> some View {
+        Text(habit.title)
+            .font(DS.Typography.largeTitle)
     }
     
     @ToolbarContentBuilder
     private func toolbarContent(vm: HabitDetailViewModel) -> some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button(role: .close) {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .fontWeight(.semibold)
-            }
-        }
-        
         ToolbarItem(placement: .primaryAction) {
             Button { showingStats = true } label: {
                 Image(systemName: "chart.bar.fill")
@@ -155,7 +152,7 @@ struct HabitDetailContentView: View {
         Button(action: { viewModel.completeHabit() }) {
             Text(viewModel.isAlreadyCompleted ? "completed" : "complete")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Color.blackWhite)
+                .foregroundStyle(Color.whiteBlack)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .contentShape(.capsule)
         }

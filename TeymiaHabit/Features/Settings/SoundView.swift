@@ -1,6 +1,17 @@
 import SwiftUI
 import SwiftData
 
+struct SoundRow: View {
+    var body: some View {
+        NavigationLink(destination: SoundView()) {
+            Label(
+                title: { Text("settings_sounds") },
+                icon: { RowIcon(iconName: "speaker.wave.1") }
+            )
+        }
+    }
+}
+
 struct SoundView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(SoundManager.self) private var soundManager

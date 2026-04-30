@@ -42,7 +42,6 @@ struct NewHabitContentView: View {
     var body: some View {
         @Bindable var vm = viewModel
         habitForm(vm: vm)
-            .secondaryBackground()
             .navigationTitle(vm.habit == nil ? "create_habit" : "edit_habit")
 //            .navigationBarTitleDisplayMode(.inline) TODO
             .scrollDismissesKeyboard(.immediately)
@@ -89,7 +88,6 @@ struct NewHabitContentView: View {
                     }
                 }
             }
-            .rowBackground()
             
             Section {
                 GoalSection(
@@ -99,7 +97,6 @@ struct NewHabitContentView: View {
                     minutes: $vm.minutes
                 )
             }
-            .rowBackground()
             
             Section {
                 RepeatDaysView(activeDays: $vm.activeDays)
@@ -109,7 +106,6 @@ struct NewHabitContentView: View {
                     reminderTimes: $vm.reminderTimes
                 )
             }
-            .rowBackground()
         }
         .formStyle(.grouped)
     }

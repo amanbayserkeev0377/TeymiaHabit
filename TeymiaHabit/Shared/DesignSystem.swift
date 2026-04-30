@@ -4,10 +4,7 @@ enum DS {
     // MARK: - Colors
     enum Colors {
         static let appPrimary = Color.appPrimary
-        static let appSecondary = Color.appSecondary
-        static let primaryBackground = Color.primaryBackground
-        static let secondaryBackground = Color.secondaryBackground
-        static let rowBackground = Color.rowBackground
+        static let appSecondary = Color.secondary.opacity(0.1)
         
         static let iconOpacity: Double = 0.15
     }

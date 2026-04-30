@@ -101,7 +101,7 @@ struct HabitListRow: View {
         
         var body: some View {
             HabitListRow(habit: habit, date: date)
-                .glassEffect(.regular.interactive().tint(DS.Colors.rowBackground), in: cardShape)
+                .glassEffect(.regular.interactive(), in: cardShape)
                 .contentShape(cardShape)
             #if os(iOS)
                 .contentShape(.dragPreview, cardShape)

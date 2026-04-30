@@ -65,12 +65,9 @@ struct HabitProgressView: View {
                 .font(.system(size: size * 0.4, weight: .medium))
                 .foregroundStyle(Color.primary)
                 .frame(width: size, height: size)
-                .background {
-                    Circle().fill(Color.clear)
-                }
         }
         .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
+        .glassEffect(.regular.interactive(false).tint(DS.Colors.appSecondary), in: .circle)
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.4 : 1.0)
     }

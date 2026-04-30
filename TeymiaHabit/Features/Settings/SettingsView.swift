@@ -5,14 +5,12 @@ enum SettingDetail: Hashable, CaseIterable {
 }
 
 struct SettingsView: View {
-    // Указываем тип явно, чтобы избежать ошибок
     @State private var selectedDetail: SettingDetail? = .appearance
     
     var body: some View {
         NavigationSplitView {
             Form {
                 Section {
-                    // 2. Оборачиваем каждый пункт в логику выбора
                     settingRow(for: .appearance) { AppearanceRow() }
                     #if os(iOS)
                     settingRow(for: .appIcon) { AppIconRow() }
@@ -21,14 +19,13 @@ struct SettingsView: View {
                     settingRow(for: .sound) { SoundRow() }
                     settingRow(for: .archive) { ArchiveRow() }
                     
-//                    LanguageRow()
+                    #if os(iOS)
+                    LanguageRow()
+                    #endif
                 }
-//                .rowBackground()
                 
                 AboutSection()
-                    .rowBackground()
             }
-//            .secondaryBackground()
             .navigationTitle("settings")
             .listStyle(.sidebar)
         } detail: {

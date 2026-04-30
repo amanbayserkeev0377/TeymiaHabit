@@ -1,3 +1,14 @@
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - force_cast
+  - vertical_whitespace
+  - first_where
+  - contains_over_filter_is_empty
+  - discouraged_optional_boolean
+  - closure_spacing
+  - prefer_self_in_static_references
+
 included:
   - TeymiaHabit
 excluded:
@@ -7,9 +18,9 @@ excluded:
 
 disabled_rules:
   - trailing_whitespace
-  - implicit_optional_initialization # CloudKit (@Optional)
   - identifier_name
   - multiple_closures_with_trailing_closure
+  - implicit_optional_initialization
 
 type_name:
   min_length: 2
@@ -24,9 +35,16 @@ line_length:
   warning: 160
   error: 200
 
+function_body_length:
+  warning: 60
+  error: 100
+
+nesting:
+  type_level: 3
+  statement_level: 5
+
 opening_brace:
   severity: warning
-  allow_multiline_declarations: true
 
 empty_count:
   severity: warning
